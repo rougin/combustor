@@ -2,11 +2,10 @@
     "name": "rougin/combustor",
     "description": "Yet another code generator for creating web applications faster in CodeIgniter",
     "keywords": ["combustor", "code generator", "codeigniter", "lazy"],
-    "authors": [
-        {
-            "name": "Rougin Royce Gutib"
-        }
-    ],
+    "license": "MIT",
+    "authors": [{
+        "name": "Rougin Royce Gutib"
+    }],
     "require": {
         "php": ">=5.3.0",
         "symfony/console": "2.4.x-dev"

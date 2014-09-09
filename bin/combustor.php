@@ -4,7 +4,7 @@
  * Include the Composer Autoloader
  */
 
-include_once __DIR__ . '/../../vendor/autoload.php';
+(@include_once __DIR__ . '/../vendor/autoload.php') || @include_once __DIR__ . '/../../../autoload.php';
 
 /**
  * Import the commands from Combuster

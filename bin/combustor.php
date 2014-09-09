@@ -1,10 +1,21 @@
-#!/usr/bin/env php
 <?php
+
+/**
+ * Include the Composer Autoloader
+ */
 
 include_once __DIR__ . '/../../vendor/autoload.php';
 
+/**
+ * Import the commands from Combuster
+ */
+
 use Combustor\CreateControllerCommand;
 use Combustor\CreateModelCommand;
+
+/**
+ * Import the Symfony Console Component
+ */
 
 use Symfony\Component\Console\Application;
 use Symfony\Component\Console\Helper\HelperSet;

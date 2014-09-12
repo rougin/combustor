@@ -2,6 +2,7 @@
 
 namespace Combustor;
 
+use Inflect\Inflect;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
@@ -34,6 +35,11 @@ class CreateControllerCommand extends Command
 
 	protected function execute(InputInterface $input, OutputInterface $output)
 	{
+		$name = ($input->getOption('keep')) ? $input->getArgument('name') : Inflect::pluralize($input->getArgument('name'));
+
+		$controller = file_get_contents(__DIR__ . '/Templates/Controller.txt');
+
+		$output->writeln($name);
 	}
 	
 }

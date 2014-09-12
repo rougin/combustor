@@ -1,0 +1,342 @@
+<?php if ( ! defined("BASEPATH")) exit("No direct script access allowed");
+
+/**
+ * ControllerName Controller Class
+ *
+ * @author 		Rougin Gutib
+ * @copyright	Copyright (c) 1908 - 2014, University of the Immaculate Conception
+ */
+
+class ControllerName extends CI_Controller
+{
+
+	/**
+	 * Initialize the controller first before calling its corresponding methods
+	 */
+	public function __construct()
+	{
+		/**
+		 * Load the CI_Controller's methods
+		 */
+
+		parent::__construct();
+
+		/**
+		 * Load the [singular] model
+		 * 
+		 * You can also add other models belows by seperating it
+	 	 * with a comma.
+		 */
+		
+		$this->load->model(array(
+			'[singular]'
+		));
+
+		/**
+		 * Set the default timezone for the application
+		 */
+		
+		date_default_timezone_set('Asia/Singapore');
+	}
+
+	/**
+	 * Show the form for creating a new [singular]
+	 */
+	public function create()
+	{
+		$this->validate_input();
+
+		/**
+		 * If the inputs are validated
+		 */
+		
+		if ($this->form_validation->run()) {
+			/**
+			 * Add the [singular] to the storage
+			 */
+			
+			/**
+			 * Set columns here to be persisted to the database
+			 */
+
+			if ($this->input->post('password') == $this->input->post('confirm_password')) {
+				$this->[singular]->set_password($this->input->post('password'));
+			} else {
+				$this->session->set_flashdata('notification', 'The passwords you entered did not match!');
+				$this->session->set_flashdata('alert', 'danger');
+
+				redirect('[singular]s/create');
+			}
+
+			$this->[singular]->set_firstname($this->input->post('firstname'));
+			$this->[singular]->set_middlename($this->input->post('middlename'));
+			$this->[singular]->set_lastname($this->input->post('lastname'));
+			$this->[singular]->set_username($this->input->post('username'));
+			$this->[singular]->set_position($this->input->post('position'));
+			$this->[singular]->set_datetime_created('now');
+
+			$this->doctrine->em->persist($this->[singular]);
+			$this->doctrine->em->flush();
+
+			/**
+			 * Create a notification after adding
+			 * 
+			 * You can change the content of the notification and what type of alert it is.
+			 */
+			
+			$this->session->set_flashdata('notification', 'The [singular] has been added successfully!');
+			$this->session->set_flashdata('alert', 'success');
+
+			/**
+			 * Redirect back to the [singular]s controller
+			 */
+
+			redirect('[singular]s');
+		}
+		
+		$data['positions'] = array(
+			'' => '',
+			'administrator' => 'Administrator',
+			'encoder' => 'Encoder',
+			'judge' => 'Judge'
+		);
+
+		/**
+		 * Show the form
+		 */
+		
+		$this->load->view('[singular]s/create', $data);
+	}
+
+	/**
+	 * Delete the specified [singular] from storage
+	 * 
+	 * @param  int $id
+	 */
+	public function delete($id)
+	{
+		/**
+		 * Create an instance of the Doctrine Query Builder
+		 */
+		
+		$db = $this->doctrine->em->createQueryBuilder();
+
+		/**
+		 * Set first the SQL
+		 */
+
+		$db->delete('[singular]', 'a')->where('a.[singular]_id = ?1')->setParameter(1, $id);
+
+		/**
+		 * Return the query
+		 */
+
+		$db->getQuery()->getResult();
+
+		/**
+		 * Create a notification after deleting
+		 * 
+		 * You can change the content of the notification and what type of alert it is.
+		 */
+		
+		$this->session->set_flashdata('notification', 'The [singular] has been deleted successfully!');
+		$this->session->set_flashdata('alert', 'success');
+
+		/**
+		 * Redirect back to the [singular]s controller
+		 */
+
+		redirect('[singular]s');
+	}
+
+	/**
+	 * Show the form for editing the specified [singular]
+	 * 
+	 * @param  int $id
+	 */
+	public function edit($id)
+	{
+		$this->validate_input();
+	
+		/**
+		 * If the inputs are validated
+		 */
+
+		if ($this->form_validation->run()) {
+			$[singular] = $this->doctrine->em->find('[singular]', $id);
+
+			if ($[singular] !== NULL) {
+				/**
+				 * Update the details of the specified [singular] to the storage
+				 */
+
+				/**
+				 * Set columns here
+				 */
+
+				if ($this->input->post('old_password') != NULL && $this->input->post('new_password') != NULL && $this->input->post('confirm_password') != NULL) {
+					if (md5($this->input->post('old_password')) != $[singular]->get_password() || $this->input->post('new_password') != $this->input->post('confirm_password')) {
+						$this->session->set_flashdata('notification', 'The passwords you entered did not match!');
+						$this->session->set_flashdata('alert', 'danger');
+
+						redirect('[singular]s/edit/' . $id);
+					} else {
+						$[singular]->set_password($this->input->post('new_password'));
+					}
+				}
+				
+				$[singular]->set_firstname($this->input->post('firstname'));
+				$[singular]->set_middlename($this->input->post('middlename'));
+				$[singular]->set_lastname($this->input->post('lastname'));
+				$[singular]->set_username($this->input->post('username'));
+				$[singular]->set_position($this->input->post('position'));
+				$[singular]->set_datetime_updated('now');
+
+				$this->doctrine->em->flush();
+			} else {
+				exit('Error');
+			}
+
+			/**
+			 * Create a notification after updating
+			 * 
+			 * You can change the content of the notification and what type of alert it is.
+			 */
+			
+			$this->session->set_flashdata('notification', 'The [singular] has been updated successfully!');
+			$this->session->set_flashdata('alert', 'success');
+
+			/**
+			 * Redirect back to the [singular]s controller
+			 */
+
+			redirect('[singular]s');
+		}
+
+		$data['positions'] = array(
+			'' => '',
+			'administrator' => 'Administrator',
+			'encoder' => 'Encoder',
+			'judge' => 'Judge'
+		);
+		
+		/**
+		 * Load the data of the specified [singular]
+		 */
+
+		$data['[singular]'] = $this->doctrine->em->find('[singular]', $id);
+
+		/**
+		 * Show the form
+		 */
+
+		$this->load->view('[singular]s/edit', $data);
+	}
+
+	/**
+	 * Display a listing of [singular]s
+	 */
+	public function index()
+	{
+		$this->load->library('pagination');
+
+		$config['total_rows'] = $this->[singular]->count_all();
+
+		/**
+		 * Load and initialize the pagination
+		 */
+
+		include APPPATH . 'config/pagination.php';
+
+		$config['per_page'] = 20;
+
+		$this->pagination->initialize($config);
+
+		/**
+		 * Set the delimiters
+		 */
+		
+		$delimiters = array('per_page' => $config['per_page'], 'page' => $this->pagination->offset, 'keyword' => $this->input->get('keyword'));
+
+		/**
+		 * Retrieve the data of all [singular]s
+		 */
+
+		$data['[singular]s'] = $this->[singular]->all($delimiters);
+
+		/**
+		 * Get the pagination links based on the [singular] model
+		 */
+
+		$data['links'] = $this->pagination->create_links();
+
+		/**
+		 * Load the controller's index view
+		 */
+
+		$this->load->view('[singular]s/index', $data);
+	}
+
+	/**
+	 * Display the specified [singular]
+	 * 
+	 * @param  int $id
+	 */
+	public function show($id)
+	{
+		/**
+		 * Load the data of the specified [singular]
+		 */
+
+		$data['[singular]'] = $this->doctrine->em->find('[singular]', $id);
+
+		/**
+		 * Show the form
+		 */
+
+		$this->load->view('[singular]s/show', $data);
+	}
+
+	/**
+	 * Validate the input from the view
+	 * 
+	 * Here you can insert validation rules for your controller.
+	 * For more information and examples about this, you can read 
+	 * more about Form Validation in the CodeIgniter User Guide.
+	 * 
+	 * https://ellislab.com/codeigniter/user-guide/libraries/form_validation.html
+	 */
+	private function validate_input()
+	{
+		$this->load->library('form_validation');
+
+		/**
+		 * Insert here the column name first and then its corresponding label
+		 * in the $columns array.
+		 *
+		 * Examples:
+		 * 
+		 * $columns = array(
+		 * 		'age' => 'age',
+		 * 		'firstname' => 'first name',
+		 * 		'lastname' => 'last name',
+		 *   	'email' => 'email'
+		 * );
+		 */
+		
+		$columns = array(
+			'firstname' => 'firstname',
+			'middlename' => 'middlename',
+			'lastname' => 'lastname',
+			'username' => 'username',
+			'position' => 'position',
+		);
+
+		foreach ($columns as $column => $label) {
+			$this->form_validation->set_rules($column, $label, 'required');
+		}
+
+		$this->form_validation->set_error_delimiters('<div class="text-danger">', '</div>');
+	}
+
+}

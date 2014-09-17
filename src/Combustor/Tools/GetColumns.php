@@ -2,7 +2,7 @@
 
 namespace Combustor\Tools;
 
-use Inflect\Inflect;
+use Combustor\Tools\Inflect;
 
 class GetColumns {
 

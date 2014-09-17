@@ -161,15 +161,12 @@ class CreateModelCommand extends Command
 			$methodName = 'get_' . $row->Field;
 			$methodName = ($input->getOption('snake')) ? Inflect::underscore($methodName) : Inflect::camelize($methodName);
 
-			$accessors .= '/**' . "\n";
-			$accessors .= '	 * Get ' . $row->Field . "\n";
-			$accessors .= '	 *' . "\n";
-			$accessors .= '	 * @return ' . $type . "\n";
-			$accessors .= '	 */' . "\n";
-			$accessors .= '	public function ' . $methodName . '()' . "\n";
-			$accessors .= '	{' . "\n";
-			$accessors .= '		return $this->' . $row->Field . ';' . "\n";
-			$accessors .= '	}' . "\n\n";
+			$accessor = file_get_contents(__DIR__ . '/Templates/Miscellaneous/Accessor.txt');
+
+			$search = array('$field', '$type', '$methodName');
+			$replace = array($row->Field, $type, $methodName);
+
+			$accessors .= str_replace($search, $replace, $accessor) . "\n\n";
 
 			/**
 			 * Generate the mutators
@@ -191,17 +188,12 @@ class CreateModelCommand extends Command
 				$methodName = 'set_' . $row->Field;
 				$methodName = ($input->getOption('snake')) ? Inflect::underscore($methodName) : Inflect::camelize($methodName);
 
-				$mutators .= '/**' . "\n";
-				$mutators .= '	 * Set ' . $row->Field . "\n";
-				$mutators .= '	 *' . "\n";
-				$mutators .= '	 * @param ' . $type . ' $' . $row->Field . "\n";
-				$mutators .= '	 * @return ' . $class . "\n";
-				$mutators .= '	 */' . "\n";
-				$mutators .= '	public function ' . $methodName . '(\\' . $class . ' $' . $row->Field . $nullable . ')' . "\n";
-				$mutators .= '	{' . "\n";
-				$mutators .= '		$this->' . $row->Field . ' = $' . $row->Field . ';' . "\n\n";
-				$mutators .= '		return $this;' . "\n";
-				$mutators .= '	}' . "\n\n";
+				$mutator = file_get_contents(__DIR__ . '/Templates/Miscellaneous/Mutator.txt');
+
+				$search = array('$field', '$type', '$methodName', '$class', '$nullable');
+				$replace = array($row->Field, $type, $methodName, $class, $nullable);
+
+				$mutators .= str_replace($search, $replace, $mutator) . "\n\n";
 			}
 
 			$counter++;

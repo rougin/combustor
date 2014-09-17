@@ -89,23 +89,8 @@ class CreateControllerCommand extends Command
 				$columnsEdit .= "\n" . '			$' . $entity . ' = $this->doctrine->em->find(\'' . $entity . '\', $this->input->post(\'' . $row->Field . '\'));' . "\n";
 				$columnsEdit .= '			$$singular->set_' . strtolower($row->Field) . '($' . $entity . ');';
 			} elseif ($row->Field == 'password') {
-				$columnsCreate .= "\n" . '			if ($this->input->post(\'password\') == $this->input->post(\'confirm_password\')) {' . "\n";
-				$columnsCreate .= '				$this->$singular->set_password($this->input->post(\'password\'));' . "\n";
-				$columnsCreate .= '			} else {' . "\n";
-				$columnsCreate .= '				$this->session->set_flashdata(\'notification\', \'The passwords you entered did not match!\');' . "\n";
-				$columnsCreate .= '				$this->session->set_flashdata(\'alert\', \'danger\');' . "\n";
-				$columnsCreate .= '				redirect(\'$plural/create\');' . "\n";
-				$columnsCreate .= '			}' . "\n\n";
-
-				$columnsEdit .= "\n" . '			if ($this->input->post(\'old_password\') != NULL && $this->input->post(\'new_password\') != NULL && $this->input->post(\'confirm_password\') != NULL) {' . "\n";
-				$columnsEdit .= '				if (md5($this->input->post(\'old_password\')) != $$singular->get_password() || $this->input->post(\'new_password\') != $this->input->post(\'confirm_password\')) {' . "\n";
-				$columnsEdit .= '					$this->session->set_flashdata(\'notification\', \'The passwords you entered did not match!\');' . "\n";
-				$columnsEdit .= '					$this->session->set_flashdata(\'alert\', \'danger\');' . "\n";
-				$columnsEdit .= '					redirect(\'$plural/edit/\' . $id);' . "\n";
-				$columnsEdit .= '				} else {' . "\n";
-				$columnsEdit .= '					$$singular->set_password($this->input->post(\'new_password\'));' . "\n";
-				$columnsEdit .= '				}' . "\n";
-				$columnsEdit .= '			}' . "\n\n";
+				$columnsCreate .= "\n" . file_get_contents(__DIR__ . '/Templates/Miscellaneous/CheckCreatePassword.txt') . "\n\n";
+				$columnsEdit .= "\n" . file_get_contents(__DIR__ . '/Templates/Miscellaneous/CheckEditPassword.txt') . "\n\n";
 			} else {
 				$column = ($row->Field == 'datetime_created' || $row->Field == 'datetime_updated') ? 'now' : $row->Field;
 

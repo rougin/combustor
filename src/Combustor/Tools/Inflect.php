@@ -133,6 +133,18 @@ class Inflect
     }
 
     /**
+     * Takes multiple words separated by the separator and changes them to spaces
+     *
+     * @param   string  $string        Input string
+     * @param   string  $separator  Input separator
+     * @return  string
+     */
+    public static function humanize($string, $separator = '_')
+    {
+        return ucwords(preg_replace('/[' . $separator . ']+/', ' ', trim(strtolower($string))));
+    }
+
+    /**
      * Pluralize a specified string
      * 
      * @param  string $string   The string to be pluralized

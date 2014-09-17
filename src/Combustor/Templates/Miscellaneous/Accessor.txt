@@ -1,0 +1,9 @@
+/**
+	 * Get $field;
+	 *
+	 * @return $type
+	 */
+	public function $methodName()
+	{
+		return $this->$field;
+	}

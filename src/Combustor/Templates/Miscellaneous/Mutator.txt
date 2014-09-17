@@ -1,0 +1,12 @@
+/**
+	 * Set $field
+	 *
+	 * @param $type $$field
+	 * @return $class
+	 */
+	public function $methodName (\$class $$field$nullable)
+	{
+		$this->$$field = $$field;
+
+		return $this;
+	}

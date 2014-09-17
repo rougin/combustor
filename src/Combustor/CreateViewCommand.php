@@ -76,12 +76,6 @@ class CreateViewCommand extends Command
 
 		$databaseColumns = new GetColumns($input->getArgument('name'), $output);
 
-		if ( ! $databaseColumns->result()) {
-			$output->writeln('<error>There is no table named "' . $input->getArgument('name') . '" from the database!</error>');
-
-			exit();
-		}
-
 		$columns = NULL;
 		$counter = 0;
 		$editFields = NULL;

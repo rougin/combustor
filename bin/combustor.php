@@ -18,6 +18,8 @@ define('VENDOR', str_replace('rougin/combustor/bin', '', __DIR__));
 
 use Combustor\CreateControllerCommand;
 use Combustor\CreateModelCommand;
+use Combustor\CreateLayoutCommand;
+use Combustor\CreateViewCommand;
 use Combustor\Doctrine\ModifyCommand;
 use Combustor\Doctrine\RevertCommand;
 
@@ -30,7 +32,9 @@ use Symfony\Component\Console\Helper\HelperSet;
 
 $application = new Application('Combustor', '1');
 $application->add(new CreateControllerCommand);
+$application->add(new CreateLayoutCommand);
 $application->add(new CreateModelCommand);
+$application->add(new CreateViewCommand);
 $application->add(new ModifyCommand);
 $application->add(new RevertCommand);
 $application->run();

@@ -1,0 +1,7 @@
+<?php echo form_open('$plural/edit/' . $$singular->$primaryKey(), 'class="$bootstrapFormOpen"'); ?>
+	$editFields
+	<div class="$bootstrapFormGroup">
+		<a href="<?php echo base_url('$plural'); ?>">Back</a>
+		<?php echo form_submit('', 'Submit'); ?>
+	</div>
+<?php echo form_close(); ?>

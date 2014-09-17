@@ -2,7 +2,7 @@
 
 namespace Combustor;
 
-use Inflect\Inflect;
+use Combustor\Tools\Inflect;
 use Combustor\Tools\GetColumns;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputArgument;

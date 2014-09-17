@@ -13,7 +13,7 @@ Instructions
 	```
 		"require": {
 			"rougin/combustor": "dev-master",
-			"symfony/console": "2.4.x-dev"
+			"symfony/console": "~2.0"
 		}
 	```
 

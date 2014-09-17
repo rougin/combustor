@@ -1,7 +1,7 @@
 <?php
 namespace Combustor;
 
-use Inflect\Inflect;
+use Combustor\Tools\Inflect;
 use Combustor\Tools\GetColumns;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputArgument;
@@ -25,7 +25,7 @@ class CreateModelCommand extends Command
 				'Name of the model'
 			)->addOption(
 				'snake',
-				null,
+				NULL,
 				InputOption::VALUE_NONE,
 				'Use the snake case naming convention for the accessor and mutators'
 			);
@@ -84,7 +84,7 @@ class CreateModelCommand extends Command
 		if ( ! $databaseColumns->result()) {
 			$output->writeln('<error>There is no table named "' . $input->getArgument('name') . '" from the database!</error>');
 
-			exit();	
+			exit();
 		}
 
 		$databaseColumns = $databaseColumns->result();
@@ -159,12 +159,7 @@ class CreateModelCommand extends Command
 			 */
 
 			$methodName = 'get_' . $row->Field;
-
-			if ($input->getOption('snake')) {
-				$methodName = preg_replace('/[\s]+/', '_', trim(strtolower($methodName)));
-			} else {
-				$methodName = strtolower($methodName[0]).substr(str_replace(' ', '', ucwords(preg_replace('/[\s_]+/', ' ', $methodName))), 1);
-			}
+			$methodName = ($input->getOption('snake')) ? Inflect::underscore($methodName) : Inflect::camelize($methodName);
 
 			$accessors .= '/**' . "\n";
 			$accessors .= '	 * Get ' . $row->Field . "\n";
@@ -194,12 +189,7 @@ class CreateModelCommand extends Command
 				}
 
 				$methodName = 'set_' . $row->Field;
-
-				if ($input->getOption('snake')) {
-					$methodName = preg_replace('/[\s]+/', '_', trim(strtolower($methodName)));
-				} else {
-					$methodName = strtolower($methodName[0]).substr(str_replace(' ', '', ucwords(preg_replace('/[\s_]+/', ' ', $methodName))), 1);
-				}
+				$methodName = ($input->getOption('snake')) ? Inflect::underscore($methodName) : Inflect::camelize($methodName);
 
 				$mutators .= '/**' . "\n";
 				$mutators .= '	 * Set ' . $row->Field . "\n";

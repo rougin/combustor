@@ -1,7 +1,7 @@
 Combustor
 =========
 
-Yet another code generator based in command line interface (CLI) for speeding up the developments of web applications  in [CodeIgniter](https://ellislab.com/codeigniter/). This library generates [CRUD](http://en.wikipedia.org/wiki/Create,_read,_update_and_delete) interface (with [Bootstrap](http://www.getbootstrap.com), optionally) with an integration of an [ORM library](http://www.doctrine-project.org/).
+Yet another code generator console application for [CodeIgniter](https://ellislab.com/codeigniter/) to speed up the development of web applications. This library generates [CRUD](http://en.wikipedia.org/wiki/Create,_read,_update_and_delete) interface (with [Bootstrap](http://www.getbootstrap.com), optionally) with an integration of an [ORM library](http://www.doctrine-project.org/).
 
 Instructions
 ============

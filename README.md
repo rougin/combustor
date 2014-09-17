@@ -10,11 +10,13 @@ Instructions
 	
 	```
 		"require": {
-			"rougin/combustor": "dev-master"
+			"rougin/combustor": "dev-master",
 			"symfony/console": "2.4.x-dev"
 		}
 	```
 
-2. Access the application via the PHP CLI and to retrieve the list of its commands
+2. Access the application via the PHP CLI and to retrieve the list of commands
 
 	```php vendor/bin/combustor```
+
+If you want to know more about Doctrine ORM and its usage, you can always read their documentation [here](doctrine-orm.readthedocs.org/en/latest/tutorials/getting-started.html).

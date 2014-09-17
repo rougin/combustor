@@ -52,19 +52,12 @@ class CreateControllerCommand extends Command
 
 		$columns = new GetColumns($input->getArgument('name'), $output);
 
-		if ( ! $columns->result()) {
-			$output->writeln('<error>There is no table named "' . $input->getArgument('name') . '" from the database!</error>');
-			exit();	
-		}
-
-		$columns = $columns->result();
-
 		$columnsCreate = NULL;
 		$columnsEdit = NULL;
 		$columnsValidate = NULL;
 		$counter = 0;
 
-		foreach ($columns as $row) {
+		foreach ($columns->result() as $row) {
 			if ($counter != 0) {
 				if ($row->Field != 'datetime_updated') {
 					$columnsCreate .= "			";
@@ -84,10 +77,10 @@ class CreateControllerCommand extends Command
 			} elseif ($row->Key == 'MUL') {
 				$entity = str_replace('_id', '', $row->Field);
 				$columnsCreate .= "\n" . '			$' . $entity . ' = $this->doctrine->em->find(\'' . $entity . '\', $this->input->post(\'' . $row->Field . '\'));' . "\n";
-				$columnsCreate .= '			$this->$singular->set_' . strtolower($row->Field) . '($' . $entity . ');';
+				$columnsCreate .= '			$this->$singular->set_' . strtolower($row->Field) . '($' . $entity . ');' . "\n\n";
 
 				$columnsEdit .= "\n" . '			$' . $entity . ' = $this->doctrine->em->find(\'' . $entity . '\', $this->input->post(\'' . $row->Field . '\'));' . "\n";
-				$columnsEdit .= '			$$singular->set_' . strtolower($row->Field) . '($' . $entity . ');';
+				$columnsEdit .= '			$$singular->set_' . strtolower($row->Field) . '($' . $entity . ');' . "\n\n";
 			} elseif ($row->Field == 'password') {
 				$columnsCreate .= "\n" . file_get_contents(__DIR__ . '/Templates/Miscellaneous/CheckCreatePassword.txt') . "\n\n";
 				$columnsEdit .= "\n" . file_get_contents(__DIR__ . '/Templates/Miscellaneous/CheckEditPassword.txt') . "\n\n";
@@ -138,7 +131,7 @@ class CreateControllerCommand extends Command
 		 * Create a new file and insert the generated template
 		 */
 
-		$name = ($input->getOption('keep')) ? Inflect::pluralize($input->getArgument('name')) : $input->getArgument('name');
+		$name = ($input->getOption('keep')) ? $input->getArgument('name') : Inflect::pluralize($input->getArgument('name'));
 
 		$filename = APPPATH . 'controllers/' . ucfirst($name) . '.php';
 

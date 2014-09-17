@@ -81,14 +81,6 @@ class CreateModelCommand extends Command
 
 		$databaseColumns = new GetColumns($input->getArgument('name'), $output);
 
-		if ( ! $databaseColumns->result()) {
-			$output->writeln('<error>There is no table named "' . $input->getArgument('name') . '" from the database!</error>');
-
-			exit();
-		}
-
-		$databaseColumns = $databaseColumns->result();
-
 		$accessors = NULL;
 		$columns = NULL;
 		$counter = 0;
@@ -97,7 +89,7 @@ class CreateModelCommand extends Command
 		$indexes = NULL;
 		$mutators = NULL;
 
-		foreach ($databaseColumns as $row) {
+		foreach ($databaseColumns->result() as $row) {
 			$nullable = ($row->Null == 'YES') ? 'TRUE' : 'FALSE';
 
 			$type = $this->getDataType($row->Type);

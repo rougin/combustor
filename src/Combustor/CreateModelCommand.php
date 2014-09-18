@@ -85,9 +85,10 @@ class CreateModelCommand extends Command
 		$columns = NULL;
 		$counter = 0;
 		$indexCounter = 0;
-		$mutatorCounter = 0;
 		$indexes = NULL;
+		$mutatorCounter = 0;
 		$mutators = NULL;
+		$primaryKey = NULL;
 
 		foreach ($databaseColumns->result() as $row) {
 			$nullable = ($row->Null == 'YES') ? 'TRUE' : 'FALSE';
@@ -111,10 +112,6 @@ class CreateModelCommand extends Command
 				$columns .= '	';
 			}
 
-			if ($indexCounter != 0) {
-				$indexes .= '*   		';
-			}
-
 			if ($mutatorCounter != 0) {
 				$mutators .= '	';
 			}
@@ -129,7 +126,9 @@ class CreateModelCommand extends Command
 				$columns .= '	 * @Id @GeneratedValue' . "\n";
 				$columns .= '	 * @Column(type="' . $type . '"' . $length . ', nullable=' . $nullable . ', unique=' . $unique . ')' . "\n";
 			} elseif ($row->Key == 'MUL') {
-				$indexCounter++;
+				if ($indexCounter != 0) {
+					$indexes .= ' *   		';
+				}
 
 				$entity = ucfirst(str_replace('_id', '', $row->Field));
 				$indexes .= '@index(name="' . $row->Field . '", columns={"' . $row->Field . '"}),' . "\n";
@@ -139,6 +138,8 @@ class CreateModelCommand extends Command
 				$columns .= '	 * @JoinColumns({' . "\n";
 				$columns .= '	 *   @JoinColumn(name="' . $row->Field . '", referencedColumnName="' . $row->Field . '", nullable=' . $nullable . ', onDelete="cascade")' . "\n";
 				$columns .= '	 * })' . "\n";
+
+				$indexCounter++;
 			} else {
 				$columns .= '	 * @Column(type="' . $type . '"' . $length . ', nullable=' . $nullable . ', unique=' . $unique . ')' . "\n";
 			}
@@ -152,6 +153,10 @@ class CreateModelCommand extends Command
 
 			$methodName = 'get_' . $row->Field;
 			$methodName = ($input->getOption('snake')) ? Inflect::underscore($methodName) : Inflect::camelize($methodName);
+
+			if ($row->Key == 'PRI') {
+				$primaryKey = $methodName;
+			}
 
 			$accessor = file_get_contents(__DIR__ . '/Templates/Miscellaneous/Accessor.txt');
 
@@ -200,15 +205,19 @@ class CreateModelCommand extends Command
 			'$columns',
 			'$accessors',
 			'$mutators',
+			'$primaryKey',
+			'$plural',
 			'$singular',
 			'$model'
 		);
 
 		$replace = array(
-			rtrim($indexes),
+			rtrim(substr($indexes, 0, -2)),
 			rtrim($columns),
 			rtrim($accessors),
 			rtrim($mutators),
+			$primaryKey,
+			Inflect::pluralize($input->getArgument('name')),
 			Inflect::singularize($input->getArgument('name')),
 			ucfirst(Inflect::singularize($input->getArgument('name')))
 		);

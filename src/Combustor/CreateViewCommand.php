@@ -52,6 +52,7 @@ class CreateViewCommand extends Command
 		$bootstrapFormControl = NULL;
 		$bootstrapFormGroup = NULL;
 		$bootstrapFormOpen = NULL;
+		$bootstrapFormSubmit = ($input->getOption('bootstrap')) ? 'col-lg-12' : NULL;
 		$bootstrapTable = NULL;
 
 		if ($input->getOption('bootstrap')) {
@@ -78,8 +79,9 @@ class CreateViewCommand extends Command
 
 		$columns = NULL;
 		$counter = 0;
-		$editFields = NULL;
 		$fields = NULL;
+		$formColumn = ($input->getOption('bootstrap')) ? 'col-lg-11' : NULL;
+		$labelClass = ($input->getOption('bootstrap')) ? 'control-label col-lg-1' : NULL;
 		$rows = NULL;
 		$showFields = NULL;
 
@@ -99,45 +101,71 @@ class CreateViewCommand extends Command
 				continue;
 			}
 
-			if ($counter != 0) {
+			if ($counter != 0 && $row->Field != 'password') {
 				$columns .= '				';
 				$rows .= '					';
-				$fields .= '	';
+				$fields .= '		';
 				$showFields .= '	';
 			}
 
 			if ($row->Field != 'password') {
 				$columns .= '<th>' . Inflect::humanize($row->Field) . '</th>' . "\n";
 
-				$rows .= '<td><?php echo $$singular->' . $methodName . '(); ?><td>' . "\n";
+				if (strpos($row->Field, 'date') !== FALSE) {
+					$extend = '->format(\'F d, Y\')';
+				} elseif ($row->Key == 'MUL') {
+					$extend = '->' . $methodName . '()';
+				} else {
+					$extend = NULL;
+				}
+
+				$rows .= '<td><?php echo $$singular->' . $methodName . '()' . $extend . '; ?></td>' . "\n";
 
 				if ($input->getOption('bootstrap')) {
 					$fields .= '<?php if (form_error(\'' . $row->Field . '\')): ?>' . "\n";
-					$fields .= '		<div class="form-group has-error">' . "\n";
-					$fields .= '	<?php else: ?>' . "\n";
-					$fields .= '		<div class="form-group">' . "\n";
-					$fields .= '	<?php endif; ?>' . "\n";
+					$fields .= '			<div class="form-group has-error">' . "\n";
+					$fields .= '		<?php else: ?>' . "\n";
+					$fields .= '			<div class="form-group">' . "\n";
+					$fields .= '		<?php endif; ?>' . "\n";
 				} else {
-					$fields .= '<div class="$bootstrapFormGroup">' . "\n";
+					$fields .= '	<div class="$bootstrapFormGroup">' . "\n";
 				}
 
-				$fields .= '		<?php echo form_label(\'' . Inflect::humanize($row->Field) . '\', \'' . $row->Field . '\'); ?>' . "\n";
-				$fields .= '		<?php echo form_input(\'' . $row->Field . '\', set_value(\'' . $row->Field . '\'), \'class="$bootstrapFormControl"\'); ?>' . "\n";
-				$fields .= '		<?php echo form_error(\'' . $row->Field . '\'); ?>' . "\n";
-				$fields .= '	</div>' . "\n";
+				$fields .= '			<?php echo form_label(\'' . Inflect::humanize($row->Field) . '\', \'' . $row->Field . '\', $attributes); ?>' . "\n";
+				$fields .= '			<div class="$formColumn">' . "\n";
+				$fields .= '				<?php echo form_input(\'' . $row->Field . '\', set_value(\'' . $row->Field . '\'), \'class="$bootstrapFormControl"\'); ?>' . "\n";
+				$fields .= '				<?php echo form_error(\'' . $row->Field . '\'); ?>' . "\n";
+				$fields .= '			</div>' . "\n";
+				$fields .= '		</div>' . "\n";
 
 				$showFields .= Inflect::humanize($row->Field) . ': <?php echo $$singular->' . $methodName . '(); ?>' . "\n";
 
-				if (strpos($fields, 'set_value(\'' . $row->Field . '\')') !== FALSE) {
-					$editFields = str_replace('set_value(\'' . $row->Field . '\')', 'set_value(\'' . $row->Field . '\', $$singular->' . $methodName . '())', $fields);
-				}
 			} else {
 				$fields .= file_get_contents(__DIR__ . '/Templates/Miscellaneous/CreatePassword.txt');
-				$editFields .= file_get_contents(__DIR__ . '/Templates/Miscellaneous/EditPassword.txt');
 			}
 
 			$counter++;
 		}
+
+		/**
+		 * Generate form for edit.php
+		 */
+
+		$editFields = $fields;
+
+		foreach ($databaseColumns->result() as $row) {
+			$methodName = 'get_' . $row->Field;
+			$methodName = ($input->getOption('snake')) ? Inflect::underscore($methodName) : Inflect::camelize($methodName);
+
+			if (strpos($editFields, 'set_value(\'' . $row->Field . '\')') !== FALSE) {
+				$editFields = str_replace('set_value(\'' . $row->Field . '\')', 'set_value(\'' . $row->Field . '\', $$singular->' . $methodName . '())', $editFields);
+			}
+			if ($row->Field == 'password') {
+				$editFields .= file_get_contents(__DIR__ . '/Templates/Miscellaneous/EditPassword.txt');
+			}
+		}
+
+		$columns .= '				<th></th>' . "\n";
 
 		$search = array(
 			'$showFields',
@@ -149,8 +177,12 @@ class CreateViewCommand extends Command
 			'$bootstrapFormControl',
 			'$bootstrapFormGroup',
 			'$bootstrapFormOpen',
+			'$bootstrapFormSubmit',
 			'$bootstrapTable',
+			'$labelClass',
+			'$formColumn',
 			'$entity',
+			'$singularEntity',
 			'$plural',
 			'$singular'
 		);
@@ -165,8 +197,12 @@ class CreateViewCommand extends Command
 			$bootstrapFormControl,
 			$bootstrapFormGroup,
 			$bootstrapFormOpen,
+			$bootstrapFormSubmit,
 			$bootstrapTable,
+			$labelClass,
+			$formColumn,
 			ucfirst(Inflect::pluralize($input->getArgument('name'))),
+			ucfirst(Inflect::singularize($input->getArgument('name'))),
 			Inflect::pluralize($input->getArgument('name')),
 			Inflect::singularize($input->getArgument('name'))
 		);

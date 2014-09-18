@@ -14,7 +14,7 @@ class $controller extends CI_Controller
 		date_default_timezone_set('Asia/Taipei');
 
 		$this->load->model(array(
-			'$singular'
+			$models
 		));
 	}
 

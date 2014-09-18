@@ -170,27 +170,27 @@ class CreateModelCommand extends Command
 			 */
 
 			if ($row->Key != 'PRI') {
-				$nullable = ($row->Null == 'YES') ? ' = NULL' : NULL;
-
-				$mutatorCounter++;
-
-				if ($row->Key == 'MUL') {
-					$class = ucfirst(str_replace('_id', '', $row->Field));
-				} elseif ($this->getDataType($row->Type) == 'date' || $this->getDataType($row->Type) == 'datetime' || $this->getDataType($row->Type) == 'datetimetz') {
-					$class = 'DateTime';
-				} else {
-					$class = '$model';
-				}
-
+				$class = NULL;
+				
 				$methodName = 'set_' . $row->Field;
 				$methodName = ($input->getOption('snake')) ? Inflect::underscore($methodName) : Inflect::camelize($methodName);
+				
+				$nullable = ($row->Null == 'YES') ? ' = NULL' : NULL;
 
 				$mutator = file_get_contents(__DIR__ . '/Templates/Miscellaneous/Mutator.txt');
+
+				if ($row->Key == 'MUL') {
+					$class = '\\' . ucfirst(str_replace('_id', '', $row->Field)) . ' ';
+				} elseif ($this->getDataType($row->Type) == 'date' || $this->getDataType($row->Type) == 'datetime' || $this->getDataType($row->Type) == 'datetimetz') {
+					$mutator = str_replace('$this->$field = $$field;', '$this->$field = new \DateTime($$field);', $mutator);
+				}
 
 				$search = array('$field', '$type', '$methodName', '$class', '$nullable');
 				$replace = array($row->Field, $type, $methodName, $class, $nullable);
 
 				$mutators .= str_replace($search, $replace, $mutator) . "\n\n";
+
+				$mutatorCounter++;
 			}
 
 			$counter++;

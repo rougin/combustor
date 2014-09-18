@@ -4,9 +4,9 @@
 	 * @param  $type $$field
 	 * @return $class
 	 */
-	public function $methodName(\$class $$field$nullable)
+	public function $methodName($class$$field$nullable)
 	{
-		$this->$$field = $$field;
+		$this->$field = $$field;
 
 		return $this;
 	}

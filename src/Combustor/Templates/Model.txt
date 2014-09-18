@@ -23,7 +23,7 @@ class $model extends CI_Model
 	 */
 	public function select()
 	{
-		$$plural = array();
+		$$plural = array('');
 
 		$$singularRepository = $this->doctrine->em->getRepository('$singular');
 

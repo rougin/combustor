@@ -97,14 +97,14 @@ class CreateControllerCommand extends Command
 				$columnsCreate .= "\n" . file_get_contents(__DIR__ . '/Templates/Miscellaneous/CheckCreatePassword.txt') . "\n\n";
 				$columnsEdit .= "\n" . file_get_contents(__DIR__ . '/Templates/Miscellaneous/CheckEditPassword.txt') . "\n\n";
 			} else {
-				$column = ($row->Field == 'datetime_created' || $row->Field == 'datetime_updated') ? 'now' : $row->Field;
+				$column = ($row->Field == 'datetime_created' || $row->Field == 'datetime_updated') ? '\'now\'' : '$this->input->post(\'' . $row->Field . '\')';
 
 				if ($row->Field != 'datetime_updated') {
-					$columnsCreate .= '$this->$singular->' . $methodName . '($this->input->post(\'' . $column . '\'));' . "\n";
+					$columnsCreate .= '$this->$singular->' . $methodName . '(' . $column . ');' . "\n";
 				}
 
 				if ($row->Field != 'datetime_created') {
-					$columnsEdit .= '$$singular->' . $methodName . '($this->input->post(\'' . $column . '\'));' . "\n";
+					$columnsEdit .= '$$singular->' . $methodName . '(' . $column . ');' . "\n";
 				}
 			}
 

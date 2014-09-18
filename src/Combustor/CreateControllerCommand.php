@@ -29,6 +29,11 @@ class CreateControllerCommand extends Command
 				null,
 				InputOption::VALUE_NONE,
 				'Keeps the name to be used'
+			)->addOption(
+				'snake',
+				NULL,
+				InputOption::VALUE_NONE,
+				'Use the snake case naming convention for the accessor and mutators'
 			);
 	}
 
@@ -52,12 +57,17 @@ class CreateControllerCommand extends Command
 
 		$columns = new GetColumns($input->getArgument('name'), $output);
 
+		$models = '\'$singular\'';
+
 		$columnsCreate = NULL;
 		$columnsEdit = NULL;
 		$columnsValidate = NULL;
 		$counter = 0;
 
 		foreach ($columns->result() as $row) {
+			$methodName = 'set_' . strtolower($row->Field);
+			$methodName = ($input->getOption('snake')) ? Inflect::underscore($methodName) : Inflect::camelize($methodName);
+
 			if ($counter != 0) {
 				if ($row->Field != 'datetime_updated') {
 					$columnsCreate .= "			";
@@ -76,11 +86,13 @@ class CreateControllerCommand extends Command
 				continue;
 			} elseif ($row->Key == 'MUL') {
 				$entity = str_replace('_id', '', $row->Field);
+				$models .= ",\n" . '			\'' . $entity . '\'';
+
 				$columnsCreate .= "\n" . '			$' . $entity . ' = $this->doctrine->em->find(\'' . $entity . '\', $this->input->post(\'' . $row->Field . '\'));' . "\n";
-				$columnsCreate .= '			$this->$singular->set_' . strtolower($row->Field) . '($' . $entity . ');' . "\n\n";
+				$columnsCreate .= '			$this->$singular->' . $methodName . '($' . $entity . ');' . "\n\n";
 
 				$columnsEdit .= "\n" . '			$' . $entity . ' = $this->doctrine->em->find(\'' . $entity . '\', $this->input->post(\'' . $row->Field . '\'));' . "\n";
-				$columnsEdit .= '			$$singular->set_' . strtolower($row->Field) . '($' . $entity . ');' . "\n\n";
+				$columnsEdit .= '			$$singular->' . $methodName . '($' . $entity . ');' . "\n\n";
 			} elseif ($row->Field == 'password') {
 				$columnsCreate .= "\n" . file_get_contents(__DIR__ . '/Templates/Miscellaneous/CheckCreatePassword.txt') . "\n\n";
 				$columnsEdit .= "\n" . file_get_contents(__DIR__ . '/Templates/Miscellaneous/CheckEditPassword.txt') . "\n\n";
@@ -88,11 +100,11 @@ class CreateControllerCommand extends Command
 				$column = ($row->Field == 'datetime_created' || $row->Field == 'datetime_updated') ? 'now' : $row->Field;
 
 				if ($row->Field != 'datetime_updated') {
-					$columnsCreate .= '$this->$singular->set_' . strtolower($row->Field) . '($this->input->post(\'' . $column . '\'));' . "\n";
+					$columnsCreate .= '$this->$singular->' . $methodName . '($this->input->post(\'' . $column . '\'));' . "\n";
 				}
 
 				if ($row->Field != 'datetime_created') {
-					$columnsEdit .= '$$singular->set_' . strtolower($row->Field) . '($this->input->post(\'' . $column . '\'));' . "\n";
+					$columnsEdit .= '$$singular->' . $methodName . '($this->input->post(\'' . $column . '\'));' . "\n";
 				}
 			}
 
@@ -108,6 +120,7 @@ class CreateControllerCommand extends Command
 		 */
 
 		$search = array(
+			'$models',
 			'$columnsCreate',
 			'$columnsEdit',
 			'$columnsValidate',
@@ -117,9 +130,10 @@ class CreateControllerCommand extends Command
 		);
 
 		$replace = array(
+			rtrim($models),
 			rtrim($columnsCreate),
 			rtrim($columnsEdit),
-			rtrim($columnsValidate),
+			substr($columnsValidate, 0, -2),
 			ucfirst(Inflect::pluralize($input->getArgument('name'))),
 			Inflect::pluralize($input->getArgument('name')),
 			Inflect::singularize($input->getArgument('name'))

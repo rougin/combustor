@@ -16,6 +16,24 @@ class $model extends CI_Model
 
 	$accessors
 
+	/**
+	 * List all $plural in dropdown format
+	 * 
+	 * @return array
+	 */
+	public function select()
+	{
+		$$plural = array();
+
+		$$singularRepository = $this->doctrine->em->getRepository('$singular');
+
+		foreach ($$singularRepository->findAll() as $$singular) {
+			$$plural[$$singular->$primaryKey()] = $$singular->/* Column to be displayed in the dropdown */;
+		}
+
+		return $$plural;
+	}
+
 	$mutators
 	
 }

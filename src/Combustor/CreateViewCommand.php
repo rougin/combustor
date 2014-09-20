@@ -141,7 +141,7 @@ class CreateViewCommand extends Command
 				$showFields .= Inflect::humanize($row->Field) . ': <?php echo $$singular->' . $methodName . '(); ?>' . "\n";
 
 			} else {
-				$fields .= file_get_contents(__DIR__ . '/Templates/Miscellaneous/CreatePassword.txt');
+				$fields .= file_get_contents(__DIR__ . '/Templates/Miscellaneous/CreatePassword.txt') . "\n";
 			}
 
 			$counter++;
@@ -161,7 +161,7 @@ class CreateViewCommand extends Command
 				$editFields = str_replace('set_value(\'' . $row->Field . '\')', 'set_value(\'' . $row->Field . '\', $$singular->' . $methodName . '())', $editFields);
 			}
 			if ($row->Field == 'password') {
-				$editFields .= file_get_contents(__DIR__ . '/Templates/Miscellaneous/EditPassword.txt');
+				$editFields .= file_get_contents(__DIR__ . '/Templates/Miscellaneous/EditPassword.txt') . "\n";
 			}
 		}
 

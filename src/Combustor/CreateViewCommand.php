@@ -131,15 +131,14 @@ class CreateViewCommand extends Command
 					$fields .= '	<div class="$bootstrapFormGroup">' . "\n";
 				}
 
-				$fields .= '			<?php echo form_label(\'' . Inflect::humanize($row->Field) . '\', \'' . $row->Field . '\', $attributes); ?>' . "\n";
+				$fields .= '			<?php echo form_label(\'' . Inflect::humanize($row->Field) . '\', \'' . $row->Field . '\', array(\'class\' => \'$labelClass\')); ?>' . "\n";
 				$fields .= '			<div class="$formColumn">' . "\n";
 				$fields .= '				<?php echo form_input(\'' . $row->Field . '\', set_value(\'' . $row->Field . '\'), \'class="$bootstrapFormControl"\'); ?>' . "\n";
 				$fields .= '				<?php echo form_error(\'' . $row->Field . '\'); ?>' . "\n";
 				$fields .= '			</div>' . "\n";
 				$fields .= '		</div>' . "\n";
 
-				$showFields .= Inflect::humanize($row->Field) . ': <?php echo $$singular->' . $methodName . '(); ?>' . "\n";
-
+				$showFields .= Inflect::humanize($row->Field) . ': <?php echo $$singular->' . $methodName . '(); ?><br>' . "\n";
 			} else {
 				$fields .= file_get_contents(__DIR__ . '/Templates/Miscellaneous/CreatePassword.txt') . "\n";
 			}

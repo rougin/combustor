@@ -1,5 +1,4 @@
 <?php $this->load->view('layout/header'); ?>
-	<?php $attributes = array('class' => '$labelClass'); ?>
 	<?php echo form_open('$plural/edit/' . $$singular->$primaryKey(), 'class="$bootstrapFormOpen"'); ?>
 		$editFields
 		<div class="$bootstrapFormGroup">

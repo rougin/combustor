@@ -1,5 +1,4 @@
 <?php $this->load->view('layout/header'); ?>
-	<?php $attributes = array('class' => '$labelClass'); ?>
 	<?php echo form_open('$plural/create', 'class="$bootstrapFormOpen"'); ?>
 		$fields
 		<div class="$bootstrapFormSubmit">

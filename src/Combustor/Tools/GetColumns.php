@@ -28,7 +28,7 @@ class GetColumns {
 		 */
 
 		if ( ! @mysql_connect($db['default']['hostname'], $db['default']['username'], $db['default']['password'])) {
-			return $output->writeln('<error>Can\'t connect to the database! Please check your configuration at application/config/database.php</error>');
+			return exit($output->writeln('<error>Can\'t connect to the database! Please check your configuration at application/config/database.php</error>'));
 		}
 
 		mysql_select_db($db['default']['database']);
@@ -39,7 +39,7 @@ class GetColumns {
 
 		if ( ! $query = mysql_query('DESCRIBE ' . Inflect::pluralize($table))) {
 			if ( ! $query = mysql_query('DESCRIBE ' . Inflect::singularize($table))) {
-				return $output->writeln('<error>There is no table named "' . $table . '" from the database!</error>');
+				return exit($output->writeln('<error>There is no table named "' . $table . '" from the database!</error>'));
 			}
 		}
 

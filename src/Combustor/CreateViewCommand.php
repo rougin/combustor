@@ -206,8 +206,8 @@ class CreateViewCommand extends Command
 			$pullRight,
 			$labelClass,
 			$formColumn,
-			ucfirst(Inflect::pluralize($input->getArgument('name'))),
-			ucfirst(Inflect::singularize($input->getArgument('name'))),
+			ucwords(str_replace('_', ' ', Inflect::pluralize($input->getArgument('name')))),
+			ucwords(str_replace('_', ' ', Inflect::singularize($input->getArgument('name')))),
 			Inflect::pluralize($input->getArgument('name')),
 			Inflect::singularize($input->getArgument('name'))
 		);

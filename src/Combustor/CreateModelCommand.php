@@ -69,6 +69,17 @@ class CreateModelCommand extends Command
 	 */
 	protected function execute(InputInterface $input, OutputInterface $output)
 	{
+		$accessors = NULL;
+		$columns = NULL;
+		$counter = 0;
+		$indexCounter = 0;
+		$indexes = NULL;
+		$mutatorCounter = 0;
+		$mutators = NULL;
+		$primaryKey = NULL;
+
+		$selectColumns = array('name', 'description');
+
 		/**
 		 * Get the model template
 		 */
@@ -81,17 +92,9 @@ class CreateModelCommand extends Command
 
 		$databaseColumns = new GetColumns($input->getArgument('name'), $output);
 
-		$accessors = NULL;
-		$columns = NULL;
-		$counter = 0;
-		$indexCounter = 0;
-		$indexes = NULL;
-		$mutatorCounter = 0;
-		$mutators = NULL;
-		$primaryKey = NULL;
-
 		foreach ($databaseColumns->result() as $row) {
 			$nullable = ($row->Null == 'YES') ? 'TRUE' : 'FALSE';
+			$unique = ($row->Key == 'UNI') ? 'TRUE' : 'FALSE';
 
 			$type = $this->getDataType($row->Type);
 
@@ -104,8 +107,6 @@ class CreateModelCommand extends Command
 			} else {
 				$length = NULL;
 			}
-
-			$unique = ($row->Key == 'UNI') ? 'TRUE' : 'FALSE';
 
 			if ($counter != 0) {
 				$accessors .= '	';
@@ -164,6 +165,14 @@ class CreateModelCommand extends Command
 			$replace = array($row->Field, $type, $methodName);
 
 			$accessors .= str_replace($search, $replace, $accessor) . "\n\n";
+
+			/**
+			 * The column to be displayed in the select() public method
+			 */
+			
+			if (in_array($row->Field, $selectColumns)) {
+				$model = str_replace('/* Column to be displayed in the dropdown */', $methodName . '()', $model);
+			}
 
 			/**
 			 * Generate the mutators

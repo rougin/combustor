@@ -53,6 +53,7 @@ class CreateViewCommand extends Command
 		$bootstrapFormGroup = NULL;
 		$bootstrapFormOpen = NULL;
 		$bootstrapFormSubmit = ($input->getOption('bootstrap')) ? 'col-lg-12' : NULL;
+		$bootstrapFormSubmitButton = ($input->getOption('bootstrap')) ? 'btn btn-default' : NULL;
 		$bootstrapTable = NULL;
 
 		if ($input->getOption('bootstrap')) {
@@ -82,6 +83,7 @@ class CreateViewCommand extends Command
 		$fields = NULL;
 		$formColumn = ($input->getOption('bootstrap')) ? 'col-lg-11' : NULL;
 		$labelClass = ($input->getOption('bootstrap')) ? 'control-label col-lg-1' : NULL;
+		$pullRight = ($input->getOption('bootstrap')) ? 'pull-right' : NULL;
 		$rows = NULL;
 		$showFields = NULL;
 
@@ -176,8 +178,10 @@ class CreateViewCommand extends Command
 			'$bootstrapFormControl',
 			'$bootstrapFormGroup',
 			'$bootstrapFormOpen',
+			'$bootstrapFormSubmitButton',
 			'$bootstrapFormSubmit',
 			'$bootstrapTable',
+			'$pullRight',
 			'$labelClass',
 			'$formColumn',
 			'$entity',
@@ -196,8 +200,10 @@ class CreateViewCommand extends Command
 			$bootstrapFormControl,
 			$bootstrapFormGroup,
 			$bootstrapFormOpen,
+			$bootstrapFormSubmitButton,
 			$bootstrapFormSubmit,
 			$bootstrapTable,
+			$pullRight,
 			$labelClass,
 			$formColumn,
 			ucfirst(Inflect::pluralize($input->getArgument('name'))),

@@ -26,6 +26,11 @@ class CreateScaffoldCommand extends Command
 				InputArgument::REQUIRED,
 				'Name of the controller, model and view'
 			)->addOption(
+				'bootstrap',
+				NULL,
+				InputOption::VALUE_NONE,
+				'Include the Bootstrap CSS/JS Framework tags'
+			)->addOption(
 				'keep',
 				null,
 				InputOption::VALUE_NONE,
@@ -46,23 +51,40 @@ class CreateScaffoldCommand extends Command
 	 */
 	protected function execute(InputInterface $input, OutputInterface $output)
 	{
-		$keep = ($input->getOption('keep')) ? TRUE : FALSE;
-		$snake = ($input->getOption('snake')) ? TRUE : FALSE;
+		$bootstrap = $input->getOption('bootstrap');
+		$keep = $input->getOption('keep');
+		$snake = $input->getOption('snake');
+		
 		$arguments = array(
 			'command' => NULL,
-			'name' => $input->getArgument('name'),
-			'--keep' => $keep,
-			'--snake' => $snake
+			'name' => $input->getArgument('name')
 		);
+
 		$commands = array('create:controller', 'create:model', 'create:view');
 
 		foreach ($commands as $command) {
 			$arguments['command'] = $command;
 			
+			if (isset($arguments['--bootstrap'])) {
+				unset($arguments['--bootstrap']);
+			}
+
+			if (isset($arguments['--keep'])) {
+				unset($arguments['--keep']);
+			}
+
+			if (isset($arguments['--snake'])) {
+				unset($arguments['--snake']);
+			}
+
 			if ($command == 'create:controller') {
 				$arguments['--keep'] = $keep;
-			} elseif (isset($arguments['--keep'])) {
-				unset($arguments['--keep']);
+				$arguments['--snake'] = $snake;
+			} elseif ($command == 'create:model') {
+				$arguments['--snake'] = $snake;
+			} elseif ($command == 'create:view') {
+				$arguments['--bootstrap'] = $bootstrap;
+				$arguments['--snake'] = $snake;
 			}
 
 			$input = new ArrayInput($arguments);

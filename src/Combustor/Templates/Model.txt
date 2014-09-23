@@ -9,7 +9,7 @@
  * 		}
  * )
  */
-class $model extends CI_Model
+class $modelName extends CI_Model
 {
 
 	$columns

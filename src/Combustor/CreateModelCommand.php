@@ -217,7 +217,7 @@ class CreateModelCommand extends Command
 			'$primaryKey',
 			'$plural',
 			'$singular',
-			'$model'
+			'$modelName'
 		);
 
 		$replace = array(

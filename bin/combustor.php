@@ -6,11 +6,11 @@
 
 (@include_once __DIR__ . '/../vendor/autoload.php') || @include_once __DIR__ . '/../../../autoload.php';
 
-define('BASEPATH', str_replace('vendor/rougin/combustor/bin', '', __DIR__ . 'system/'));
+define('BASEPATH', __DIR__ . '/../../../../system/');
 
-define('APPPATH', str_replace('vendor/rougin/combustor/bin', '', __DIR__ . 'application/'));
+define('APPPATH', __DIR__ . '/../../../../application/');
 
-define('VENDOR', str_replace('rougin/combustor/bin', '', __DIR__));
+define('VENDOR', __DIR__ . '/../../../../vendor/');
 
 /**
  * Import the commands from Combuster

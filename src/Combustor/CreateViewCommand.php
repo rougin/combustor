@@ -133,9 +133,15 @@ class CreateViewCommand extends Command
 					$fields .= '	<div class="$bootstrapFormGroup">' . "\n";
 				}
 
-				$fields .= '			<?php echo form_label(\'' . Inflect::humanize($row->Field) . '\', \'' . $row->Field . '\', array(\'class\' => \'$labelClass\')); ?>' . "\n";
+				$fields .= '			<?php echo form_label(\'' . str_replace(' Id', '', Inflect::humanize($row->Field)) . '\', \'' . $row->Field . '\', array(\'class\' => \'$labelClass\')); ?>' . "\n";
 				$fields .= '			<div class="$formColumn">' . "\n";
-				$fields .= '				<?php echo form_input(\'' . $row->Field . '\', set_value(\'' . $row->Field . '\'), \'class="$bootstrapFormControl"\'); ?>' . "\n";
+				
+				if ($row->Key == 'MUL') {
+					$fields .= '				<?php echo form_dropdown(\'' . $row->Field . '\', $' . Inflect::pluralize($row->Field) . ', set_value(\'' . $row->Field . '\'), \'class="$bootstrapFormControl"\'); ?>' . "\n";
+				} else {
+					$fields .= '				<?php echo form_input(\'' . $row->Field . '\', set_value(\'' . $row->Field . '\'), \'class="$bootstrapFormControl"\'); ?>' . "\n";
+				}
+
 				$fields .= '				<?php echo form_error(\'' . $row->Field . '\'); ?>' . "\n";
 				$fields .= '			</div>' . "\n";
 				$fields .= '		</div>' . "\n";

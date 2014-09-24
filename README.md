@@ -6,16 +6,14 @@ Yet another code generator console application for [CodeIgniter](https://ellisla
 Instructions
 ============
 
-1. Download the latest version of CodeIgniter and install the Doctrine ORM. To make it easy for you, I've created a [simple script](https://github.com/rougin/ignite.php) for that. If you want to know more about Doctrine ORM and its usage, you can always read their documentation [here](doctrine-orm.readthedocs.org/en/latest/tutorials/getting-started.html).
+1. Download the latest version of CodeIgniter and install the Doctrine ORM. To make it easy for you, I've created a [simple script](https://github.com/rougin/ignite.php) for that.
 
-2. Install it via [Composer](http://www.getcomposer.com).
-	
-	```
-		"require": {
-			"rougin/combustor": "dev-master"
-		}
-	```
-
-3. Access the application via the PHP CLI and to retrieve the list of commands
+2. Access the application via the PHP CLI and to retrieve the list of commands
 	
 	```php vendor/bin/combustor```
+
+Reminders
+=========
+* If you want to know more about Doctrine ORM and its functionalities, you can always read their documentation [here](doctrine-orm.readthedocs.org/en/latest/tutorials/getting-started.html).
+* Before generating the models, views, and controllers, please make sure that you set up your database (foreign keys, indexes, relationships) properly to minimize modifications after the codes has been generated.
+* Found a bug? Want to contribute? Feel free to open an issue or create a pull request. :+1:

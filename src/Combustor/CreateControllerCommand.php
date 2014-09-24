@@ -95,6 +95,7 @@ class CreateControllerCommand extends Command
 				$models .= ",\n" . '			\'' . $entity . '\'';
 
 				$dropdownColumns .= '$data[\'' . Inflect::pluralize($entity) . '\'] = $this->' . $entity . '->select();' . "\n";
+				$dropdowns++;
 
 				$columnsCreate .= "\n" . '			$' . $entity . ' = $this->doctrine->em->find(\'' . $entity . '\', $this->input->post(\'' . $row->Field . '\'));' . "\n";
 				$columnsCreate .= '			$this->$singular->' . $methodName . '($' . $entity . ');' . "\n\n";

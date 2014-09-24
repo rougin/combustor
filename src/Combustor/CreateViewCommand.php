@@ -137,7 +137,8 @@ class CreateViewCommand extends Command
 				$fields .= '			<div class="$formColumn">' . "\n";
 				
 				if ($row->Key == 'MUL') {
-					$fields .= '				<?php echo form_dropdown(\'' . $row->Field . '\', $' . Inflect::pluralize($row->Field) . ', set_value(\'' . $row->Field . '\'), \'class="$bootstrapFormControl"\'); ?>' . "\n";
+					$data = Inflect::pluralize(str_replace('_id', '', $row->Field));
+					$fields .= '				<?php echo form_dropdown(\'' . $row->Field . '\', $' . $data . ', set_value(\'' . $row->Field . '\'), \'class="$bootstrapFormControl"\'); ?>' . "\n";
 				} else {
 					$fields .= '				<?php echo form_input(\'' . $row->Field . '\', set_value(\'' . $row->Field . '\'), \'class="$bootstrapFormControl"\'); ?>' . "\n";
 				}

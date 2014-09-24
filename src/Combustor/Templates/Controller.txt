@@ -37,7 +37,10 @@ class $controller extends CI_Controller
 			redirect('$plural');
 		}
 
-		$this->load->view('$plural/create');
+		$data = array();
+		$dropdownColumns
+
+		$this->load->view('$plural/create', $data);
 	}
 
 	/**
@@ -90,6 +93,7 @@ class $controller extends CI_Controller
 			redirect('$plural');
 		}
 
+		$dropdownColumns
 		$data['$singular'] = $this->doctrine->em->find('$singular', $id);
 
 		$this->load->view('$plural/edit', $data);

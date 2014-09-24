@@ -63,6 +63,8 @@ class CreateControllerCommand extends Command
 		$columnsEdit = NULL;
 		$columnsValidate = NULL;
 		$counter = 0;
+		$dropdowns = 0;
+		$dropdownColumns = NULL;
 
 		foreach ($columns->result() as $row) {
 			$methodName = 'set_' . strtolower($row->Field);
@@ -82,11 +84,17 @@ class CreateControllerCommand extends Command
 				}
 			}
 
+			if ($dropdowns != 0) {
+				$dropdownColumns .= '		';
+			}
+
 			if ($row->Extra == 'auto_increment') {
 				continue;
 			} elseif ($row->Key == 'MUL') {
 				$entity = str_replace('_id', '', $row->Field);
 				$models .= ",\n" . '			\'' . $entity . '\'';
+
+				$dropdownColumns .= '$data[\'' . Inflect::pluralize($entity) . '\'] = $this->' . $entity . '->select();' . "\n";
 
 				$columnsCreate .= "\n" . '			$' . $entity . ' = $this->doctrine->em->find(\'' . $entity . '\', $this->input->post(\'' . $row->Field . '\'));' . "\n";
 				$columnsCreate .= '			$this->$singular->' . $methodName . '($' . $entity . ');' . "\n\n";
@@ -121,6 +129,7 @@ class CreateControllerCommand extends Command
 
 		$search = array(
 			'$models',
+			'$dropdownColumns',
 			'$columnsCreate',
 			'$columnsEdit',
 			'$columnsValidate',
@@ -131,6 +140,7 @@ class CreateControllerCommand extends Command
 
 		$replace = array(
 			rtrim($models),
+			rtrim($dropdownColumns),
 			rtrim($columnsCreate),
 			rtrim($columnsEdit),
 			substr($columnsValidate, 0, -2),

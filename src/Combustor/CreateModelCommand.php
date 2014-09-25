@@ -217,7 +217,7 @@ class CreateModelCommand extends Command
 		$replace = array(
 			rtrim(substr($indexes, 0, -2)),
 			rtrim($columns),
-			rtrim(substr($keywords, 0, -2))
+			rtrim(substr($keywords, 0, -2)),
 			rtrim($accessors),
 			rtrim($mutators),
 			$primaryKey,

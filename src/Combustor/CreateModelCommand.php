@@ -233,8 +233,6 @@ class CreateModelCommand extends Command
 
 		$model = str_replace($search, $replace, $model);
 
-		echo $model; exit();
-
 		/**
 		 * Create a new file and insert the generated template
 		 */

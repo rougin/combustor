@@ -84,7 +84,7 @@ class CreateViewCommand extends Command
 			$methodName = 'get_' . $row->Field;
 			$methodName = ($input->getOption('snake')) ? Inflect::underscore($methodName) : Inflect::camelize($methodName);
 
-			$primaryKey = ($row->Key == 'PRI') ? $methodName : NULL;
+			$primaryKey = ($row->Key == 'PRI') ? $methodName : $primaryKey;
 
 			if ($row->Field == 'datetime_created' || $row->Field == 'datetime_updated' || $row->Extra == 'auto_increment') continue;
 

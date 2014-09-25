@@ -33,7 +33,14 @@ class $modelName extends CI_Model
 
 		$this->_query_builder = $this->doctrine->em->createQueryBuilder();
 	}
-
+	
+	/**
+	 * Retrieve all the data from the storage
+	 * 
+	 * @param  array  $delimiters
+	 * @param  string $type
+	 * @return object
+	 */
 	public function all($delimiters, $type = NULL)
 	{
 		$this->_query_builder->select('$firstLetter')->from('$singular', '$firstLetter');
@@ -74,6 +81,9 @@ class $modelName extends CI_Model
 
 	$mutators
 
+	/**
+	 * Search for keywords based on the list of columns in the storage
+	 */
 	protected function _find_by_keyword()
 	{
 		if ($this->input->get('keyword') != NULL) {

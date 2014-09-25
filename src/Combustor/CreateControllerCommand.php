@@ -59,34 +59,24 @@ class CreateControllerCommand extends Command
 
 		$models = '\'$singular\'';
 
-		$columnsCreate = NULL;
-		$columnsEdit = NULL;
+		$columnsCreate   = NULL;
+		$columnsEdit     = NULL;
 		$columnsValidate = NULL;
-		$counter = 0;
-		$dropdowns = 0;
+		$counter         = 0;
 		$dropdownColumns = NULL;
+		$dropdowns       = 0;
 
 		foreach ($columns->result() as $row) {
 			$methodName = 'set_' . strtolower($row->Field);
 			$methodName = ($input->getOption('snake')) ? Inflect::underscore($methodName) : Inflect::camelize($methodName);
 
 			if ($counter != 0) {
-				if ($row->Field != 'datetime_updated') {
-					$columnsCreate .= "			";
-				}
-
-				if ($row->Field != 'datetime_created') {
-					$columnsEdit .= "			";
-				}
-
-				if ($row->Field != 'password' && $row->Field != 'datetime_created' && $row->Field != 'datetime_updated') {
-					$columnsValidate .= "			";
-				}
+				$columnsCreate   .= ($row->Field != 'datetime_updated') ? '			' : NULL;
+				$columnsEdit     .= ($row->Field != 'datetime_created') ? '			' : NULL;
+				$columnsValidate .= ($row->Field != 'password' && $row->Field != 'datetime_created' && $row->Field != 'datetime_updated') ? '			' : NULL;
 			}
 
-			if ($dropdowns != 0) {
-				$dropdownColumns .= '		';
-			}
+			$dropdownColumns .= ($dropdowns != 0) ? '		' : NULL;
 
 			if ($row->Extra == 'auto_increment') {
 				continue;

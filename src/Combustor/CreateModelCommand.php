@@ -75,6 +75,7 @@ class CreateModelCommand extends Command
 		$indexes         = NULL;
 		$indexesCounter  = 0;
 		$keywords        = NULL;
+		$keywordsCounter = NULL;
 		$mutators        = NULL;
 		$mutatorsCounter = 0;
 		$primaryKey      = NULL;
@@ -96,7 +97,7 @@ class CreateModelCommand extends Command
 		foreach ($databaseColumns->result() as $row) {
 			$accessors .= ($counter != 0) ? '	' : NULL;
 			$columns   .= ($counter != 0) ? '	' : NULL;
-			$keywords  .= ($counter != 0) ? '		' : NULL;
+			$keywords  .= ($keywordsCounter != 0) ? '		' : NULL;
 			$mutators  .= ($mutatorsCounter != 0) ? '	' : NULL;
 
 			$nullable   = ($row->Null == 'YES') ? 'TRUE' : 'FALSE';
@@ -138,7 +139,9 @@ class CreateModelCommand extends Command
 				$indexesCounter++;
 			} else {
 				$columns  .= '	 * @Column(type="' . $type . '"' . $length . ', nullable=' . $nullable . ', unique=' . $unique . ')' . "\n";
-				$keywords .= $row->Field . ",\n";
+				$keywords .= '\'' . $row->Field . '\'' . ",\n";
+
+				$keywordsCounter++;
 			}
 
 			$columns .= '	 */' . "\n";
@@ -164,30 +167,31 @@ class CreateModelCommand extends Command
 			 * The column to be displayed in the select() public method
 			 */
 			
-			$model = (in_array($row->Field, $selectColumns)) ? str_replace('/* Column to be displayed in the dropdown */', $methodName . '()', $model) : NULL;
+			$model = (in_array($row->Field, $selectColumns)) ? str_replace('/* Column to be displayed in the dropdown */', $methodName . '()', $model) : $model;
 
 			/**
 			 * Generate the mutators
 			 */
 
 			if ($row->Key != 'PRI') {
-				$class      = NULL;
+				$class         = '\\' . ucfirst(Inflect::singularize($input->getArgument('name')));
+				$classVariable = NULL;
 				
-				$methodName = 'set_' . $row->Field;
-				$methodName = ($input->getOption('snake')) ? Inflect::underscore($methodName) : Inflect::camelize($methodName);
+				$methodName    = 'set_' . $row->Field;
+				$methodName    = ($input->getOption('snake')) ? Inflect::underscore($methodName) : Inflect::camelize($methodName);
 				
-				$nullable   = ($row->Null == 'YES') ? ' = NULL' : NULL;
+				$nullable      = ($row->Null == 'YES') ? ' = NULL' : NULL;
 				
-				$mutator    = file_get_contents(__DIR__ . '/Templates/Miscellaneous/Mutator.txt');
+				$mutator       = file_get_contents(__DIR__ . '/Templates/Miscellaneous/Mutator.txt');
 
 				if ($row->Key == 'MUL') {
-					$class   = '\\' . ucfirst(str_replace('_id', '', $row->Field)) . ' ';
+					$classVariable   = '\\' . ucfirst(str_replace('_id', '', $row->Field)) . ' ';
 				} elseif ($this->getDataType($row->Type) == 'date' || $this->getDataType($row->Type) == 'datetime' || $this->getDataType($row->Type) == 'datetimetz') {
-					$mutator = str_replace('$this->$field = $$field;', '$this->$field = new \DateTime($$field);', $mutator);
+					$mutator         = str_replace('$this->$field = $$field;', '$this->$field = new \DateTime($$field);', $mutator);
 				}
 
-				$search    = array('$field', '$type', '$methodName', '$class', '$nullable');
-				$replace   = array($row->Field, $type, $methodName, $class, $nullable);
+				$search    = array('$field', '$type', '$methodName', '$classVariable', '$class', '$nullable');
+				$replace   = array($row->Field, $type, $methodName, $classVariable, $class, $nullable);
 				
 				$mutators .= str_replace($search, $replace, $mutator) . "\n\n";
 
@@ -228,6 +232,8 @@ class CreateModelCommand extends Command
 		);
 
 		$model = str_replace($search, $replace, $model);
+
+		echo $model; exit();
 
 		/**
 		 * Create a new file and insert the generated template

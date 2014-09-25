@@ -153,6 +153,10 @@ class CreateViewCommand extends Command
 			}
 
 			$editFields .= ($row->Field == 'password') ? file_get_contents(__DIR__ . '/Templates/Miscellaneous/EditPassword.txt') . "\n" : NULL;
+
+			$createPassword = file_get_contents(__DIR__ . '/Templates/Miscellaneous/CreatePassword.txt') . "\n";
+
+			$editFields = str_replace($createPassword, '', $editFields);
 		}
 
 		$columns .= '				<th></th>' . "\n";

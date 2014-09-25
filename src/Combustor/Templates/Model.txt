@@ -14,6 +14,44 @@ class $modelName extends CI_Model
 
 	$columns
 
+	/**
+	 * List of column names that you want to include in the 
+	 * keywords for searching data
+	 */
+	protected $_columns = array(
+		$keywords
+	);
+
+	protected $_query_builder;
+
+	/**
+	 * Class constructor
+	 */
+	public function __construct()
+	{
+		parent::__construct();
+
+		$this->_query_builder = $this->doctrine->em->createQueryBuilder();
+	}
+
+	public function all($delimiters, $type = NULL)
+	{
+		$this->_query_builder->select('$firstLetter')->from('$singular', '$firstLetter');
+
+		$this->_find_by_keyword();
+
+		if ($type == NULL) {
+			$this->_query_builder->setFirstResult($delimiters['page']);
+			$this->_query_builder->setMaxResults($delimiters['per_page']);
+		}
+
+		$result = ($type == 'count') ? count($this->_query_builder->getQuery()->getResult()) : $this->_query_builder->getQuery()->getResult();
+
+		$this->_query_builder->resetDQLParts();
+
+		return $result;
+	}
+
 	$accessors
 
 	/**
@@ -35,5 +73,17 @@ class $modelName extends CI_Model
 	}
 
 	$mutators
+
+	protected function _find_by_keyword()
+	{
+		if ($this->input->get('keyword') != NULL) {
+			foreach ($this->_columns as $column) {
+				$this->_query_builder->where(
+					$this->_query_builder->expr()->like('$firstLetter.' . $column,
+					$this->_query_builder->expr()->literal('%' . $this->input->get('keyword') . '%'))
+				);
+			}
+		}
+	}
 	
 }

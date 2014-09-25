@@ -50,9 +50,7 @@ class $controller extends CI_Controller
 	 */
 	public function delete($id)
 	{
-		if ( ! isset($id)) {
-			redirect('$plural');
-		}
+		if ( ! isset($id)) redirect('$plural');
 
 		$$singular = $this->doctrine->em->find('$singular', $id);
 
@@ -73,9 +71,7 @@ class $controller extends CI_Controller
 	 */
 	public function edit($id)
 	{
-		if ( ! isset($id)) {
-			redirect('$plural');
-		}
+		if ( ! isset($id)) redirect('$plural');
 
 		$this->validate_input();
 
@@ -108,13 +104,13 @@ class $controller extends CI_Controller
 		
 		include APPPATH . 'config/pagination.php';
 
-		$$singularRepository = $this->doctrine->em->getRepository('$singular');
-
-		$config['total_rows'] = count($$singularRepository->findAll());
+		$config['total_rows'] = $this->$singular->all(NULL, 'count');
 
 		$this->pagination->initialize($config);
+
+		$delimiters = array('per_page' => $config['per_page'], 'page' => $this->pagination->offset, 'keyword' => $this->input->get('keyword'));
 		
-		$data['$plural'] = $$singularRepository->findBy(array(), NULL, $config['per_page'], $this->pagination->offset);
+		$data['$plural'] = $this->$singular->all($delimiters);
 
 		$data['links'] = $this->pagination->create_links();
 
@@ -128,9 +124,7 @@ class $controller extends CI_Controller
 	 */
 	public function show($id)
 	{
-		if ( ! isset($id)) {
-			redirect('$plural');
-		}
+		if ( ! isset($id)) redirect('$plural');
 		
 		$data['$singular'] = $this->doctrine->em->find('$singular', $id);
 

@@ -49,28 +49,21 @@ class CreateViewCommand extends Command
 		 * Integrate Bootstrap if enabled
 		 */
 		
-		$bootstrapFormControl = NULL;
-		$bootstrapFormGroup = NULL;
-		$bootstrapFormOpen = NULL;
-		$bootstrapFormSubmit = ($input->getOption('bootstrap')) ? 'col-lg-12' : NULL;
+		$bootstrapFormControl      = ($input->getOption('bootstrap')) ? 'form-control' : NULL;
+		$bootstrapFormGroup        = ($input->getOption('bootstrap')) ? 'form-group' : NULL;
+		$bootstrapFormOpen         = ($input->getOption('bootstrap')) ? 'form-horizontal' : NULL;
+		$bootstrapFormSubmit       = ($input->getOption('bootstrap')) ? 'col-lg-12' : NULL;
 		$bootstrapFormSubmitButton = ($input->getOption('bootstrap')) ? 'btn btn-default' : NULL;
-		$bootstrapTable = NULL;
-
-		if ($input->getOption('bootstrap')) {
-			$bootstrapFormControl = 'form-control';
-			$bootstrapFormGroup = 'form-group';
-			$bootstrapFormOpen = 'form-horizontal';
-			$bootstrapTable = 'table';
-		}
+		$bootstrapTable            = ($input->getOption('bootstrap')) ? 'table' : NULL;
 
 		/**
 		 * Get the view template
 		 */
 		
 		$create = file_get_contents(__DIR__ . '/Templates/Views/Create.txt');
-		$edit = file_get_contents(__DIR__ . '/Templates/Views/Edit.txt');
-		$index = file_get_contents(__DIR__ . '/Templates/Views/Index.txt');
-		$show = file_get_contents(__DIR__ . '/Templates/Views/Show.txt');
+		$edit   = file_get_contents(__DIR__ . '/Templates/Views/Edit.txt');
+		$index  = file_get_contents(__DIR__ . '/Templates/Views/Index.txt');
+		$show   = file_get_contents(__DIR__ . '/Templates/Views/Show.txt');
 
 		/**
 		 * Get the columns from the specified name
@@ -78,37 +71,27 @@ class CreateViewCommand extends Command
 
 		$databaseColumns = new GetColumns($input->getArgument('name'), $output);
 
-		$columns = NULL;
-		$counter = 0;
-		$fields = NULL;
+		$columns    = NULL;
+		$counter    = 0;
+		$fields     = NULL;
 		$formColumn = ($input->getOption('bootstrap')) ? 'col-lg-11' : NULL;
 		$labelClass = ($input->getOption('bootstrap')) ? 'control-label col-lg-1' : NULL;
-		$pullRight = ($input->getOption('bootstrap')) ? 'pull-right' : NULL;
-		$rows = NULL;
+		$pullRight  = ($input->getOption('bootstrap')) ? 'pull-right' : NULL;
+		$rows       = NULL;
 		$showFields = NULL;
 
 		foreach ($databaseColumns->result() as $row) {
-			/**
-			 * Get the method name
-			 */
-			
 			$methodName = 'get_' . $row->Field;
 			$methodName = ($input->getOption('snake')) ? Inflect::underscore($methodName) : Inflect::camelize($methodName);
 
-			if ($row->Key == 'PRI') {
-				$primaryKey = $methodName;
-			}
+			$primaryKey = ($row->Key == 'PRI') ? $methodName : NULL;
 
-			if ($row->Field == 'datetime_created' || $row->Field == 'datetime_updated' || $row->Extra == 'auto_increment') {
-				continue;
-			}
+			if ($row->Field == 'datetime_created' || $row->Field == 'datetime_updated' || $row->Extra == 'auto_increment') continue;
 
-			if ($counter != 0 && $row->Field != 'password') {
-				$columns .= '				';
-				$rows .= '					';
-				$fields .= '		';
-				$showFields .= '	';
-			}
+			$columns    .= ($counter != 0 && $row->Field != 'password') ? '				' : NULL;
+			$rows       .= ($counter != 0 && $row->Field != 'password') ? '					' : NULL;
+			$fields     .= ($counter != 0 && $row->Field != 'password') ? '		' : NULL;
+			$showFields .= ($counter != 0 && $row->Field != 'password') ? '	' : NULL;
 
 			if ($row->Field != 'password') {
 				$columns .= '<th>' . Inflect::humanize($row->Field) . '</th>' . "\n";
@@ -137,7 +120,7 @@ class CreateViewCommand extends Command
 				$fields .= '			<div class="$formColumn">' . "\n";
 				
 				if ($row->Key == 'MUL') {
-					$data = Inflect::pluralize(str_replace('_id', '', $row->Field));
+					$data    = Inflect::pluralize(str_replace('_id', '', $row->Field));
 					$fields .= '				<?php echo form_dropdown(\'' . $row->Field . '\', $' . $data . ', set_value(\'' . $row->Field . '\'), \'class="$bootstrapFormControl"\'); ?>' . "\n";
 				} else {
 					$fields .= '				<?php echo form_input(\'' . $row->Field . '\', set_value(\'' . $row->Field . '\'), \'class="$bootstrapFormControl"\'); ?>' . "\n";
@@ -168,9 +151,8 @@ class CreateViewCommand extends Command
 			if (strpos($editFields, 'set_value(\'' . $row->Field . '\')') !== FALSE) {
 				$editFields = str_replace('set_value(\'' . $row->Field . '\')', 'set_value(\'' . $row->Field . '\', $$singular->' . $methodName . '())', $editFields);
 			}
-			if ($row->Field == 'password') {
-				$editFields .= file_get_contents(__DIR__ . '/Templates/Miscellaneous/EditPassword.txt') . "\n";
-			}
+
+			$editFields .= ($row->Field == 'password') ? file_get_contents(__DIR__ . '/Templates/Miscellaneous/EditPassword.txt') . "\n" : NULL;
 		}
 
 		$columns .= '				<th></th>' . "\n";

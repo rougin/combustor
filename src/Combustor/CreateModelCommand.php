@@ -69,16 +69,17 @@ class CreateModelCommand extends Command
 	 */
 	protected function execute(InputInterface $input, OutputInterface $output)
 	{
-		$accessors = NULL;
-		$columns = NULL;
-		$counter = 0;
-		$indexCounter = 0;
-		$indexes = NULL;
-		$mutatorCounter = 0;
-		$mutators = NULL;
-		$primaryKey = NULL;
+		$accessors       = NULL;
+		$columns         = NULL;
+		$counter         = 0;
+		$indexes         = NULL;
+		$indexesCounter  = 0;
+		$keywords        = NULL;
+		$mutators        = NULL;
+		$mutatorsCounter = 0;
+		$primaryKey      = NULL;
 
-		$selectColumns = array('name', 'description');
+		$selectColumns   = array('name', 'description');
 
 		/**
 		 * Get the model template
@@ -93,10 +94,15 @@ class CreateModelCommand extends Command
 		$databaseColumns = new GetColumns($input->getArgument('name'), $output);
 
 		foreach ($databaseColumns->result() as $row) {
-			$nullable = ($row->Null == 'YES') ? 'TRUE' : 'FALSE';
-			$unique = ($row->Key == 'UNI') ? 'TRUE' : 'FALSE';
+			$accessors .= ($counter != 0) ? '	' : NULL;
+			$columns   .= ($counter != 0) ? '	' : NULL;
+			$keywords  .= ($counter != 0) ? '		' : NULL;
+			$mutators  .= ($mutatorsCounter != 0) ? '	' : NULL;
 
-			$type = $this->getDataType($row->Type);
+			$nullable   = ($row->Null == 'YES') ? 'TRUE' : 'FALSE';
+			$unique     = ($row->Key == 'UNI') ? 'TRUE' : 'FALSE';
+
+			$type       = $this->getDataType($row->Type);
 
 			/**
 			 * The data type is an integer or string? Set the length of the specified data type
@@ -106,15 +112,6 @@ class CreateModelCommand extends Command
 				$length =  ', length=' . str_replace(array($type, '(', ')', 'varchar', 'int'), array('', '', '', '', ''), $row->Type);
 			} else {
 				$length = NULL;
-			}
-
-			if ($counter != 0) {
-				$accessors .= '	';
-				$columns .= '	';
-			}
-
-			if ($mutatorCounter != 0) {
-				$mutators .= '	';
 			}
 
 			/**
@@ -127,22 +124,21 @@ class CreateModelCommand extends Command
 				$columns .= '	 * @Id @GeneratedValue' . "\n";
 				$columns .= '	 * @Column(type="' . $type . '"' . $length . ', nullable=' . $nullable . ', unique=' . $unique . ')' . "\n";
 			} elseif ($row->Key == 'MUL') {
-				if ($indexCounter != 0) {
-					$indexes .= ' *   		';
-				}
+				$indexes .= ($indexesCounter != 0) ? ' *   		' : NULL;
 
-				$entity = ucfirst(str_replace('_id', '', $row->Field));
+				$entity   = ucfirst(str_replace('_id', '', $row->Field));
 				$indexes .= '@index(name="' . $row->Field . '", columns={"' . $row->Field . '"}),' . "\n";
-				$type = '\\' . ucfirst($entity);
+				$type     = '\\' . ucfirst($entity);
 
 				$columns .= '	 * @ManyToOne(targetEntity="' . $entity . '")' . "\n";
 				$columns .= '	 * @JoinColumns({' . "\n";
 				$columns .= '	 *   @JoinColumn(name="' . $row->Field . '", referencedColumnName="' . $row->Field . '", nullable=' . $nullable . ', onDelete="cascade")' . "\n";
 				$columns .= '	 * })' . "\n";
 
-				$indexCounter++;
+				$indexesCounter++;
 			} else {
-				$columns .= '	 * @Column(type="' . $type . '"' . $length . ', nullable=' . $nullable . ', unique=' . $unique . ')' . "\n";
+				$columns  .= '	 * @Column(type="' . $type . '"' . $length . ', nullable=' . $nullable . ', unique=' . $unique . ')' . "\n";
+				$keywords .= $row->Field . ",\n";
 			}
 
 			$columns .= '	 */' . "\n";
@@ -154,15 +150,13 @@ class CreateModelCommand extends Command
 
 			$methodName = 'get_' . $row->Field;
 			$methodName = ($input->getOption('snake')) ? Inflect::underscore($methodName) : Inflect::camelize($methodName);
-
-			if ($row->Key == 'PRI') {
-				$primaryKey = $methodName;
-			}
-
-			$accessor = file_get_contents(__DIR__ . '/Templates/Miscellaneous/Accessor.txt');
-
-			$search = array('$field', '$type', '$methodName');
-			$replace = array($row->Field, $type, $methodName);
+			
+			$primaryKey = ($row->Key == 'PRI') ? $methodName : NULL;
+			
+			$accessor   = file_get_contents(__DIR__ . '/Templates/Miscellaneous/Accessor.txt');
+			
+			$search     = array('$field', '$type', '$methodName');
+			$replace    = array($row->Field, $type, $methodName);
 
 			$accessors .= str_replace($search, $replace, $accessor) . "\n\n";
 
@@ -170,36 +164,34 @@ class CreateModelCommand extends Command
 			 * The column to be displayed in the select() public method
 			 */
 			
-			if (in_array($row->Field, $selectColumns)) {
-				$model = str_replace('/* Column to be displayed in the dropdown */', $methodName . '()', $model);
-			}
+			$model = (in_array($row->Field, $selectColumns)) ? str_replace('/* Column to be displayed in the dropdown */', $methodName . '()', $model) : NULL;
 
 			/**
 			 * Generate the mutators
 			 */
 
 			if ($row->Key != 'PRI') {
-				$class = NULL;
+				$class      = NULL;
 				
 				$methodName = 'set_' . $row->Field;
 				$methodName = ($input->getOption('snake')) ? Inflect::underscore($methodName) : Inflect::camelize($methodName);
 				
-				$nullable = ($row->Null == 'YES') ? ' = NULL' : NULL;
-
-				$mutator = file_get_contents(__DIR__ . '/Templates/Miscellaneous/Mutator.txt');
+				$nullable   = ($row->Null == 'YES') ? ' = NULL' : NULL;
+				
+				$mutator    = file_get_contents(__DIR__ . '/Templates/Miscellaneous/Mutator.txt');
 
 				if ($row->Key == 'MUL') {
-					$class = '\\' . ucfirst(str_replace('_id', '', $row->Field)) . ' ';
+					$class   = '\\' . ucfirst(str_replace('_id', '', $row->Field)) . ' ';
 				} elseif ($this->getDataType($row->Type) == 'date' || $this->getDataType($row->Type) == 'datetime' || $this->getDataType($row->Type) == 'datetimetz') {
 					$mutator = str_replace('$this->$field = $$field;', '$this->$field = new \DateTime($$field);', $mutator);
 				}
 
-				$search = array('$field', '$type', '$methodName', '$class', '$nullable');
-				$replace = array($row->Field, $type, $methodName, $class, $nullable);
-
+				$search    = array('$field', '$type', '$methodName', '$class', '$nullable');
+				$replace   = array($row->Field, $type, $methodName, $class, $nullable);
+				
 				$mutators .= str_replace($search, $replace, $mutator) . "\n\n";
 
-				$mutatorCounter++;
+				$mutatorsCounter++;
 			}
 
 			$counter++;
@@ -212,22 +204,26 @@ class CreateModelCommand extends Command
 		$search = array(
 			'$indexes',
 			'$columns',
+			'$keywords',
 			'$accessors',
 			'$mutators',
 			'$primaryKey',
 			'$plural',
 			'$singular',
+			'$firstLetter',
 			'$modelName'
 		);
 
 		$replace = array(
 			rtrim(substr($indexes, 0, -2)),
 			rtrim($columns),
+			rtrim(substr($keywords, 0, -2))
 			rtrim($accessors),
 			rtrim($mutators),
 			$primaryKey,
 			Inflect::pluralize($input->getArgument('name')),
 			Inflect::singularize($input->getArgument('name')),
+			substr($input->getArgument('name'), 0, 1),
 			ucfirst(Inflect::singularize($input->getArgument('name')))
 		);
 

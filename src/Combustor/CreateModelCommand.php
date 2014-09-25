@@ -154,7 +154,7 @@ class CreateModelCommand extends Command
 			$methodName = 'get_' . $row->Field;
 			$methodName = ($input->getOption('snake')) ? Inflect::underscore($methodName) : Inflect::camelize($methodName);
 			
-			$primaryKey = ($row->Key == 'PRI') ? $methodName : NULL;
+			$primaryKey = ($row->Key == 'PRI') ? $methodName : $primaryKey;
 			
 			$accessor   = file_get_contents(__DIR__ . '/Templates/Miscellaneous/Accessor.txt');
 			

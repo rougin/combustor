@@ -139,7 +139,7 @@ class CreateModelCommand extends Command
 				$indexesCounter++;
 			} else {
 				$columns  .= '	 * @Column(type="' . $type . '"' . $length . ', nullable=' . $nullable . ', unique=' . $unique . ')' . "\n";
-				$keywords .= '\'' . $row->Field . '\'' . ",\n";
+				$keywords .= '\'$firstLetter.' . $row->Field . '\'' . ",\n";
 
 				$keywordsCounter++;
 			}

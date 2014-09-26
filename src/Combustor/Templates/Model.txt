@@ -86,12 +86,23 @@ class $modelName extends CI_Model
 	 */
 	protected function _find_by_keyword()
 	{
+		$counter = 0;
+
 		if ($this->input->get('keyword') != NULL) {
 			foreach ($this->_columns as $column) {
-				$this->_query_builder->where(
-					$this->_query_builder->expr()->like('$firstLetter.' . $column,
-					$this->_query_builder->expr()->literal('%' . $this->input->get('keyword') . '%'))
-				);
+				if ($counter == 0) {
+					$this->_query_builder->where(
+						$this->_query_builder->expr()->like($column,
+						$this->_query_builder->expr()->literal('%' . $this->input->get('keyword') . '%'))
+					);
+				} else {
+					$this->_query_builder->orWhere(
+						$this->_query_builder->expr()->like($column,
+						$this->_query_builder->expr()->literal('%' . $this->input->get('keyword') . '%'))
+					);
+				}
+
+				$counter++;
 			}
 		}
 	}

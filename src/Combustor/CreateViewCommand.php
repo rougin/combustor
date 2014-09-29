@@ -130,7 +130,9 @@ class CreateViewCommand extends Command
 				$fields .= '			</div>' . "\n";
 				$fields .= '		</div>' . "\n";
 
-				$showFields .= Inflect::humanize($row->Field) . ': <?php echo $$singular->' . $methodName . '(); ?><br>' . "\n";
+				$value = ($row->Key == 'MUL') ? '$$singular->' . $methodName . '()->' . $methodName . '()' : '$$singular->' . $methodName . '()';
+
+				$showFields .= str_replace(' Id', '', Inflect::humanize($row->Field)) . ': <?php echo ' . $value . '; ?><br>' . "\n";
 			} else {
 				$fields .= file_get_contents(__DIR__ . '/Templates/Miscellaneous/CreatePassword.txt') . "\n";
 			}
@@ -148,15 +150,16 @@ class CreateViewCommand extends Command
 			$methodName = 'get_' . $row->Field;
 			$methodName = ($input->getOption('snake')) ? Inflect::underscore($methodName) : Inflect::camelize($methodName);
 
+			$value = ($row->Key == 'MUL') ? '$$singular->' . $methodName . '()->' . $methodName . '()' : '$$singular->' . $methodName . '()';
+
 			if (strpos($editFields, 'set_value(\'' . $row->Field . '\')') !== FALSE) {
-				$editFields = str_replace('set_value(\'' . $row->Field . '\')', 'set_value(\'' . $row->Field . '\', $$singular->' . $methodName . '())', $editFields);
+				$editFields = str_replace('set_value(\'' . $row->Field . '\')', 'set_value(\'' . $row->Field . '\', ' . $value . ')', $editFields);
 			}
 
-			$editFields .= ($row->Field == 'password') ? file_get_contents(__DIR__ . '/Templates/Miscellaneous/EditPassword.txt') . "\n" : NULL;
-
-			$createPassword = file_get_contents(__DIR__ . '/Templates/Miscellaneous/CreatePassword.txt') . "\n";
-
-			$editFields = str_replace($createPassword, '', $editFields);
+			$createPassword  = file_get_contents(__DIR__ . '/Templates/Miscellaneous/CreatePassword.txt') . "\n";
+			
+			$editFields     .= ($row->Field == 'password') ? file_get_contents(__DIR__ . '/Templates/Miscellaneous/EditPassword.txt') . "\n" : NULL;
+			$editFields      = str_replace($createPassword, '', $editFields);
 		}
 
 		$columns .= '				<th></th>' . "\n";
@@ -227,9 +230,9 @@ class CreateViewCommand extends Command
 		 */
 
 		$create_file = fopen($filepath . 'create.php', 'wb');
-		$edit_file = fopen($filepath . 'edit.php', 'wb');
-		$index_file = fopen($filepath . 'index.php', 'wb');
-		$show_file = fopen($filepath . 'show.php', 'wb');
+		$edit_file   = fopen($filepath . 'edit.php', 'wb');
+		$index_file  = fopen($filepath . 'index.php', 'wb');
+		$show_file   = fopen($filepath . 'show.php', 'wb');
 
 		file_put_contents($filepath . 'create.php', $create);
 		file_put_contents($filepath . 'edit.php', $edit);

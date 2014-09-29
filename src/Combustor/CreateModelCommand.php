@@ -97,7 +97,6 @@ class CreateModelCommand extends Command
 		foreach ($databaseColumns->result() as $row) {
 			$accessors .= ($counter != 0) ? '	' : NULL;
 			$columns   .= ($counter != 0) ? '	' : NULL;
-			$keywords  .= ($keywordsCounter != 0) ? '		' : NULL;
 			$mutators  .= ($mutatorsCounter != 0) ? '	' : NULL;
 
 			$nullable   = ($row->Null == 'YES') ? 'TRUE' : 'FALSE';
@@ -139,9 +138,13 @@ class CreateModelCommand extends Command
 				$indexesCounter++;
 			} else {
 				$columns  .= '	 * @Column(type="' . $type . '"' . $length . ', nullable=' . $nullable . ', unique=' . $unique . ')' . "\n";
-				$keywords .= '\'$firstLetter.' . $row->Field . '\'' . ",\n";
 
-				$keywordsCounter++;
+				if ($row->Field != 'datetime_created' && $row->Field != 'datetime_updated' && $row->Field != 'password') {
+					$keywords  .= ($keywordsCounter != 0) ? '		' : NULL;
+					$keywords  .= '\'$firstLetter.' . $row->Field . '\'' . ",\n";
+
+					$keywordsCounter++;
+				}
 			}
 
 			$columns .= '	 */' . "\n";

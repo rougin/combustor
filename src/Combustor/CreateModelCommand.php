@@ -80,7 +80,7 @@ class CreateModelCommand extends Command
 		$mutatorsCounter = 0;
 		$primaryKey      = NULL;
 
-		$selectColumns   = array('name', 'description');
+		$selectColumns   = array('name', 'description', 'label');
 
 		/**
 		 * Get the model template

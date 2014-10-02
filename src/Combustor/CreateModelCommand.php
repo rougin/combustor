@@ -189,7 +189,7 @@ class CreateModelCommand extends Command
 
 				if ($row->Key == 'MUL') {
 					$classVariable   = '\\' . ucfirst(str_replace('_id', '', $row->Field)) . ' ';
-				} elseif ($this->getDataType($row->Type) == 'date' || $this->getDataType($row->Type) == 'datetime' || $this->getDataType($row->Type) == 'datetimetz') {
+				} elseif ($this->getDataType($row->Type) == 'time' || $this->getDataType($row->Type) == 'date' || $this->getDataType($row->Type) == 'datetime' || $this->getDataType($row->Type) == 'datetimetz') {
 					$mutator         = str_replace('$this->$field = $$field;', '$this->$field = new \DateTime($$field);', $mutator);
 				}
 

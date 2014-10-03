@@ -72,6 +72,7 @@ class CreateModelCommand extends Command
 		$accessors       = NULL;
 		$columns         = NULL;
 		$counter         = 0;
+		$dataTypes       = array('time', 'date', 'datetime', 'datetimetz');
 		$indexes         = NULL;
 		$indexesCounter  = 0;
 		$keywords        = NULL;
@@ -121,7 +122,9 @@ class CreateModelCommand extends Command
 			$columns .= '/**' . "\n";
 
 			if ($row->Key == 'PRI') {
-				$columns .= '	 * @Id @GeneratedValue' . "\n";
+				$autoIncrement = ($row->Extra == 'auto_increment') ? '@GeneratedValue' : NULL:
+
+				$columns .= '	 * @Id ' . $autoIncrement . "\n";
 				$columns .= '	 * @Column(type="' . $type . '"' . $length . ', nullable=' . $nullable . ', unique=' . $unique . ')' . "\n";
 			} elseif ($row->Key == 'MUL') {
 				$indexes .= ($indexesCounter != 0) ? ' *   		' : NULL;
@@ -176,7 +179,7 @@ class CreateModelCommand extends Command
 			 * Generate the mutators
 			 */
 
-			if ($row->Key != 'PRI') {
+			if ($row->Extra != 'auto_increment') {
 				$class         = '\\' . ucfirst(Inflect::singularize($input->getArgument('name')));
 				$classVariable = NULL;
 				
@@ -189,7 +192,7 @@ class CreateModelCommand extends Command
 
 				if ($row->Key == 'MUL') {
 					$classVariable   = '\\' . ucfirst(str_replace('_id', '', $row->Field)) . ' ';
-				} elseif ($this->getDataType($row->Type) == 'time' || $this->getDataType($row->Type) == 'date' || $this->getDataType($row->Type) == 'datetime' || $this->getDataType($row->Type) == 'datetimetz') {
+				} elseif (in_array($this->getDataType($row->Type), $dataTypes)) {
 					$mutator         = str_replace('$this->$field = $$field;', '$this->$field = new \DateTime($$field);', $mutator);
 				}
 

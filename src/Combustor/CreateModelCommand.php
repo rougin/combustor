@@ -122,7 +122,7 @@ class CreateModelCommand extends Command
 			$columns .= '/**' . "\n";
 
 			if ($row->Key == 'PRI') {
-				$autoIncrement = ($row->Extra == 'auto_increment') ? '@GeneratedValue' : NULL:
+				$autoIncrement = ($row->Extra == 'auto_increment') ? '@GeneratedValue' : NULL;
 
 				$columns .= '	 * @Id ' . $autoIncrement . "\n";
 				$columns .= '	 * @Column(type="' . $type . '"' . $length . ', nullable=' . $nullable . ', unique=' . $unique . ')' . "\n";

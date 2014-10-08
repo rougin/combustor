@@ -104,6 +104,7 @@ class $controller extends CI_Controller
 		
 		include APPPATH . 'config/pagination.php';
 
+		$config['suffix'] = '?keyword=' . $this->input->get('keyword');
 		$config['total_rows'] = $this->$singular->all(NULL, 'count');
 
 		$this->pagination->initialize($config);
@@ -111,7 +112,6 @@ class $controller extends CI_Controller
 		$delimiters = array('per_page' => $config['per_page'], 'page' => $this->pagination->offset, 'keyword' => $this->input->get('keyword'));
 		
 		$data['$plural'] = $this->$singular->all($delimiters);
-
 		$data['links'] = $this->pagination->create_links();
 
 		$this->load->view('$plural/index', $data);

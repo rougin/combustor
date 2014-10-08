@@ -106,7 +106,8 @@ class Inflect
         'information' => true,
         'equipment'   => true,
         'jeans'       => true,
-        'police'      => true
+        'police'      => true,
+        'fecalysis'   => true
     );
 
     /**

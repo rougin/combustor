@@ -133,7 +133,7 @@ class CreateModelCommand extends Command
 				$indexes .= '@index(name="' . $row->Field . '", columns={"' . $row->Field . '"}),' . "\n";
 				$type     = '\\' . ucfirst($entity);
 
-				$columns .= '	 * @ManyToOne(targetEntity="' . $entity . '")' . "\n";
+				$columns .= '	 * @ManyToOne(targetEntity="' . $entity . '", cascade={"persist"})' . "\n";
 				$columns .= '	 * @JoinColumns({' . "\n";
 				$columns .= '	 *   @JoinColumn(name="' . $row->Field . '", referencedColumnName="' . $row->Field . '", nullable=' . $nullable . ', onDelete="cascade")' . "\n";
 				$columns .= '	 * })' . "\n";

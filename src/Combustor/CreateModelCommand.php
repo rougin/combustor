@@ -46,7 +46,7 @@ class CreateModelCommand extends Command
 		elseif (strpos($type, 'datetime') !== FALSE || strpos($type, 'timestamp') !== FALSE) $type = 'datetime';
 		elseif (strpos($type, 'datetimetz') !== FALSE) $type = 'datetimetz';
 		elseif (strpos($type, 'date') !== FALSE) $type = 'date';
-		elseif (strpos($type, 'decimal') !== FALSE) $type = 'decimal';
+		elseif (strpos($type, 'decimal') !== FALSE || strpos($type, 'double') !== FALSE) $type = 'decimal';
 		elseif (strpos($type, 'float') !== FALSE) $type = 'float';
 		elseif (strpos($type, 'guid') !== FALSE) $type = 'guid';
 		elseif (strpos($type, 'int') !== FALSE) $type = 'integer';

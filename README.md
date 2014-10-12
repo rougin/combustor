@@ -7,9 +7,10 @@ Instructions
 ============
 
 1. Download the latest version of CodeIgniter and Doctrine ORM and install them. To make it easy for you, I've created a [simple script](https://github.com/rougin/ignite.php) for that.
-2. Access the application via the PHP CLI and to retrieve the list of commands
+2. Access the application via the PHP CLI and to retrieve the list of commands:
 	
-	```php vendor/bin/combustor```
+	```php vendor/bin/combustor``` (for Unix)
+	```php vendor/rougin/combustor/bin/combustor``` (for Windows)
 
 Reminders
 =========

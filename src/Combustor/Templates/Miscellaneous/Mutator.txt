@@ -1,12 +1,12 @@
 /**
-	 * Set $field
+	 * Set [field]
 	 *
-	 * @param  $type $$field
-	 * @return $class
+	 * @param  [type] $[field]
+	 * @return [class]
 	 */
-	public function $methodName($classVariable$$field$nullable)
+	public function $methodName([classVariable]$[field][nullable])
 	{
-		$this->$field = $$field;
+		$this->[field] = $[field];
 
 		return $this;
 	}

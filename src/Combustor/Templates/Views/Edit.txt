@@ -1,10 +1,10 @@
 <?php $this->load->view('layout/header'); ?>
-	<?php echo form_open('$plural/edit/' . $$singular->$primaryKey(), 'class="$bootstrapFormOpen"'); ?>
-		$editFields
-		<div class="$bootstrapFormGroup $pullRight">
-			<div class="$bootstrapFormSubmit">
-				<a class="$bootstrapFormSubmitButton" href="<?php echo base_url('$plural'); ?>">Back</a>
-				<?php echo form_submit('', 'Submit', 'class="$bootstrapFormSubmitButton"'); ?>
+	<?php echo form_open('[plural]/edit/' . $[singular]->[primaryKey](), 'class="[bootstrapFormOpen]"'); ?>
+		[editFields]
+		<div class="[bootstrapFormGroup] [pullRight]">
+			<div class="[bootstrapFormSubmit]">
+				<a class="[bootstrapFormSubmitButton]" href="<?php echo base_url('[plural]'); ?>">Back</a>
+				<?php echo form_submit('', 'Submit', 'class="[bootstrapFormSubmitButton]"'); ?>
 			</div>
 		</div>
 	<?php echo form_close(); ?>

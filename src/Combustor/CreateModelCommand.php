@@ -144,7 +144,7 @@ class CreateModelCommand extends Command
 
 				if ($row->Field != 'datetime_created' && $row->Field != 'datetime_updated' && $row->Field != 'password') {
 					$keywords  .= ($keywordsCounter != 0) ? '		' : NULL;
-					$keywords  .= '\'$firstLetter.' . $row->Field . '\'' . ",\n";
+					$keywords  .= '\'[firstLetter].' . $row->Field . '\'' . ",\n";
 
 					$keywordsCounter++;
 				}
@@ -164,7 +164,7 @@ class CreateModelCommand extends Command
 			
 			$accessor   = file_get_contents(__DIR__ . '/Templates/Miscellaneous/Accessor.txt');
 			
-			$search     = array('$field', '$type', '$methodName');
+			$search     = array('[field]', '[type]', '[method]');
 			$replace    = array($row->Field, $type, $methodName);
 
 			$accessors .= str_replace($search, $replace, $accessor) . "\n\n";
@@ -193,10 +193,10 @@ class CreateModelCommand extends Command
 				if ($row->Key == 'MUL') {
 					$classVariable   = '\\' . ucfirst(str_replace('_id', '', $row->Field)) . ' ';
 				} elseif (in_array($this->getDataType($row->Type), $dataTypes)) {
-					$mutator         = str_replace('$this->$field = $$field;', '$this->$field = new \DateTime($$field);', $mutator);
+					$mutator         = str_replace('$this->[field] = $[field];', '$this->[field] = new \DateTime($[field]);', $mutator);
 				}
 
-				$search    = array('$field', '$type', '$methodName', '$classVariable', '$class', '$nullable');
+				$search    = array('[field]', '[type]', '[methodName]', '[classVariable]', '[class]', '[nullable]');
 				$replace   = array($row->Field, $type, $methodName, $classVariable, $class, $nullable);
 				
 				$mutators .= str_replace($search, $replace, $mutator) . "\n\n";
@@ -212,16 +212,16 @@ class CreateModelCommand extends Command
 		 */
 
 		$search = array(
-			'$indexes',
-			'$columns',
-			'$keywords',
-			'$accessors',
-			'$mutators',
-			'$primaryKey',
-			'$plural',
-			'$singular',
-			'$firstLetter',
-			'$modelName'
+			'[indexes]',
+			'[columns]',
+			'[keywords]',
+			'[accessors]',
+			'[mutators]',
+			'[primaryKey]',
+			'[plural]',
+			'[singular]',
+			'[firstLetter]',
+			'[model]'
 		);
 
 		$replace = array(

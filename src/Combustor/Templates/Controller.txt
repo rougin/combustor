@@ -1,10 +1,10 @@
 <?php if ( ! defined('BASEPATH')) exit('No direct script access allowed');
 
 /**
- * $controller Controller Class
+ * [controller] Controller Class
  */
 
-class $controller extends CI_Controller
+class [controller] extends CI_Controller
 {
 
 	public function __construct()
@@ -14,89 +14,88 @@ class $controller extends CI_Controller
 		date_default_timezone_set('Asia/Taipei');
 
 		$this->load->model(array(
-			$models
+			[models]
 		));
 	}
 
 	/**
-	 * Show the form for creating a new $singular
+	 * Show the form for creating a new [singular]
 	 */
 	public function create()
 	{
 		$this->validate_input();
 
 		if ($this->form_validation->run()) {
-			$columnsCreate
+			[columnsCreate]
 
-			$this->doctrine->em->persist($this->$singular);
+			$this->doctrine->em->persist($this->[singular]);
 			$this->doctrine->em->flush();
 
-			$this->session->set_flashdata('notification', 'The $singular has been created successfully!');
+			$this->session->set_flashdata('notification', 'The [singular] has been created successfully!');
 			$this->session->set_flashdata('alert', 'success');
 
-			redirect('$plural');
+			redirect('[plural]');
 		}
 
 		$data = array();
-		$dropdownColumns
+		[dropdownColumns]
 
-		$this->load->view('$plural/create', $data);
+		$this->load->view('[plural]/create', $data);
 	}
 
 	/**
-	 * Delete the specified $singular from storage
+	 * Delete the specified [singular] from storage
 	 * 
 	 * @param  int $id
 	 */
 	public function delete($id)
 	{
-		if ( ! isset($id)) redirect('$plural');
+		if ( ! isset($id)) redirect('[plural]');
 
-		$$singular = $this->doctrine->em->find('$singular', $id);
+		$[singular] = $this->doctrine->em->find('[singular]', $id);
 
-		$this->doctrine->em->remove($$singular);
-
+		$this->doctrine->em->remove($[singular]);
 		$this->doctrine->em->flush();
 
-		$this->session->set_flashdata('notification', 'The $singular has been deleted successfully!');
+		$this->session->set_flashdata('notification', 'The [singular] has been deleted successfully!');
 		$this->session->set_flashdata('alert', 'success');
 
-		redirect('$plural');
+		redirect('[plural]');
 	}
 
 	/**
-	 * Show the form for editing the specified $singular
+	 * Show the form for editing the specified [singular]
 	 * 
 	 * @param  int $id
 	 */
 	public function edit($id)
 	{
-		if ( ! isset($id)) redirect('$plural');
+		if ( ! isset($id)) redirect('[plural]');
 
 		$this->validate_input();
 
 		if ($this->form_validation->run()) {
-			$$singular = $this->doctrine->em->find('$singular', $id);
+			$[singular] = $this->doctrine->em->find('[singular]', $id);
 
-			$columnsEdit
+			[columnsEdit]
 
-			$this->doctrine->em->persist($$singular);
+			$this->doctrine->em->persist($[singular]);
 			$this->doctrine->em->flush();
 
-			$this->session->set_flashdata('notification', 'The $singular has been updated successfully!');
+			$this->session->set_flashdata('notification', 'The [singular] has been updated successfully!');
 			$this->session->set_flashdata('alert', 'success');
 
-			redirect('$plural');
+			redirect('[plural]');
 		}
 
 		$dropdownColumns
-		$data['$singular'] = $this->doctrine->em->find('$singular', $id);
+		$data['[singular]'] = $this->doctrine->em->find('[singular]', $id);
 
-		$this->load->view('$plural/edit', $data);
+		$this->load->view('[plural]/edit', $data);
 	}
 
 	/**
-	 * Display a listing of $plural
+	 * Display a listing of [plural]
 	 */
 	public function index()
 	{
@@ -104,31 +103,35 @@ class $controller extends CI_Controller
 		
 		include APPPATH . 'config/pagination.php';
 
-		$config['suffix'] = '?keyword=' . $this->input->get('keyword');
-		$config['total_rows'] = $this->$singular->all(NULL, 'count');
+		$config['suffix']     = '?keyword=' . $this->input->get('keyword');
+		$config['total_rows'] = $this->[singular]->all(NULL, 'count');
 
 		$this->pagination->initialize($config);
 
-		$delimiters = array('per_page' => $config['per_page'], 'page' => $this->pagination->offset, 'keyword' => $this->input->get('keyword'));
+		$delimiters = array(
+			'per_page' => $config['per_page'],
+			'page' => $this->pagination->offset,
+			'keyword' => $this->input->get('keyword')
+		);
 		
-		$data['$plural'] = $this->$singular->all($delimiters);
+		$data['[plural]'] = $this->[singular]->all($delimiters);
 		$data['links'] = $this->pagination->create_links();
 
-		$this->load->view('$plural/index', $data);
+		$this->load->view('[plural]/index', $data);
 	}
 
 	/**
-	 * Display the specified $singular
+	 * Display the specified [singular]
 	 * 
 	 * @param  int $id
 	 */
 	public function show($id)
 	{
-		if ( ! isset($id)) redirect('$plural');
+		if ( ! isset($id)) redirect('[plural]');
 		
-		$data['$singular'] = $this->doctrine->em->find('$singular', $id);
+		$data['[singular]'] = $this->doctrine->em->find('[singular]', $id);
 
-		$this->load->view('$plural/show', $data);
+		$this->load->view('[plural]/show', $data);
 	}
 
 	/**
@@ -139,7 +142,7 @@ class $controller extends CI_Controller
 		$this->load->library('form_validation');
 
 		$columns = array(
-			$columnsValidate
+			[columnsValidate]
 		);
 
 		foreach ($columns as $column => $label) {

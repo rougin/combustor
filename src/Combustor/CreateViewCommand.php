@@ -104,7 +104,7 @@ class CreateViewCommand extends Command
 					$extend = NULL;
 				}
 
-				$rows .= '<td><?php echo $$singular->' . $methodName . '()' . $extend . '; ?></td>' . "\n";
+				$rows .= '<td><?php echo $[singular]->' . $methodName . '()' . $extend . '; ?></td>' . "\n";
 
 				if ($input->getOption('bootstrap')) {
 					$fields .= '<?php if (form_error(\'' . $row->Field . '\')): ?>' . "\n";
@@ -113,24 +113,24 @@ class CreateViewCommand extends Command
 					$fields .= '			<div class="form-group">' . "\n";
 					$fields .= '		<?php endif; ?>' . "\n";
 				} else {
-					$fields .= '	<div class="$bootstrapFormGroup">' . "\n";
+					$fields .= '	<div class="[bootstrapFormGroup]">' . "\n";
 				}
 
-				$fields .= '			<?php echo form_label(\'' . str_replace(' Id', '', Inflect::humanize($row->Field)) . '\', \'' . $row->Field . '\', array(\'class\' => \'$labelClass\')); ?>' . "\n";
-				$fields .= '			<div class="$formColumn">' . "\n";
+				$fields .= '			<?php echo form_label(\'' . str_replace(' Id', '', Inflect::humanize($row->Field)) . '\', \'' . $row->Field . '\', array(\'class\' => \'[labelClass]\')); ?>' . "\n";
+				$fields .= '			<div class="[formColumn]">' . "\n";
 				
 				if ($row->Key == 'MUL') {
 					$data    = Inflect::pluralize(str_replace('_id', '', $row->Field));
-					$fields .= '				<?php echo form_dropdown(\'' . $row->Field . '\', $' . $data . ', set_value(\'' . $row->Field . '\'), \'class="$bootstrapFormControl"\'); ?>' . "\n";
+					$fields .= '				<?php echo form_dropdown(\'' . $row->Field . '\', $' . $data . ', set_value(\'' . $row->Field . '\'), \'class="[bootstrapFormControl]"\'); ?>' . "\n";
 				} else {
-					$fields .= '				<?php echo form_input(\'' . $row->Field . '\', set_value(\'' . $row->Field . '\'), \'class="$bootstrapFormControl"\'); ?>' . "\n";
+					$fields .= '				<?php echo form_input(\'' . $row->Field . '\', set_value(\'' . $row->Field . '\'), \'class="[bootstrapFormControl]"\'); ?>' . "\n";
 				}
 
 				$fields .= '				<?php echo form_error(\'' . $row->Field . '\'); ?>' . "\n";
 				$fields .= '			</div>' . "\n";
 				$fields .= '		</div>' . "\n";
 
-				$value = ($row->Key == 'MUL') ? '$$singular->' . $methodName . '()->' . $methodName . '()' : '$$singular->' . $methodName . '()';
+				$value = ($row->Key == 'MUL') ? '$[singular]->' . $methodName . '()->' . $methodName . '()' : '$[singular]->' . $methodName . '()';
 
 				$showFields .= str_replace(' Id', '', Inflect::humanize($row->Field)) . ': <?php echo ' . $value . '; ?><br>' . "\n";
 			} else {
@@ -150,7 +150,7 @@ class CreateViewCommand extends Command
 			$methodName = 'get_' . $row->Field;
 			$methodName = ($input->getOption('snake')) ? Inflect::underscore($methodName) : Inflect::camelize($methodName);
 
-			$value = ($row->Key == 'MUL') ? '$$singular->' . $methodName . '()->' . $methodName . '()' : '$$singular->' . $methodName . '()';
+			$value = ($row->Key == 'MUL') ? '$[singular]->' . $methodName . '()->' . $methodName . '()' : '$[singular]->' . $methodName . '()';
 
 			if (strpos($editFields, 'set_value(\'' . $row->Field . '\')') !== FALSE) {
 				$editFields = str_replace('set_value(\'' . $row->Field . '\')', 'set_value(\'' . $row->Field . '\', ' . $value . ')', $editFields);
@@ -165,25 +165,25 @@ class CreateViewCommand extends Command
 		$columns .= '				<th></th>' . "\n";
 
 		$search = array(
-			'$showFields',
-			'$editFields',
-			'$fields',
-			'$columns',
-			'$rows',
-			'$primaryKey',
-			'$bootstrapFormControl',
-			'$bootstrapFormGroup',
-			'$bootstrapFormOpen',
-			'$bootstrapFormSubmitButton',
-			'$bootstrapFormSubmit',
-			'$bootstrapTable',
-			'$pullRight',
-			'$labelClass',
-			'$formColumn',
-			'$entity',
-			'$singularEntity',
-			'$plural',
-			'$singular'
+			'[showFields]',
+			'[editFields]',
+			'[fields]',
+			'[columns]',
+			'[rows]',
+			'[primaryKey]',
+			'[bootstrapFormControl]',
+			'[bootstrapFormGroup]',
+			'[bootstrapFormOpen]',
+			'[bootstrapFormSubmitButton]',
+			'[bootstrapFormSubmit]',
+			'[bootstrapTable]',
+			'[pullRight]',
+			'[labelClass]',
+			'[formColumn]',
+			'[entity]',
+			'[singularEntity]',
+			'[plural]',
+			'[singular]'
 		);
 
 		$replace = array(

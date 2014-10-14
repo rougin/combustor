@@ -57,7 +57,7 @@ class CreateControllerCommand extends Command
 
 		$columns = new GetColumns($input->getArgument('name'), $output);
 
-		$models = '\'$singular\'';
+		$models = '\'[singular]\'';
 
 		$columnsCreate   = NULL;
 		$columnsEdit     = NULL;
@@ -88,25 +88,25 @@ class CreateControllerCommand extends Command
 				$dropdowns++;
 
 				$columnsCreate .= "\n" . '			$' . $entity . ' = $this->doctrine->em->find(\'' . $entity . '\', $this->input->post(\'' . $row->Field . '\'));' . "\n";
-				$columnsCreate .= '			$this->$singular->' . $methodName . '($' . $entity . ');' . "\n\n";
+				$columnsCreate .= '			$this->[singular]->' . $methodName . '($' . $entity . ');' . "\n\n";
 
 				$columnsEdit .= "\n" . '			$' . $entity . ' = $this->doctrine->em->find(\'' . $entity . '\', $this->input->post(\'' . $row->Field . '\'));' . "\n";
-				$columnsEdit .= '			$$singular->' . $methodName . '($' . $entity . ');' . "\n\n";
+				$columnsEdit .= '			$[singular]->' . $methodName . '($' . $entity . ');' . "\n\n";
 			} elseif ($row->Field == 'password') {
 				$columnsCreate .= "\n" . file_get_contents(__DIR__ . '/Templates/Miscellaneous/CheckCreatePassword.txt') . "\n\n";
 				$columnsEdit .= "\n" . file_get_contents(__DIR__ . '/Templates/Miscellaneous/CheckEditPassword.txt') . "\n\n";
 
-				$columnsCreate = str_replace('$methodName', $methodName, $columnsCreate);
-				$columnsEdit = str_replace('$methodName', $methodName, $columnsEdit);
+				$columnsCreate = str_replace('[method]', $methodName, $columnsCreate);
+				$columnsEdit = str_replace('[method]', $methodName, $columnsEdit);
 			} else {
 				$column = ($row->Field == 'datetime_created' || $row->Field == 'datetime_updated') ? '\'now\'' : '$this->input->post(\'' . $row->Field . '\')';
 
 				if ($row->Field != 'datetime_updated') {
-					$columnsCreate .= '$this->$singular->' . $methodName . '(' . $column . ');' . "\n";
+					$columnsCreate .= '$this->[singular]->' . $methodName . '(' . $column . ');' . "\n";
 				}
 
 				if ($row->Field != 'datetime_created') {
-					$columnsEdit .= '$$singular->' . $methodName . '(' . $column . ');' . "\n";
+					$columnsEdit .= '$[singular]->' . $methodName . '(' . $column . ');' . "\n";
 				}
 			}
 
@@ -122,14 +122,14 @@ class CreateControllerCommand extends Command
 		 */
 
 		$search = array(
-			'$models',
-			'$dropdownColumns',
-			'$columnsCreate',
-			'$columnsEdit',
-			'$columnsValidate',
-			'$controller',
-			'$plural',
-			'$singular'
+			'[models]',
+			'[dropdownColumns]',
+			'[columnsCreate]',
+			'[columnsEdit]',
+			'[columnsValidate]',
+			'[controller]',
+			'[plural]',
+			'[singular]'
 		);
 
 		$replace = array(

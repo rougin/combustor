@@ -3,23 +3,23 @@
 /**
  * @Entity
  * @Table(
- * 		name="$singular",
+ * 		name="[singular]",
  * 		indexes={
- * 			$indexes
+ * 			[indexes]
  * 		}
  * )
  */
-class $modelName extends CI_Model
+class [model] extends CI_Model
 {
 
-	$columns
+	[columns]
 
 	/**
 	 * List of column names that you want to include in the 
 	 * keywords for searching data
 	 */
 	protected $_columns = array(
-		$keywords
+		[$keywords]
 	);
 
 	protected $_query_builder;
@@ -43,7 +43,7 @@ class $modelName extends CI_Model
 	 */
 	public function all($delimiters, $type = NULL)
 	{
-		$this->_query_builder->select('$firstLetter')->from('$singular', '$firstLetter');
+		$this->_query_builder->select('[firstLetter]')->from('[singular]', '[firstLetter]');
 
 		$this->_find_by_keyword();
 
@@ -59,27 +59,27 @@ class $modelName extends CI_Model
 		return $result;
 	}
 
-	$accessors
+	[accessors]
 
 	/**
-	 * List all $plural in dropdown format
+	 * List all [plural] in dropdown format
 	 * 
 	 * @return array
 	 */
 	public function select()
 	{
-		$$plural = array('');
+		$[plural] = array('');
 
-		$$singularRepository = $this->doctrine->em->getRepository('$singular');
+		$[singularRepository] = $this->doctrine->em->getRepository('[singular]');
 
-		foreach ($$singularRepository->findAll() as $$singular) {
-			$$plural[$$singular->$primaryKey()] = $$singular->/* Column to be displayed in the dropdown */;
+		foreach ($[singularRepository]->findAll() as $[singular]) {
+			$[plural][$[singular]->$primaryKey()] = $[singular]->/* Column to be displayed in the dropdown */;
 		}
 
-		return $$plural;
+		return $[plural];
 	}
 
-	$mutators
+	[mutators]
 
 	/**
 	 * Search for keywords based on the list of columns in the storage

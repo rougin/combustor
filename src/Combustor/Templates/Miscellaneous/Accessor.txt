@@ -1,9 +1,9 @@
 /**
-	 * Get $field
+	 * Get [field]
 	 *
-	 * @return $type
+	 * @return [type]
 	 */
-	public function $methodName()
+	public function [method]()
 	{
-		return $this->$field;
+		return $this->[field];
 	}

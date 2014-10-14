@@ -1,20 +1,20 @@
 <?php $this->load->view('layout/header'); ?>
-	<a href="<?php echo base_url('$plural/create'); ?>">Create a New $singularEntity</a>
-	<table class="$bootstrapTable">
+	<a href="<?php echo base_url('[plural]/create'); ?>">Create a New [singularEntity]</a>
+	<table class="[bootstrapTable]">
 		<thead>
 			<tr>
-				$columns
+				[columns]
 			</tr>
 		</thead>
 		<tbody>
-			<?php foreach ($$plural as $$singular): ?>
+			<?php foreach ($[plural] as $[singular]): ?>
 				<tr>
 					$rows
 					<td>
-						<a href="<?php echo base_url('$plural/edit/' . $$singular->$primaryKey()); ?>">
+						<a href="<?php echo base_url('[plural]/edit/' . $[singular]->[primaryKey]()); ?>">
 							Update
 						</a>
-						<a href="<?php echo base_url('$plural/delete/' . $$singular->$primaryKey()); ?>">
+						<a href="<?php echo base_url('[plural]/delete/' . $[singular]->[primaryKey]()); ?>">
 							Delete
 						</a>
 					</td>

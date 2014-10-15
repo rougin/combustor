@@ -19,7 +19,7 @@ class [model] extends CI_Model
 	 * keywords for searching data
 	 */
 	protected $_columns = array(
-		[$keywords]
+		[keywords]
 	);
 
 	protected $_query_builder;

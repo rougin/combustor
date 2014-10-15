@@ -65,7 +65,7 @@ class CreateControllerCommand extends Command
 		$counter         = 0;
 		$dropdownColumns = NULL;
 		$dropdowns       = 0;
-		$singularText    = Inflect::humanize($input->getArgument('name'));
+		$singularText    = strtolower(Inflect::humanize($input->getArgument('name')));
 
 		foreach ($columns->result() as $row) {
 			$methodName = 'set_' . strtolower($row->Field);

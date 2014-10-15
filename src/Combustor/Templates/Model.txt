@@ -73,7 +73,7 @@ class [model] extends CI_Model
 		$[singularRepository] = $this->doctrine->em->getRepository('[singular]');
 
 		foreach ($[singularRepository]->findAll() as $[singular]) {
-			$[plural][$[singular]->$primaryKey()] = $[singular]->/* Column to be displayed in the dropdown */;
+			$[plural][$[singular]->[primaryKey]()] = $[singular]->/* Column to be displayed in the dropdown */;
 		}
 
 		return $[plural];

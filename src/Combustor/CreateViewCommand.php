@@ -96,7 +96,7 @@ class CreateViewCommand extends Command
 			if ($row->Field != 'password') {
 				$columns .= '<th>' . str_replace(' Id', '', Inflect::humanize($row->Field)) . '</th>' . "\n";
 
-				if (strpos($row->Field, 'date') !== FALSE) {
+				if (strpos($row->Field, 'date') !== FALSE || strpos($row->Field, 'time') !== FALSE) {
 					$extend = '->format(\'F d, Y\')';
 				} elseif ($row->Key == 'MUL') {
 					$extend = '->' . $methodName . '()';

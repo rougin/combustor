@@ -9,7 +9,7 @@
 		<tbody>
 			<?php foreach ($[plural] as $[singular]): ?>
 				<tr>
-					$rows
+					[rows]
 					<td>
 						<a href="<?php echo base_url('[plural]/edit/' . $[singular]->[primaryKey]()); ?>">
 							Update

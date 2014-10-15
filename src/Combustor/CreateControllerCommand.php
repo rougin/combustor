@@ -65,6 +65,7 @@ class CreateControllerCommand extends Command
 		$counter         = 0;
 		$dropdownColumns = NULL;
 		$dropdowns       = 0;
+		$singularText    = Inflect::humanize($input->getArgument('name'));
 
 		foreach ($columns->result() as $row) {
 			$methodName = 'set_' . strtolower($row->Field);
@@ -129,7 +130,8 @@ class CreateControllerCommand extends Command
 			'[columnsValidate]',
 			'[controller]',
 			'[plural]',
-			'[singular]'
+			'[singular]',
+			'[singularText]'
 		);
 
 		$replace = array(
@@ -140,7 +142,8 @@ class CreateControllerCommand extends Command
 			substr($columnsValidate, 0, -2),
 			ucfirst(Inflect::pluralize($input->getArgument('name'))),
 			Inflect::pluralize($input->getArgument('name')),
-			Inflect::singularize($input->getArgument('name'))
+			Inflect::singularize($input->getArgument('name')),
+			$singularText
 		);
 
 		$controller = str_replace($search, $replace, $controller);

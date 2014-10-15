@@ -19,7 +19,7 @@ class [controller] extends CI_Controller
 	}
 
 	/**
-	 * Show the form for creating a new [singular]
+	 * Show the form for creating a new [singularText]
 	 */
 	public function create()
 	{
@@ -31,7 +31,7 @@ class [controller] extends CI_Controller
 			$this->doctrine->em->persist($this->[singular]);
 			$this->doctrine->em->flush();
 
-			$this->session->set_flashdata('notification', 'The [singular] has been created successfully!');
+			$this->session->set_flashdata('notification', 'The [singularText] has been created successfully!');
 			$this->session->set_flashdata('alert', 'success');
 
 			redirect('[plural]');
@@ -44,7 +44,7 @@ class [controller] extends CI_Controller
 	}
 
 	/**
-	 * Delete the specified [singular] from storage
+	 * Delete the specified [singularText] from storage
 	 * 
 	 * @param  int $id
 	 */
@@ -57,14 +57,14 @@ class [controller] extends CI_Controller
 		$this->doctrine->em->remove($[singular]);
 		$this->doctrine->em->flush();
 
-		$this->session->set_flashdata('notification', 'The [singular] has been deleted successfully!');
+		$this->session->set_flashdata('notification', 'The [singularText] has been deleted successfully!');
 		$this->session->set_flashdata('alert', 'success');
 
 		redirect('[plural]');
 	}
 
 	/**
-	 * Show the form for editing the specified [singular]
+	 * Show the form for editing the specified [singularText]
 	 * 
 	 * @param  int $id
 	 */
@@ -82,13 +82,13 @@ class [controller] extends CI_Controller
 			$this->doctrine->em->persist($[singular]);
 			$this->doctrine->em->flush();
 
-			$this->session->set_flashdata('notification', 'The [singular] has been updated successfully!');
+			$this->session->set_flashdata('notification', 'The [singularText] has been updated successfully!');
 			$this->session->set_flashdata('alert', 'success');
 
 			redirect('[plural]');
 		}
 
-		$dropdownColumns
+		[dropdownColumns]
 		$data['[singular]'] = $this->doctrine->em->find('[singular]', $id);
 
 		$this->load->view('[plural]/edit', $data);
@@ -121,7 +121,7 @@ class [controller] extends CI_Controller
 	}
 
 	/**
-	 * Display the specified [singular]
+	 * Display the specified [singularText]
 	 * 
 	 * @param  int $id
 	 */

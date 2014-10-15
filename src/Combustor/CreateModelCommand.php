@@ -81,6 +81,9 @@ class CreateModelCommand extends Command
 		$mutatorsCounter = 0;
 		$primaryKey      = NULL;
 
+		$repository         = Inflect::singularize($input->getArgument('name')) . '_repository';
+		$singularRepository = ($input->getOption('snake')) ? Inflect::underscore($repository) : Inflect::camelize($repository);
+
 		$selectColumns   = array('name', 'description', 'label');
 
 		/**
@@ -196,7 +199,7 @@ class CreateModelCommand extends Command
 					$mutator         = str_replace('$this->[field] = $[field];', '$this->[field] = new \DateTime($[field]);', $mutator);
 				}
 
-				$search    = array('[field]', '[type]', '[methodName]', '[classVariable]', '[class]', '[nullable]');
+				$search    = array('[field]', '[type]', '[method]', '[classVariable]', '[class]', '[nullable]');
 				$replace   = array($row->Field, $type, $methodName, $classVariable, $class, $nullable);
 				
 				$mutators .= str_replace($search, $replace, $mutator) . "\n\n";
@@ -212,6 +215,7 @@ class CreateModelCommand extends Command
 		 */
 
 		$search = array(
+			'[singularRepository]',
 			'[indexes]',
 			'[columns]',
 			'[keywords]',
@@ -225,6 +229,7 @@ class CreateModelCommand extends Command
 		);
 
 		$replace = array(
+			$singularRepository,
 			rtrim(substr($indexes, 0, -2)),
 			rtrim($columns),
 			rtrim(substr($keywords, 0, -2)),

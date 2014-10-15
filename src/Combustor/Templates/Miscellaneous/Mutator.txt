@@ -4,7 +4,7 @@
 	 * @param  [type] $[field]
 	 * @return [class]
 	 */
-	public function $methodName([classVariable]$[field][nullable])
+	public function [method]([classVariable]$[field][nullable])
 	{
 		$this->[field] = $[field];
 

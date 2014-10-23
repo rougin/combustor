@@ -1,7 +1,7 @@
 <?php if ( ! defined('BASEPATH')) exit('No direct script access allowed');
 
 /**
- * [controller] Controller Class
+ * [controllerName] Controller Class
  */
 
 class [controller] extends CI_Controller
@@ -23,7 +23,7 @@ class [controller] extends CI_Controller
 	 */
 	public function create()
 	{
-		$this->validate_input();
+		$this->_validate_input();
 
 		if ($this->form_validation->run()) {
 			[columnsCreate]
@@ -72,7 +72,7 @@ class [controller] extends CI_Controller
 	{
 		if ( ! isset($id)) redirect('[plural]');
 
-		$this->validate_input();
+		$this->_validate_input();
 
 		if ($this->form_validation->run()) {
 			$[singular] = $this->doctrine->em->find('[singular]', $id);
@@ -109,9 +109,9 @@ class [controller] extends CI_Controller
 		$this->pagination->initialize($config);
 
 		$delimiters = array(
-			'per_page' => $config['per_page'],
-			'page' => $this->pagination->offset,
-			'keyword' => $this->input->get('keyword')
+			'keyword'  => $this->input->get('keyword'),
+			'page'     => $this->pagination->offset,
+			'per_page' => $config['per_page']
 		);
 		
 		$data['[plural]'] = $this->[singular]->all($delimiters);
@@ -137,7 +137,7 @@ class [controller] extends CI_Controller
 	/**
 	 * Validate the input retrieved from the view
 	 */
-	private function validate_input()
+	private function _validate_input()
 	{
 		$this->load->library('form_validation');
 

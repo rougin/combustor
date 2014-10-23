@@ -129,6 +129,7 @@ class CreateControllerCommand extends Command
 			'[columnsEdit]',
 			'[columnsValidate]',
 			'[controller]',
+			'[controllerName]',
 			'[plural]',
 			'[singular]',
 			'[singularText]'
@@ -141,6 +142,7 @@ class CreateControllerCommand extends Command
 			rtrim($columnsEdit),
 			substr($columnsValidate, 0, -2),
 			ucfirst(Inflect::pluralize($input->getArgument('name'))),
+			ucfirst(str_replace('_', ' ', Inflect::pluralize($input->getArgument('name')))),
 			Inflect::pluralize($input->getArgument('name')),
 			Inflect::singularize($input->getArgument('name')),
 			$singularText

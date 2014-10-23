@@ -89,20 +89,24 @@ class [model] extends CI_Model
 		$counter = 0;
 
 		if ($this->input->get('keyword') != NULL) {
-			foreach ($this->_columns as $column) {
-				if ($counter == 0) {
-					$this->_query_builder->where(
-						$this->_query_builder->expr()->like($column,
-						$this->_query_builder->expr()->literal('%' . $this->input->get('keyword') . '%'))
-					);
-				} else {
-					$this->_query_builder->orWhere(
-						$this->_query_builder->expr()->like($column,
-						$this->_query_builder->expr()->literal('%' . $this->input->get('keyword') . '%'))
-					);
-				}
+			$keywords = explode(' ', $this->input->get('keyword'));
 
-				$counter++;
+			foreach ($keywords as $keyword) {
+				foreach ($this->_columns as $column) {
+					if ($counter == 0) {
+						$this->_query_builder->where(
+							$this->_query_builder->expr()->like($column,
+							$this->_query_builder->expr()->literal('%' . $keyword . '%'))
+						);
+					} else {
+						$this->_query_builder->orWhere(
+							$this->_query_builder->expr()->like($column,
+							$this->_query_builder->expr()->literal('%' . $keyword . '%'))
+						);
+					}
+
+					$counter++;
+				}
 			}
 		}
 	}

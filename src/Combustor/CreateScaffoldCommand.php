@@ -36,10 +36,10 @@ class CreateScaffoldCommand extends Command
 				InputOption::VALUE_NONE,
 				'Keeps the name to be used'
 			)->addOption(
-				'snake',
+				'camel',
 				NULL,
 				InputOption::VALUE_NONE,
-				'Use the snake case naming convention for the accessor and mutators'
+				'Use the camel case naming convention for the accessor and mutators'
 			);
 	}
 
@@ -53,7 +53,7 @@ class CreateScaffoldCommand extends Command
 	{
 		$bootstrap = $input->getOption('bootstrap');
 		$keep = $input->getOption('keep');
-		$snake = $input->getOption('snake');
+		$camel = $input->getOption('camel');
 		
 		$arguments = array(
 			'command' => NULL,
@@ -73,18 +73,18 @@ class CreateScaffoldCommand extends Command
 				unset($arguments['--keep']);
 			}
 
-			if (isset($arguments['--snake'])) {
-				unset($arguments['--snake']);
+			if (isset($arguments['--camel'])) {
+				unset($arguments['--camel']);
 			}
 
 			if ($command == 'create:controller') {
 				$arguments['--keep'] = $keep;
-				$arguments['--snake'] = $snake;
+				$arguments['--camel'] = $camel;
 			} elseif ($command == 'create:model') {
-				$arguments['--snake'] = $snake;
+				$arguments['--camel'] = $camel;
 			} elseif ($command == 'create:view') {
 				$arguments['--bootstrap'] = $bootstrap;
-				$arguments['--snake'] = $snake;
+				$arguments['--camel'] = $camel;
 			}
 
 			$input = new ArrayInput($arguments);

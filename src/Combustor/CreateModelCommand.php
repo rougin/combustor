@@ -24,10 +24,10 @@ class CreateModelCommand extends Command
 				InputArgument::REQUIRED,
 				'Name of the model'
 			)->addOption(
-				'snake',
+				'camel',
 				NULL,
 				InputOption::VALUE_NONE,
-				'Use the snake case naming convention for the accessor and mutators'
+				'Use the camel case naming convention for the accessor and mutators'
 			);
 	}
 
@@ -82,7 +82,7 @@ class CreateModelCommand extends Command
 		$primaryKey      = NULL;
 
 		$repository         = Inflect::singularize($input->getArgument('name')) . '_repository';
-		$singularRepository = ($input->getOption('snake')) ? Inflect::underscore($repository) : Inflect::camelize($repository);
+		$singularRepository = ($input->getOption('camel')) ? Inflect::camelize($repository) : Inflect::underscore($repository);
 
 		$selectColumns   = array('name', 'description', 'label');
 
@@ -161,7 +161,7 @@ class CreateModelCommand extends Command
 			 */
 
 			$methodName = 'get_' . $row->Field;
-			$methodName = ($input->getOption('snake')) ? Inflect::underscore($methodName) : Inflect::camelize($methodName);
+			$methodName = ($input->getOption('camel')) ? Inflect::camelize($methodName) : Inflect::underscore($methodName);
 			
 			$primaryKey = ($row->Key == 'PRI') ? $methodName : $primaryKey;
 			
@@ -187,7 +187,7 @@ class CreateModelCommand extends Command
 				$classVariable = NULL;
 				
 				$methodName    = 'set_' . $row->Field;
-				$methodName    = ($input->getOption('snake')) ? Inflect::underscore($methodName) : Inflect::camelize($methodName);
+				$methodName    = ($input->getOption('camel')) ? Inflect::camelize($methodName) : Inflect::underscore($methodName);
 				
 				$nullable      = ($row->Null == 'YES') ? ' = NULL' : NULL;
 				

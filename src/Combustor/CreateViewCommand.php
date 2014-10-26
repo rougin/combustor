@@ -30,10 +30,10 @@ class CreateViewCommand extends Command
 				InputOption::VALUE_NONE,
 				'Include the Bootstrap CSS/JS Framework tags'
 			)->addOption(
-				'snake',
+				'camel',
 				NULL,
 				InputOption::VALUE_NONE,
-				'Use the snake case naming convention for the accessor and mutators'
+				'Use the camel case naming convention for the accessor and mutators'
 			);
 	}
 
@@ -82,7 +82,7 @@ class CreateViewCommand extends Command
 
 		foreach ($databaseColumns->result() as $row) {
 			$methodName = 'get_' . $row->Field;
-			$methodName = ($input->getOption('snake')) ? Inflect::underscore($methodName) : Inflect::camelize($methodName);
+			$methodName = ($input->getOption('camel')) ? Inflect::camelize($methodName) : Inflect::underscore($methodName);
 
 			$primaryKey = ($row->Key == 'PRI') ? $methodName : $primaryKey;
 
@@ -148,7 +148,7 @@ class CreateViewCommand extends Command
 
 		foreach ($databaseColumns->result() as $row) {
 			$methodName = 'get_' . $row->Field;
-			$methodName = ($input->getOption('snake')) ? Inflect::underscore($methodName) : Inflect::camelize($methodName);
+			$methodName = ($input->getOption('camel')) ? Inflect::camelize($methodName) : Inflect::underscore($methodName);
 
 			$value = ($row->Key == 'MUL') ? '$[singular]->' . $methodName . '()->' . $methodName . '()' : '$[singular]->' . $methodName . '()';
 

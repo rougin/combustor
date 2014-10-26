@@ -30,10 +30,10 @@ class CreateControllerCommand extends Command
 				InputOption::VALUE_NONE,
 				'Keeps the name to be used'
 			)->addOption(
-				'snake',
+				'camel',
 				NULL,
 				InputOption::VALUE_NONE,
-				'Use the snake case naming convention for the accessor and mutators'
+				'Use the camel case naming convention for the accessor and mutators'
 			);
 	}
 
@@ -69,7 +69,7 @@ class CreateControllerCommand extends Command
 
 		foreach ($columns->result() as $row) {
 			$methodName = 'set_' . strtolower($row->Field);
-			$methodName = ($input->getOption('snake')) ? Inflect::underscore($methodName) : Inflect::camelize($methodName);
+			$methodName = ($input->getOption('camel')) ? Inflect::camelize($methodName) : Inflect::underscore($methodName);
 
 			if ($counter != 0) {
 				$columnsCreate   .= ($row->Field != 'datetime_updated') ? '			' : NULL;

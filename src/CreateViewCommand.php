@@ -1,6 +1,4 @@
-<?php
-
-namespace Combustor;
+<?php namespace Combustor;
 
 use Combustor\Tools\Inflect;
 use Combustor\Tools\GetColumns;

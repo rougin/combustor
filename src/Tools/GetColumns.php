@@ -1,6 +1,4 @@
-<?php
-
-namespace Combustor\Tools;
+<?php namespace Combustor\Tools;
 
 use Combustor\Tools\Inflect;
 use Symfony\Component\Console\Output\OutputInterface;

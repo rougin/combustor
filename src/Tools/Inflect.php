@@ -1,6 +1,4 @@
-<?php
-
-namespace Combustor\Tools;
+<?php namespace Combustor\Tools;
 
 /**
  * Inflect Class for PHP

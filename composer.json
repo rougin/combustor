@@ -13,8 +13,8 @@
 	}],
 	"bin": ["bin/combustor", "bin/combustor.php"],
 	"autoload": {
-		"psr-0": {
-			"Combustor": "src/"
+		"psr-4": {
+			"Combustor\\": "src/"
 		}
 	}
 }

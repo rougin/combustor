@@ -156,8 +156,8 @@ class CreateViewCommand extends Command
 
 			$createPassword  = file_get_contents(__DIR__ . '/Templates/Miscellaneous/CreatePassword.txt') . "\n";
 			
-			$editFields     .= ($row->Field == 'password') ? file_get_contents(__DIR__ . '/Templates/Miscellaneous/EditPassword.txt') . "\n" : NULL;
-			$editFields      = str_replace($createPassword, '', $editFields);
+			$editFields .= ($row->Field == 'password') ? file_get_contents(__DIR__ . '/Templates/Miscellaneous/EditPassword.txt') . "\n" : NULL;
+			$editFields  = str_replace($createPassword, '', $editFields);
 		}
 
 		$columns .= '				<th></th>' . "\n";
@@ -207,9 +207,9 @@ class CreateViewCommand extends Command
 		);
 
 		$create = str_replace($search, $replace, $create);
-		$edit = str_replace($search, $replace, $edit);
-		$index = str_replace($search, $replace, $index);
-		$show = str_replace($search, $replace, $show);
+		$edit   = str_replace($search, $replace, $edit);
+		$index  = str_replace($search, $replace, $index);
+		$show   = str_replace($search, $replace, $show);
 
 		/**
 		 * Create the directory first
@@ -227,10 +227,10 @@ class CreateViewCommand extends Command
 		 * Create the files
 		 */
 
-		$create_file = fopen($filepath . 'create.php', 'wb');
-		$edit_file   = fopen($filepath . 'edit.php', 'wb');
-		$index_file  = fopen($filepath . 'index.php', 'wb');
-		$show_file   = fopen($filepath . 'show.php', 'wb');
+		$createFile = fopen($filepath . 'create.php', 'wb');
+		$editFile   = fopen($filepath . 'edit.php', 'wb');
+		$indexFile  = fopen($filepath . 'index.php', 'wb');
+		$showFile   = fopen($filepath . 'show.php', 'wb');
 
 		file_put_contents($filepath . 'create.php', $create);
 		file_put_contents($filepath . 'edit.php', $edit);

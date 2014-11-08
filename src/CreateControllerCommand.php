@@ -80,7 +80,7 @@ class CreateControllerCommand extends Command
 			if ($row->Extra == 'auto_increment') {
 				continue;
 			} elseif ($row->Key == 'MUL') {
-				$entity = str_replace('_id', '', $row->Field);
+				$entity  = str_replace('_id', '', $row->Field);
 				$models .= ",\n" . '			\'' . $entity . '\'';
 
 				$dropdownColumns .= '$data[\'' . Inflect::pluralize($entity) . '\'] = $this->' . $entity . '->select();' . "\n";
@@ -93,10 +93,10 @@ class CreateControllerCommand extends Command
 				$columnsEdit .= '			$[singular]->' . $methodName . '($' . $entity . ');' . "\n\n";
 			} elseif ($row->Field == 'password') {
 				$columnsCreate .= "\n" . file_get_contents(__DIR__ . '/Templates/Miscellaneous/CheckCreatePassword.txt') . "\n\n";
-				$columnsEdit .= "\n" . file_get_contents(__DIR__ . '/Templates/Miscellaneous/CheckEditPassword.txt') . "\n\n";
+				$columnsEdit   .= "\n" . file_get_contents(__DIR__ . '/Templates/Miscellaneous/CheckEditPassword.txt') . "\n\n";
 
 				$columnsCreate = str_replace('[method]', $methodName, $columnsCreate);
-				$columnsEdit = str_replace('[method]', $methodName, $columnsEdit);
+				$columnsEdit   = str_replace('[method]', $methodName, $columnsEdit);
 			} else {
 				$column = ($row->Field == 'datetime_created' || $row->Field == 'datetime_updated') ? '\'now\'' : '$this->input->post(\'' . $row->Field . '\')';
 

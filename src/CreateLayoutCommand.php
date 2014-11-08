@@ -41,8 +41,8 @@ class CreateLayoutCommand extends Command
 			exit();
 		}
 
-		$header_file = fopen($filepath . 'header.php', 'wb');
-		$footer_file = fopen($filepath . 'footer.php', 'wb');
+		$headerFile = fopen($filepath . 'header.php', 'wb');
+		$footerFile = fopen($filepath . 'footer.php', 'wb');
 
 		file_put_contents($filepath . 'header.php', $header);
 		file_put_contents($filepath . 'footer.php', $footer);

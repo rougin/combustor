@@ -36,7 +36,7 @@ class CreateModelCommand extends Command
 	 * @param  string $type
 	 * @return string
 	 */
-	protected function getDataType($type)
+	protected function _getDataType($type)
 	{
 		if (strpos($type, 'array') !== FALSE) $type = 'array';
 		elseif (strpos($type, 'bigint') !== FALSE) $type = 'bigint';
@@ -83,7 +83,7 @@ class CreateModelCommand extends Command
 		$repository         = Inflect::singularize($input->getArgument('name')) . '_repository';
 		$singularRepository = ($input->getOption('camel')) ? Inflect::camelize($repository) : Inflect::underscore($repository);
 
-		$selectColumns   = array('name', 'description', 'label');
+		$selectColumns = array('name', 'description', 'label');
 
 		/**
 		 * Get the model template
@@ -105,7 +105,7 @@ class CreateModelCommand extends Command
 			$nullable   = ($row->Null == 'YES') ? 'TRUE' : 'FALSE';
 			$unique     = ($row->Key == 'UNI') ? 'TRUE' : 'FALSE';
 
-			$type       = $this->getDataType($row->Type);
+			$type       = $this->_getDataType($row->Type);
 
 			/**
 			 * The data type is an integer or string? Set the length of the specified data type
@@ -142,11 +142,11 @@ class CreateModelCommand extends Command
 
 				$indexesCounter++;
 			} else {
-				$columns  .= '	 * @Column(type="' . $type . '"' . $length . ', nullable=' . $nullable . ', unique=' . $unique . ')' . "\n";
+				$columns .= '	 * @Column(type="' . $type . '"' . $length . ', nullable=' . $nullable . ', unique=' . $unique . ')' . "\n";
 
 				if ($row->Field != 'datetime_created' && $row->Field != 'datetime_updated' && $row->Field != 'password') {
-					$keywords  .= ($keywordsCounter != 0) ? '		' : NULL;
-					$keywords  .= '\'[firstLetter].' . $row->Field . '\'' . ",\n";
+					$keywords .= ($keywordsCounter != 0) ? '		' : NULL;
+					$keywords .= '\'[firstLetter].' . $row->Field . '\'' . ",\n";
 
 					$keywordsCounter++;
 				}
@@ -185,21 +185,21 @@ class CreateModelCommand extends Command
 				$class         = '\\' . ucfirst(Inflect::singularize($input->getArgument('name')));
 				$classVariable = NULL;
 				
-				$methodName    = 'set_' . $row->Field;
-				$methodName    = ($input->getOption('camel')) ? Inflect::camelize($methodName) : Inflect::underscore($methodName);
-				
-				$nullable      = ($row->Null == 'YES') ? ' = NULL' : NULL;
-				
-				$mutator       = file_get_contents(__DIR__ . '/Templates/Miscellaneous/Mutator.txt');
+				$methodName = 'set_' . $row->Field;
+				$methodName = ($input->getOption('camel')) ? Inflect::camelize($methodName) : Inflect::underscore($methodName);
+
+				$nullable = ($row->Null == 'YES') ? ' = NULL' : NULL;
+
+				$mutator = file_get_contents(__DIR__ . '/Templates/Miscellaneous/Mutator.txt');
 
 				if ($row->Key == 'MUL') {
-					$classVariable   = '\\' . ucfirst(str_replace('_id', '', $row->Field)) . ' ';
-				} elseif (in_array($this->getDataType($row->Type), $dataTypes)) {
-					$mutator         = str_replace('$this->[field] = $[field];', '$this->[field] = new \DateTime($[field]);', $mutator);
+					$classVariable = '\\' . ucfirst(str_replace('_id', '', $row->Field)) . ' ';
+				} elseif (in_array($this->_getDataType($row->Type), $dataTypes)) {
+					$mutator = str_replace('$this->[field] = $[field];', '$this->[field] = new \DateTime($[field]);', $mutator);
 				}
 
-				$search    = array('[field]', '[type]', '[method]', '[classVariable]', '[class]', '[nullable]');
-				$replace   = array($row->Field, $type, $methodName, $classVariable, $class, $nullable);
+				$search  = array('[field]', '[type]', '[method]', '[classVariable]', '[class]', '[nullable]');
+				$replace = array($row->Field, $type, $methodName, $classVariable, $class, $nullable);
 				
 				$mutators .= str_replace($search, $replace, $mutator) . "\n\n";
 

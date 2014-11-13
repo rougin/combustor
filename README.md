@@ -6,7 +6,7 @@ Combustor is a code generator console application for [CodeIgniter](https://elli
 Instructions
 ============
 
-1. Download the latest version of CodeIgniter and Doctrine ORM and install them. Then add the package in your require-list in ```composer.json``` and after that, run ```composer install```:
+1. Download the latest version of CodeIgniter then add the package in your require-list in ```composer.json``` and after that, run ```composer install```:
 
 	```
 	{
@@ -16,7 +16,7 @@ Instructions
 	}
 	```
 
-	**NOTE:**: If you want to install this package easily with CodeIgniter, I've created a [simple script](https://github.com/rougin/ignite.php) for that.
+	**NOTE**: If you want to install this package easily with CodeIgniter, I've created a [simple script](https://github.com/rougin/ignite.php) for that.
 
 2. Access the application via the PHP CLI and to retrieve the list of commands:
 	

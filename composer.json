@@ -7,10 +7,12 @@
 		"doctrine/orm": "2.4.*"
 	},
 	"license": "MIT",
-	"authors": [{
+	"authors": [
+		{
 			"name": "Rougin Gutib",
-			"email": "rougin.royce@gmail.com"
-	}],
+			"email": "rougingutib@gmail.com"
+		}
+	],
 	"bin": ["bin/combustor", "bin/combustor.php"],
 	"autoload": {
 		"psr-4": {

@@ -16,9 +16,19 @@ Instructions
 	}
 	```
 
-	**NOTE**: If you want to install this package easily with CodeIgniter, I've created a [simple script](https://github.com/rougin/ignite.php) for that.
+2. After installing the required dependencies, run the command below in the PHP CLI:
 
-2. Access the application via the PHP CLI and to retrieve the list of commands:
+	For Unix and Mac:
+
+	```php vendor/bin/pertain```
+
+	For Windows or if there are no symbolic links found at ```vendor/bin``` directory:
+
+	```php vendor/rougin/combustor/bin/pertain```
+
+	**NOTE**: The command above only setups the Doctrine for CodeIgniter. If you want to also include the pagination and other stuff, I've created a [simple script](https://github.com/rougin/ignite.php) for that.
+
+2. Then, access the application via the PHP CLI and to retrieve the list of commands:
 	
 	For Unix and Mac:
 
@@ -26,7 +36,7 @@ Instructions
 
 	For Windows or if there are no symbolic links found at ```vendor/bin``` directory:
 
-	```php vendor/rougin/combustor/bin/combustor``` 
+	```php vendor/rougin/combustor/bin/combustor```
 
 Reminders
 =========

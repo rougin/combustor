@@ -231,20 +231,13 @@ fclose($file);
 
 /**
  * ---------------------------------------------------------------------------------------------
- * Autoload the Doctrine library and the other libraries and helpers
+ * Autoload the Doctrine library
  * ---------------------------------------------------------------------------------------------
  */
 
-$session = (strpos($codeigniter_core, 'define(\'CI_VERSION\', \'3.0-dev\')') === FALSE) ? ', \'session\'' : '';
-
 $autoload = file_get_contents('application/config/autoload.php');
-$search   = array('$autoload[\'libraries\'] = array();', '$autoload[\'helper\'] = array();');
-$replace  = array('$autoload[\'libraries\'] = array(\'doctrine\'' . $session . ');', '$autoload[\'helper\'] = array(\'url\', \'form\');');
-
-if (strpos($codeigniter_core, 'define(\'CI_VERSION\', \'3.0-dev\')') !== FALSE) {
-	$search[]  = '$autoload[\'drivers\'] = array();';
-	$replace[] = '$autoload[\'drivers\'] = array(\'session\');';
-}
+$search   = array('$autoload[\'libraries\'] = array();');
+$replace  = array('$autoload[\'libraries\'] = array(\'doctrine\');');
 
 $contents = str_replace($search, $replace, $autoload);
 file_put_contents('application/config/autoload.php', $contents);

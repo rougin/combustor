@@ -18,11 +18,11 @@ Instructions
 
 2. After installing the required dependencies, run the command below in the PHP CLI:
 
-	For Unix and Mac:
+	**For Unix and Mac:**
 
 	```php vendor/bin/pertain```
 
-	For Windows or if there are no symbolic links found at ```vendor/bin``` directory:
+	**For Windows or if there are no symbolic links found at ```vendor/bin``` directory:**
 
 	```php vendor/rougin/combustor/bin/pertain```
 
@@ -30,11 +30,11 @@ Instructions
 
 2. Then, access the application via the PHP CLI and to retrieve the list of commands:
 	
-	For Unix and Mac:
+	**For Unix and Mac:**
 
 	```php vendor/bin/combustor```
 
-	For Windows or if there are no symbolic links found at ```vendor/bin``` directory:
+	**For Windows or if there are no symbolic links found at ```vendor/bin``` directory:**
 
 	```php vendor/rougin/combustor/bin/combustor```
 

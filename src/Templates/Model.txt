@@ -1,28 +1,13 @@
 <?php if ( ! defined('BASEPATH')) exit('No direct script access allowed');
 
 /**
- * @Entity
- * @Table(
- * 		name="[singular]",
- * 		indexes={
- * 			[indexes]
- * 		}
- * )
+ * [model] Model Class
  */
+
 class [model] extends CI_Model
 {
 
 	[columns]
-
-	/**
-	 * List of column names that you want to include in the 
-	 * keywords for searching data
-	 */
-	protected $_columns = array(
-		[keywords]
-	);
-
-	protected $_query_builder;
 
 	/**
 	 * Class constructor
@@ -30,85 +15,45 @@ class [model] extends CI_Model
 	public function __construct()
 	{
 		parent::__construct();
-
-		$this->_query_builder = $this->doctrine->em->createQueryBuilder();
 	}
 	
-	/**
-	 * Retrieve all the data from the storage
-	 * 
-	 * @param  array  $delimiters
-	 * @param  string $type
-	 * @return object
-	 */
-	public function all($delimiters, $type = NULL)
+	public function delete(User $user)
 	{
-		$this->_query_builder->select('[firstLetter]')->from('[singular]', '[firstLetter]');
-
-		$this->_find_by_keyword();
-
-		if ($type == NULL) {
-			$this->_query_builder->setFirstResult($delimiters['page']);
-			$this->_query_builder->setMaxResults($delimiters['per_page']);
-		}
-
-		$result = ($type == 'count') ? count($this->_query_builder->getQuery()->getResult()) : $this->_query_builder->getQuery()->getResult();
-
-		$this->_query_builder->resetDQLParts();
-
-		return $result;
+		$this->db->where('[primaryKey]', $user->get_[primaryKey]());
+		$this->db->delete('[singular]');
 	}
 
 	[accessors]
-
-	/**
-	 * List all [plural] in dropdown format
-	 * 
-	 * @return array
-	 */
-	public function select()
+	
+	public function save()
 	{
-		$[plural] = array('');
+		$data = array(
+			[fields]
+		);
 
-		$[singularRepository] = $this->doctrine->em->getRepository('[singular]');
-
-		foreach ($[singularRepository]->findAll() as $[singular]) {
-			$[plural][$[singular]->[primaryKey]()] = $[singular]->/* Column to be displayed in the dropdown */;
+		if ($this->_id > 0)
+		{
+			if ($this->db->update('[singular]', $data, array('[primaryKey]' => $this->_[primaryKey])))
+			{
+				return TRUE;
+			}
+		}
+		else
+		{
+			if ($this->db->insert('[singular]', $data))
+			{
+				$this->_id = $this->db->insert_id();
+				
+				return TRUE;
+			}
 		}
 
-		return $[plural];
+		return FALSE;
 	}
 
 	[mutators]
 
-	/**
-	 * Search for keywords based on the list of columns in the storage
-	 */
-	protected function _find_by_keyword()
-	{
-		$counter = 0;
-
-		if ($this->input->get('keyword') != NULL) {
-			$keywords = explode(' ', $this->input->get('keyword'));
-
-			foreach ($keywords as $keyword) {
-				foreach ($this->_columns as $column) {
-					if ($counter == 0) {
-						$this->_query_builder->where(
-							$this->_query_builder->expr()->like($column,
-							$this->_query_builder->expr()->literal('%' . $keyword . '%'))
-						);
-					} else {
-						$this->_query_builder->orWhere(
-							$this->_query_builder->expr()->like($column,
-							$this->_query_builder->expr()->literal('%' . $keyword . '%'))
-						);
-					}
-
-					$counter++;
-				}
-			}
-		}
-	}
-	
 }
+
+/* End of file [model].php */
+/* Location: ./application/controllers/[model].php */

@@ -28,6 +28,11 @@ class CreateControllerCommand extends Command
 				InputOption::VALUE_NONE,
 				'Keeps the name to be used'
 			)->addOption(
+				'doctrine',
+				null,
+				InputOption::VALUE_NONE,
+				'Create a new controller based on Doctrine'
+			)->addOption(
 				'camel',
 				NULL,
 				InputOption::VALUE_NONE,
@@ -43,11 +48,15 @@ class CreateControllerCommand extends Command
 	 */
 	protected function execute(InputInterface $input, OutputInterface $output)
 	{
+		$dateFormat = ($input->getOption('doctrine')) ? '\'now\'' : 'date(\'Y-m-d H:i:s\')';
+		$library    = ($input->getOption('doctrine')) ? 'doctrine->em' : Inflect::singularize($input->getArgument('name'));
+		$templates  = ($input->getOption('doctrine')) ? __DIR__ . '/Templates/Doctrine/' : __DIR__ . '/Templates/';
+
 		/**
 		 * Get the controller template
 		 */
 		
-		$controller = file_get_contents(__DIR__ . '/Templates/Controller.txt');
+		$controller = file_get_contents($templates . 'Controller.txt');
 		
 		/**
 		 * Get the columns from the specified name
@@ -86,19 +95,19 @@ class CreateControllerCommand extends Command
 				$dropdownColumns .= '$data[\'' . Inflect::pluralize($entity) . '\'] = $this->' . $entity . '->select();' . "\n";
 				$dropdowns++;
 
-				$columnsCreate .= "\n" . '			$' . $entity . ' = $this->doctrine->em->find(\'' . $entity . '\', $this->input->post(\'' . $row->Field . '\'));' . "\n";
+				$columnsCreate .= "\n" . '			$' . $entity . ' = $this->' . $library . '->find(\'' . $entity . '\', $this->input->post(\'' . $row->Field . '\'));' . "\n";
 				$columnsCreate .= '			$this->[singular]->' . $methodName . '($' . $entity . ');' . "\n\n";
 
-				$columnsEdit .= "\n" . '			$' . $entity . ' = $this->doctrine->em->find(\'' . $entity . '\', $this->input->post(\'' . $row->Field . '\'));' . "\n";
+				$columnsEdit .= "\n" . '			$' . $entity . ' = $this->' . $library . '->find(\'' . $entity . '\', $this->input->post(\'' . $row->Field . '\'));' . "\n";
 				$columnsEdit .= '			$[singular]->' . $methodName . '($' . $entity . ');' . "\n\n";
 			} elseif ($row->Field == 'password') {
-				$columnsCreate .= "\n" . file_get_contents(__DIR__ . '/Templates/Miscellaneous/CheckCreatePassword.txt') . "\n\n";
-				$columnsEdit   .= "\n" . file_get_contents(__DIR__ . '/Templates/Miscellaneous/CheckEditPassword.txt') . "\n\n";
+				$columnsCreate .= "\n" . file_get_contents($templates . 'Miscellaneous/CheckCreatePassword.txt') . "\n\n";
+				$columnsEdit   .= "\n" . file_get_contents($templates . 'Miscellaneous/CheckEditPassword.txt') . "\n\n";
 
 				$columnsCreate = str_replace('[method]', $methodName, $columnsCreate);
 				$columnsEdit   = str_replace('[method]', $methodName, $columnsEdit);
 			} else {
-				$column = ($row->Field == 'datetime_created' || $row->Field == 'datetime_updated') ? '\'now\'' : '$this->input->post(\'' . $row->Field . '\')';
+				$column = ($row->Field == 'datetime_created' || $row->Field == 'datetime_updated') ? $dateFormat : '$this->input->post(\'' . $row->Field . '\')';
 
 				if ($row->Field != 'datetime_updated') {
 					$columnsCreate .= '$this->[singular]->' . $methodName . '(' . $column . ');' . "\n";

@@ -11,10 +11,11 @@ class [controller] extends CI_Controller
 	{
 		parent::__construct();
 
+		date_default_timezone_set('Asia/Taipei');
+
 		$this->load->model(array(
 			[models]
 		));
-		$this->load->factory('[singular]');
 	}
 
 	/**
@@ -27,7 +28,8 @@ class [controller] extends CI_Controller
 		if ($this->form_validation->run()) {
 			[columnsCreate]
 
-			$this->[singular]->save();
+			$this->doctrine->em->persist($this->[singular]);
+			$this->doctrine->em->flush();
 
 			$this->session->set_flashdata('notification', 'The [singularText] has been created successfully!');
 			$this->session->set_flashdata('alert', 'success');
@@ -50,9 +52,10 @@ class [controller] extends CI_Controller
 	{
 		if ( ! isset($id)) redirect('[plural]');
 
-		$[singular] = $this->[singular]_factory->find($id);
+		$[singular] = $this->doctrine->em->find('[singular]', $id);
 
-		$this->[singular]->delete($[singular]);
+		$this->doctrine->em->remove($[singular]);
+		$this->doctrine->em->flush();
 
 		$this->session->set_flashdata('notification', 'The [singularText] has been deleted successfully!');
 		$this->session->set_flashdata('alert', 'success');
@@ -72,11 +75,12 @@ class [controller] extends CI_Controller
 		$this->_validate_input();
 
 		if ($this->form_validation->run()) {
-			$[singular] = $this->[singular]_factory->find($id);
+			$[singular] = $this->doctrine->em->find('[singular]', $id);
 
 			[columnsEdit]
 
-			$[singular]->save();
+			$this->doctrine->em->persist($[singular]);
+			$this->doctrine->em->flush();
 
 			$this->session->set_flashdata('notification', 'The [singularText] has been updated successfully!');
 			$this->session->set_flashdata('alert', 'success');
@@ -85,7 +89,7 @@ class [controller] extends CI_Controller
 		}
 
 		[dropdownColumns]
-		$data['[singular]'] = $this->[singular]_factory->find($id);
+		$data['[singular]'] = $this->doctrine->em->find('[singular]', $id);
 
 		$this->load->view('[plural]/edit', $data);
 	}
@@ -100,7 +104,7 @@ class [controller] extends CI_Controller
 		include APPPATH . 'config/pagination.php';
 
 		$config['suffix']     = '?keyword=' . $this->input->get('keyword');
-		$config['total_rows'] = $this->[singular]_factory->all('count');
+		$config['total_rows'] = $this->[singular]->all(NULL, 'count');
 
 		$this->pagination->initialize($config);
 
@@ -110,7 +114,7 @@ class [controller] extends CI_Controller
 			'per_page' => $config['per_page']
 		);
 		
-		$data['[plural]'] = $this->[singular]_factory->all($delimiters);
+		$data['[plural]'] = $this->[singular]->all($delimiters);
 		$data['links'] = $this->pagination->create_links();
 
 		$this->load->view('[plural]/index', $data);
@@ -125,7 +129,7 @@ class [controller] extends CI_Controller
 	{
 		if ( ! isset($id)) redirect('[plural]');
 		
-		$data['[singular]'] = $this->[singular]_factory->find($id);
+		$data['[singular]'] = $this->doctrine->em->find('[singular]', $id);
 
 		$this->load->view('[plural]/show', $data);
 	}
@@ -147,6 +151,3 @@ class [controller] extends CI_Controller
 	}
 
 }
-
-/* End of file [controllerName].php */
-/* Location: ./application/controllers/[controllerName].php */

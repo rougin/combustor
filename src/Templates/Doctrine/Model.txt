@@ -1,0 +1,114 @@
+<?php if ( ! defined('BASEPATH')) exit('No direct script access allowed');
+
+/**
+ * @Entity
+ * @Table(
+ * 		name="[singular]",
+ * 		indexes={
+ * 			[indexes]
+ * 		}
+ * )
+ */
+class [model] extends CI_Model
+{
+
+	[columns]
+
+	/**
+	 * List of column names that you want to include in the 
+	 * keywords for searching data
+	 */
+	protected $_columns = array(
+		[keywords]
+	);
+
+	protected $_query_builder;
+
+	/**
+	 * Class constructor
+	 */
+	public function __construct()
+	{
+		parent::__construct();
+
+		$this->_query_builder = $this->doctrine->em->createQueryBuilder();
+	}
+	
+	/**
+	 * Retrieve all the data from the storage
+	 * 
+	 * @param  array  $delimiters
+	 * @param  string $type
+	 * @return object
+	 */
+	public function all($delimiters, $type = NULL)
+	{
+		$this->_query_builder->select('[firstLetter]')->from('[singular]', '[firstLetter]');
+
+		$this->_find_by_keyword();
+
+		if ($type == NULL) {
+			$this->_query_builder->setFirstResult($delimiters['page']);
+			$this->_query_builder->setMaxResults($delimiters['per_page']);
+		}
+
+		$result = ($type == 'count') ? count($this->_query_builder->getQuery()->getResult()) : $this->_query_builder->getQuery()->getResult();
+
+		$this->_query_builder->resetDQLParts();
+
+		return $result;
+	}
+
+	[accessors]
+
+	/**
+	 * List all [plural] in dropdown format
+	 * 
+	 * @return array
+	 */
+	public function select()
+	{
+		$[plural] = array('');
+
+		$[singularRepository] = $this->doctrine->em->getRepository('[singular]');
+
+		foreach ($[singularRepository]->findAll() as $[singular]) {
+			$[plural][$[singular]->[primaryKey]()] = $[singular]->/* Column to be displayed in the dropdown */;
+		}
+
+		return $[plural];
+	}
+
+	[mutators]
+
+	/**
+	 * Search for keywords based on the list of columns in the storage
+	 */
+	protected function _find_by_keyword()
+	{
+		$counter = 0;
+
+		if ($this->input->get('keyword') != NULL) {
+			$keywords = explode(' ', $this->input->get('keyword'));
+
+			foreach ($keywords as $keyword) {
+				foreach ($this->_columns as $column) {
+					if ($counter == 0) {
+						$this->_query_builder->where(
+							$this->_query_builder->expr()->like($column,
+							$this->_query_builder->expr()->literal('%' . $keyword . '%'))
+						);
+					} else {
+						$this->_query_builder->orWhere(
+							$this->_query_builder->expr()->like($column,
+							$this->_query_builder->expr()->literal('%' . $keyword . '%'))
+						);
+					}
+
+					$counter++;
+				}
+			}
+		}
+	}
+	
+}

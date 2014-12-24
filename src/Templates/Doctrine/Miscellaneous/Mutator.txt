@@ -1,9 +1,12 @@
 /**
 	 * Set [field]
 	 *
-	 * @param [type] $[field]
+	 * @param  [type] $[field]
+	 * @return [class]
 	 */
 	public function [method]([classVariable]$[field][nullable])
 	{
-		$this->_[field] = $[field];
+		$this->[field] = $[field];
+
+		return $this;
 	}

@@ -31,6 +31,184 @@ class CreateModelCommand extends Command
 	}
 
 	/**
+	 * Execute the command
+	 * 
+	 * @param  InputInterface  $input
+	 * @param  OutputInterface $output
+	 */
+	protected function execute(InputInterface $input, OutputInterface $output)
+	{
+		if ($input->getOption('doctrine')) {
+			$this->doctrine($input, $output);
+
+			return 0;
+		}
+
+		$accessors       = NULL;
+		$columns         = NULL;
+		$counter         = 0;
+		$dataTypes       = array('time', 'date', 'datetime', 'datetimetz');
+		$fields          = NULL;
+		$fieldsCounter   = 0;
+		$keywords        = NULL;
+		$keywordsCounter = NULL;
+		$mutators        = NULL;
+		$mutatorsCounter = 0;
+		$name            = Inflect::singularize($input->getArgument('name'));
+		$primaryKey      = NULL;
+
+		$selectColumns = array('name', 'description', 'label');
+
+		/**
+		 * Get the factory and model template
+		 */
+		
+		$factory = file_get_contents(__DIR__ . '/Templates/Factory.txt');
+		$model   = file_get_contents(__DIR__ . '/Templates/Model.txt');
+		
+		/**
+		 * Get the columns from the specified name
+		 */
+
+		$databaseColumns = new GetColumns($input->getArgument('name'), $output);
+
+		foreach ($databaseColumns->result() as $row) {
+			$accessors .= ($counter != 0) ? '	' : NULL;
+			$columns   .= ($counter != 0) ? '	' : NULL;
+			$mutators  .= ($mutatorsCounter != 0) ? '	' : NULL;
+
+			/**
+			 * Generate keywords
+			 */
+
+			if ($row->Field != 'datetime_created' && $row->Field != 'datetime_updated' && $row->Field != 'password') {
+				$keywords .= ($keywordsCounter != 0) ? '		' : NULL;
+				$keywords .= '\'[firstLetter].' . $row->Field . '\'' . ",\n";
+
+				$keywordsCounter++;
+			}
+			
+			$columns .= 'protected $_' . $row->Field . ';' . "\n";
+
+			/**
+			 * Generate the accessors
+			 */
+
+			$methodName = 'get_' . $row->Field;
+			$methodName = ($input->getOption('camel')) ? Inflect::camelize($methodName) : Inflect::underscore($methodName);
+			
+			$primaryKey = ($row->Key == 'PRI') ? $row->Field : $primaryKey;
+			
+			$accessor   = file_get_contents(__DIR__ . '/Templates/Miscellaneous/Accessor.txt');
+			
+			$search     = array('[field]', '[type]', '[method]');
+			$replace    = array($row->Field, $row->Type, $methodName);
+
+			$accessors .= str_replace($search, $replace, $accessor) . "\n\n";
+
+			/**
+			 * Generate fields
+			 */
+
+			$fields .= ($fieldsCounter != 0) ? ",\n" . '			' : NULL;
+			$fields .= '\'' . $row->Field . '\' => $this->' . $methodName . '()';
+
+			$fieldsCounter++;
+
+			/**
+			 * Generate methods to the factory
+			 */
+			
+			$methods .= '$user->set_' . $row->Field . '($row->' . $row->Field . ')';
+
+			/**
+			 * The column to be displayed in the select() public method
+			 */
+
+			if (in_array($row->Field, $selectColumns)) {
+				$model = str_replace('/* Column to be displayed in the dropdown */', $methodName . '()', $model);
+			}
+			
+			/**
+			 * Generate the mutators
+			 */
+
+			$class         = '\\' . ucfirst($name);
+			$classVariable = NULL;
+			
+			$methodName = 'set_' . $row->Field;
+			$methodName = ($input->getOption('camel')) ? Inflect::camelize($methodName) : Inflect::underscore($methodName);
+
+			$nullable = ($row->Null == 'YES') ? ' = NULL' : NULL;
+
+			$mutator = file_get_contents(__DIR__ . '/Templates/Miscellaneous/Mutator.txt');
+
+			if ($row->Key == 'MUL') {
+				$classVariable = '\\' . ucfirst(str_replace('_id', '', $row->Field)) . ' ';
+			}
+
+			$search  = array('[field]', '[type]', '[method]', '[classVariable]', '[nullable]');
+			$replace = array($row->Field, $row->Type, $methodName, $classVariable, $nullable);
+			
+			$mutators .= str_replace($search, $replace, $mutator) . "\n\n";
+
+			$mutatorsCounter++;
+
+			$counter++;
+		}
+
+		/**
+		 * Search and replace the following keywords from the template
+		 */
+
+		$search = array(
+			'[fields]',
+			'[columns]',
+			'[keywords]',
+			'[accessors]',
+			'[mutators]',
+			'[primaryKey]',
+			'[plural]',
+			'[singular]',
+			'[firstLetter]',
+			'[model]'
+		);
+
+		$replace = array(
+			$methods,
+			$fields,
+			rtrim($columns),
+			rtrim(substr($keywords, 0, -2)),
+			rtrim($accessors),
+			rtrim($mutators),
+			$primaryKey,
+			Inflect::pluralize($input->getArgument('name')),
+			$name,
+			substr($input->getArgument('name'), 0, 1),
+			ucfirst($name)
+		);
+
+		$model = str_replace($search, $replace, $model);
+
+		/**
+		 * Create a new file and insert the generated template
+		 */
+
+		$filename = APPPATH . 'models/' . ucfirst($name) . '.php';
+
+		if (file_exists($filename)) {
+			$output->writeln('<error>The ' . $name . ' model already exists!</error>');
+			
+			exit();
+		}
+
+		$file = fopen($filename, 'wb');
+		file_put_contents($filename, $model);
+
+		$output->writeln('<info>The model "' . $name . '" has been created successfully!</info>');
+	}
+
+	/**
 	 * Get the data type of the specified column
 	 * 
 	 * @param  string $type
@@ -61,12 +239,12 @@ class CreateModelCommand extends Command
 	}
 	
 	/**
-	 * Execute the command
+	 * Create a model based in Doctrine
 	 * 
 	 * @param  InputInterface  $input
 	 * @param  OutputInterface $output
 	 */
-	protected function execute(InputInterface $input, OutputInterface $output)
+	protected function doctrine(InputInterface $input, OutputInterface $output)
 	{
 		$accessors       = NULL;
 		$columns         = NULL;
@@ -78,9 +256,10 @@ class CreateModelCommand extends Command
 		$keywordsCounter = NULL;
 		$mutators        = NULL;
 		$mutatorsCounter = 0;
+		$name            = Inflect::singularize($input->getArgument('name'));
 		$primaryKey      = NULL;
 
-		$repository         = Inflect::singularize($input->getArgument('name')) . '_repository';
+		$repository         = $name . '_repository';
 		$singularRepository = ($input->getOption('camel')) ? Inflect::camelize($repository) : Inflect::underscore($repository);
 
 		$selectColumns = array('name', 'description', 'label');
@@ -89,7 +268,7 @@ class CreateModelCommand extends Command
 		 * Get the model template
 		 */
 		
-		$model = file_get_contents(__DIR__ . '/Templates/Model.txt');
+		$model = file_get_contents(__DIR__ . '/Templates/Doctrine/Model.txt');
 		
 		/**
 		 * Get the columns from the specified name
@@ -164,7 +343,7 @@ class CreateModelCommand extends Command
 			
 			$primaryKey = ($row->Key == 'PRI') ? $methodName : $primaryKey;
 			
-			$accessor   = file_get_contents(__DIR__ . '/Templates/Miscellaneous/Accessor.txt');
+			$accessor   = file_get_contents(__DIR__ . '/Templates/Doctrine/Miscellaneous/Accessor.txt');
 			
 			$search     = array('[field]', '[type]', '[method]');
 			$replace    = array($row->Field, $type, $methodName);
@@ -174,15 +353,17 @@ class CreateModelCommand extends Command
 			/**
 			 * The column to be displayed in the select() public method
 			 */
-			
-			$model = (in_array($row->Field, $selectColumns)) ? str_replace('/* Column to be displayed in the dropdown */', $methodName . '()', $model) : $model;
+
+			if (in_array($row->Field, $selectColumns)) {
+				$model = str_replace('/* Column to be displayed in the dropdown */', $methodName . '()', $model);
+			}
 
 			/**
 			 * Generate the mutators
 			 */
 
 			if ($row->Extra != 'auto_increment') {
-				$class         = '\\' . ucfirst(Inflect::singularize($input->getArgument('name')));
+				$class         = '\\' . ucfirst($name);
 				$classVariable = NULL;
 				
 				$methodName = 'set_' . $row->Field;
@@ -190,7 +371,7 @@ class CreateModelCommand extends Command
 
 				$nullable = ($row->Null == 'YES') ? ' = NULL' : NULL;
 
-				$mutator = file_get_contents(__DIR__ . '/Templates/Miscellaneous/Mutator.txt');
+				$mutator = file_get_contents(__DIR__ . '/Templates/Doctrine/Miscellaneous/Mutator.txt');
 
 				if ($row->Key == 'MUL') {
 					$classVariable = '\\' . ucfirst(str_replace('_id', '', $row->Field)) . ' ';
@@ -236,9 +417,9 @@ class CreateModelCommand extends Command
 			rtrim($mutators),
 			$primaryKey,
 			Inflect::pluralize($input->getArgument('name')),
-			Inflect::singularize($input->getArgument('name')),
+			$name,
 			substr($input->getArgument('name'), 0, 1),
-			ucfirst(Inflect::singularize($input->getArgument('name')))
+			ucfirst($name)
 		);
 
 		$model = str_replace($search, $replace, $model);
@@ -247,10 +428,10 @@ class CreateModelCommand extends Command
 		 * Create a new file and insert the generated template
 		 */
 
-		$filename = APPPATH . 'models/' . ucfirst(Inflect::singularize($input->getArgument('name'))) . '.php';
+		$filename = APPPATH . 'models/' . ucfirst($name) . '.php';
 
 		if (file_exists($filename)) {
-			$output->writeln('<error>The ' . Inflect::singularize($input->getArgument('name')) . ' model already exists!</error>');
+			$output->writeln('<error>The ' . $name . ' model already exists!</error>');
 			
 			exit();
 		}
@@ -258,7 +439,7 @@ class CreateModelCommand extends Command
 		$file = fopen($filename, 'wb');
 		file_put_contents($filename, $model);
 
-		$output->writeln('<info>The model "' . Inflect::singularize($input->getArgument('name')) . '" has been created successfully!</info>');
+		$output->writeln('<info>The model "' . $name . '" has been created successfully!</info>');
 	}
 	
 }

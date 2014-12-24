@@ -29,6 +29,11 @@ class CreateScaffoldCommand extends Command
 				InputOption::VALUE_NONE,
 				'Include the Bootstrap CSS/JS Framework tags'
 			)->addOption(
+				'doctrine',
+				null,
+				InputOption::VALUE_NONE,
+				'Create a new controller based on Doctrine'
+			)->addOption(
 				'keep',
 				null,
 				InputOption::VALUE_NONE,
@@ -50,8 +55,9 @@ class CreateScaffoldCommand extends Command
 	protected function execute(InputInterface $input, OutputInterface $output)
 	{
 		$bootstrap = $input->getOption('bootstrap');
-		$keep = $input->getOption('keep');
-		$camel = $input->getOption('camel');
+		$camel     = $input->getOption('camel');
+		$doctrine  = $input->getOption('doctrine');
+		$keep      = $input->getOption('keep');
 		
 		$arguments = array(
 			'command' => NULL,
@@ -67,19 +73,25 @@ class CreateScaffoldCommand extends Command
 				unset($arguments['--bootstrap']);
 			}
 
-			if (isset($arguments['--keep'])) {
-				unset($arguments['--keep']);
-			}
-
 			if (isset($arguments['--camel'])) {
 				unset($arguments['--camel']);
 			}
 
+			if (isset($arguments['--doctrine'])) {
+				unset($arguments['--doctrine']);
+			}
+
+			if (isset($arguments['--keep'])) {
+				unset($arguments['--keep']);
+			}
+
 			if ($command == 'create:controller') {
-				$arguments['--keep'] = $keep;
-				$arguments['--camel'] = $camel;
+				$arguments['--camel']    = $camel;
+				$arguments['--doctrine'] = $doctrine;
+				$arguments['--keep']     = $keep;
 			} elseif ($command == 'create:model') {
-				$arguments['--camel'] = $camel;
+				$arguments['--camel']    = $camel;
+				$arguments['--doctrine'] = $doctrine;
 			} elseif ($command == 'create:view') {
 				$arguments['--bootstrap'] = $bootstrap;
 				$arguments['--camel'] = $camel;

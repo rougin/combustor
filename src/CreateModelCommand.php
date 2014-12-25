@@ -23,6 +23,11 @@ class CreateModelCommand extends Command
 				InputArgument::REQUIRED,
 				'Name of the model'
 			)->addOption(
+				'doctrine',
+				null,
+				InputOption::VALUE_NONE,
+				'Create a new controller based on Doctrine'
+			)->addOption(
 				'camel',
 				NULL,
 				InputOption::VALUE_NONE,
@@ -52,12 +57,16 @@ class CreateModelCommand extends Command
 		$fieldsCounter   = 0;
 		$keywords        = NULL;
 		$keywordsCounter = NULL;
+		$methods         = NULL;
 		$mutators        = NULL;
 		$mutatorsCounter = 0;
 		$name            = Inflect::singularize($input->getArgument('name'));
 		$primaryKey      = NULL;
 
 		$selectColumns = array('name', 'description', 'label');
+
+		$columnKeywords        = NULL;
+		$columnKeywordsCounter = 0;
 
 		/**
 		 * Get the factory and model template
@@ -119,7 +128,16 @@ class CreateModelCommand extends Command
 			 * Generate methods to the factory
 			 */
 			
-			$methods .= '$user->set_' . $row->Field . '($row->' . $row->Field . ')';
+			$methods .= '$user->set_' . $row->Field . '($row->' . $row->Field . ');' . "\n		";
+
+			/**
+			 * Generate column keywords to the factory
+			 */
+
+			$columnKeywords .= ($columnKeywordsCounter != 0) ? ",\n" . '		' : NULL;
+			$columnKeywords .= '\'' . $row->Field . '\'';
+
+			$columnKeywordsCounter++;
 
 			/**
 			 * The column to be displayed in the select() public method
@@ -162,6 +180,9 @@ class CreateModelCommand extends Command
 		 */
 
 		$search = array(
+			'[className]',
+			'[columnKeywords]',
+			'[methods]',
 			'[fields]',
 			'[columns]',
 			'[keywords]',
@@ -175,6 +196,8 @@ class CreateModelCommand extends Command
 		);
 
 		$replace = array(
+			$class,
+			$columnKeywords,
 			$methods,
 			$fields,
 			rtrim($columns),
@@ -188,22 +211,37 @@ class CreateModelCommand extends Command
 			ucfirst($name)
 		);
 
-		$model = str_replace($search, $replace, $model);
+		$factory = str_replace($search, $replace, $factory);
+		$model   = str_replace($search, $replace, $model);
 
 		/**
 		 * Create a new file and insert the generated template
 		 */
 
-		$filename = APPPATH . 'models/' . ucfirst($name) . '.php';
+		$factoryFile = APPPATH . 'factories/' . ucfirst($name) . '_factory.php';
+		$modelFile   = APPPATH . 'models/' . ucfirst($name) . '.php';
 
-		if (file_exists($filename)) {
-			$output->writeln('<error>The ' . $name . ' model already exists!</error>');
+		// if (file_exists($modelFile)) {
+		// 	$output->writeln('<error>The ' . $name . ' model already exists!</error>');
 			
-			exit();
+		// 	exit();
+		// }
+
+		// if (file_exists($factoryFile)) {
+		// 	$output->writeln('<error>The ' . $name . ' model factory already exists!</error>');
+			
+		// 	exit();
+		// }
+
+		$file = fopen($modelFile, 'wb');
+		file_put_contents($modelFile, $model);
+
+		if ( ! is_dir('application/factories')) {
+			mkdir('application/factories');
 		}
 
-		$file = fopen($filename, 'wb');
-		file_put_contents($filename, $model);
+		$file = fopen($factoryFile, 'wb');
+		file_put_contents($factoryFile, $factory);
 
 		$output->writeln('<info>The model "' . $name . '" has been created successfully!</info>');
 	}

@@ -24,7 +24,8 @@ class [controller] extends CI_Controller
 	{
 		$this->_validate_input();
 
-		if ($this->form_validation->run()) {
+		if ($this->form_validation->run())
+		{
 			[columnsCreate]
 
 			$this->[singular]->save();
@@ -71,7 +72,8 @@ class [controller] extends CI_Controller
 
 		$this->_validate_input();
 
-		if ($this->form_validation->run()) {
+		if ($this->form_validation->run())
+		{
 			$[singular] = $this->[singular]_factory->find($id);
 
 			[columnsEdit]
@@ -141,7 +143,8 @@ class [controller] extends CI_Controller
 			[columnsValidate]
 		);
 
-		foreach ($columns as $column => $label) {
+		foreach ($columns as $column => $label)
+		{
 			$this->form_validation->set_rules($column, $label, 'required');
 		}
 	}

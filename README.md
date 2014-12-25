@@ -1,7 +1,7 @@
 Combustor
 =========
 
-Combustor is a code generator console application for [CodeIgniter](https://ellislab.com/codeigniter/) in order to speed up the development of web applications. This library generates a [CRUD](http://en.wikipedia.org/wiki/Create,_read,_update_and_delete) interface (with [Bootstrap](http://www.getbootstrap.com), optional only) with an integration of an [ORM library](http://www.doctrine-project.org/).
+Combustor is a code generator console application for [CodeIgniter](https://ellislab.com/codeigniter/) in order to speed up the development of web applications. This library generates a [CRUD](http://en.wikipedia.org/wiki/Create,_read,_update_and_delete) interface (with [Bootstrap](http://www.getbootstrap.com), optional only) with an integration of an [ORM library](http://www.doctrine-project.org/) or with a factory pattern that is based from this [link](http://www.revillweb.com/tutorials/codeigniter-tutorial-learn-codeigniter-in-40-minutes/).
 
 Instructions
 ============
@@ -26,7 +26,7 @@ Instructions
 
 	```php vendor/rougin/combustor/bin/pertain```
 
-	**NOTE**: The command above only setups the Doctrine for CodeIgniter. If you want to also include the pagination and other stuff, I've created a [simple script](https://github.com/rougin/ignite.php) for that.
+	**NOTE**: The command above only setups the Doctrine for CodeIgniter. To include the integrated pagination and other stuff, I've created a [simple script](https://github.com/rougin/ignite.php) for that.
 
 2. Then, access the application via the PHP CLI and to retrieve the list of commands:
 	

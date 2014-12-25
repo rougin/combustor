@@ -11,7 +11,7 @@ class [controller] extends CI_Controller
 	{
 		parent::__construct();
 
-		date_default_timezone_set('Asia/Taipei');
+		date_default_timezone_set('Asia/Manila');
 
 		$this->load->model(array(
 			[models]
@@ -25,7 +25,8 @@ class [controller] extends CI_Controller
 	{
 		$this->_validate_input();
 
-		if ($this->form_validation->run()) {
+		if ($this->form_validation->run())
+		{
 			[columnsCreate]
 
 			$this->doctrine->em->persist($this->[singular]);
@@ -74,7 +75,8 @@ class [controller] extends CI_Controller
 
 		$this->_validate_input();
 
-		if ($this->form_validation->run()) {
+		if ($this->form_validation->run())
+		{
 			$[singular] = $this->doctrine->em->find('[singular]', $id);
 
 			[columnsEdit]
@@ -145,7 +147,8 @@ class [controller] extends CI_Controller
 			[columnsValidate]
 		);
 
-		foreach ($columns as $column => $label) {
+		foreach ($columns as $column => $label)
+		{
 			$this->form_validation->set_rules($column, $label, 'required');
 		}
 	}

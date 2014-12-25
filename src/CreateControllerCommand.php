@@ -101,8 +101,8 @@ class CreateControllerCommand extends Command
 				$columnsEdit .= "\n" . '			$' . $entity . ' = $this->' . $library . '->find(\'' . $entity . '\', $this->input->post(\'' . $row->Field . '\'));' . "\n";
 				$columnsEdit .= '			$[singular]->' . $methodName . '($' . $entity . ');' . "\n\n";
 			} elseif ($row->Field == 'password') {
-				$columnsCreate .= "\n" . file_get_contents($templates . 'Miscellaneous/CheckCreatePassword.txt') . "\n\n";
-				$columnsEdit   .= "\n" . file_get_contents($templates . 'Miscellaneous/CheckEditPassword.txt') . "\n\n";
+				$columnsCreate .= "\n" . file_get_contents(__DIR__ . '/Templates/Miscellaneous/CheckCreatePassword.txt') . "\n\n";
+				$columnsEdit   .= "\n" . file_get_contents(__DIR__ . '/Templates/Miscellaneous/CheckEditPassword.txt') . "\n\n";
 
 				$columnsCreate = str_replace('[method]', $methodName, $columnsCreate);
 				$columnsEdit   = str_replace('[method]', $methodName, $columnsEdit);

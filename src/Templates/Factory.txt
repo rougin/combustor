@@ -1,5 +1,9 @@
 <?php defined('BASEPATH') OR exit('No direct script access allowed');
 
+/**
+ * [model] Factory Class
+ */
+
 class [model]_factory
 {
 
@@ -10,13 +14,11 @@ class [model]_factory
 	 * keywords for searching data
 	 */
 	protected $_columns = array(
-		[fields]
+		[columnKeywords]
 	);
 
 	/**
 	 * Class constructor
-	 * 
-	 * @return	void
 	 */
 	public function __construct()
 	{
@@ -111,15 +113,14 @@ class [model]_factory
 	protected function _create_object($row)
 	{
 		$[singular] = new [className]();
-		[methods]
-		
+		[methods]		
 		return $[singular];
 	}
 
 	/**
 	 * Search for keywords based on the list of columns in the storage
 	 * 
-	 * @param  string $keyword
+	 * @param string $keyword
 	 */
 	protected function _find_by_keyword($keyword)
 	{

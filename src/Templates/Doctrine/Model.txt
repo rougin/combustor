@@ -47,7 +47,8 @@ class [model] extends CI_Model
 
 		$this->_find_by_keyword();
 
-		if ($type == NULL) {
+		if ($type == NULL)
+		{
 			$this->_query_builder->setFirstResult($delimiters['page']);
 			$this->_query_builder->setMaxResults($delimiters['per_page']);
 		}
@@ -72,7 +73,8 @@ class [model] extends CI_Model
 
 		$[singularRepository] = $this->doctrine->em->getRepository('[singular]');
 
-		foreach ($[singularRepository]->findAll() as $[singular]) {
+		foreach ($[singularRepository]->findAll() as $[singular])
+		{
 			$[plural][$[singular]->[primaryKey]()] = $[singular]->/* Column to be displayed in the dropdown */;
 		}
 
@@ -88,17 +90,23 @@ class [model] extends CI_Model
 	{
 		$counter = 0;
 
-		if ($this->input->get('keyword') != NULL) {
+		if ($this->input->get('keyword') != NULL)
+		{
 			$keywords = explode(' ', $this->input->get('keyword'));
 
-			foreach ($keywords as $keyword) {
-				foreach ($this->_columns as $column) {
-					if ($counter == 0) {
+			foreach ($keywords as $keyword)
+			{
+				foreach ($this->_columns as $column)
+				{
+					if ($counter == 0)
+					{
 						$this->_query_builder->where(
 							$this->_query_builder->expr()->like($column,
 							$this->_query_builder->expr()->literal('%' . $keyword . '%'))
 						);
-					} else {
+					}
+					else
+					{
 						$this->_query_builder->orWhere(
 							$this->_query_builder->expr()->like($column,
 							$this->_query_builder->expr()->literal('%' . $keyword . '%'))
@@ -112,3 +120,6 @@ class [model] extends CI_Model
 	}
 	
 }
+
+/* End of file [model].php */
+/* Location: ./application/controllers/[model].php */

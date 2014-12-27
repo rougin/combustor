@@ -185,6 +185,191 @@ class Doctrine
 
 /**
  * ---------------------------------------------------------------------------------------------
+ * Contents of MY_Loader.php
+ * ---------------------------------------------------------------------------------------------
+ */
+
+$loader = '<?php defined(\'BASEPATH\') OR exit(\'No direct script access allowed\');
+
+class MY_Loader extends CI_Loader
+{
+
+	/**
+	 * Factory Loader
+	 *
+	 * Loads and instantiates factories.
+	 * Designed to be called from application controllers.
+	 *
+	 * @param	string	$factory	Factory name
+	 * @param	array	$params		Optional parameters to pass to the factory class constructor
+	 * @param	string	$object_name	An optional object name to assign to
+	 * @return	object
+	 */
+	public function factory($factory, $params = NULL, $object_name = NULL)
+	{
+		if (empty($factory))
+		{
+			return $this;
+		}
+		elseif (is_array($factory))
+		{
+			foreach ($factory as $key => $value)
+			{
+				if (is_int($key))
+				{
+					$this->factory($value . \'_factory\', $params);
+				}
+				else
+				{
+					$this->factory($key . \'_factory\', $params, $value);
+				}
+			}
+
+			return $this;
+		}
+
+		if ($params !== NULL && ! is_array($params))
+		{
+			$params = NULL;
+		}
+
+		$this->_ci_load_factory($factory . \'_factory\', $params, $object_name);
+		return $this;
+	}
+
+	/**
+	 * Internal CI Class Loader
+	 *
+	 * @used-by	CI_Loader::factory()
+	 * @uses	CI_Loader::_ci_init_class()
+	 *
+	 * @param	string	$class		Class name to load
+	 * @param	mixed	$params		Optional parameters to pass to the class constructor
+	 * @param	string	$object_name	Optional object name to assign to
+	 * @return	void
+	 */
+	protected function _ci_load_factory($class, $params = NULL, $object_name = NULL)
+	{
+		// Get the class name, and while we\'re at it trim any slashes.
+		// The directory path can be included as part of the class name,
+		// but we don\'t want a leading slash
+		$class = str_replace(\'.php\', \'\', trim($class, \'/\'));
+
+		// Was the path included with the class name?
+		// We look for a slash to determine this
+		if (($last_slash = strrpos($class, \'/\')) !== FALSE)
+		{
+			// Extract the path
+			$subdir = substr($class, 0, ++$last_slash);
+
+			// Get the filename from the path
+			$class = substr($class, $last_slash);
+		}
+		else
+		{
+			$subdir = \'\';
+		}
+
+		$class = ucfirst($class);
+		$subclass = APPPATH.\'factories/\'.$subdir.config_item(\'subclass_prefix\').$class.\'.php\';
+
+		// Is this a class extension request?
+		if (file_exists($subclass))
+		{
+			$baseclass = BASEPATH.\'factories/\'.$subdir.$class.\'.php\';
+
+			if ( ! file_exists($baseclass))
+			{
+				log_message(\'error\', \'Unable to load the requested class: \'.$class);
+				show_error(\'Unable to load the requested class: \'.$class);
+			}
+
+			// Safety: Was the class already loaded by a previous call?
+			if (class_exists(config_item(\'subclass_prefix\').$class, FALSE))
+			{
+				// Before we deem this to be a duplicate request, let\'s see
+				// if a custom object name is being supplied. If so, we\'ll
+				// return a new instance of the object
+				if ($object_name !== NULL)
+				{
+					$CI =& get_instance();
+					if ( ! isset($CI->$object_name))
+					{
+						return $this->_ci_init_class($class, config_item(\'subclass_prefix\'), $params, $object_name);
+					}
+				}
+
+				log_message(\'debug\', $class.\' class already loaded. Second attempt ignored.\');
+				return;
+			}
+
+			include_once($baseclass);
+			include_once($subclass);
+
+			return $this->_ci_init_class($class, config_item(\'subclass_prefix\'), $params, $object_name);
+		}
+
+		// Let\'s search for the requested factory file and load it.
+		foreach ($this->_ci_library_paths as $path)
+		{
+			$filepath = $path.\'factories/\'.$subdir.$class.\'.php\';
+
+			// Safety: Was the class already loaded by a previous call?
+			if (class_exists($class, FALSE))
+			{
+				// Before we deem this to be a duplicate request, let\'s see
+				// if a custom object name is being supplied. If so, we\'ll
+				// return a new instance of the object
+				if ($object_name !== NULL)
+				{
+					$CI =& get_instance();
+					if ( ! isset($CI->$object_name))
+					{
+						return $this->_ci_init_class($class, \'\', $params, $object_name);
+					}
+				}
+
+				log_message(\'debug\', $class.\' class already loaded. Second attempt ignored.\');
+				return;
+			}
+			// Does the file exist? No? Bummer...
+			elseif ( ! file_exists($filepath))
+			{
+				continue;
+			}
+
+			include_once($filepath);
+			return $this->_ci_init_class($class, \'\', $params, $object_name);
+		}
+
+		// One last attempt. Maybe the factory is in a subdirectory, but it wasn\'t specified?
+		if ($subdir === \'\')
+		{
+			return $this->_ci_load_factory($class.\'/\'.$class, $params, $object_name);
+		}
+
+		// If we got this far we were unable to find the requested class.
+		log_message(\'error\', \'Unable to load the requested class: \'.$class);
+		show_error(\'Unable to load the requested class: \'.$class);
+	}
+
+}';
+
+/**
+ * ---------------------------------------------------------------------------------------------
+ * Adding the MY_Loader.php to the "core" directory
+ * ---------------------------------------------------------------------------------------------
+ */
+
+if ( ! file_exists('application/core/MY_Loader.php'))
+{
+	$file = fopen('application/core/MY_Loader.php', 'wb');
+	file_put_contents('application/core/MY_Loader.php', $loader);
+	fclose($file);
+}
+
+/**
+ * ---------------------------------------------------------------------------------------------
  * Adding the composer autoload file in index.php
  * ---------------------------------------------------------------------------------------------
  */

@@ -26,7 +26,7 @@ Instructions
 
 	```php vendor/rougin/combustor/bin/pertain```
 
-	**NOTE**: The command above only setups the Doctrine for CodeIgniter. To include the integrated pagination and other stuff, I've created a [simple script](https://github.com/rougin/ignite.php) for that.
+	**NOTE**: The command above only setups the Combustor and Doctrine for CodeIgniter. To include the integrated pagination and other stuff, I've created a [simple script](https://github.com/rougin/ignite.php) for that.
 
 2. Then, access the application via the PHP CLI and to retrieve the list of commands:
 	

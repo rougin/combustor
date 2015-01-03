@@ -128,7 +128,7 @@ class [model]_factory
 		{
 			$keywords = explode(' ', $keyword);
 
-			foreach ($keywwords as $keyword)
+			foreach ($keywords as $keyword)
 			{
 				foreach ($this->_columns as $column)
 				{

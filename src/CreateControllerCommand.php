@@ -92,7 +92,8 @@ class CreateControllerCommand extends Command
 				$entity  = str_replace('_id', '', $row->Field);
 				$models .= ",\n" . '			\'' . $entity . '\'';
 
-				$dropdownColumns .= '$data[\'' . Inflect::pluralize($entity) . '\'] = $this->' . $entity . '->select();' . "\n";
+				$factory = ($input->getOption('doctrine')) ? NULL : '_factory';
+				$dropdownColumns .= '$data[\'' . Inflect::pluralize($entity) . '\'] = $this->' . $entity . $factory . '->select();' . "\n";
 				$dropdowns++;
 
 				$columnsCreate .= "\n" . '			$' . $entity . ' = $this->' . $library . '->find(\'' . $entity . '\', $this->input->post(\'' . $row->Field . '\'));' . "\n";

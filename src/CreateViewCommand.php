@@ -78,6 +78,8 @@ class CreateViewCommand extends Command
 		$rows       = NULL;
 		$showFields = NULL;
 
+		$selectColumns = array('name', 'description', 'label');
+
 		foreach ($databaseColumns->result() as $row) {
 			$methodName = 'get_' . $row->Field;
 			$methodName = ($input->getOption('camel')) ? Inflect::camelize($methodName) : Inflect::underscore($methodName);
@@ -97,7 +99,24 @@ class CreateViewCommand extends Command
 				if (strpos($row->Field, 'date') !== FALSE || strpos($row->Field, 'time') !== FALSE) {
 					$extend = '->format(\'F d, Y\')';
 				} elseif ($row->Key == 'MUL') {
-					$extend = '->' . $methodName . '()';
+					$table = str_replace(array('get_', '_id'), array('', ''), $methodName);
+					$tableColumns = new GetColumns($table, $output);
+
+					$tablePrimaryKey = NULL;
+
+					foreach ($tableColumns->result() as $column) {
+						if (in_array($column->Field, $selectColumns) || $column->Key == 'PRI') {
+							$tablePrimaryKey = 'get_' . $column->Field;
+
+							if ($input->getOption('camel')) {
+								$tablePrimaryKey = Inflect::camelize($tablePrimaryKey);
+							} else {
+								$tablePrimaryKey = Inflect::underscore($tablePrimaryKey);
+							}
+						}
+					}
+
+					$extend = '->' . $tablePrimaryKey . '()';
 				} else {
 					$extend = NULL;
 				}
@@ -128,7 +147,28 @@ class CreateViewCommand extends Command
 				$fields .= '			</div>' . "\n";
 				$fields .= '		</div>' . "\n";
 
-				$value = ($row->Key == 'MUL') ? '$[singular]->' . $methodName . '()->' . $methodName . '()' : '$[singular]->' . $methodName . '()';
+				if ($row->Key == 'MUL') {
+					$table = str_replace(array('get_', '_id'), array('', ''), $methodName);
+					$tableColumns = new GetColumns($table, $output);
+
+					$tablePrimaryKey = NULL;
+
+					foreach ($tableColumns->result() as $column) {
+						if ($column->Key == 'PRI') {
+							$tablePrimaryKey = 'get_' . $column->Field;
+							
+							if ($input->getOption('camel')) {
+								$tablePrimaryKey = Inflect::camelize($tablePrimaryKey);
+							} else {
+								$tablePrimaryKey = Inflect::underscore($tablePrimaryKey);
+							}
+						}
+					}
+
+					$value = '$[singular]->' . $methodName . '()->' . $tablePrimaryKey . '()';
+				} else {
+					$value = '$[singular]->' . $methodName . '()';
+				}
 
 				$showFields .= str_replace(' Id', '', Inflect::humanize($row->Field)) . ': <?php echo ' . $value . '; ?><br>' . "\n";
 			} else {
@@ -148,7 +188,28 @@ class CreateViewCommand extends Command
 			$methodName = 'get_' . $row->Field;
 			$methodName = ($input->getOption('camel')) ? Inflect::camelize($methodName) : Inflect::underscore($methodName);
 
-			$value = ($row->Key == 'MUL') ? '$[singular]->' . $methodName . '()->' . $methodName . '()' : '$[singular]->' . $methodName . '()';
+			if ($row->Key == 'MUL') {
+				$table = str_replace(array('get_', '_id'), array('', ''), $methodName);
+				$tableColumns = new GetColumns($table, $output);
+
+				$tablePrimaryKey = NULL;
+
+				foreach ($tableColumns->result() as $column) {
+					if ($column->Key == 'PRI') {
+						$tablePrimaryKey = 'get_' . $column->Field;
+						
+						if ($input->getOption('camel')) {
+							$tablePrimaryKey = Inflect::camelize($tablePrimaryKey);
+						} else {
+							$tablePrimaryKey = Inflect::underscore($tablePrimaryKey);
+						}
+					}
+				}
+				
+				$value = '$[singular]->' . $methodName . '()->' . $tablePrimaryKey . '()';
+			} else {
+				$value = '$[singular]->' . $methodName . '()';
+			}
 
 			if (strpos($editFields, 'set_value(\'' . $row->Field . '\')') !== FALSE) {
 				$editFields = str_replace('set_value(\'' . $row->Field . '\')', 'set_value(\'' . $row->Field . '\', ' . $value . ')', $editFields);

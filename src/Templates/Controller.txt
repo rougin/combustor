@@ -14,7 +14,10 @@ class [controller] extends CI_Controller
 		$this->load->model(array(
 			[models]
 		));
-		$this->load->factory('[singular]');
+		
+		$this->load->factory(array(
+			[models]
+		));
 	}
 
 	/**
@@ -101,17 +104,17 @@ class [controller] extends CI_Controller
 		
 		include APPPATH . 'config/pagination.php';
 
-		$config['suffix']     = '?keyword=' . $this->input->get('keyword');
-		$config['total_rows'] = $this->[singular]_factory->all('count');
+		$delimiters['keyword'] = $this->input->get('keyword');
+
+		$config['first_url']  = '1?keyword=' . $delimiters['keyword'];
+		$config['suffix']     = '?keyword=' . $delimiters['keyword'];
+		$config['total_rows'] = $this->[singular]_factory->all($delimiters, 'count');
 
 		$this->pagination->initialize($config);
 
-		$delimiters = array(
-			'keyword'  => $this->input->get('keyword'),
-			'page'     => $this->pagination->offset,
-			'per_page' => $config['per_page']
-		);
-		
+		$delimiters['page']     = $this->pagination->offset;
+		$delimiters['per_page'] = $config['per_page'];
+
 		$data['[plural]'] = $this->[singular]_factory->all($delimiters);
 		$data['links'] = $this->pagination->create_links();
 

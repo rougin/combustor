@@ -33,10 +33,11 @@ class [model]_factory
 	/**
 	 * Return all row from the specified table
 	 *
-	 * @param  array $delimiters
+	 * @param  array   $delimiters
+	 * @param  boolean $count
 	 * @return object | boolean
 	 */
-	public function all($delimiters = array())
+	public function all($delimiters = array(), $count = FALSE)
 	{
 		if (isset($delimiters['keyword']) && $delimiters['keyword'] != NULL)
 		{
@@ -52,7 +53,7 @@ class [model]_factory
 
 		if ($query->num_rows() > 0)
 		{
-			if ($delimiters == 'count')
+			if ($count)
 			{
 				return $query->num_rows();
 			}
@@ -98,7 +99,7 @@ class [model]_factory
 		$[plural] = array('');
 
 		foreach ($this->all() as $[singular]) {
-			$[plural][$[singular]->get_[primaryKey]()] = $[singular]->get_[primaryKey]();
+			$[plural][$[singular]->get_[primaryKey]()] = $[singular]->/* Column to be displayed in the dropdown */;
 		}
 
 		return $[plural];
@@ -132,7 +133,7 @@ class [model]_factory
 			{
 				foreach ($this->_columns as $column)
 				{
-					$this->_ci->db->like($column);
+					$this->_ci->db->or_like($column, $keyword);
 				}
 			}
 		}

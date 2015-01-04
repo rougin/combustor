@@ -128,7 +128,15 @@ class CreateModelCommand extends Command
 			 * Generate methods to the factory
 			 */
 			
-			$methods .= '$user->set_' . $row->Field . '($row->' . $row->Field . ');' . "\n		";
+			if ($row->Key == 'MUL') {
+				$tableName = str_replace('_id', '', $row->Field);
+
+				$methods .= "\n" . '		$this->_ci->load->factory(\'' . $tableName . '\');' . "\n";
+				$methods .= '		$' . $tableName . ' = $this->_ci->' . $tableName . '_factory->find($row->' . $tableName . '_id);' . "\n";
+				$methods .= '		$[singular]->set_' . $tableName . '_id($' . $tableName . ');' . "\n";
+			} else {
+				$methods .= '$[singular]->set_' . $row->Field . '($row->' . $row->Field . ');' . "\n		";
+			}
 
 			/**
 			 * Generate column keywords to the factory
@@ -144,7 +152,7 @@ class CreateModelCommand extends Command
 			 */
 
 			if (in_array($row->Field, $selectColumns)) {
-				$model = str_replace('/* Column to be displayed in the dropdown */', $methodName . '()', $model);
+				$factory = str_replace('/* Column to be displayed in the dropdown */', $methodName . '()', $factory);
 			}
 			
 			/**
@@ -173,6 +181,10 @@ class CreateModelCommand extends Command
 			$mutatorsCounter++;
 
 			$counter++;
+		}
+
+		if (strpos($factory, '/* Column to be displayed in the dropdown */') !== FALSE) {
+			$factory = str_replace('/* Column to be displayed in the dropdown */', 'get_[primaryKey]()', $factory);
 		}
 
 		/**
@@ -221,17 +233,17 @@ class CreateModelCommand extends Command
 		$factoryFile = APPPATH . 'factories/' . ucfirst($name) . '_factory.php';
 		$modelFile   = APPPATH . 'models/' . ucfirst($name) . '.php';
 
-		// if (file_exists($modelFile)) {
-		// 	$output->writeln('<error>The ' . $name . ' model already exists!</error>');
+		if (file_exists($modelFile)) {
+			$output->writeln('<error>The ' . $name . ' model already exists!</error>');
 			
-		// 	exit();
-		// }
+			exit();
+		}
 
-		// if (file_exists($factoryFile)) {
-		// 	$output->writeln('<error>The ' . $name . ' model factory already exists!</error>');
+		if (file_exists($factoryFile)) {
+			$output->writeln('<error>The ' . $name . ' model factory already exists!</error>');
 			
-		// 	exit();
-		// }
+			exit();
+		}
 
 		$file = fopen($modelFile, 'wb');
 		file_put_contents($modelFile, $model);

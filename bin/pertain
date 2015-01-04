@@ -217,11 +217,11 @@ class MY_Loader extends CI_Loader
 			{
 				if (is_int($key))
 				{
-					$this->factory($value . \'_factory\', $params);
+					$this->factory($value, $params);
 				}
 				else
 				{
-					$this->factory($key . \'_factory\', $params, $value);
+					$this->factory($key, $params, $value);
 				}
 			}
 

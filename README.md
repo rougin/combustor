@@ -42,5 +42,5 @@ Reminders
 =========
 
 * If you want to know more about Doctrine ORM and its functionalities, you can always read their documentation [here](doctrine-orm.readthedocs.org/en/latest/tutorials/getting-started.html).
-* Before generating the models, views, and controllers, please make sure that you **set up your database** (foreign keys, indexes, relationships) properly to minimize modifications after the codes has been generated. Also, generate the models, views, and controllers first to tables that are having **no relationship with other tables** in the database.
+* Before generating the models, views, and controllers, please make sure that you **set up your database** (foreign keys, indexes, relationships, normalizations) properly to minimize modifications after the codes has been generated. Also, generate the models, views, and controllers first to tables that are having **no relationship with other tables** in the database.
 * Found a bug? Want to contribute? Feel free to open an issue or create a pull request. :+1:

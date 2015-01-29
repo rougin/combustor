@@ -471,9 +471,7 @@ class CreateModelCommand extends Command
 			$output->writeln('<error>The ' . $name . ' model already exists!</error>');
 			
 			exit();
-		}
-
-		if (file_exists($factoryFile)) {
+		} else if (file_exists($factoryFile)) {
 			$output->writeln('<error>The ' . $name . ' model factory already exists!</error>');
 			
 			exit();

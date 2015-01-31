@@ -1,21 +1,16 @@
-<?php if ( ! defined('BASEPATH')) exit('No direct script access allowed');
+<?php defined('BASEPATH') OR exit('No direct script access allowed');
 
 /**
  * [controllerName] Controller Class
  */
 
-class [controller] extends CI_Controller
-{
+class [controller] extends CI_Controller {
 
 	public function __construct()
 	{
 		parent::__construct();
 
 		$this->load->model(array(
-			[models]
-		));
-		
-		$this->load->factory(array(
 			[models]
 		));
 	}
@@ -54,9 +49,7 @@ class [controller] extends CI_Controller
 	{
 		if ( ! isset($id)) redirect('[plural]');
 
-		$[singular] = $this->factory->find('[singular]', $id);
-
-		$this->[singular]->delete($[singular]);
+		$this->factory->delete('[singular]', array('[primaryKey]' => $id));
 
 		$this->session->set_flashdata('notification', 'The [singularText] has been deleted successfully!');
 		$this->session->set_flashdata('alert', 'success');
@@ -77,7 +70,7 @@ class [controller] extends CI_Controller
 
 		if ($this->form_validation->run())
 		{
-			$[singular] = $this->factory->find('[singular]', $id);
+			$[singular] = $this->factory->find('[singular]', array('[primaryKey]' => $id));
 
 			[columnsEdit]
 
@@ -90,7 +83,7 @@ class [controller] extends CI_Controller
 		}
 
 		[dropdownColumns]
-		$data['[singular]'] = $this->factory->find('[singular]', $id);
+		$data['[singular]'] = $this->factory->find('[singular]', array('[primaryKey]' => $id));
 
 		$this->load->view('[plural]/edit', $data);
 	}
@@ -130,7 +123,7 @@ class [controller] extends CI_Controller
 	{
 		if ( ! isset($id)) redirect('[plural]');
 		
-		$data['[singular]'] = $this->factory->find('[singular]', $id);
+		$data['[singular]'] = $this->factory->find('[singular]', array('[primaryKey]' => $id));
 
 		$this->load->view('[plural]/show', $data);
 	}

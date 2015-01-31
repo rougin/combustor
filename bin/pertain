@@ -194,7 +194,7 @@ $loader = '<?php defined(\'BASEPATH\') OR exit(\'No direct script access allowed
 class Factory {
 
 	private $_ci;
-	private $_rows;
+	private $_rows = array();
 
 	/**
 	 * Class constructor
@@ -285,11 +285,9 @@ class Factory {
 			{
 				$this->_rows[] = $this->_create_object($table, $row);
 			}
-			
-			return $this;
 		}
 		
-		return array();
+		return $this;
 	}
 
 	/**

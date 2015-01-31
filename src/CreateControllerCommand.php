@@ -28,6 +28,11 @@ class CreateControllerCommand extends Command
 				InputOption::VALUE_NONE,
 				'Keeps the name to be used'
 			)->addOption(
+				'lowercase',
+				null,
+				InputOption::VALUE_NONE,
+				'Keep the first character of the name to lowercase'
+			)->addOption(
 				'doctrine',
 				null,
 				InputOption::VALUE_NONE,
@@ -146,6 +151,7 @@ class CreateControllerCommand extends Command
 
 		$search = array(
 			'[models]',
+			'[primaryKey]',
 			'[dropdownColumns]',
 			'[columnsCreate]',
 			'[columnsEdit]',
@@ -159,6 +165,7 @@ class CreateControllerCommand extends Command
 
 		$replace = array(
 			rtrim($models),
+			$primaryKey,
 			rtrim($dropdownColumns),
 			rtrim($columnsCreate),
 			rtrim($columnsEdit),
@@ -176,7 +183,9 @@ class CreateControllerCommand extends Command
 		 * Create a new file and insert the generated template
 		 */
 
-		$filename = APPPATH . 'controllers/' . ucfirst($name) . '.php';
+		$controllerFile = ($input->getOption('lowercase')) ? strtolower($name) : ucfirst($name);
+
+		$filename = APPPATH . 'controllers/' . $controllerFile . '.php';
 
 		if (file_exists($filename)) {
 			$output->writeln('<error>The ' . $name . ' controller already exists!</error>');

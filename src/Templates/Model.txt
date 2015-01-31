@@ -1,4 +1,4 @@
-<?php if ( ! defined('BASEPATH')) exit('No direct script access allowed');
+<?php defined('BASEPATH') OR exit('No direct script access allowed');
 
 /**
  * [model] Model Class
@@ -9,9 +9,7 @@ class [model] extends CI_Model
 
 	[columns]
 
-	public $foreign_keys = array(
-		[foreignKeys]
-	);
+	public $foreign_keys = array([foreignKeys]);
 
 	[accessors]
 	

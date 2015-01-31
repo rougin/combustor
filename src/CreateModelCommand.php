@@ -257,6 +257,11 @@ class CreateModelCommand extends Command
 				InputArgument::REQUIRED,
 				'Name of the model'
 			)->addOption(
+				'lowercase',
+				null,
+				InputOption::VALUE_NONE,
+				'Keep the first character of the name to lowercase'
+			)->addOption(
 				'doctrine',
 				null,
 				InputOption::VALUE_NONE,
@@ -359,7 +364,8 @@ class CreateModelCommand extends Command
 			 */
 
 			if ($row->Key == 'MUL') {
-				$foreignKeys .= ($foreignKeysCounter != 0) ? ",\n" . '		' : NULL;
+				$foreignKeys .= ($foreignKeysCounter == 0) ? "\n		" : NULL;
+				$foreignKeys .= ($foreignKeysCounter != 0) ? ",\n		" : NULL;
 				$foreignKeys .= '\'' . $row->Field . '\' => \'' . str_replace('_id', '', $row->Field) . '\'';
 				$foreignKeysCounter++;
 			}
@@ -392,12 +398,15 @@ class CreateModelCommand extends Command
 			$counter++;
 		}
 
+		$foreignKeys .= ($foreignKeysCounter != 0) ? "\n	" : NULL;
+
 		/**
 		 * Search and replace the following keywords from the template
 		 */
 
 		$search = array(
 			'[className]',
+			'[foreignKeys]',
 			'[fields]',
 			'[columns]',
 			'[keywords]',
@@ -412,6 +421,7 @@ class CreateModelCommand extends Command
 
 		$replace = array(
 			$class,
+			$foreignKeys,
 			$fields,
 			rtrim($columns),
 			rtrim(substr($keywords, 0, -2)),
@@ -430,16 +440,18 @@ class CreateModelCommand extends Command
 		 * Create a new file and insert the generated template
 		 */
 
-		$modelFile = APPPATH . 'models/' . ucfirst($name) . '.php';
+		$modelFile = ($input->getOption('lowercase')) ? strtolower($name) : ucfirst($name);
 
-		if (file_exists($modelFile)) {
+		$filename = APPPATH . 'models/' . $modelFile . '.php';
+
+		if (file_exists($filename)) {
 			$output->writeln('<error>The ' . $name . ' model already exists!</error>');
 			
 			exit();
 		}
 
-		$file = fopen($modelFile, 'wb');
-		file_put_contents($modelFile, $model);
+		$file = fopen($filename, 'wb');
+		file_put_contents($filename, $model);
 
 		$output->writeln('<info>The model "' . $name . '" has been created successfully!</info>');
 	}

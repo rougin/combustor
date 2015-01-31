@@ -278,9 +278,7 @@ class CreateModelCommand extends Command
 	protected function execute(InputInterface $input, OutputInterface $output)
 	{
 		if ($input->getOption('doctrine')) {
-			$this->_doctrine($input, $output);
-
-			return 0;
+			return $this->_doctrine($input, $output);
 		}
 
 		$accessors       = NULL;
@@ -291,7 +289,6 @@ class CreateModelCommand extends Command
 		$fieldsCounter   = 0;
 		$keywords        = NULL;
 		$keywordsCounter = NULL;
-		$methods         = NULL;
 		$mutators        = NULL;
 		$mutatorsCounter = 0;
 		$name            = Inflect::singularize($input->getArgument('name'));
@@ -299,15 +296,14 @@ class CreateModelCommand extends Command
 
 		$selectColumns = array('name', 'description', 'label');
 
-		$columnKeywords        = NULL;
-		$columnKeywordsCounter = 0;
+		$foreignKeys        = NULL;
+		$foreignKeysCounter = 0;
 
 		/**
-		 * Get the factory and model template
+		 * Get the model template
 		 */
 		
-		$factory = file_get_contents(__DIR__ . '/Templates/Factory.txt');
-		$model   = file_get_contents(__DIR__ . '/Templates/Model.txt');
+		$model = file_get_contents(__DIR__ . '/Templates/Model.txt');
 		
 		/**
 		 * Get the columns from the specified name
@@ -359,36 +355,15 @@ class CreateModelCommand extends Command
 			$fieldsCounter++;
 
 			/**
-			 * Generate methods to the factory
+			 * Generate foreign keys to the model
 			 */
-			
+
 			if ($row->Key == 'MUL') {
-				$tableName = str_replace('_id', '', $row->Field);
-
-				$methods .= "\n" . '		$this->_ci->load->factory(\'' . $tableName . '\');' . "\n";
-				$methods .= '		$' . $tableName . ' = $this->_ci->' . $tableName . '_factory->find($row->' . $tableName . '_id);' . "\n";
-				$methods .= '		$[singular]->set_' . $tableName . '_id($' . $tableName . ');' . "\n";
-			} else {
-				$methods .= '$[singular]->set_' . $row->Field . '($row->' . $row->Field . ');' . "\n		";
+				$foreignKeys .= ($foreignKeysCounter != 0) ? ",\n" . '		' : NULL;
+				$foreignKeys .= '\'' . $row->Field . '\' => \'' . str_replace('_id', '', $row->Field) . '\'';
+				$foreignKeysCounter++;
 			}
 
-			/**
-			 * Generate column keywords to the factory
-			 */
-
-			$columnKeywords .= ($columnKeywordsCounter != 0) ? ",\n" . '		' : NULL;
-			$columnKeywords .= '\'' . $row->Field . '\'';
-
-			$columnKeywordsCounter++;
-
-			/**
-			 * The column to be displayed in the select() public method
-			 */
-
-			if (in_array($row->Field, $selectColumns)) {
-				$factory = str_replace('/* Column to be displayed in the dropdown */', $methodName . '()', $factory);
-			}
-			
 			/**
 			 * Generate the mutators
 			 */
@@ -417,18 +392,12 @@ class CreateModelCommand extends Command
 			$counter++;
 		}
 
-		if (strpos($factory, '/* Column to be displayed in the dropdown */') !== FALSE) {
-			$factory = str_replace('/* Column to be displayed in the dropdown */', 'get_[primaryKey]()', $factory);
-		}
-
 		/**
 		 * Search and replace the following keywords from the template
 		 */
 
 		$search = array(
 			'[className]',
-			'[columnKeywords]',
-			'[methods]',
 			'[fields]',
 			'[columns]',
 			'[keywords]',
@@ -443,8 +412,6 @@ class CreateModelCommand extends Command
 
 		$replace = array(
 			$class,
-			$columnKeywords,
-			$methods,
 			$fields,
 			rtrim($columns),
 			rtrim(substr($keywords, 0, -2)),
@@ -457,35 +424,22 @@ class CreateModelCommand extends Command
 			ucfirst($name)
 		);
 
-		$factory = str_replace($search, $replace, $factory);
-		$model   = str_replace($search, $replace, $model);
+		$model = str_replace($search, $replace, $model);
 
 		/**
 		 * Create a new file and insert the generated template
 		 */
 
-		$factoryFile = APPPATH . 'factories/' . ucfirst($name) . '_factory.php';
-		$modelFile   = APPPATH . 'models/' . ucfirst($name) . '.php';
+		$modelFile = APPPATH . 'models/' . ucfirst($name) . '.php';
 
 		if (file_exists($modelFile)) {
 			$output->writeln('<error>The ' . $name . ' model already exists!</error>');
-			
-			exit();
-		} else if (file_exists($factoryFile)) {
-			$output->writeln('<error>The ' . $name . ' model factory already exists!</error>');
 			
 			exit();
 		}
 
 		$file = fopen($modelFile, 'wb');
 		file_put_contents($modelFile, $model);
-
-		if ( ! is_dir('application/factories')) {
-			mkdir('application/factories');
-		}
-
-		$file = fopen($factoryFile, 'wb');
-		file_put_contents($factoryFile, $factory);
 
 		$output->writeln('<info>The model "' . $name . '" has been created successfully!</info>');
 	}

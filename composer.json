@@ -1,7 +1,7 @@
 {
 	"name": "rougin/combustor",
 	"description": "A code generator console application for CodeIgniter",
-	"keywords": ["codeigniter", "combustor", "php", "code", "generator"],
+	"keywords": ["codeigniter", "combustor", "php", "doctrine", "code", "generator"],
 	"require": {
 		"symfony/console": "~2.0",
 		"doctrine/orm": "2.4.*"

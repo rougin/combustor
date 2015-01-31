@@ -9,19 +9,9 @@ class [model] extends CI_Model
 
 	[columns]
 
-	/**
-	 * Class constructor
-	 */
-	public function __construct()
-	{
-		parent::__construct();
-	}
-	
-	public function delete(User $user)
-	{
-		$this->db->where('[primaryKey]', $user->get_[primaryKey]());
-		$this->db->delete('[singular]');
-	}
+	public $foreign_keys = array(
+		[foreignKeys]
+	);
 
 	[accessors]
 	
@@ -31,7 +21,7 @@ class [model] extends CI_Model
 			[fields]
 		);
 
-		if ($this->_id > 0)
+		if ($this->_[primaryKey] > 0)
 		{
 			if ($this->db->update('[singular]', $data, array('[primaryKey]' => $this->_[primaryKey])))
 			{
@@ -42,7 +32,7 @@ class [model] extends CI_Model
 		{
 			if ($this->db->insert('[singular]', $data))
 			{
-				$this->_id = $this->db->insert_id();
+				$this->_[primaryKey] = $this->db->insert_id();
 				
 				return TRUE;
 			}
@@ -54,6 +44,3 @@ class [model] extends CI_Model
 	[mutators]
 
 }
-
-/* End of file [model].php */
-/* Location: ./application/controllers/[model].php */

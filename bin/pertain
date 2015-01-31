@@ -191,186 +191,204 @@ class Doctrine
 
 $loader = '<?php defined(\'BASEPATH\') OR exit(\'No direct script access allowed\');
 
-class MY_Loader extends CI_Loader
-{
+class Factory {
+
+	private $_ci;
+	private $_rows;
 
 	/**
-	 * Factory Loader
-	 *
-	 * Loads and instantiates factories.
-	 * Designed to be called from application controllers.
-	 *
-	 * @param	string	$factory	Factory name
-	 * @param	array	$params		Optional parameters to pass to the factory class constructor
-	 * @param	string	$object_name	An optional object name to assign to
-	 * @return	object
+	 * Class constructor
 	 */
-	public function factory($factory, $params = NULL, $object_name = NULL)
+	public function __construct()
 	{
-		if (empty($factory))
-		{
-			return $this;
-		}
-		elseif (is_array($factory))
-		{
-			foreach ($factory as $key => $value)
-			{
-				if (is_int($key))
-				{
-					$this->factory($value, $params);
-				}
-				else
-				{
-					$this->factory($key, $params, $value);
-				}
-			}
-
-			return $this;
-		}
-
-		if ($params !== NULL && ! is_array($params))
-		{
-			$params = NULL;
-		}
-
-		$this->_ci_load_factory($factory . \'_factory\', $params, $object_name);
-		return $this;
+		$this->_ci =& get_instance();
+		$this->_ci->load->database();
 	}
 
 	/**
-	 * Internal CI Class Loader
+	 * List all data in dropdown format
 	 *
-	 * @used-by	CI_Loader::factory()
-	 * @uses	CI_Loader::_ci_init_class()
-	 *
-	 * @param	string	$class		Class name to load
-	 * @param	mixed	$params		Optional parameters to pass to the class constructor
-	 * @param	string	$object_name	Optional object name to assign to
-	 * @return	void
+	 * @param  string $table
+	 * @param  string $id
+	 * @param  string $description
+	 * @return array
 	 */
-	protected function _ci_load_factory($class, $params = NULL, $object_name = NULL)
+	public function as_dropdown($id, $description)
 	{
-		// Get the class name, and while we\'re at it trim any slashes.
-		// The directory path can be included as part of the class name,
-		// but we don\'t want a leading slash
-		$class = str_replace(\'.php\', \'\', trim($class, \'/\'));
+		$data        = array(\'\');
+		$description = \'get_\' . $description;
+		$id          = \'get_\' . $id;
 
-		// Was the path included with the class name?
-		// We look for a slash to determine this
-		if (($last_slash = strrpos($class, \'/\')) !== FALSE)
-		{
-			// Extract the path
-			$subdir = substr($class, 0, ++$last_slash);
-
-			// Get the filename from the path
-			$class = substr($class, $last_slash);
-		}
-		else
-		{
-			$subdir = \'\';
+		foreach ($this->_rows as $row) {
+			$data[$row->$id()] = $row->$description();
 		}
 
-		$class = ucfirst($class);
-		$subclass = APPPATH.\'factories/\'.$subdir.config_item(\'subclass_prefix\').$class.\'.php\';
+		return $data;
+	}
 
-		// Is this a class extension request?
-		if (file_exists($subclass))
+	/**
+	 * Delete the specified data from storage
+	 * 
+	 * @param  string $table
+	 * @param  array  $parameters
+	 * @return boolean
+	 */
+	public function delete($table, $parameters = array())
+	{
+		return ($this->_ci->db->delete($table, $parameters)) ? TRUE : FALSE;
+	}
+
+	/**
+	 * Find the row from the specified ID
+	 *
+	 * @param  string $table
+	 * @param  array  parameters
+	 * @return object | boolean
+	 */
+	public function find($table, $parameters = array())
+	{
+		$query = $this->_ci->db->get_where($table, $parameters);
+
+		if ($query->num_rows() > 0)
 		{
-			$baseclass = BASEPATH.\'factories/\'.$subdir.$class.\'.php\';
+			return $this->_create_object($table, $query->row());
+		}
 
-			if ( ! file_exists($baseclass))
+		return FALSE;
+	}
+
+	/**
+	 * Return all row from the specified table
+	 *
+	 * @param  array $delimiters
+	 * @return object | boolean
+	 */
+	public function get_all($table, $delimiters = array())
+	{
+		if (isset($delimiters[\'keyword\']) && $delimiters[\'keyword\'] != NULL)
+		{
+			$this->_find_by_keyword($delimiters[\'keyword\']);
+		}
+
+		if (isset($delimiters[\'per_page\']) && $delimiters[\'per_page\'] != NULL)
+		{
+			$this->_ci->db->limit($delimiters[\'per_page\'], $delimiters[\'page\']);
+		}
+
+		$query = $this->_ci->db->select(\'*\')->from($table)->get();
+
+		if ($query->num_rows() > 0)
+		{
+			$this->_rows = array();
+			
+			foreach ($query->result() as $row)
 			{
-				log_message(\'error\', \'Unable to load the requested class: \'.$class);
-				show_error(\'Unable to load the requested class: \'.$class);
+				$this->_rows[] = $this->_create_object($table, $row);
 			}
+			
+			return $this;
+		}
+		
+		return array();
+	}
 
-			// Safety: Was the class already loaded by a previous call?
-			if (class_exists(config_item(\'subclass_prefix\').$class, FALSE))
+	/**
+	 * Return the result
+	 * 
+	 * @return object
+	 */
+	public function result()
+	{
+		return $this->_rows;
+	}
+
+	/**
+	 * Return the number of rows from the result
+	 * 
+	 * @return int
+	 */
+	public function total_rows()
+	{
+		return count($this->_rows);
+	}
+
+	/**
+	 * Create an object from the specified data
+	 *
+	 * @param  string $table
+	 * @param  object $row
+	 * @return User
+	 */
+	protected function _create_object($table, $row)
+	{
+		$methods = get_class_methods($table);
+		$model = new $table();
+
+		foreach ($methods as $key => $value)
+		{
+			if ($value == \'__construct\' || $value == \'__get\' || $value == \'save\' || strpos($value, \'get_\') !== FALSE)
 			{
-				// Before we deem this to be a duplicate request, let\'s see
-				// if a custom object name is being supplied. If so, we\'ll
-				// return a new instance of the object
-				if ($object_name !== NULL)
+				unset($methods[$key]);
+			}
+			else
+			{
+				$field = substr($value, 4);
+				$data = $row->$field;
+
+				if (isset($model->foreign_keys) && isset($model->foreign_keys[$field]))
 				{
-					$CI =& get_instance();
-					if ( ! isset($CI->$object_name))
-					{
-						return $this->_ci_init_class($class, config_item(\'subclass_prefix\'), $params, $object_name);
-					}
+					$foreign_table = $model->foreign_keys[$field];
+					$parameters = array($field => $data);
+
+					$data = $this->find($foreign_table, $parameters);
 				}
 
-				log_message(\'debug\', $class.\' class already loaded. Second attempt ignored.\');
-				return;
+				$model->$value($data);
 			}
-
-			include_once($baseclass);
-			include_once($subclass);
-
-			return $this->_ci_init_class($class, config_item(\'subclass_prefix\'), $params, $object_name);
 		}
 
-		// Let\'s search for the requested factory file and load it.
-		foreach ($this->_ci_library_paths as $path)
-		{
-			$filepath = $path.\'factories/\'.$subdir.$class.\'.php\';
+		return $model;
+	}
 
-			// Safety: Was the class already loaded by a previous call?
-			if (class_exists($class, FALSE))
+	/**
+	 * Search for keywords based on the list of columns in the storage
+	 * 
+	 * @param  string $keyword
+	 */
+	protected function _find_by_keyword($keyword)
+	{
+		if ($keyword != NULL)
+		{
+			$keywords = explode(\' \', $keyword);
+
+			foreach ($keywords as $keyword)
 			{
-				// Before we deem this to be a duplicate request, let\'s see
-				// if a custom object name is being supplied. If so, we\'ll
-				// return a new instance of the object
-				if ($object_name !== NULL)
+				foreach ($this->_columns as $column)
 				{
-					$CI =& get_instance();
-					if ( ! isset($CI->$object_name))
-					{
-						return $this->_ci_init_class($class, \'\', $params, $object_name);
-					}
+					$this->_ci->db->like($column);
 				}
-
-				log_message(\'debug\', $class.\' class already loaded. Second attempt ignored.\');
-				return;
 			}
-			// Does the file exist? No? Bummer...
-			elseif ( ! file_exists($filepath))
-			{
-				continue;
-			}
-
-			include_once($filepath);
-			return $this->_ci_init_class($class, \'\', $params, $object_name);
 		}
-
-		// One last attempt. Maybe the factory is in a subdirectory, but it wasn\'t specified?
-		if ($subdir === \'\')
-		{
-			return $this->_ci_load_factory($class.\'/\'.$class, $params, $object_name);
-		}
-
-		// If we got this far we were unable to find the requested class.
-		log_message(\'error\', \'Unable to load the requested class: \'.$class);
-		show_error(\'Unable to load the requested class: \'.$class);
 	}
 
 }';
 
 /**
  * ---------------------------------------------------------------------------------------------
- * Adding the MY_Loader.php to the "core" directory
+ * Adding the Factory.php to the "libraries" directory
  * ---------------------------------------------------------------------------------------------
  */
 
-if ( ! file_exists('application/core/MY_Loader.php'))
+if ( ! file_exists('application/libraries/Factory.php'))
 {
-	$file = fopen('application/core/MY_Loader.php', 'wb');
-	file_put_contents('application/core/MY_Loader.php', $loader);
+	$file = fopen('application/libraries/Factory.php', 'wb');
+	file_put_contents('application/libraries/Factory.php', $loader);
 	fclose($file);
 }
 
 /**
  * ---------------------------------------------------------------------------------------------
- * Adding the composer autoload file in index.php
+ * Adding the Composer autoload file in index.php
  * ---------------------------------------------------------------------------------------------
  */
 
@@ -434,13 +452,13 @@ fclose($file);
 
 /**
  * ---------------------------------------------------------------------------------------------
- * Autoload the Doctrine library
+ * Autoload the Doctrine and Factory library
  * ---------------------------------------------------------------------------------------------
  */
 
 $autoload = file_get_contents('application/config/autoload.php');
 $search   = array('$autoload[\'libraries\'] = array();');
-$replace  = array('$autoload[\'libraries\'] = array(\'doctrine\');');
+$replace  = array('$autoload[\'libraries\'] = array(\'doctrine\', \'factory\');');
 
 $contents = str_replace($search, $replace, $autoload);
 file_put_contents('application/config/autoload.php', $contents);

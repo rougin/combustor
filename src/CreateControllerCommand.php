@@ -53,6 +53,12 @@ class CreateControllerCommand extends Command
 		$templates  = ($input->getOption('doctrine')) ? __DIR__ . '/Templates/Doctrine/' : __DIR__ . '/Templates/';
 
 		/**
+		 * Set the name for the controller
+		 */
+
+		$name = ($input->getOption('keep')) ? $input->getArgument('name') : Inflect::pluralize($input->getArgument('name'));
+
+		/**
 		 * Get the controller template
 		 */
 		
@@ -75,6 +81,10 @@ class CreateControllerCommand extends Command
 		$singularText    = strtolower(Inflect::humanize($input->getArgument('name')));
 
 		foreach ($columns->result() as $row) {
+			if ($row->Key == 'PRI') {
+				$primaryKey = $row->Field;
+			}
+
 			$methodName = 'set_' . strtolower($row->Field);
 			$methodName = ($input->getOption('camel')) ? Inflect::camelize($methodName) : Inflect::underscore($methodName);
 
@@ -92,8 +102,12 @@ class CreateControllerCommand extends Command
 				$entity  = str_replace('_id', '', $row->Field);
 				$models .= ",\n" . '			\'' . $entity . '\'';
 
-				$factory = ($input->getOption('doctrine')) ? NULL : '_factory';
-				$dropdownColumns .= '$data[\'' . Inflect::pluralize($entity) . '\'] = $this->' . $entity . $factory . '->select();' . "\n";
+				if ($input->getOption('doctrine')) {
+					$dropdownColumns .= '$data[\'' . Inflect::pluralize($entity) . '\'] = $this->' . $entity . '->select();' . "\n";
+				} else {
+					$dropdownColumns .= '$data[\'' . Inflect::pluralize($entity) . '\'] = $this->factory->get_all(\'' . $name . '\')->as_dropdown(\'' . $primaryKey . '\', \'' . $row->Field . '\');' . "\n";
+				}
+
 				$dropdowns++;
 
 				$columnsCreate .= "\n" . '			$' . $entity . ' = $this->' . $library . '->find(\'' . $entity . '\', $this->input->post(\'' . $row->Field . '\'));' . "\n";
@@ -162,12 +176,10 @@ class CreateControllerCommand extends Command
 		 * Create a new file and insert the generated template
 		 */
 
-		$name = ($input->getOption('keep')) ? $input->getArgument('name') : Inflect::pluralize($input->getArgument('name'));
-
 		$filename = APPPATH . 'controllers/' . ucfirst($name) . '.php';
 
 		if (file_exists($filename)) {
-			$output->writeln('<error>The ' . Inflect::pluralize($input->getArgument('name')) . ' controller already exists!</error>');
+			$output->writeln('<error>The ' . $name . ' controller already exists!</error>');
 
 			exit();
 		}
@@ -175,7 +187,7 @@ class CreateControllerCommand extends Command
 		$file = fopen($filename, 'wb');
 		file_put_contents($filename, $controller);
 
-		$output->writeln('<info>The controller "' . Inflect::pluralize($input->getArgument('name')) . '" has been created successfully!</info>');
+		$output->writeln('<info>The controller "' . $name . '" has been created successfully!</info>');
 	}
 	
 }

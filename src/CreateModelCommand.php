@@ -357,6 +357,10 @@ class CreateModelCommand extends Command
 			$fields .= ($fieldsCounter != 0) ? ",\n" . '			' : NULL;
 			$fields .= '\'' . $row->Field . '\' => $this->' . $methodName . '()';
 
+			if ($row->Key == 'MUL') {
+				$fields .= '->' . $methodName . '()';
+			}
+
 			$fieldsCounter++;
 
 			/**

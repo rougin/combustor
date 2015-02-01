@@ -54,7 +54,6 @@ class CreateControllerCommand extends Command
 	protected function execute(InputInterface $input, OutputInterface $output)
 	{
 		$dateFormat = ($input->getOption('doctrine')) ? '\'now\'' : 'date(\'Y-m-d H:i:s\')';
-		$library    = ($input->getOption('doctrine')) ? 'doctrine->em' : Inflect::singularize($input->getArgument('name'));
 		$templates  = ($input->getOption('doctrine')) ? __DIR__ . '/Templates/Doctrine/' : __DIR__ . '/Templates/';
 
 		/**
@@ -109,17 +108,24 @@ class CreateControllerCommand extends Command
 
 				if ($input->getOption('doctrine')) {
 					$dropdownColumns .= '$data[\'' . Inflect::pluralize($entity) . '\'] = $this->' . $entity . '->select();' . "\n";
+					
+					$columnsCreate .= "\n" . '			$' . $entity . ' = $this->doctrine->em->find(\'' . $entity . '\', $this->input->post(\'' . $row->Field . '\'));' . "\n";
+					$columnsCreate .= '			$this->[singular]->' . $methodName . '($' . $entity . ');' . "\n\n";
+
+					$columnsEdit .= "\n" . '			$' . $entity . ' = $this->doctrine->em->find(\'' . $entity . '\', $this->input->post(\'' . $row->Field . '\'));' . "\n";
+					$columnsEdit .= '			$[singular]->' . $methodName . '($' . $entity . ');' . "\n\n";
 				} else {
-					$dropdownColumns .= '$data[\'' . Inflect::pluralize($entity) . '\'] = $this->factory->get_all(\'' . $name . '\')->as_dropdown(\'' . $primaryKey . '\', \'' . $row->Field . '\');' . "\n";
+					$dropdownColumns .= '$data[\'' . Inflect::pluralize($entity) . '\'] = $this->factory->get_all(\'' . $entity . '\')->as_dropdown(\'' . $row->Field . '\', \'' . $row->Field . '\');' . "\n";
+
+					$columnsCreate .= "\n" . '			$' . $entity . ' = $this->factory->find(\'' . $entity . '\', array(\'' . $row->Field . '\' => $this->input->post(\'' . $row->Field . '\')));' . "\n";
+					$columnsCreate .= '			$this->[singular]->' . $methodName . '($' . $entity . ');' . "\n\n";
+
+					$columnsEdit .= "\n" . '			$' . $entity . ' = $this->factory->find(\'' . $entity . '\', array(\'' . $row->Field . '\' => $this->input->post(\'' . $row->Field . '\')));' . "\n";
+					$columnsEdit .= '			$[singular]->' . $methodName . '($' . $entity . ');' . "\n\n";
 				}
 
 				$dropdowns++;
 
-				$columnsCreate .= "\n" . '			$' . $entity . ' = $this->' . $library . '->find(\'' . $entity . '\', $this->input->post(\'' . $row->Field . '\'));' . "\n";
-				$columnsCreate .= '			$this->[singular]->' . $methodName . '($' . $entity . ');' . "\n\n";
-
-				$columnsEdit .= "\n" . '			$' . $entity . ' = $this->' . $library . '->find(\'' . $entity . '\', $this->input->post(\'' . $row->Field . '\'));' . "\n";
-				$columnsEdit .= '			$[singular]->' . $methodName . '($' . $entity . ');' . "\n\n";
 			} elseif ($row->Field == 'password') {
 				$columnsCreate .= "\n" . file_get_contents(__DIR__ . '/Templates/Miscellaneous/CheckCreatePassword.txt') . "\n\n";
 				$columnsEdit   .= "\n" . file_get_contents(__DIR__ . '/Templates/Miscellaneous/CheckEditPassword.txt') . "\n\n";

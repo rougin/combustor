@@ -42,6 +42,28 @@ class GetColumns {
 		}
 
 		while ($row = mysql_fetch_object($query)) {
+			$row->Referenced_Column = NULL;
+			$row->Referenced_Table = NULL;
+
+			$subQueryString = '
+				SELECT
+					COLUMN_NAME,
+					REFERENCED_TABLE_NAME,
+					REFERENCED_COLUMN_NAME
+				FROM INFORMATION_SCHEMA.KEY_COLUMN_USAGE
+				WHERE
+					TABLE_NAME = "' . $table . '";
+			';
+
+			$subQuery = mysql_query($subQueryString);
+
+			while ($foreignKey = mysql_fetch_object($subQuery)) {
+				if ($foreignKey->COLUMN_NAME == $row->Field) {
+					$row->Referenced_Column = $foreignKey->REFERENCED_COLUMN_NAME;
+					$row->Referenced_Table  = $foreignKey->REFERENCED_TABLE_NAME;
+				}
+			}
+			
 			$this->columns[] = $row;
 		}
 

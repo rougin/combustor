@@ -21,9 +21,21 @@ class [model] extends CI_Model
 
 		if ($this->_[primaryKey] > 0)
 		{
-			if ($this->db->update('[singular]', $data, array('[primaryKey]' => $this->_[primaryKey])))
+			$this->db->where('[primaryKey]', $this->_[primaryKey]);
+
+			if ($this->db->get('[singular]')->num_rows())
 			{
-				return TRUE;
+				if ($this->db->update('[singular]', $data, array('[primaryKey]' => $this->_[primaryKey])))
+				{
+					return TRUE;
+				}
+			}
+			else
+			{
+				if ($this->db->insert('[singular]', $data))
+				{	
+					return TRUE;
+				}
 			}
 		}
 		else

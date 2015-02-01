@@ -18,6 +18,8 @@ use Symfony\Component\Console\Application;
 use Symfony\Component\Console\Helper\HelperSet;
 
 $application = new Application('Combustor', '1');
+$application->add(new Combustor\Doctrine\CreateControllerCommand);
+$application->add(new Combustor\Doctrine\CreateModelCommand);
 $application->add(new Combustor\CreateControllerCommand);
 $application->add(new Combustor\CreateLayoutCommand);
 $application->add(new Combustor\CreateModelCommand);

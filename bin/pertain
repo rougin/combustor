@@ -220,7 +220,7 @@ class Factory {
 		$id          = \'get_\' . $id;
 
 		foreach ($this->_rows as $row) {
-			$data[$row->$id()] = $row->$description();
+			$data[$row->$id()] = ucwords($row->$description());
 		}
 
 		return $data;
@@ -324,7 +324,7 @@ class Factory {
 
 		foreach ($methods as $key => $value)
 		{
-			if ($value == \'__construct\' || $value == \'__get\' || $value == \'save\' || strpos($value, \'get_\') !== FALSE)
+			if (strpos($value, \'set_\') !== FALSE)
 			{
 				unset($methods[$key]);
 			}

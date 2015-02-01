@@ -1,9 +1,8 @@
-<?php namespace Combustor;
+<?php namespace Combustor\Doctrine;
 
-use Combustor\Tools\GetColumns;
 use Combustor\Tools\Inflect;
+use Combustor\Tools\GetColumns;
 use Symfony\Component\Console\Command\Command;
-use Symfony\Component\Console\Input\ArrayInput;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
@@ -17,8 +16,8 @@ class CreateControllerCommand extends Command
 	 */
 	protected function configure()
 	{
-		$this->setName('create:controller')
-			->setDescription('Create a new controller')
+		$this->setName('doctrine:controller')
+			->setDescription('Create a new Doctrine-based controller')
 			->addArgument(
 				'name',
 				InputArgument::REQUIRED,
@@ -47,9 +46,14 @@ class CreateControllerCommand extends Command
 	 * @param  InputInterface  $input
 	 * @param  OutputInterface $output
 	 */
+	/**
+	 * Execute the command
+	 * 
+	 * @param  InputInterface  $input
+	 * @param  OutputInterface $output
+	 */
 	protected function execute(InputInterface $input, OutputInterface $output)
 	{
-
 		/**
 		 * Set the name for the controller
 		 */
@@ -60,8 +64,9 @@ class CreateControllerCommand extends Command
 		 * Get the controller template
 		 */
 		
-		$controller = file_get_contents(__DIR__ . '/Templates/Controller.txt');
-		
+		$doctrineDirectory = str_replace('/Doctrine', '', __DIR__);
+		$controller = file_get_contents($doctrineDirectory . '/Templates/Doctrine/Controller.txt');
+
 		/**
 		 * Get the columns from the specified name
 		 */
@@ -71,13 +76,11 @@ class CreateControllerCommand extends Command
 		$models = '\'[singular]\'';
 
 		$columnsCreate   = NULL;
-		$columnsCreateCounter = 0;
 		$columnsEdit     = NULL;
 		$columnsValidate = NULL;
 		$counter         = 0;
 		$dropdownColumns = NULL;
 		$dropdowns       = 0;
-		$selectColumns   = array('name', 'description', 'label');
 		$singularText    = strtolower(Inflect::humanize($input->getArgument('name')));
 
 		foreach ($columns->result() as $row) {
@@ -99,32 +102,26 @@ class CreateControllerCommand extends Command
 			if ($row->Extra == 'auto_increment') {
 				continue;
 			} elseif ($row->Key == 'MUL') {
-				$entity = str_replace('_id', '', $row->Field);
+				$entity  = str_replace('_id', '', $row->Field);
+				$models .= ",\n" . '			\'' . $entity . '\'';
 
-				if (strpos($models, ",\n" . '			\'' . $row->Referenced_Table . '\'') === FALSE) {
-					$models .= ",\n" . '			\'' . $row->Referenced_Table . '\'';
-				}
+				$dropdownColumns .= '$data[\'' . Inflect::pluralize($entity) . '\'] = $this->' . $entity . '->select();' . "\n";
+				
+				$columnsCreate .= '$' . $entity . ' = $this->doctrine->em->find(\'' . $entity . '\', $this->input->post(\'' . $row->Field . '\'));' . "\n";
+				$columnsCreate .= '			$this->[singular]->' . $methodName . '($' . $entity . ');' . "\n\n";
 
-				$fieldDescription = $row->Field;
-				$fieldDescription = in_array($row->Field, $selectColumns) ? $row->Field : $fieldDescription;
-
-				$dropdownColumns .= '$data[\'' . Inflect::pluralize($entity) . '\'] = $this->factory->get_all(\'' . $row->Referenced_Table . '\')->as_dropdown(\'' . $row->Referenced_Table . '\', \'' . $row->Referenced_Column . '\');' . "\n";
-
-				$columnsCreate .= '$' . $row->Referenced_Table . ' = $this->factory->find(\'' . $row->Referenced_Table . '\', array(\'' . $row->Referenced_Column . '\' => $this->input->post(\'' . $row->Referenced_Column . '\')));' . "\n";
-				$columnsCreate .= '			$this->[singular]->' . $methodName . '($' . $row->Referenced_Table . ');' . "\n\n";
-
-				$columnsEdit .= '$' . $row->Referenced_Table . ' = $this->factory->find(\'' . $row->Referenced_Table . '\', array(\'' . $row->Field . '\' => $this->input->post(\'' . $row->Referenced_Column . '\')));' . "\n";
-				$columnsEdit .= '			$[singular]->' . $methodName . '($' . $row->Referenced_Table . ');' . "\n\n";
+				$columnsEdit .= '$' . $entity . ' = $this->doctrine->em->find(\'' . $entity . '\', $this->input->post(\'' . $row->Field . '\'));' . "\n";
+				$columnsEdit .= '			$[singular]->' . $methodName . '($' . $entity . ');' . "\n\n";
 
 				$dropdowns++;
 			} elseif ($row->Field == 'password') {
-				$columnsCreate .= "\n" . file_get_contents(__DIR__ . '/Templates/Miscellaneous/CheckCreatePassword.txt') . "\n\n";
-				$columnsEdit   .= "\n" . file_get_contents(__DIR__ . '/Templates/Miscellaneous/CheckEditPassword.txt') . "\n\n";
+				$columnsCreate .= "\n" . file_get_contents($doctrineDirectory . '/Templates/Miscellaneous/CheckCreatePassword.txt') . "\n\n";
+				$columnsEdit   .= "\n" . file_get_contents($doctrineDirectory . '/Templates/Miscellaneous/CheckEditPassword.txt') . "\n\n";
 
 				$columnsCreate = str_replace('[method]', $methodName, $columnsCreate);
 				$columnsEdit   = str_replace('[method]', $methodName, $columnsEdit);
 			} else {
-				$column = ($row->Field == 'datetime_created' || $row->Field == 'datetime_updated') ? 'date(\'Y-m-d H:i:s\')' : '$this->input->post(\'' . $row->Field . '\')';
+				$column = ($row->Field == 'datetime_created' || $row->Field == 'datetime_updated') ? '\'now\'' : '$this->input->post(\'' . $row->Field . '\')';
 
 				if ($row->Field != 'datetime_updated') {
 					$columnsCreate .= '$this->[singular]->' . $methodName . '(' . $column . ');' . "\n";

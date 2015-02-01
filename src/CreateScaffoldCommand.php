@@ -39,6 +39,11 @@ class CreateScaffoldCommand extends Command
 				InputOption::VALUE_NONE,
 				'Keeps the name to be used'
 			)->addOption(
+				'lowercase',
+				null,
+				InputOption::VALUE_NONE,
+				'Keep the first character of the name to lowercase'
+			)->addOption(
 				'camel',
 				NULL,
 				InputOption::VALUE_NONE,
@@ -58,13 +63,18 @@ class CreateScaffoldCommand extends Command
 		$camel     = $input->getOption('camel');
 		$doctrine  = $input->getOption('doctrine');
 		$keep      = $input->getOption('keep');
+		$lowercase = $input->getOption('lowercase');
 		
 		$arguments = array(
 			'command' => NULL,
 			'name' => $input->getArgument('name')
 		);
 
-		$commands = array('create:controller', 'create:model', 'create:view');
+		$commands = array(
+			'create:controller',
+			'create:model',
+			'create:view'
+		);
 
 		foreach ($commands as $command) {
 			$arguments['command'] = $command;
@@ -85,23 +95,32 @@ class CreateScaffoldCommand extends Command
 				unset($arguments['--keep']);
 			}
 
+			if (isset($arguments['--lowercase'])) {
+				unset($arguments['--lowercase']);
+			}
+
 			if ($command == 'create:controller') {
-				$arguments['--camel']    = $camel;
-				$arguments['--doctrine'] = $doctrine;
-				$arguments['--keep']     = $keep;
+				$arguments['--camel']     = $camel;
+				$arguments['--keep']      = $keep;
+				$arguments['--lowercase'] = $lowercase;
 			} elseif ($command == 'create:model') {
-				$arguments['--camel']    = $camel;
-				$arguments['--doctrine'] = $doctrine;
+				$arguments['--camel']     = $camel;
+				$arguments['--lowercase'] = $lowercase;
 			} elseif ($command == 'create:view') {
 				$arguments['--bootstrap'] = $bootstrap;
-				$arguments['--camel'] = $camel;
+				$arguments['--camel']     = $camel;
 			}
 
 			$input = new ArrayInput($arguments);
 
-			$application = $this->getApplication()->find($command);
+			if ($doctrine && ($command == 'create:controller' || $command == 'create:model')) {
+				$application = $this->getApplication()->find(str_replace('create', 'doctrine', $command));
+			} else {
+				$application = $this->getApplication()->find($command);
+			}
+
 			$result = $application->run($input, $output);
 		}
 	}
-	
+
 }

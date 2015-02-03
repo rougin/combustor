@@ -99,11 +99,9 @@ class CreateViewCommand extends Command
 				if (strpos($row->Field, 'date') !== FALSE || strpos($row->Field, 'time') !== FALSE) {
 					$extend = '->format(\'F d, Y\')';
 				} elseif ($row->Key == 'MUL') {
-					$table = str_replace(array('get_', '_id'), array('', ''), $methodName);
-					$tableColumns = new GetColumns($table, $output);
+					$tableColumns = new GetColumns($row->Referenced_Table, $output);
 
 					$tablePrimaryKey = NULL;
-
 					foreach ($tableColumns->result() as $column) {
 						if (in_array($column->Field, $selectColumns) || $column->Key == 'PRI') {
 							$tablePrimaryKey = 'get_' . $column->Field;
@@ -137,7 +135,7 @@ class CreateViewCommand extends Command
 				$fields .= '			<div class="[formColumn]">' . "\n";
 				
 				if ($row->Key == 'MUL') {
-					$data    = Inflect::pluralize(str_replace('_id', '', $row->Field));
+					$data    = Inflect::pluralize($row->Referenced_Table);
 					$fields .= '				<?php echo form_dropdown(\'' . $row->Field . '\', $' . $data . ', set_value(\'' . $row->Field . '\'), \'class="[bootstrapFormControl]"\'); ?>' . "\n";
 				} else {
 					$fields .= '				<?php echo form_input(\'' . $row->Field . '\', set_value(\'' . $row->Field . '\'), \'class="[bootstrapFormControl]"\'); ?>' . "\n";
@@ -148,11 +146,9 @@ class CreateViewCommand extends Command
 				$fields .= '		</div>' . "\n";
 
 				if ($row->Key == 'MUL') {
-					$table = str_replace(array('get_', '_id'), array('', ''), $methodName);
-					$tableColumns = new GetColumns($table, $output);
+					$tableColumns = new GetColumns($row->Referenced_Table, $output);
 
 					$tablePrimaryKey = NULL;
-
 					foreach ($tableColumns->result() as $column) {
 						if ($column->Key == 'PRI') {
 							$tablePrimaryKey = 'get_' . $column->Field;
@@ -189,11 +185,9 @@ class CreateViewCommand extends Command
 			$methodName = ($input->getOption('camel')) ? Inflect::camelize($methodName) : Inflect::underscore($methodName);
 
 			if ($row->Key == 'MUL') {
-				$table = str_replace(array('get_', '_id'), array('', ''), $methodName);
-				$tableColumns = new GetColumns($table, $output);
+				$tableColumns = new GetColumns($row->Referenced_Table, $output);
 
 				$tablePrimaryKey = NULL;
-
 				foreach ($tableColumns->result() as $column) {
 					if ($column->Key == 'PRI') {
 						$tablePrimaryKey = 'get_' . $column->Field;
@@ -300,5 +294,5 @@ class CreateViewCommand extends Command
 
 		$output->writeln('<info>The views folder "' . Inflect::pluralize($input->getArgument('name')) . '" has been created successfully!</info>');
 	}
-	
+
 }

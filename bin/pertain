@@ -10,6 +10,30 @@
  * @link    https://github.com/rougin/combustor
  */
 
+$question = '
+What would you like to install into CodeIgniter?
+
+[1] Customized factory pattern
+[2] Doctrine, an object relational mapper (ORM)
+[3] Both of them
+
+Just choose from 1 to 3: ';
+
+if (PHP_OS == 'WINNT')
+{
+	echo $question;
+	$answer = stream_get_line(STDIN, 1024, PHP_EOL);
+} else
+{
+	echo $question;
+	$answer = readline();
+}
+
+if ($answer != 1 && $answer != 2 && $answer != 3)
+{
+	exit();
+}
+
 /**
  * ---------------------------------------------------------------------------------------------
  * Get the CodeIgniter.php core file
@@ -20,377 +44,11 @@ $codeigniter_core = file_get_contents('system/core/CodeIgniter.php');
 
 /**
  * ---------------------------------------------------------------------------------------------
- * Contents for the doctrine.php in vendor/bin
- * ---------------------------------------------------------------------------------------------
- */
-
-$doctrine_cli =
-'<?php
-/*
- * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
- * "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
- * LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR
- * A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT
- * OWNER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
- * SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT
- * LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,
- * DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY
- * THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
- * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
- * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
- *
- * This software consists of voluntary contributions made by many individuals
- * and is licensed under the MIT license. For more information, see
- * <http://www.doctrine-project.org>.
- */
-
-use Symfony\Component\Console\Helper\HelperSet;
-use Doctrine\ORM\Tools\Console\ConsoleRunner;
-
-(@include_once __DIR__ . \'/../vendor/autoload.php\') || @include_once __DIR__ . \'/../../../autoload.php\';
-
-/**
- * Path to the root folder
- */
-
-define(\'ROOT\', __DIR__ . \'/../../../../\');
-
-/**
- * Path to the "system" folder
- */
-
-define(\'BASEPATH\', str_replace(\'\\\\\', \'/\', ROOT . \'system/\'));
-
-/**
- * The path to the "application" folder
- */
-
-define(\'APPPATH\', ROOT . \'application/\');
-
-/**
- * Load the Doctrine Library
- */
-
-require APPPATH . \'/libraries/Doctrine.php\';
-
-$doctrine = new Doctrine();
-
-$helperSet = require $doctrine->cli();
-
-if ( ! ($helperSet instanceof HelperSet)) {
-	foreach ($GLOBALS as $helperSetCandidate) {
-		if ($helperSetCandidate instanceof HelperSet) {
-			$helperSet = $helperSetCandidate;
-			break;
-		}
-	}
-}
-
-\Doctrine\ORM\Tools\Console\ConsoleRunner::run($helperSet, $commands);';
-
-/**
- * Contents for the Doctrine library
- */
-
-$doctrine_library = 
-'<?php
-
-use Doctrine\Common\ClassLoader,
-	Doctrine\ORM\Tools\Setup,
-	Doctrine\ORM\EntityManager;
-
-/**
- * Doctrine bootstrap library for CodeIgniter
- *
- * @author	Adam Elsodaney  <archfizz.co.uk>
- * @author  Rougin Gutib 	<rougin.royce@gmail.com>
- * @link	http://stackoverflow.com/questions/17121997/integrating-doctrine-with-codeigniter
- */
-
-class Doctrine
-{
-
-	/**
-	 * The variable for handling the entity manager
-	 */
-	public $em;
-
-	/**
-	 * Load the entity manager and load the classes
-	 */
-	public function __construct()
-	{
-		/**
-		 * Load the database configuration from CodeIgniter
-		 */
-		
-		require APPPATH . \'config/database.php\';
-
-		$connection_options = array(
-			\'driver\'        => \'pdo_mysql\',
-			\'user\'          => $db[\'default\'][\'username\'],
-			\'password\'      => $db[\'default\'][\'password\'],
-			\'host\'          => $db[\'default\'][\'hostname\'],
-			\'dbname\'        => $db[\'default\'][\'database\'],
-			\'charset\'       => $db[\'default\'][\'char_set\'],
-			\'driverOptions\' => array(
-				\'charset\'   => $db[\'default\'][\'char_set\'],
-			),
-		);
-
-		/**
-		 * With this configuration, your model files need to be in application/models/
-		 * e.g. Creating a new \User loads the class from application/models/User.php
-		 */
-		
-		$metadata_paths   = array(APPPATH . \'models\');
-		$models           = APPPATH . \'models\';
-		$models_namespace = \'\';
-		$proxies          = APPPATH . \'models/proxies\';
-
-		/**
-		 * Set $dev_mode to TRUE to disable caching while you develop
-		 */
-		
-		$config = Setup::createAnnotationMetadataConfiguration($metadata_paths, $dev_mode = true, $proxies);
-		$this->em = EntityManager::create($connection_options, $config);
-
-		$loader = new ClassLoader($models_namespace, $models);
-		$loader->register();
-	}
-
-	/**
-	 * The Command Line Interface (CLI) configuration for Doctrine
-	 * 
-	 * @return object
-	 */
-	public function cli()
-	{
-		foreach ($GLOBALS as $helperSetCandidate) {
-			if ($helperSetCandidate instanceof \Symfony\Component\Console\Helper\HelperSet) {
-				$helperSet = $helperSetCandidate;
-				break;
-			}
-		}
-
-		$helperSet = new \Symfony\Component\Console\Helper\HelperSet(array(
-			\'db\' => new \Doctrine\DBAL\Tools\Console\Helper\ConnectionHelper($this->em->getConnection()),
-			\'em\' => new \Doctrine\ORM\Tools\Console\Helper\EntityManagerHelper($this->em)
-		));
-
-		return \Doctrine\ORM\Tools\Console\ConsoleRunner::run($helperSet);
-	}
-
-}';
-
-/**
- * ---------------------------------------------------------------------------------------------
- * Contents of MY_Loader.php
- * ---------------------------------------------------------------------------------------------
- */
-
-$loader = '<?php defined(\'BASEPATH\') OR exit(\'No direct script access allowed\');
-
-class Factory {
-
-	private $_ci;
-	private $_rows = array();
-
-	/**
-	 * Class constructor
-	 */
-	public function __construct()
-	{
-		$this->_ci =& get_instance();
-		$this->_ci->load->database();
-	}
-
-	/**
-	 * List all data in dropdown format
-	 *
-	 * @param  string $table
-	 * @param  string $id
-	 * @param  string $description
-	 * @return array
-	 */
-	public function as_dropdown($id, $description)
-	{
-		$data        = array(\'\');
-		$description = \'get_\' . $description;
-		$id          = \'get_\' . $id;
-
-		foreach ($this->_rows as $row) {
-			$data[$row->$id()] = ucwords($row->$description());
-		}
-
-		return $data;
-	}
-
-	/**
-	 * Delete the specified data from storage
-	 * 
-	 * @param  string $table
-	 * @param  array  $parameters
-	 * @return boolean
-	 */
-	public function delete($table, $parameters = array())
-	{
-		return ($this->_ci->db->delete($table, $parameters)) ? TRUE : FALSE;
-	}
-
-	/**
-	 * Find the row from the specified ID
-	 *
-	 * @param  string $table
-	 * @param  array  parameters
-	 * @return object | boolean
-	 */
-	public function find($table, $parameters = array())
-	{
-		$query = $this->_ci->db->get_where($table, $parameters);
-
-		if ($query->num_rows() > 0)
-		{
-			return $this->_create_object($table, $query->row());
-		}
-
-		return FALSE;
-	}
-
-	/**
-	 * Return all row from the specified table
-	 *
-	 * @param  array $delimiters
-	 * @return object | boolean
-	 */
-	public function get_all($table, $delimiters = array())
-	{
-		if (isset($delimiters[\'keyword\']) && $delimiters[\'keyword\'] != NULL)
-		{
-			$this->_find_by_keyword($delimiters[\'keyword\']);
-		}
-
-		if (isset($delimiters[\'per_page\']) && $delimiters[\'per_page\'] != NULL)
-		{
-			$this->_ci->db->limit($delimiters[\'per_page\'], $delimiters[\'page\']);
-		}
-
-		$query = $this->_ci->db->select(\'*\')->from($table)->get();
-
-		if ($query->num_rows() > 0)
-		{
-			$this->_rows = array();
-			
-			foreach ($query->result() as $row)
-			{
-				$this->_rows[] = $this->_create_object($table, $row);
-			}
-		}
-		
-		return $this;
-	}
-
-	/**
-	 * Return the result
-	 * 
-	 * @return object
-	 */
-	public function result()
-	{
-		return $this->_rows;
-	}
-
-	/**
-	 * Return the number of rows from the result
-	 * 
-	 * @return int
-	 */
-	public function total_rows()
-	{
-		return count($this->_rows);
-	}
-
-	/**
-	 * Create an object from the specified data
-	 *
-	 * @param  string $table
-	 * @param  object $row
-	 * @return User
-	 */
-	protected function _create_object($table, $row)
-	{
-		$methods = get_class_methods($table);
-		$model = new $table();
-
-		foreach ($methods as $key => $value)
-		{
-			if (strpos($value, \'set_\') !== FALSE)
-			{
-				unset($methods[$key]);
-			}
-			else
-			{
-				$field = substr($value, 4);
-				$data = $row->$field;
-
-				if (isset($model->foreign_keys) && isset($model->foreign_keys[$field]))
-				{
-					$foreign_table = $model->foreign_keys[$field];
-					$parameters = array($field => $data);
-
-					$data = $this->find($foreign_table, $parameters);
-				}
-
-				$model->$value($data);
-			}
-		}
-
-		return $model;
-	}
-
-	/**
-	 * Search for keywords based on the list of columns in the storage
-	 * 
-	 * @param  string $keyword
-	 */
-	protected function _find_by_keyword($keyword)
-	{
-		if ($keyword != NULL)
-		{
-			$keywords = explode(\' \', $keyword);
-
-			foreach ($keywords as $keyword)
-			{
-				foreach ($this->_columns as $column)
-				{
-					$this->_ci->db->like($column);
-				}
-			}
-		}
-	}
-
-}';
-
-/**
- * ---------------------------------------------------------------------------------------------
- * Adding the Factory.php to the "libraries" directory
- * ---------------------------------------------------------------------------------------------
- */
-
-if ( ! file_exists('application/libraries/Factory.php'))
-{
-	$file = fopen('application/libraries/Factory.php', 'wb');
-	file_put_contents('application/libraries/Factory.php', $loader);
-	fclose($file);
-}
-
-/**
- * ---------------------------------------------------------------------------------------------
  * Adding the Composer autoload file in index.php
  * ---------------------------------------------------------------------------------------------
  */
 
-if (strpos($codeigniter_core, 'define(\'CI_VERSION\', \'3.0-dev\')') === FALSE)
+if (strpos($codeigniter_core, 'define(\'CI_VERSION\', \'3.0') === FALSE)
 {
 	$index = file_get_contents('index.php');
 	
@@ -430,58 +88,513 @@ else
 
 /**
  * ---------------------------------------------------------------------------------------------
- * Modify the contents of vendor/bin/doctrine.php, create the Doctrine library and create a
- * "proxies" directory for lazy loading
+ * Install Doctrine and add additional commands to Combustor (if the user selects it)
  * ---------------------------------------------------------------------------------------------
  */
 
-file_put_contents('vendor/bin/doctrine.php', $doctrine_cli);
-file_put_contents('vendor/doctrine/orm/bin/doctrine.php', $doctrine_cli);
+if ($answer == 2 || $answer == 3)
+{
+	$composer = file_get_contents('composer.json');
+	
+	$composer = str_replace(
+		'"rougin/combustor": "dev-master"',
+		'"rougin/combustor": "dev-master",' . "\n		" .
+		'"doctrine/orm": "2.4.*"',
+		$composer
+	);
 
-$file = fopen('application/libraries/Doctrine.php', 'wb');
-file_put_contents('application/libraries/Doctrine.php', $doctrine_library);
+	$file = fopen('composer.json', 'wb');
+	file_put_contents('composer.json', $composer);
+	fclose($file);
+	system('composer update');
+	
+	$combustor = file_get_contents('vendor/rougin/combustor/bin/combustor.php');
 
-if ( ! is_dir('application/models/proxies')) {
-	mkdir('application/models/proxies');
-	chmod('application/models/proxies', 0777);
+	if (strpos($combustor, '$application->add(new Combustor\Doctrine\CreateControllerCommand)') !== FALSE)
+	{
+		$combustor = str_replace(
+			'$application = new Application(\'Combustor\', \'1\');',
+			'$application = new Application(\'Combustor\', \'1\');' . "\n" . 
+			'$application->add(new Combustor\Doctrine\CreateControllerCommand);' . "\n" .
+			'$application->add(new Combustor\Doctrine\CreateModelCommand);',
+			$combustor
+		);
+
+		$file = fopen('vendor/rougin/combustor/bin/combustor.php', 'wb');
+		file_put_contents('vendor/rougin/combustor/bin/combustor.php', $combustor);
+		fclose($file);
+	}
+
 }
-
-fclose($file);
 
 /**
  * ---------------------------------------------------------------------------------------------
- * Autoload the Doctrine and Factory library
+ * Autoload the other libraries and helpers
  * ---------------------------------------------------------------------------------------------
  */
 
+$libraries = NULL;
+
+if ($answer == 1)
+{
+	$libraries = ', \'factory\'';
+}
+else if ($answer == 2)
+{
+	$libraries = ', \'doctrine\'';
+}
+else if ($answer == 3)
+{
+	$libraries = ', \'doctrine\', \'factory\'';
+}
+
+$session = (strpos($codeigniter_core, 'define(\'CI_VERSION\', \'3.0') === FALSE) ? '\'session\'' : '\'\'';
+
 $autoload = file_get_contents('application/config/autoload.php');
-$search   = array('$autoload[\'libraries\'] = array();');
-$replace  = array('$autoload[\'libraries\'] = array(\'doctrine\', \'factory\');');
+
+$search = array(
+	'$autoload[\'libraries\'] = array();',
+	'$autoload[\'helper\'] = array();'
+);
+
+$replace = array(
+	'$autoload[\'libraries\'] = array(' . $session . $libraries . ');',
+	'$autoload[\'helper\'] = array(\'url\', \'form\');'
+);
+
+if (strpos($codeigniter_core, 'define(\'CI_VERSION\', \'3.0') !== FALSE)
+{
+	$search[]  = '$autoload[\'drivers\'] = array();';
+	$replace[] = '$autoload[\'drivers\'] = array(\'session\');';
+}
 
 $contents = str_replace($search, $replace, $autoload);
 file_put_contents('application/config/autoload.php', $contents);
 
-/**
- * ---------------------------------------------------------------------------------------------
- * Include the Base Model class in Doctrine CLI
- * ---------------------------------------------------------------------------------------------
- */
+if ($answer == 1 || $answer == 3)
+{
+	/**
+	 * ---------------------------------------------------------------------------------------------
+	 * Contents of MY_Loader.php
+	 * ---------------------------------------------------------------------------------------------
+	 */
 
-$abstract_command = file_get_contents('vendor/doctrine/orm/lib/Doctrine/ORM/Tools/Console/Command/SchemaTool/AbstractCommand.php');
+	$loader = '<?php defined(\'BASEPATH\') OR exit(\'No direct script access allowed\');
 
-$search  = 'use Doctrine\ORM\Tools\SchemaTool;';
-$replace = 'use Doctrine\ORM\Tools\SchemaTool;
+	use Combustor\Tools\Describe;
 
-include BASEPATH . \'core/Model.php\';';
+	class Factory {
 
-$contents = $abstract_command;
+		private $_ci;
+		private $_rows  = array();
+		private $_table = NULL;
 
-if (strpos($abstract_command, 'use Doctrine\ORM\Tools\SchemaTool;') !== FALSE) {
-	if (strpos($abstract_command, 'include BASEPATH . \'core/Model.php\';') === FALSE) {
-		$contents = str_replace($search, $replace, $abstract_command);
+		/**
+		 * Class constructor
+		 */
+		public function __construct()
+		{
+			$this->_ci =& get_instance();
+			$this->_ci->load->database();
+		}
+
+		/**
+		 * List all data in dropdown format
+		 *
+		 * @param  string $description
+		 * @return array
+		 */
+		public function as_dropdown($description)
+		{
+			$tableDescription = new Describe($this->_table);
+			
+			$data        = array(\'\');
+			$description = \'get_\' . $description;
+			$id          = \'get_\' . $tableDescription->getPrimaryKey();
+
+			foreach ($this->_rows as $row) {
+				$data[$row->$id()] = ucwords($row->$description());
+			}
+
+			return $data;
+		}
+
+		/**
+		 * Delete the specified data from storage
+		 * 
+		 * @param  string $table
+		 * @param  array  $parameters
+		 * @return boolean
+		 */
+		public function delete($table, $parameters = array())
+		{
+			return ($this->_ci->db->delete($table, $parameters)) ? TRUE : FALSE;
+		}
+
+		/**
+		 * Find the row from the specified ID
+		 *
+		 * @param  string $table
+		 * @param  array  parameters
+		 * @return object | boolean
+		 */
+		public function find($table, $parameters = array())
+		{
+			$query = $this->_ci->db->get_where($table, $parameters);
+
+			if ($query->num_rows() > 0)
+			{
+				return $this->_create_object($table, $query->row());
+			}
+
+			return FALSE;
+		}
+
+		/**
+		 * Return all row from the specified table
+		 *
+		 * @param  array $delimiters
+		 * @return object | boolean
+		 */
+		public function get_all($table, $delimiters = array())
+		{
+			$this->_table = $table;
+
+			if (isset($delimiters[\'keyword\']) && $delimiters[\'keyword\'] != NULL)
+			{
+				$this->_find_by_keyword($delimiters[\'keyword\']);
+			}
+
+			if (isset($delimiters[\'per_page\']) && $delimiters[\'per_page\'] != NULL)
+			{
+				$this->_ci->db->limit($delimiters[\'per_page\'], $delimiters[\'page\']);
+			}
+
+			$query = $this->_ci->db->select(\'*\')->from($table)->get();
+
+			if ($query->num_rows() > 0)
+			{
+				$this->_rows = array();
+				
+				foreach ($query->result() as $row)
+				{
+					$this->_rows[] = $this->_create_object($table, $row);
+				}
+			}
+
+			return $this;
+		}
+
+		/**
+		 * Return the result
+		 * 
+		 * @return object
+		 */
+		public function result()
+		{
+			return $this->_rows;
+		}
+
+		/**
+		 * Return the number of rows from the result
+		 * 
+		 * @return int
+		 */
+		public function total_rows()
+		{
+			return count($this->_rows);
+		}
+
+		/**
+		 * Create an object from the specified data
+		 *
+		 * @param  string $table
+		 * @param  object $row
+		 * @return User
+		 */
+		protected function _create_object($table, $row)
+		{
+			$model = new $table();
+			$main_table = new Describe($table);
+
+			foreach ($main_table->result() as $table_row) {
+				$mutator = \'set_\' . $table_row->field;
+				$method = $table_row->field;
+				$data = $row->$method;
+
+				if ($table_row->key == \'MUL\') {
+					$parameters = array($table_row->referenced_column => $data);
+
+					$data = $this->find($table_row->referenced_table, $parameters);
+				}
+
+				$model->$mutator($data);
+			}
+
+			return $model;
+		}
+
+		/**
+		 * Search for keywords based on the list of columns in the storage
+		 * 
+		 * @param  string $keyword
+		 */
+		protected function _find_by_keyword($keyword)
+		{
+			if ($keyword != NULL)
+			{
+				$keywords = explode(\' \', $keyword);
+
+				foreach ($keywords as $keyword)
+				{
+					foreach ($this->_columns as $column)
+					{
+						$this->_ci->db->like($column);
+					}
+				}
+			}
+		}
+
+	}';
+
+	/**
+	 * ---------------------------------------------------------------------------------------------
+	 * Adding the Factory.php to the "libraries" directory
+	 * ---------------------------------------------------------------------------------------------
+	 */
+
+	if ( ! file_exists('application/libraries/Factory.php'))
+	{
+		$file = fopen('application/libraries/Factory.php', 'wb');
+		file_put_contents('application/libraries/Factory.php', $loader);
+		fclose($file);
 	}
+
+	echo 'The customized factory pattern is now set up for CodeIgniter!', PHP_EOL;
 }
 
-file_put_contents('vendor/doctrine/orm/lib/Doctrine/ORM/Tools/Console/Command/SchemaTool/AbstractCommand.php', $contents);
+if ($answer == 2 || $answer == 3)
+{
+	/**
+	 * ---------------------------------------------------------------------------------------------
+	 * Contents for the doctrine.php in vendor/bin
+	 * ---------------------------------------------------------------------------------------------
+	 */
 
-echo 'Doctrine is now set up for CodeIgniter!', PHP_EOL;
+	$doctrine_cli =
+	'<?php
+	/*
+	 * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
+	 * "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
+	 * LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR
+	 * A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT
+	 * OWNER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
+	 * SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT
+	 * LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,
+	 * DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY
+	 * THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+	 * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
+	 * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+	 *
+	 * This software consists of voluntary contributions made by many individuals
+	 * and is licensed under the MIT license. For more information, see
+	 * <http://www.doctrine-project.org>.
+	 */
+
+	use Symfony\Component\Console\Helper\HelperSet;
+	use Doctrine\ORM\Tools\Console\ConsoleRunner;
+
+	(@include_once __DIR__ . \'/../vendor/autoload.php\') || @include_once __DIR__ . \'/../../../autoload.php\';
+
+	/**
+	 * Path to the root folder
+	 */
+
+	define(\'ROOT\', __DIR__ . \'/../../../../\');
+
+	/**
+	 * Path to the "system" folder
+	 */
+
+	define(\'BASEPATH\', str_replace(\'\\\\\', \'/\', ROOT . \'system/\'));
+
+	/**
+	 * The path to the "application" folder
+	 */
+
+	define(\'APPPATH\', ROOT . \'application/\');
+
+	/**
+	 * Load the Doctrine Library
+	 */
+
+	require APPPATH . \'/libraries/Doctrine.php\';
+
+	$doctrine = new Doctrine();
+
+	$helperSet = require $doctrine->cli();
+
+	if ( ! ($helperSet instanceof HelperSet)) {
+		foreach ($GLOBALS as $helperSetCandidate) {
+			if ($helperSetCandidate instanceof HelperSet) {
+				$helperSet = $helperSetCandidate;
+				break;
+			}
+		}
+	}
+
+	\Doctrine\ORM\Tools\Console\ConsoleRunner::run($helperSet, $commands);';
+
+	/**
+	 * Contents for the Doctrine library
+	 */
+
+	$doctrine_library = 
+	'<?php
+
+	use Doctrine\Common\ClassLoader,
+		Doctrine\ORM\Tools\Setup,
+		Doctrine\ORM\EntityManager;
+
+	/**
+	 * Doctrine bootstrap library for CodeIgniter
+	 *
+	 * @author	Adam Elsodaney  <archfizz.co.uk>
+	 * @author  Rougin Gutib 	<rougin.royce@gmail.com>
+	 * @link	http://stackoverflow.com/questions/17121997/integrating-doctrine-with-codeigniter
+	 */
+
+	class Doctrine
+	{
+
+		/**
+		 * The variable for handling the entity manager
+		 */
+		public $em;
+
+		/**
+		 * Load the entity manager and load the classes
+		 */
+		public function __construct()
+		{
+			/**
+			 * Load the database configuration from CodeIgniter
+			 */
+			
+			require APPPATH . \'config/database.php\';
+
+			$connection_options = array(
+				\'driver\'        => \'pdo_mysql\',
+				\'user\'          => $db[\'default\'][\'username\'],
+				\'password\'      => $db[\'default\'][\'password\'],
+				\'host\'          => $db[\'default\'][\'hostname\'],
+				\'dbname\'        => $db[\'default\'][\'database\'],
+				\'charset\'       => $db[\'default\'][\'char_set\'],
+				\'driverOptions\' => array(
+					\'charset\'   => $db[\'default\'][\'char_set\'],
+				),
+			);
+
+			/**
+			 * With this configuration, your model files need to be in application/models/
+			 * e.g. Creating a new \User loads the class from application/models/User.php
+			 */
+			
+			$metadata_paths   = array(APPPATH . \'models\');
+			$models           = APPPATH . \'models\';
+			$models_namespace = \'\';
+			$proxies          = APPPATH . \'models/proxies\';
+
+			/**
+			 * Set $dev_mode to TRUE to disable caching while you develop
+			 */
+			
+			$config = Setup::createAnnotationMetadataConfiguration($metadata_paths, $dev_mode = true, $proxies);
+			$this->em = EntityManager::create($connection_options, $config);
+
+			$loader = new ClassLoader($models_namespace, $models);
+			$loader->register();
+		}
+
+		/**
+		 * The Command Line Interface (CLI) configuration for Doctrine
+		 * 
+		 * @return object
+		 */
+		public function cli()
+		{
+			foreach ($GLOBALS as $helperSetCandidate) {
+				if ($helperSetCandidate instanceof \Symfony\Component\Console\Helper\HelperSet) {
+					$helperSet = $helperSetCandidate;
+					break;
+				}
+			}
+
+			$helperSet = new \Symfony\Component\Console\Helper\HelperSet(array(
+				\'db\' => new \Doctrine\DBAL\Tools\Console\Helper\ConnectionHelper($this->em->getConnection()),
+				\'em\' => new \Doctrine\ORM\Tools\Console\Helper\EntityManagerHelper($this->em)
+			));
+
+			return \Doctrine\ORM\Tools\Console\ConsoleRunner::run($helperSet);
+		}
+
+	}';
+
+	/**
+	 * ---------------------------------------------------------------------------------------------
+	 * Modify the contents of vendor/bin/doctrine.php, create the Doctrine library and create a
+	 * "proxies" directory for lazy loading
+	 * ---------------------------------------------------------------------------------------------
+	 */
+
+	file_put_contents('vendor/bin/doctrine.php', $doctrine_cli);
+	file_put_contents('vendor/doctrine/orm/bin/doctrine.php', $doctrine_cli);
+
+	$file = fopen('application/libraries/Doctrine.php', 'wb');
+	file_put_contents('application/libraries/Doctrine.php', $doctrine_library);
+
+	if ( ! is_dir('application/models/proxies')) {
+		mkdir('application/models/proxies');
+		chmod('application/models/proxies', 0777);
+	}
+
+	fclose($file);
+
+	/**
+	 * ---------------------------------------------------------------------------------------------
+	 * Autoload the Doctrine and Factory library
+	 * ---------------------------------------------------------------------------------------------
+	 */
+
+	$autoload = file_get_contents('application/config/autoload.php');
+	$search   = array('$autoload[\'libraries\'] = array();');
+	$replace  = array('$autoload[\'libraries\'] = array(\'doctrine\', \'factory\');');
+
+	$contents = str_replace($search, $replace, $autoload);
+	file_put_contents('application/config/autoload.php', $contents);
+
+	/**
+	 * ---------------------------------------------------------------------------------------------
+	 * Include the Base Model class in Doctrine CLI
+	 * ---------------------------------------------------------------------------------------------
+	 */
+
+	$abstract_command = file_get_contents('vendor/doctrine/orm/lib/Doctrine/ORM/Tools/Console/Command/SchemaTool/AbstractCommand.php');
+
+	$search  = 'use Doctrine\ORM\Tools\SchemaTool;';
+	$replace = 'use Doctrine\ORM\Tools\SchemaTool;
+
+	include BASEPATH . \'core/Model.php\';';
+
+	$contents = $abstract_command;
+
+	if (strpos($abstract_command, 'use Doctrine\ORM\Tools\SchemaTool;') !== FALSE) {
+		if (strpos($abstract_command, 'include BASEPATH . \'core/Model.php\';') === FALSE) {
+			$contents = str_replace($search, $replace, $abstract_command);
+		}
+	}
+
+	file_put_contents('vendor/doctrine/orm/lib/Doctrine/ORM/Tools/Console/Command/SchemaTool/AbstractCommand.php', $contents);
+
+	echo 'Doctrine is now set up for CodeIgniter!', PHP_EOL;
+}

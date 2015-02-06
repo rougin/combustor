@@ -1,7 +1,7 @@
 <?php namespace Combustor\Doctrine;
 
+use Combustor\Tools\Describe;
 use Combustor\Tools\Inflect;
-use Combustor\Tools\GetColumns;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
@@ -71,7 +71,7 @@ class CreateControllerCommand extends Command
 		 * Get the columns from the specified name
 		 */
 
-		$columns = new GetColumns($input->getArgument('name'), $output);
+		$columns = new Describe($input->getArgument('name'), $output);
 
 		$models = '\'[singular]\'';
 
@@ -84,56 +84,56 @@ class CreateControllerCommand extends Command
 		$singularText    = strtolower(Inflect::humanize($input->getArgument('name')));
 
 		foreach ($columns->result() as $row) {
-			if ($row->Key == 'PRI') {
-				$primaryKey = $row->Field;
+			if ($row->key == 'PRI') {
+				$primaryKey = $row->field;
 			}
 
-			$methodName = 'set_' . strtolower($row->Field);
+			$methodName = 'set_' . strtolower($row->field);
 			$methodName = ($input->getOption('camel')) ? Inflect::camelize($methodName) : Inflect::underscore($methodName);
 
 			if ($counter != 0) {
-				$columnsCreate   .= ($row->Field != 'datetime_updated') ? '			' : NULL;
-				$columnsEdit     .= ($row->Field != 'datetime_created') ? '			' : NULL;
-				$columnsValidate .= ($row->Field != 'password' && $row->Field != 'datetime_created' && $row->Field != 'datetime_updated') ? '			' : NULL;
+				$columnsCreate   .= ($row->field != 'datetime_updated') ? '			' : NULL;
+				$columnsEdit     .= ($row->field != 'datetime_created') ? '			' : NULL;
+				$columnsValidate .= ($row->field != 'password' && $row->field != 'datetime_created' && $row->field != 'datetime_updated') ? '			' : NULL;
 			}
 
 			$dropdownColumns .= ($dropdowns != 0) ? '		' : NULL;
 
-			if ($row->Extra == 'auto_increment') {
+			if ($row->extra == 'auto_increment') {
 				continue;
-			} elseif ($row->Key == 'MUL') {
-				$entity  = str_replace('_id', '', $row->Field);
+			} elseif ($row->key == 'MUL') {
+				$entity  = str_replace('_id', '', $row->field);
 				$models .= ",\n" . '			\'' . $entity . '\'';
 
 				$dropdownColumns .= '$data[\'' . Inflect::pluralize($entity) . '\'] = $this->' . $entity . '->select();' . "\n";
 				
-				$columnsCreate .= '$' . $entity . ' = $this->doctrine->em->find(\'' . $entity . '\', $this->input->post(\'' . $row->Field . '\'));' . "\n";
+				$columnsCreate .= '$' . $entity . ' = $this->doctrine->em->find(\'' . $entity . '\', $this->input->post(\'' . $row->field . '\'));' . "\n";
 				$columnsCreate .= '			$this->[singular]->' . $methodName . '($' . $entity . ');' . "\n\n";
 
-				$columnsEdit .= '$' . $entity . ' = $this->doctrine->em->find(\'' . $entity . '\', $this->input->post(\'' . $row->Field . '\'));' . "\n";
+				$columnsEdit .= '$' . $entity . ' = $this->doctrine->em->find(\'' . $entity . '\', $this->input->post(\'' . $row->field . '\'));' . "\n";
 				$columnsEdit .= '			$[singular]->' . $methodName . '($' . $entity . ');' . "\n\n";
 
 				$dropdowns++;
-			} elseif ($row->Field == 'password') {
+			} elseif ($row->field == 'password') {
 				$columnsCreate .= "\n" . file_get_contents($doctrineDirectory . '/Templates/Miscellaneous/CheckCreatePassword.txt') . "\n\n";
 				$columnsEdit   .= "\n" . file_get_contents($doctrineDirectory . '/Templates/Miscellaneous/CheckEditPassword.txt') . "\n\n";
 
 				$columnsCreate = str_replace('[method]', $methodName, $columnsCreate);
 				$columnsEdit   = str_replace('[method]', $methodName, $columnsEdit);
 			} else {
-				$column = ($row->Field == 'datetime_created' || $row->Field == 'datetime_updated') ? '\'now\'' : '$this->input->post(\'' . $row->Field . '\')';
+				$column = ($row->field == 'datetime_created' || $row->field == 'datetime_updated') ? '\'now\'' : '$this->input->post(\'' . $row->field . '\')';
 
-				if ($row->Field != 'datetime_updated') {
+				if ($row->field != 'datetime_updated') {
 					$columnsCreate .= '$this->[singular]->' . $methodName . '(' . $column . ');' . "\n";
 				}
 
-				if ($row->Field != 'datetime_created') {
+				if ($row->field != 'datetime_created') {
 					$columnsEdit .= '$[singular]->' . $methodName . '(' . $column . ');' . "\n";
 				}
 			}
 
-			if ($row->Field != 'password' && $row->Field != 'datetime_created' && $row->Field != 'datetime_updated') {
-				$columnsValidate .= '\'' . $row->Field . '\' => \'' . str_replace('_', ' ', $row->Field) . '\',' . "\n";
+			if ($row->field != 'password' && $row->field != 'datetime_created' && $row->field != 'datetime_updated') {
+				$columnsValidate .= '\'' . $row->field . '\' => \'' . str_replace('_', ' ', $row->field) . '\',' . "\n";
 			}
 
 			$counter++;

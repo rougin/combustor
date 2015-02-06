@@ -1,7 +1,7 @@
 <?php namespace Combustor;
 
+use Combustor\Tools\Describe;
 use Combustor\Tools\Inflect;
-use Combustor\Tools\GetColumns;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
@@ -78,7 +78,7 @@ class CreateModelCommand extends Command
 		 * Get the columns from the specified name
 		 */
 
-		$databaseColumns = new GetColumns($input->getArgument('name'), $output);
+		$databaseColumns = new Describe($input->getArgument('name'), $output);
 
 		foreach ($databaseColumns->result() as $row) {
 			$accessors .= ($counter != 0) ? '	' : NULL;
@@ -89,35 +89,44 @@ class CreateModelCommand extends Command
 			 * Generate keywords
 			 */
 
-			if ($row->Field != 'datetime_created' && $row->Field != 'datetime_updated' && $row->Field != 'password') {
+			if ($row->field != 'datetime_created' && $row->field != 'datetime_updated' && $row->field != 'password') {
 				$keywords .= ($keywordsCounter != 0) ? '		' : NULL;
-				$keywords .= '\'[firstLetter].' . $row->Field . '\'' . ",\n";
+				$keywords .= '\'[firstLetter].' . $row->field . '\'' . ",\n";
 
 				$keywordsCounter++;
 			}
 			
-			$columns .= 'protected $_' . $row->Field . ';' . "\n";
+			$columns .= 'protected $_' . $row->field . ';' . "\n";
 
 			/**
 			 * Generate the accessors
 			 */
 
-			$methodName = 'get_' . $row->Field;
+			$methodName = 'get_' . $row->field;
 			$methodName = ($input->getOption('camel')) ? Inflect::camelize($methodName) : Inflect::underscore($methodName);
 			
-			$primaryKey = ($row->Key == 'PRI') ? $row->Field : $primaryKey;
+			$primaryKey = ($row->key == 'PRI') ? $row->field : $primaryKey;
 			
 			$accessor = file_get_contents(__DIR__ . '/Templates/Miscellaneous/Accessor.txt');
 			
-			$leftParenthesis = strpos($row->Type, '(');
-			$dataType = substr($row->Type, 0, $leftParenthesis);
+			$dataType = $row->type;
+
+			if (strpos($row->type, '(') !== FALSE) {
+				$leftParenthesis = strpos($row->type, '(');
+				$dataType = substr($row->type, 0, $leftParenthesis);
+			}
 
 			if (in_array($dataType, $dataTypes)) {
-				$accessor = str_replace('$this->_[field]', 'new DateTime($this->_[field])', $accessor);
+				$dateFormat = 'if (is_a($this->_[field], \'DateTime\')) {
+			return $this->_[field];
+		}
+
+		return new DateTime($this->_[field]);';
+				$accessor = str_replace('return $this->_[field];', $dateFormat, $accessor);
 			}
 
 			$search  = array('[field]', '[type]', '[method]');
-			$replace = array($row->Field, $row->Type, $methodName);
+			$replace = array($row->field, $row->type, $methodName);
 
 			$accessors .= str_replace($search, $replace, $accessor) . "\n\n";
 
@@ -126,24 +135,36 @@ class CreateModelCommand extends Command
 			 */
 
 			$fields .= ($fieldsCounter != 0) ? ",\n" . '			' : NULL;
-			$fields .= '\'' . $row->Field . '\' => $this->' . $methodName . '()';
+			$fields .= '\'' . $row->field . '\' => $this->' . $methodName . '()';
 
-			if ($row->Key == 'MUL' || in_array($dataType, $dataTypes)) {
+			if ($row->key == 'MUL') {
+				$foreignTable = new Describe($row->referenced_table, $output);
+
+				foreach ($foreignTable->result() as $foreignRow) {
+					if ($foreignRow->key == 'PRI') {
+						$methodName = 'get_' . $foreignRow->field;
+						break;
+					}
+				}
+
 				$fields .= '->' . $methodName . '()';
+			} else if (in_array($dataType, $dataTypes)) {
+				switch ($dataType) {
+					case 'time':
+						$format = '\'H:i:s\'';
+						break;
+					case 'date':
+						$format = '\'Y-m-d\'';
+						break;
+					default:
+						$format = '\'Y-m-d H:i:s\'';
+						break;
+				}
+
+				$fields .= '->format(' . $format . ')';
 			}
 
 			$fieldsCounter++;
-
-			/**
-			 * Generate foreign keys to the model
-			 */
-
-			if ($row->Key == 'MUL') {
-				$foreignKeys .= ($foreignKeysCounter == 0) ? "\n		" : NULL;
-				$foreignKeys .= ($foreignKeysCounter != 0) ? ",\n		" : NULL;
-				$foreignKeys .= '\'' . $row->Field . '\' => \'' . str_replace('_id', '', $row->Field) . '\'';
-				$foreignKeysCounter++;
-			}
 
 			/**
 			 * Generate the mutators
@@ -152,19 +173,23 @@ class CreateModelCommand extends Command
 			$class         = '\\' . ucfirst($name);
 			$classVariable = NULL;
 			
-			$methodName = 'set_' . $row->Field;
+			$methodName = 'set_' . $row->field;
 			$methodName = ($input->getOption('camel')) ? Inflect::camelize($methodName) : Inflect::underscore($methodName);
 
-			$nullable = ($row->Null == 'YES') ? ' = NULL' : NULL;
+			$nullable = ($row->null == 'YES') ? ' = NULL' : NULL;
 
 			$mutator = file_get_contents(__DIR__ . '/Templates/Miscellaneous/Mutator.txt');
 
-			if ($row->Key == 'MUL') {
-				$classVariable = '\\' . ucfirst(str_replace('_id', '', $row->Field)) . ' ';
+			if ($row->key == 'MUL') {
+				$classVariable = '\\' . ucfirst(str_replace('_id', '', $row->field)) . ' ';
+			}
+
+			if (in_array($dataType, $dataTypes)) {
+				$mutator = str_replace('$this->_[field] = $[field]', '$this->_[field] = new DateTime($[field])', $mutator);
 			}
 
 			$search  = array('[field]', '[type]', '[method]', '[classVariable]', '[nullable]');
-			$replace = array($row->Field, $row->Type, $methodName, $classVariable, $nullable);
+			$replace = array($row->field, $row->type, $methodName, $classVariable, $nullable);
 			
 			$mutators .= str_replace($search, $replace, $mutator) . "\n\n";
 
@@ -181,7 +206,6 @@ class CreateModelCommand extends Command
 
 		$search = array(
 			'[className]',
-			'[foreignKeys]',
 			'[fields]',
 			'[columns]',
 			'[keywords]',
@@ -196,7 +220,6 @@ class CreateModelCommand extends Command
 
 		$replace = array(
 			$class,
-			$foreignKeys,
 			$fields,
 			rtrim($columns),
 			rtrim(substr($keywords, 0, -2)),

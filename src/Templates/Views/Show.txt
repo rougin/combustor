@@ -1,4 +1,7 @@
 <?php $this->load->view('layout/header'); ?>
+	<h1>
+		[singularEntity] Information
+	</h1>
 	[showFields]
-	<a href="<?php echo base_url('[plural]'); ?>">Back</a>
+	<a class="[bootstrapButton]" href="<?php echo base_url('[plural]'); ?>">Back</a>
 <?php $this->load->view('layout/footer'); ?>

@@ -1,5 +1,6 @@
 <?php $this->load->view('layout/header'); ?>
-	<a href="<?php echo base_url('[plural]/create'); ?>">Create a New [singularEntity]</a>
+	<h1>[entity]</h1>
+	<a class="[bootstrapButton]" href="<?php echo base_url('[plural]/create'); ?>">Create a New [singularEntity]</a>
 	<table class="[bootstrapTable]">
 		<thead>
 			<tr>

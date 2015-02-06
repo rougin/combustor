@@ -1,6 +1,6 @@
 <?php namespace Combustor;
 
-use Combustor\Tools\GetColumns;
+use Combustor\Tools\Describe;
 use Combustor\Tools\Inflect;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputArgument;
@@ -46,13 +46,13 @@ class CreateViewCommand extends Command
 		/**
 		 * Integrate Bootstrap if enabled
 		 */
-		
+
+		$bootstrapButton           = ($input->getOption('bootstrap')) ? 'btn btn-primary btn-lg' : NULL;		
 		$bootstrapFormControl      = ($input->getOption('bootstrap')) ? 'form-control' : NULL;
 		$bootstrapFormGroup        = ($input->getOption('bootstrap')) ? 'form-group' : NULL;
 		$bootstrapFormOpen         = ($input->getOption('bootstrap')) ? 'form-horizontal' : NULL;
 		$bootstrapFormSubmit       = ($input->getOption('bootstrap')) ? 'col-lg-12' : NULL;
-		$bootstrapFormSubmitButton = ($input->getOption('bootstrap')) ? 'btn btn-default' : NULL;
-		$bootstrapTable            = ($input->getOption('bootstrap')) ? 'table' : NULL;
+		$bootstrapTable            = ($input->getOption('bootstrap')) ? 'table table table-striped table-hover' : NULL;
 
 		/**
 		 * Get the view template
@@ -67,7 +67,7 @@ class CreateViewCommand extends Command
 		 * Get the columns from the specified name
 		 */
 
-		$databaseColumns = new GetColumns($input->getArgument('name'), $output);
+		$databaseColumns = new Describe($input->getArgument('name'), $output);
 
 		$columns    = NULL;
 		$counter    = 0;
@@ -81,30 +81,30 @@ class CreateViewCommand extends Command
 		$selectColumns = array('name', 'description', 'label');
 
 		foreach ($databaseColumns->result() as $row) {
-			$methodName = 'get_' . $row->Field;
+			$methodName = 'get_' . $row->field;
 			$methodName = ($input->getOption('camel')) ? Inflect::camelize($methodName) : Inflect::underscore($methodName);
 
-			$primaryKey = ($row->Key == 'PRI') ? $methodName : $primaryKey;
+			$primaryKey = ($row->key == 'PRI') ? $methodName : $primaryKey;
 
-			if ($row->Field == 'datetime_created' || $row->Field == 'datetime_updated' || $row->Extra == 'auto_increment') continue;
+			if ($row->field == 'datetime_created' || $row->field == 'datetime_updated' || $row->extra == 'auto_increment') continue;
 
-			$columns    .= ($counter != 0 && $row->Field != 'password') ? '				' : NULL;
-			$rows       .= ($counter != 0 && $row->Field != 'password') ? '					' : NULL;
-			$fields     .= ($counter != 0 && $row->Field != 'password') ? '		' : NULL;
-			$showFields .= ($counter != 0 && $row->Field != 'password') ? '	' : NULL;
+			$columns    .= ($counter != 0 && $row->field != 'password') ? '				' : NULL;
+			$rows       .= ($counter != 0 && $row->field != 'password') ? '					' : NULL;
+			$fields     .= ($counter != 0 && $row->field != 'password') ? '		' : NULL;
+			$showFields .= ($counter != 0 && $row->field != 'password') ? '	' : NULL;
 
-			if ($row->Field != 'password') {
-				$columns .= '<th>' . str_replace(' Id', '', Inflect::humanize($row->Field)) . '</th>' . "\n";
+			if ($row->field != 'password') {
+				$columns .= '<th>' . str_replace(' Id', '', Inflect::humanize($row->field)) . '</th>' . "\n";
 
-				if (strpos($row->Field, 'date') !== FALSE || strpos($row->Field, 'time') !== FALSE) {
+				if (strpos($row->field, 'date') !== FALSE || strpos($row->field, 'time') !== FALSE) {
 					$extend = '->format(\'F d, Y\')';
-				} elseif ($row->Key == 'MUL') {
-					$tableColumns = new GetColumns($row->Referenced_Table, $output);
+				} elseif ($row->key == 'MUL') {
+					$tableColumns = new Describe($row->referenced_table, $output);
 
 					$tablePrimaryKey = NULL;
 					foreach ($tableColumns->result() as $column) {
-						if (in_array($column->Field, $selectColumns) || $column->Key == 'PRI') {
-							$tablePrimaryKey = 'get_' . $column->Field;
+						if (in_array($column->field, $selectColumns) || $column->key == 'PRI') {
+							$tablePrimaryKey = 'get_' . $column->field;
 
 							if ($input->getOption('camel')) {
 								$tablePrimaryKey = Inflect::camelize($tablePrimaryKey);
@@ -122,7 +122,7 @@ class CreateViewCommand extends Command
 				$rows .= '<td><?php echo $[singular]->' . $methodName . '()' . $extend . '; ?></td>' . "\n";
 
 				if ($input->getOption('bootstrap')) {
-					$fields .= '<?php if (form_error(\'' . $row->Field . '\')): ?>' . "\n";
+					$fields .= '<?php if (form_error(\'' . $row->field . '\')): ?>' . "\n";
 					$fields .= '			<div class="form-group has-error">' . "\n";
 					$fields .= '		<?php else: ?>' . "\n";
 					$fields .= '			<div class="form-group">' . "\n";
@@ -131,27 +131,27 @@ class CreateViewCommand extends Command
 					$fields .= '	<div class="[bootstrapFormGroup]">' . "\n";
 				}
 
-				$fields .= '			<?php echo form_label(\'' . str_replace(' Id', '', Inflect::humanize($row->Field)) . '\', \'' . $row->Field . '\', array(\'class\' => \'[labelClass]\')); ?>' . "\n";
+				$fields .= '			<?php echo form_label(\'' . str_replace(' Id', '', Inflect::humanize($row->field)) . '\', \'' . $row->field . '\', array(\'class\' => \'[labelClass]\')); ?>' . "\n";
 				$fields .= '			<div class="[formColumn]">' . "\n";
 				
-				if ($row->Key == 'MUL') {
-					$data    = Inflect::pluralize($row->Referenced_Table);
-					$fields .= '				<?php echo form_dropdown(\'' . $row->Field . '\', $' . $data . ', set_value(\'' . $row->Field . '\'), \'class="[bootstrapFormControl]"\'); ?>' . "\n";
+				if ($row->key == 'MUL') {
+					$data    = Inflect::pluralize($row->referenced_table);
+					$fields .= '				<?php echo form_dropdown(\'' . $row->field . '\', $' . $data . ', set_value(\'' . $row->field . '\'), \'class="[bootstrapFormControl]"\'); ?>' . "\n";
 				} else {
-					$fields .= '				<?php echo form_input(\'' . $row->Field . '\', set_value(\'' . $row->Field . '\'), \'class="[bootstrapFormControl]"\'); ?>' . "\n";
+					$fields .= '				<?php echo form_input(\'' . $row->field . '\', set_value(\'' . $row->field . '\'), \'class="[bootstrapFormControl]"\'); ?>' . "\n";
 				}
 
-				$fields .= '				<?php echo form_error(\'' . $row->Field . '\'); ?>' . "\n";
+				$fields .= '				<?php echo form_error(\'' . $row->field . '\'); ?>' . "\n";
 				$fields .= '			</div>' . "\n";
 				$fields .= '		</div>' . "\n";
 
-				if ($row->Key == 'MUL') {
-					$tableColumns = new GetColumns($row->Referenced_Table, $output);
+				if ($row->key == 'MUL') {
+					$tableColumns = new Describe($row->referenced_table, $output);
 
 					$tablePrimaryKey = NULL;
 					foreach ($tableColumns->result() as $column) {
-						if ($column->Key == 'PRI') {
-							$tablePrimaryKey = 'get_' . $column->Field;
+						if ($column->key == 'PRI') {
+							$tablePrimaryKey = 'get_' . $column->field;
 							
 							if ($input->getOption('camel')) {
 								$tablePrimaryKey = Inflect::camelize($tablePrimaryKey);
@@ -166,7 +166,7 @@ class CreateViewCommand extends Command
 					$value = '$[singular]->' . $methodName . '()';
 				}
 
-				$showFields .= str_replace(' Id', '', Inflect::humanize($row->Field)) . ': <?php echo ' . $value . '; ?><br>' . "\n";
+				$showFields .= str_replace(' Id', '', Inflect::humanize($row->field)) . ': <?php echo ' . $value . '; ?><br>' . "\n";
 			} else {
 				$fields .= file_get_contents(__DIR__ . '/Templates/Miscellaneous/CreatePassword.txt') . "\n";
 			}
@@ -181,16 +181,16 @@ class CreateViewCommand extends Command
 		$editFields = $fields;
 
 		foreach ($databaseColumns->result() as $row) {
-			$methodName = 'get_' . $row->Field;
+			$methodName = 'get_' . $row->field;
 			$methodName = ($input->getOption('camel')) ? Inflect::camelize($methodName) : Inflect::underscore($methodName);
 
-			if ($row->Key == 'MUL') {
-				$tableColumns = new GetColumns($row->Referenced_Table, $output);
+			if ($row->key == 'MUL') {
+				$tableColumns = new Describe($row->referenced_table, $output);
 
 				$tablePrimaryKey = NULL;
 				foreach ($tableColumns->result() as $column) {
-					if ($column->Key == 'PRI') {
-						$tablePrimaryKey = 'get_' . $column->Field;
+					if ($column->key == 'PRI') {
+						$tablePrimaryKey = 'get_' . $column->field;
 						
 						if ($input->getOption('camel')) {
 							$tablePrimaryKey = Inflect::camelize($tablePrimaryKey);
@@ -205,13 +205,13 @@ class CreateViewCommand extends Command
 				$value = '$[singular]->' . $methodName . '()';
 			}
 
-			if (strpos($editFields, 'set_value(\'' . $row->Field . '\')') !== FALSE) {
-				$editFields = str_replace('set_value(\'' . $row->Field . '\')', 'set_value(\'' . $row->Field . '\', ' . $value . ')', $editFields);
+			if (strpos($editFields, 'set_value(\'' . $row->field . '\')') !== FALSE) {
+				$editFields = str_replace('set_value(\'' . $row->field . '\')', 'set_value(\'' . $row->field . '\', ' . $value . ')', $editFields);
 			}
 
 			$createPassword  = file_get_contents(__DIR__ . '/Templates/Miscellaneous/CreatePassword.txt') . "\n";
 			
-			$editFields .= ($row->Field == 'password') ? file_get_contents(__DIR__ . '/Templates/Miscellaneous/EditPassword.txt') . "\n" : NULL;
+			$editFields .= ($row->field == 'password') ? file_get_contents(__DIR__ . '/Templates/Miscellaneous/EditPassword.txt') . "\n" : NULL;
 			$editFields  = str_replace($createPassword, '', $editFields);
 		}
 
@@ -224,10 +224,10 @@ class CreateViewCommand extends Command
 			'[columns]',
 			'[rows]',
 			'[primaryKey]',
+			'[bootstrapButton]',
 			'[bootstrapFormControl]',
 			'[bootstrapFormGroup]',
 			'[bootstrapFormOpen]',
-			'[bootstrapFormSubmitButton]',
 			'[bootstrapFormSubmit]',
 			'[bootstrapTable]',
 			'[pullRight]',
@@ -246,10 +246,10 @@ class CreateViewCommand extends Command
 			rtrim($columns),
 			rtrim($rows),
 			$primaryKey,
+			$bootstrapButton,
 			$bootstrapFormControl,
 			$bootstrapFormGroup,
 			$bootstrapFormOpen,
-			$bootstrapFormSubmitButton,
 			$bootstrapFormSubmit,
 			$bootstrapTable,
 			$pullRight,

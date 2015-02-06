@@ -9,8 +9,6 @@ class [model] extends CI_Model
 
 	[columns]
 
-	public $foreign_keys = array([foreignKeys]);
-
 	[accessors]
 	
 	public function save()

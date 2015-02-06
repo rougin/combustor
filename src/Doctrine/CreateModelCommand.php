@@ -1,7 +1,7 @@
 <?php namespace Combustor\Doctrine;
 
+use Combustor\Tools\Describe;
 use Combustor\Tools\Inflect;
-use Combustor\Tools\GetColumns;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
@@ -102,24 +102,24 @@ class CreateModelCommand extends Command
 		 * Get the columns from the specified name
 		 */
 
-		$databaseColumns = new GetColumns($input->getArgument('name'), $output);
+		$databaseColumns = new Describe($input->getArgument('name'), $output);
 
 		foreach ($databaseColumns->result() as $row) {
 			$accessors .= ($counter != 0) ? '	' : NULL;
 			$columns   .= ($counter != 0) ? '	' : NULL;
 			$mutators  .= ($mutatorsCounter != 0) ? '	' : NULL;
 
-			$nullable = ($row->Null == 'YES') ? 'TRUE' : 'FALSE';
-			$unique   = ($row->Key == 'UNI') ? 'TRUE' : 'FALSE';
+			$nullable = ($row->null == 'YES') ? 'TRUE' : 'FALSE';
+			$unique   = ($row->key == 'UNI') ? 'TRUE' : 'FALSE';
 
-			$type = $this->_getDataType($row->Type);
+			$type = $this->_getDataType($row->type);
 
 			/**
 			 * The data type is an integer or string? Set the length of the specified data type
 			 */
 
-			if ((strpos($row->Type, 'int') !== FALSE) || (strpos($row->Type, 'varchar') !== FALSE)) {
-				$length =  ', length=' . str_replace(array($type, '(', ')', 'varchar', 'int'), array('', '', '', '', ''), $row->Type);
+			if ((strpos($row->type, 'int') !== FALSE) || (strpos($row->type, 'varchar') !== FALSE)) {
+				$length =  ', length=' . str_replace(array($type, '(', ')', 'varchar', 'int'), array('', '', '', '', ''), $row->type);
 			} else {
 				$length = NULL;
 			}
@@ -130,51 +130,50 @@ class CreateModelCommand extends Command
 
 			$columns .= '/**' . "\n";
 
-			if ($row->Key == 'PRI') {
-				$autoIncrement = ($row->Extra == 'auto_increment') ? '@GeneratedValue' : NULL;
+			if ($row->key == 'PRI') {
+				$autoIncrement = ($row->extra == 'auto_increment') ? '@GeneratedValue' : NULL;
 
 				$columns .= '	 * @Id ' . $autoIncrement . "\n";
 				$columns .= '	 * @Column(type="' . $type . '"' . $length . ', nullable=' . $nullable . ', unique=' . $unique . ')' . "\n";
-			} elseif ($row->Key == 'MUL') {
+			} elseif ($row->key == 'MUL') {
 				$indexes .= ($indexesCounter != 0) ? ' *   		' : NULL;
 
-				$entity   = ucfirst(str_replace('_id', '', $row->Field));
-				$indexes .= '@index(name="' . $row->Field . '", columns={"' . $row->Field . '"}),' . "\n";
-				$type     = '\\' . ucfirst($entity);
+				$indexes .= '@index(name="' . $row->field . '", columns={"' . $row->field . '"}),' . "\n";
+				$type     = '\\' . ucfirst($row->referenced_table);
 
-				$columns .= '	 * @ManyToOne(targetEntity="' . $entity . '", cascade={"persist"})' . "\n";
+				$columns .= '	 * @ManyToOne(targetEntity="' . ucfirst($row->referenced_table) . '", cascade={"persist"})' . "\n";
 				$columns .= '	 * @JoinColumns({' . "\n";
-				$columns .= '	 *   @JoinColumn(name="' . $row->Field . '", referencedColumnName="' . $row->Field . '", nullable=' . $nullable . ', onDelete="cascade")' . "\n";
+				$columns .= '	 *   @JoinColumn(name="' . $row->field . '", referencedColumnName="' . $row->field . '", nullable=' . $nullable . ', onDelete="cascade")' . "\n";
 				$columns .= '	 * })' . "\n";
 
 				$indexesCounter++;
 			} else {
 				$columns .= '	 * @Column(type="' . $type . '"' . $length . ', nullable=' . $nullable . ', unique=' . $unique . ')' . "\n";
 
-				if ($row->Field != 'datetime_created' && $row->Field != 'datetime_updated' && $row->Field != 'password') {
+				if ($row->field != 'datetime_created' && $row->field != 'datetime_updated' && $row->field != 'password') {
 					$keywords .= ($keywordsCounter != 0) ? '		' : NULL;
-					$keywords .= '\'[firstLetter].' . $row->Field . '\'' . ",\n";
+					$keywords .= '\'[firstLetter].' . $row->field . '\'' . ",\n";
 
 					$keywordsCounter++;
 				}
 			}
 
 			$columns .= '	 */' . "\n";
-			$columns .= '	protected $' . $row->Field . ';' . "\n\n";
+			$columns .= '	protected $' . $row->field . ';' . "\n\n";
 
 			/**
 			 * Generate the accessors
 			 */
 
-			$methodName = 'get_' . $row->Field;
+			$methodName = 'get_' . $row->field;
 			$methodName = ($input->getOption('camel')) ? Inflect::camelize($methodName) : Inflect::underscore($methodName);
 			
-			$primaryKey = ($row->Key == 'PRI') ? $methodName : $primaryKey;
+			$primaryKey = ($row->key == 'PRI') ? $methodName : $primaryKey;
 			
 			$accessor = file_get_contents($doctrineDirectory . '/Templates/Doctrine/Miscellaneous/Accessor.txt');
 			
 			$search  = array('[field]', '[type]', '[method]');
-			$replace = array($row->Field, $type, $methodName);
+			$replace = array($row->field, $type, $methodName);
 
 			$accessors .= str_replace($search, $replace, $accessor) . "\n\n";
 
@@ -182,7 +181,7 @@ class CreateModelCommand extends Command
 			 * The column to be displayed in the select() public method
 			 */
 
-			if (in_array($row->Field, $selectColumns)) {
+			if (in_array($row->field, $selectColumns)) {
 				$model = str_replace('/* Column to be displayed in the dropdown */', $methodName . '()', $model);
 			}
 
@@ -190,25 +189,25 @@ class CreateModelCommand extends Command
 			 * Generate the mutators
 			 */
 
-			if ($row->Extra != 'auto_increment') {
+			if ($row->extra != 'auto_increment') {
 				$class         = '\\' . ucfirst($name);
 				$classVariable = NULL;
 				
-				$methodName = 'set_' . $row->Field;
+				$methodName = 'set_' . $row->field;
 				$methodName = ($input->getOption('camel')) ? Inflect::camelize($methodName) : Inflect::underscore($methodName);
 
-				$nullable = ($row->Null == 'YES') ? ' = NULL' : NULL;
+				$nullable = ($row->null == 'YES') ? ' = NULL' : NULL;
 
 				$mutator = file_get_contents($doctrineDirectory . '/Templates/Doctrine/Miscellaneous/Mutator.txt');
 
-				if ($row->Key == 'MUL') {
-					$classVariable = '\\' . ucfirst(str_replace('_id', '', $row->Field)) . ' ';
-				} elseif (in_array($this->_getDataType($row->Type), $dataTypes)) {
+				if ($row->key == 'MUL') {
+					$classVariable = '\\' . ucfirst($row->referenced_table) . ' ';
+				} elseif (in_array($this->_getDataType($row->type), $dataTypes)) {
 					$mutator = str_replace('$this->[field] = $[field];', '$this->[field] = new \DateTime($[field]);', $mutator);
 				}
 
 				$search  = array('[field]', '[type]', '[method]', '[classVariable]', '[class]', '[nullable]');
-				$replace = array($row->Field, $type, $methodName, $classVariable, $class, $nullable);
+				$replace = array($row->field, $type, $methodName, $classVariable, $class, $nullable);
 				
 				$mutators .= str_replace($search, $replace, $mutator) . "\n\n";
 

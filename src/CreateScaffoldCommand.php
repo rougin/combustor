@@ -1,6 +1,6 @@
 <?php namespace Combustor;
 
-use Combustor\Tools\GetColumns;
+use Combustor\Tools\Describe;
 use Combustor\Tools\Inflect;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\ArrayInput;

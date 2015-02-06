@@ -1,6 +1,6 @@
 <?php namespace Combustor;
 
-use Combustor\Tools\GetColumns;
+use Combustor\Tools\Describe;
 use Combustor\Tools\Inflect;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\ArrayInput;
@@ -66,7 +66,7 @@ class CreateControllerCommand extends Command
 		 * Get the columns from the specified name
 		 */
 
-		$columns = new GetColumns($input->getArgument('name'), $output);
+		$columns = new Describe($input->getArgument('name'), $output);
 
 		$models = '\'[singular]\'';
 
@@ -81,62 +81,66 @@ class CreateControllerCommand extends Command
 		$singularText    = strtolower(Inflect::humanize($input->getArgument('name')));
 
 		foreach ($columns->result() as $row) {
-			if ($row->Key == 'PRI') {
-				$primaryKey = $row->Field;
+			if ($row->key == 'PRI') {
+				$primaryKey = $row->field;
 			}
 
-			$methodName = 'set_' . strtolower($row->Field);
+			$methodName = 'set_' . strtolower($row->field);
 			$methodName = ($input->getOption('camel')) ? Inflect::camelize($methodName) : Inflect::underscore($methodName);
 
 			if ($counter != 0) {
-				$columnsCreate   .= ($row->Field != 'datetime_updated') ? '			' : NULL;
-				$columnsEdit     .= ($row->Field != 'datetime_created') ? '			' : NULL;
-				$columnsValidate .= ($row->Field != 'password' && $row->Field != 'datetime_created' && $row->Field != 'datetime_updated') ? '			' : NULL;
+				$columnsCreate   .= ($row->field != 'datetime_updated') ? '			' : NULL;
+				$columnsEdit     .= ($row->field != 'datetime_created') ? '			' : NULL;
+				$columnsValidate .= ($row->field != 'password' && $row->field != 'datetime_created' && $row->field != 'datetime_updated') ? '			' : NULL;
 			}
 
 			$dropdownColumns .= ($dropdowns != 0) ? '		' : NULL;
 
-			if ($row->Extra == 'auto_increment') {
+			if ($row->extra == 'auto_increment') {
 				continue;
-			} elseif ($row->Key == 'MUL') {
-				$entity = str_replace('_id', '', $row->Field);
+			} elseif ($row->key == 'MUL') {
+				$entity = str_replace('_id', '', $row->field);
 
-				if (strpos($models, ",\n" . '			\'' . $row->Referenced_Table . '\'') === FALSE) {
-					$models .= ",\n" . '			\'' . $row->Referenced_Table . '\'';
+				if (strpos($models, ",\n" . '			\'' . $row->referenced_table . '\'') === FALSE) {
+					$models .= ",\n" . '			\'' . $row->referenced_table . '\'';
 				}
 
-				$fieldDescription = $row->Field;
-				$fieldDescription = in_array($row->Field, $selectColumns) ? $row->Field : $fieldDescription;
+				$foreignTable = new Describe($row->referenced_table, $output);
 
-				$dropdownColumns .= '$data[\'' . Inflect::pluralize($entity) . '\'] = $this->factory->get_all(\'' . $row->Referenced_Table . '\')->as_dropdown(\'' . $row->Referenced_Table . '\', \'' . $row->Referenced_Column . '\');' . "\n";
+				$fieldDescription = $row->field;
+				foreach ($foreignTable->result() as $foreignRow) {
+					$fieldDescription = in_array($foreignRow->field, $selectColumns) ? $foreignRow->field : $fieldDescription;
+				}
 
-				$columnsCreate .= '$' . $row->Referenced_Table . ' = $this->factory->find(\'' . $row->Referenced_Table . '\', array(\'' . $row->Referenced_Column . '\' => $this->input->post(\'' . $row->Referenced_Column . '\')));' . "\n";
-				$columnsCreate .= '			$this->[singular]->' . $methodName . '($' . $row->Referenced_Table . ');' . "\n\n";
+				$dropdownColumns .= '$data[\'' . Inflect::pluralize($entity) . '\'] = $this->factory->get_all(\'' . $row->referenced_table . '\')->as_dropdown(\'' . $fieldDescription . '\');' . "\n";
 
-				$columnsEdit .= '$' . $row->Referenced_Table . ' = $this->factory->find(\'' . $row->Referenced_Table . '\', array(\'' . $row->Field . '\' => $this->input->post(\'' . $row->Referenced_Column . '\')));' . "\n";
-				$columnsEdit .= '			$[singular]->' . $methodName . '($' . $row->Referenced_Table . ');' . "\n\n";
+				$columnsCreate .= '$' . $row->referenced_table . ' = $this->factory->find(\'' . $row->referenced_table . '\', array(\'' . $row->referenced_column . '\' => $this->input->post(\'' . $row->field . '\')));' . "\n";
+				$columnsCreate .= '			$this->[singular]->' . $methodName . '($' . $row->referenced_table . ');' . "\n\n";
+
+				$columnsEdit .= '$' . $row->referenced_table . ' = $this->factory->find(\'' . $row->referenced_table . '\', array(\'' . $row->field . '\' => $this->input->post(\'' . $row->referenced_column . '\')));' . "\n";
+				$columnsEdit .= '			$[singular]->' . $methodName . '($' . $row->referenced_table . ');' . "\n\n";
 
 				$dropdowns++;
-			} elseif ($row->Field == 'password') {
+			} elseif ($row->field == 'password') {
 				$columnsCreate .= "\n" . file_get_contents(__DIR__ . '/Templates/Miscellaneous/CheckCreatePassword.txt') . "\n\n";
 				$columnsEdit   .= "\n" . file_get_contents(__DIR__ . '/Templates/Miscellaneous/CheckEditPassword.txt') . "\n\n";
 
 				$columnsCreate = str_replace('[method]', $methodName, $columnsCreate);
 				$columnsEdit   = str_replace('[method]', $methodName, $columnsEdit);
 			} else {
-				$column = ($row->Field == 'datetime_created' || $row->Field == 'datetime_updated') ? 'date(\'Y-m-d H:i:s\')' : '$this->input->post(\'' . $row->Field . '\')';
+				$column = ($row->field == 'datetime_created' || $row->field == 'datetime_updated') ? 'now' : '$this->input->post(\'' . $row->field . '\')';
 
-				if ($row->Field != 'datetime_updated') {
+				if ($row->field != 'datetime_updated') {
 					$columnsCreate .= '$this->[singular]->' . $methodName . '(' . $column . ');' . "\n";
 				}
 
-				if ($row->Field != 'datetime_created') {
+				if ($row->field != 'datetime_created') {
 					$columnsEdit .= '$[singular]->' . $methodName . '(' . $column . ');' . "\n";
 				}
 			}
 
-			if ($row->Field != 'password' && $row->Field != 'datetime_created' && $row->Field != 'datetime_updated') {
-				$columnsValidate .= '\'' . $row->Field . '\' => \'' . str_replace('_', ' ', $row->Field) . '\',' . "\n";
+			if ($row->field != 'password' && $row->field != 'datetime_created' && $row->field != 'datetime_updated') {
+				$columnsValidate .= '\'' . $row->field . '\' => \'' . str_replace('_', ' ', $row->field) . '\',' . "\n";
 			}
 
 			$counter++;

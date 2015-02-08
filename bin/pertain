@@ -32,6 +32,19 @@ if ($answer != 1 && $answer != 2 && $answer != 3)
 	exit();
 }
 
+switch ($answer)
+{
+	case 1:
+		$answer = 'factory';
+		break;
+	case 2:
+		$answer = 'doctrine';
+		break;
+	case 3:
+		$answer = 'both';
+		break;
+}
+
 /**
  * ---------------------------------------------------------------------------------------------
  * Get the CodeIgniter.php core file
@@ -90,7 +103,7 @@ else
  * ---------------------------------------------------------------------------------------------
  */
 
-if ($answer == 2 || $answer == 3)
+if ($answer == 'doctrine' || $answer == 'both')
 {
 	$composer = file_get_contents('composer.json');
 	
@@ -134,17 +147,17 @@ if ($answer == 2 || $answer == 3)
 $libraries = NULL;
 $session = (strpos($codeigniter_core, 'define(\'CI_VERSION\', \'3.0') === FALSE) ? '\'session\'' : NULL;
 
-if ($answer == 1)
+if ($answer == 'factory')
 {
 	$comma = (is_string($session)) ? ', ' : NULL;
 	$libraries = $comma . '\'factory\'';
 }
-else if ($answer == 2)
+else if ($answer == 'doctrine')
 {
 	$comma = (is_string($session)) ? ', ' : NULL;
 	$libraries = $comma . '\'doctrine\'';
 }
-else if ($answer == 3)
+else if ($answer == 'both')
 {
 	$comma = (is_string($session)) ? ', ' : NULL;
 	$libraries = $comma . '\'doctrine\', \'factory\'';
@@ -171,7 +184,7 @@ if (strpos($codeigniter_core, 'define(\'CI_VERSION\', \'3.0') !== FALSE)
 $contents = str_replace($search, $replace, $autoload);
 file_put_contents('application/config/autoload.php', $contents);
 
-if ($answer == 1 || $answer == 3)
+if ($answer == 'factory' || $answer == 'both')
 {
 	/**
 	 * ---------------------------------------------------------------------------------------------
@@ -205,7 +218,7 @@ class Factory {
 	 * @param  string $description
 	 * @return array
 	 */
-	public function as_dropdown($description)
+	public function as_dropdown($description = \'description\')
 	{
 		$tableDescription = new Describe($this->_table);
 		
@@ -318,12 +331,14 @@ class Factory {
 		$model = new $table();
 		$main_table = new Describe($table);
 
-		foreach ($main_table->result() as $table_row) {
+		foreach ($main_table->result() as $table_row)
+		{
 			$mutator = \'set_\' . $table_row->field;
 			$method = $table_row->field;
 			$data = $row->$method;
 
-			if ($table_row->key == \'MUL\') {
+			if ($table_row->key == \'MUL\')
+			{
 				$parameters = array($table_row->referenced_column => $data);
 
 				$data = $this->find($table_row->referenced_table, $parameters);
@@ -371,10 +386,10 @@ class Factory {
 		fclose($file);
 	}
 
-	echo 'The customized factory pattern is now set up for CodeIgniter!', PHP_EOL;
+	echo 'The customized factory pattern is now set up for CodeIgniter!' . PHP_EOL;
 }
 
-if ($answer == 2 || $answer == 3)
+if ($answer == 'doctrine' || $answer == 'both')
 {
 	/**
 	 * ---------------------------------------------------------------------------------------------
@@ -584,5 +599,5 @@ class Doctrine
 
 	file_put_contents('vendor/doctrine/orm/lib/Doctrine/ORM/Tools/Console/Command/SchemaTool/AbstractCommand.php', $contents);
 
-	echo 'Doctrine is now set up for CodeIgniter!', PHP_EOL;
+	echo 'Doctrine is now set up for CodeIgniter!' . PHP_EOL;
 }

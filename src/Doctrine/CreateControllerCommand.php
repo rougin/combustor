@@ -75,13 +75,14 @@ class CreateControllerCommand extends Command
 
 		$models = '\'[singular]\'';
 
-		$columnsCreate   = NULL;
-		$columnsEdit     = NULL;
-		$columnsValidate = NULL;
-		$counter         = 0;
-		$dropdownColumns = NULL;
-		$dropdowns       = 0;
-		$singularText    = strtolower(Inflect::humanize($input->getArgument('name')));
+		$columnsOnCreate         = NULL;
+		$columnsOnEdit           = NULL;
+		$columnsToValidate       = NULL;
+		$counter                 = 0;
+		$dropdownColumnsOnCreate = '$data = array();';
+		$dropdownColumnsOnEdit   = '$data[\'[singular]\'] = $this->doctrine->em->find(\'[singular]\', $id);';
+		$dropdowns               = 0;
+		$singularText            = strtolower(Inflect::humanize($input->getArgument('name')));
 
 		foreach ($columns->result() as $row) {
 			if ($row->key == 'PRI') {
@@ -92,12 +93,15 @@ class CreateControllerCommand extends Command
 			$methodName = ($input->getOption('camel')) ? Inflect::camelize($methodName) : Inflect::underscore($methodName);
 
 			if ($counter != 0) {
-				$columnsCreate   .= ($row->field != 'datetime_updated') ? '			' : NULL;
-				$columnsEdit     .= ($row->field != 'datetime_created') ? '			' : NULL;
-				$columnsValidate .= ($row->field != 'password' && $row->field != 'datetime_created' && $row->field != 'datetime_updated') ? '			' : NULL;
+				$columnsOnCreate   .= ($row->field != 'datetime_updated') ? '			' : NULL;
+				$columnsOnEdit     .= ($row->field != 'datetime_created') ? '			' : NULL;
+				$columnsToValidate .= ($row->field != 'password' && $row->field != 'datetime_created' && $row->field != 'datetime_updated') ? '			' : NULL;
 			}
 
-			$dropdownColumns .= ($dropdowns != 0) ? '		' : NULL;
+			if ($dropdowns != 0) {
+				$dropdownColumnsOnCreate .= '		';
+				$dropdownColumnsOnEdit   .= '		';
+			}
 
 			if ($row->extra == 'auto_increment') {
 				continue;
@@ -106,34 +110,41 @@ class CreateControllerCommand extends Command
 				$models .= ",\n" . '			\'' . $entity . '\'';
 
 				$dropdownColumns .= '$data[\'' . Inflect::pluralize($entity) . '\'] = $this->' . $entity . '->select();' . "\n";
-				
-				$columnsCreate .= '$' . $entity . ' = $this->doctrine->em->find(\'' . $entity . '\', $this->input->post(\'' . $row->field . '\'));' . "\n";
-				$columnsCreate .= '			$this->[singular]->' . $methodName . '($' . $entity . ');' . "\n\n";
 
-				$columnsEdit .= '$' . $entity . ' = $this->doctrine->em->find(\'' . $entity . '\', $this->input->post(\'' . $row->field . '\'));' . "\n";
-				$columnsEdit .= '			$[singular]->' . $methodName . '($' . $entity . ');' . "\n\n";
+				$dropdownColumnsOnCreate .= $dropdownColumn;
+				$dropdownColumnsOnEdit   .= $dropdownColumn;
+
+				$columnsOnCreate .= '$' . $entity . ' = $this->doctrine->em->find(\'' . $entity . '\', $this->input->post(\'' . $row->field . '\'));' . "\n";
+				$columnsOnCreate .= '			$this->[singular]->' . $methodName . '($' . $entity . ');' . "\n\n";
+
+				$columnsOnEdit .= '$' . $entity . ' = $this->doctrine->em->find(\'' . $entity . '\', $this->input->post(\'' . $row->field . '\'));' . "\n";
+				$columnsOnEdit .= '			$[singular]->' . $methodName . '($' . $entity . ');' . "\n\n";
 
 				$dropdowns++;
 			} elseif ($row->field == 'password') {
-				$columnsCreate .= "\n" . file_get_contents($doctrineDirectory . '/Templates/Miscellaneous/CheckCreatePassword.txt') . "\n\n";
-				$columnsEdit   .= "\n" . file_get_contents($doctrineDirectory . '/Templates/Miscellaneous/CheckEditPassword.txt') . "\n\n";
+				$columnsOnCreate .= "\n" . file_get_contents($doctrineDirectory . '/Templates/Miscellaneous/CheckCreatePassword.txt') . "\n\n";
+				$columnsOnEdit   .= "\n" . file_get_contents($doctrineDirectory . '/Templates/Miscellaneous/CheckEditPassword.txt') . "\n\n";
 
-				$columnsCreate = str_replace('[method]', $methodName, $columnsCreate);
-				$columnsEdit   = str_replace('[method]', $methodName, $columnsEdit);
+				$columnsOnCreate = str_replace('[method]', $methodName, $columnsOnCreate);
+				$columnsOnEdit   = str_replace('[method]', $methodName, $columnsOnEdit);
 			} else {
-				$column = ($row->field == 'datetime_created' || $row->field == 'datetime_updated') ? '\'now\'' : '$this->input->post(\'' . $row->field . '\')';
+				if ($row->field == 'datetime_created' || $row->field == 'datetime_updated') {
+					$column = '\'now\'';
+				} else {
+					$column = '$this->input->post(\'' . $row->field . '\')';
+				}
 
 				if ($row->field != 'datetime_updated') {
-					$columnsCreate .= '$this->[singular]->' . $methodName . '(' . $column . ');' . "\n";
+					$columnsOnCreate .= '$this->[singular]->' . $methodName . '(' . $column . ');' . "\n";
 				}
 
 				if ($row->field != 'datetime_created') {
-					$columnsEdit .= '$[singular]->' . $methodName . '(' . $column . ');' . "\n";
+					$columnsOnEdit .= '$[singular]->' . $methodName . '(' . $column . ');' . "\n";
 				}
 			}
 
 			if ($row->field != 'password' && $row->field != 'datetime_created' && $row->field != 'datetime_updated') {
-				$columnsValidate .= '\'' . $row->field . '\' => \'' . str_replace('_', ' ', $row->field) . '\',' . "\n";
+				$columnsToValidate .= '\'' . $row->field . '\' => \'' . str_replace('_', ' ', $row->field) . '\',' . "\n";
 			}
 
 			$counter++;
@@ -146,10 +157,11 @@ class CreateControllerCommand extends Command
 		$search = array(
 			'[models]',
 			'[primaryKey]',
-			'[dropdownColumns]',
-			'[columnsCreate]',
-			'[columnsEdit]',
-			'[columnsValidate]',
+			'[dropdownColumnsOnCreate]',
+			'[dropdownColumnsOnEdit]',
+			'[columnsOnCreate]',
+			'[columnsOnEdit]',
+			'[columnsToValidate]',
 			'[controller]',
 			'[controllerName]',
 			'[plural]',
@@ -160,10 +172,11 @@ class CreateControllerCommand extends Command
 		$replace = array(
 			rtrim($models),
 			$primaryKey,
-			rtrim($dropdownColumns),
-			rtrim($columnsCreate),
-			rtrim($columnsEdit),
-			substr($columnsValidate, 0, -2),
+			rtrim($dropdownColumnsOnCreate),
+			rtrim($dropdownColumnsOnEdit),
+			rtrim($columnsOnCreate),
+			rtrim($columnsOnEdit),
+			substr($columnsToValidate, 0, -2),
 			ucfirst(Inflect::pluralize($input->getArgument('name'))),
 			ucfirst(str_replace('_', ' ', Inflect::pluralize($input->getArgument('name')))),
 			Inflect::pluralize($input->getArgument('name')),
@@ -192,5 +205,5 @@ class CreateControllerCommand extends Command
 
 		$output->writeln('<info>The controller "' . $name . '" has been created successfully!</info>');
 	}
-	
+
 }

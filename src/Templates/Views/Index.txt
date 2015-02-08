@@ -12,12 +12,8 @@
 				<tr>
 					[rows]
 					<td>
-						<a href="<?php echo base_url('[plural]/edit/' . $[singular]->[primaryKey]()); ?>">
-							Update
-						</a>
-						<a href="<?php echo base_url('[plural]/delete/' . $[singular]->[primaryKey]()); ?>">
-							Delete
-						</a>
+						<a class="fa fa-edit" href="<?php echo base_url('[plural]/edit/' . $[singular]->[primaryKey]()); ?>"></a>
+						<a class="fa fa-close" href="<?php echo base_url('[plural]/delete/' . $[singular]->[primaryKey]()); ?>"></a>
 					</td>
 				</tr>
 			<?php endforeach; ?>

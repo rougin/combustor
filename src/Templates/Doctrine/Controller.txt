@@ -27,7 +27,7 @@ class [controller] extends CI_Controller
 
 		if ($this->form_validation->run())
 		{
-			[columnsCreate]
+			[columnsOnCreate]
 
 			$this->doctrine->em->persist($this->[singular]);
 			$this->doctrine->em->flush();
@@ -38,8 +38,7 @@ class [controller] extends CI_Controller
 			redirect('[plural]');
 		}
 
-		$data = array();
-		[dropdownColumns]
+		[dropdownColumnsOnCreate]
 
 		$this->load->view('[plural]/create', $data);
 	}
@@ -79,7 +78,7 @@ class [controller] extends CI_Controller
 		{
 			$[singular] = $this->doctrine->em->find('[singular]', $id);
 
-			[columnsEdit]
+			[columnsOnEdit]
 
 			$this->doctrine->em->persist($[singular]);
 			$this->doctrine->em->flush();
@@ -91,7 +90,6 @@ class [controller] extends CI_Controller
 		}
 
 		[dropdownColumns]
-		$data['[singular]'] = $this->doctrine->em->find('[singular]', $id);
 
 		$this->load->view('[plural]/edit', $data);
 	}
@@ -103,7 +101,10 @@ class [controller] extends CI_Controller
 	{
 		$this->load->library('pagination');
 		
-		include APPPATH . 'config/pagination.php';
+		if (file_exists('config/pagination.php'))
+		{
+			include APPPATH . 'config/pagination.php';
+		}
 
 		$config['suffix']     = '?keyword=' . $this->input->get('keyword');
 		$config['total_rows'] = $this->[singular]->all(NULL, 'count');
@@ -144,12 +145,14 @@ class [controller] extends CI_Controller
 		$this->load->library('form_validation');
 
 		$columns = array(
-			[columnsValidate]
+			[columnsToValidate]
 		);
 
 		foreach ($columns as $column => $label)
 		{
-			$this->form_validation->set_rules($column, $label, 'required');
+			$rules = (strpos($column, 'email') !== FALSE) ? 'required|valid_email' : 'required';
+
+			$this->form_validation->set_rules($column, $label, $rules);
 		}
 	}
 

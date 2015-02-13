@@ -28,11 +28,6 @@ class CreateModelCommand extends Command
 				InputOption::VALUE_NONE,
 				'Keep the first character of the name to lowercase'
 			)->addOption(
-				'doctrine',
-				null,
-				InputOption::VALUE_NONE,
-				'Create a new controller based on Doctrine'
-			)->addOption(
 				'camel',
 				NULL,
 				InputOption::VALUE_NONE,

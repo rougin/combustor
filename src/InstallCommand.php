@@ -1,5 +1,6 @@
 <?php namespace Combustor;
 
+use Combustor\Tools\PostInstallation;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
@@ -44,6 +45,10 @@ class InstallCommand extends Command
 
 		if ( ! in_array('\'factory\'', $libraries)) {
 			array_push($libraries, '\'factory\'');
+
+			if ( ! in_array('\'database\'', $libraries)) {
+				array_push($libraries, '\'database\'');
+			}
 
 			$autoload = preg_replace(
 				'/\$autoload\[\'libraries\'\] = array\([^)]*\);/',
@@ -98,6 +103,9 @@ $application->add(new Combustor\CreateScaffoldCommand);',
 			file_put_contents(VENDOR . 'rougin/combustor/bin/combustor', $combustor);
 			fclose($file);
 		}
+
+		$postInstallation = new PostInstallation();
+		$postInstallation->run();
 
 		$output->writeln('<info>The customized factory pattern is now installed successfully!</info>');
 	}

@@ -42,7 +42,7 @@ class RemoveCommand extends Command
 
 		$libraries = explode(', ', end($match[1]));
 
-		if ( ! in_array('\'factory\'', $libraries)) {
+		if (in_array('\'factory\'', $libraries)) {
 			$position = array_search('\'factory\'', $libraries);
 
 			unset($libraries[$position]);

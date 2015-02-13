@@ -42,7 +42,7 @@ class RemoveCommand extends Command
 
 		$libraries = explode(', ', end($match[1]));
 
-		if ( ! in_array('\'doctrine\'', $libraries)) {
+		if (in_array('\'doctrine\'', $libraries)) {
 			$position = array_search('\'doctrine\'', $libraries);
 
 			unset($libraries[$position]);
@@ -68,7 +68,7 @@ class RemoveCommand extends Command
 		preg_match_all('/"require-dev": \{(.*?)\}/', $composer, $match);
 		$requiredDevLibraries = explode(',', end($match[1]));
 
-		if ( ! in_array('"doctrine/orm": "2.4.*"', $requiredLibraries)) {
+		if (in_array('"doctrine/orm": "2.4.*"', $requiredLibraries)) {
 			$position = array_search('"doctrine/orm": "2.4.*"', $requiredLibraries);
 
 			unset($requiredLibraries[$position]);
@@ -88,10 +88,6 @@ class RemoveCommand extends Command
 			fclose($file);
 		}
 
-		if ( ! rmdir(VENDOR . 'doctrine')) {
-			$output->writeln('<error>There\'s something wrong while removing. Please try again later.</error>');
-		}
-
 		system('composer update');
 
 		$combustor = file_get_contents(VENDOR . 'rougin/combustor/bin/combustor');
@@ -102,13 +98,17 @@ class RemoveCommand extends Command
 		if ($commandsExists && $factoryIsNotInstalled) {
 			$search = array(
 '$application->add(new Combustor\Doctrine\CreateControllerCommand);
-$application->add(new Combustor\Doctrine\CreateModelCommand);',
-				'$application->add(new Combustor\Doctrine\RemoveCommand);'
+$application->add(new Combustor\Doctrine\CreateModelCommand);
+$application->add(new Combustor\Doctrine\CreateScaffoldCommand);',
+				'$application->add(new Combustor\Doctrine\RemoveCommand);',
+				'// $application->add(new Combustor\Doctrine\InstallCommand);'
 			);
 			$replace = array(
 '// $application->add(new Combustor\Doctrine\CreateControllerCommand);
-// $application->add(new Combustor\Doctrine\CreateModelCommand);',
-				'// $application->add(new Combustor\Doctrine\RemoveCommand);'
+// $application->add(new Combustor\Doctrine\CreateModelCommand);
+// $application->add(new Combustor\Doctrine\CreateScaffoldCommand);',
+				'// $application->add(new Combustor\Doctrine\RemoveCommand);',
+				'$application->add(new Combustor\Doctrine\InstallCommand);'
 			);
 
 			$combustor = str_replace($search, $replace, $combustor);

@@ -92,6 +92,11 @@ class Describe {
 		return $this->_columns;
 	}
 
+	/**
+	 * Get the primary key of the specified table
+	 * 
+	 * @return string
+	 */
 	public function getPrimaryKey()
 	{
 		foreach ($this->_columns as $column) {

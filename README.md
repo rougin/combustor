@@ -6,31 +6,17 @@ Combustor is a code generator console application for [CodeIgniter](https://elli
 Instructions
 ============
 
-1. Download the latest version of CodeIgniter then add the package in your require-list in ```composer.json``` and after that, run ```composer install```:
+1. Download the latest version of CodeIgniter from this [link](https://github.com/bcit-ci/CodeIgniter/archive/3.0rc2.zip) then type this command on the command line:
 
-	```
-	{
-		"require": {
-			"rougin/combustor": "dev-master"
-		}
-	}
-	```
+    **NOTE**: This step requires [Composer](https://getcomposer.org) and [Git](http://git-scm.com) in order to get it to work. Download and install the latest version of it first. The instructions for that can be found [here](http://git-scm.com/downloads) and [here](https://getcomposer.org/download/). If you have already installed Composer and Git on your system, then you can skip this note. (This note was copied from [ignite.php](https://github.com/rougin/ignite.php))
 
-2. After installing the required dependencies, run the command below in the PHP CLI:
+    **ANOTHER NOTE**: This is only optional for **version 3** above but if you are using **version 2.2.1 and below**, you need to clone [ignite.php](https://github.com/rougin/ignite.php) in order to setup the Composer autoloader before running the commands below. If you use the ```ignite.php``` script, then skip this step.
 
-	**For Unix and Mac:**
+	```composer require rougin/combustor:dev-master```
 
-	```php vendor/bin/pertain```
+	```composer install```
 
-	**For Windows or if there are no symbolic links found at ```vendor/bin``` directory:**
-
-	```php vendor/rougin/combustor/bin/pertain```
-
-	**NOTE**: The command above only setups the Combustor and Doctrine for CodeIgniter. To include the integrated pagination and other things, I've created a [simple script](https://github.com/rougin/ignite.php) for that.
-
-3. Select a choice if you want to install the factory pattern, Doctrine, or both of them.
-
-4. After choosing, access the application via the PHP CLI and to retrieve the list of commands:
+2. After the installation, access the application via the **PHP CLI** to retrieve the list of commands:
 	
 	**For Unix and Mac:**
 
@@ -40,9 +26,156 @@ Instructions
 
 	```php vendor/rougin/combustor/bin/combustor```
 
+3. Just select if you want to install the customized factory pattern, or the Doctrine ORM.
+
+    **To install/remove the customized pattern:**
+    
+    ```php vendor/bin/combustor install:factory```
+
+    ```php vendor/bin/combustor remove:factory```
+    
+    **To install/remove Doctrine ORM:**
+    
+    ```php vendor/bin/combustor install:doctrine```
+
+    ```php vendor/bin/combustor remove:doctrine```
+
+4. Then create now an awesome application!
+
+Commands
+========
+
+The help for following commands below are also available in the Combustor *command line interface*. Just type the command you want to get help and insert an option of ```--help``` (e.g ```create:controller --help```)
+
+### create:layout [options]
+
+Creates a new header and footer file
+
+#### Options:
+
+```--bootstrap``` Include the [Bootstrap](http://getbootstrap.com/) tags
+
+**NOTE**: You must install the customized factory pattern to view this set of commands. See step 3 above.
+
+### create:controller [arguments] [options]
+
+Creates a new controller
+
+#### Arguments:
+
+```name``` Name of the controller
+
+#### Options:
+
+```--keep``` Keeps the name to be used
+
+```--lowercase``` Keep the first character of the name to lowercase
+
+```--camel``` Use the camel case naming convention for the accessor and mutators
+
+### create:model [arguments] [options]
+
+Creates a new model
+
+#### Arguments:
+
+```name``` Name of the model
+
+#### Options:
+
+```--lowercase``` Keep the first character of the name to lowercase
+
+```--camel``` Use the camel case naming convention for the accessor and mutators
+
+### create:view [arguments] [options]
+
+**NOTE**: This command is also available when you do the command ```install:doctrine```.
+
+Creates a new view
+
+#### Arguments:
+
+```name``` Name of the directory to be included in the ```views``` directory
+
+#### Options:
+
+```--bootstrap``` Include the [Bootstrap](http://getbootstrap.com/) tags
+
+```--camel``` Use the camel case naming convention for the accessor and mutators
+
+### create:scaffold [arguments] [options]
+
+Creates a new controller, model, and view
+
+#### Arguments:
+
+```name``` Name of the directory to be included in the ```views``` directory
+
+#### Options:
+
+```--bootstrap``` Include the [Bootstrap](http://getbootstrap.com/) tags
+
+```--camel``` Use the camel case naming convention for the accessor and mutators
+
+```--keep``` Keeps the name to be used
+
+```--lowercase``` Keep the first character of the name to lowercase
+
+**NOTE**: You must install the Doctrine ORM to view this set of commands. See step 3 above.
+
+### doctrine:controller [arguments] [options]
+
+Creates a new Doctrine-based controller
+
+#### Arguments:
+
+```name``` Name of the controller
+
+#### Options:
+
+```--keep``` Keeps the name to be used
+
+```--lowercase``` Keep the first character of the name to lowercase
+
+```--camel``` Use the camel case naming convention for the accessor and mutators
+
+### doctrine:model [arguments] [options]
+
+Creates a new Doctrine-based model
+
+#### Arguments:
+
+```name``` Name of the model
+
+#### Options:
+
+```--lowercase``` Keep the first character of the name to lowercase
+
+```--camel``` Use the camel case naming convention for the accessor and mutators
+
+### doctrine:scaffold [arguments] [options]
+
+Creates a new Doctrine-based controller, Doctrine-based model and a view
+
+#### Arguments:
+
+```name``` Name of the directory to be included in the ```views``` directory
+
+#### Options:
+
+```--bootstrap``` Include the [Bootstrap](http://getbootstrap.com/) tags
+
+```--camel``` Use the camel case naming convention for the accessor and mutators
+
+```--keep``` Keeps the name to be used
+
+```--lowercase``` Keep the first character of the name to lowercase
+
 Reminders
 =========
 
+* **VERY IMPORTANT**: Before generating the models, views, and controllers, please make sure that you **set up your database** (foreign keys, indexes, relationships, normalizations) properly in order to minimize the modifications after the codes has been generated. Also, generate the models, views, and controllers first to tables that are having **no relationship with other tables** in the database. *The reason for this is that Combustor will generate controllers, models, and views based on your database schema. If there's something wrong in your database, definitely the Combustor will generated some bad code.*
+
 * If you want to know more about Doctrine ORM and its functionalities, you can always read their documentation [here](doctrine-orm.readthedocs.org/en/latest/tutorials/getting-started.html).
-* Before generating the models, views, and controllers, please make sure that you **set up your database** (foreign keys, indexes, relationships, normalizations) properly to minimize modifications after the codes has been generated. Also, generate the models, views, and controllers first to tables that are having **no relationship with other tables** in the database.
+
 * Found a bug? Want to contribute? Feel free to open an issue or create a pull request. :+1:

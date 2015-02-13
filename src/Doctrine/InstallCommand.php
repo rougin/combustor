@@ -1,5 +1,6 @@
 <?php namespace Combustor\Doctrine;
 
+use Combustor\Tools\PostInstallation;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
@@ -59,8 +60,8 @@ class InstallCommand extends Command
 
 		system('composer update');
 
-		$cli     = file_get_contents(__DIR__ . '/Templates/Doctrine/Cli.txt');
-		$library = file_get_contents(__DIR__ . '/Templates/Doctrine/Library.txt');
+		$cli     = file_get_contents(VENDOR . 'rougin/combustor/src/Templates/Doctrine/Cli.txt');
+		$library = file_get_contents(VENDOR . 'rougin/combustor/src/Templates/Doctrine/Library.txt');
 
 		/**
 		 * ---------------------------------------------------------------------------------------------
@@ -83,6 +84,12 @@ class InstallCommand extends Command
 
 		if ( ! in_array('\'doctrine\'', $libraries)) {
 			array_push($libraries, '\'doctrine\'');
+
+			if (in_array('\'database\'', $libraries)) {
+				$position = array_search('\'database\'', $libraries);
+
+				unset($libraries[$position]);
+			}
 
 			$autoload = preg_replace(
 				'/\$autoload\[\'libraries\'\] = array\([^)]*\);/',
@@ -159,6 +166,9 @@ $application->add(new Combustor\Doctrine\CreateScaffoldCommand);',
 			file_put_contents(VENDOR . 'rougin/combustor/bin/combustor', $combustor);
 			fclose($file);
 		}
+
+		$postInstallation = new PostInstallation();
+		$postInstallation->run();
 
 		$output->writeln('<info>The Doctrine ORM is now installed successfully!</info>');
 	}

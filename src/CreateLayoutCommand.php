@@ -58,6 +58,7 @@ class CreateLayoutCommand extends Command
 		);
 
 		$replace = array(
+			$bootstrapContainer,
 			$styleSheets,
 			$scripts
 		);

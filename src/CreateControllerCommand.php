@@ -95,39 +95,30 @@ class CreateControllerCommand extends Command
 				$columnsToValidate .= ($row->field != 'password' && $row->field != 'datetime_created' && $row->field != 'datetime_updated') ? '			' : NULL;
 			}
 
-			if ($dropdowns != 0) {
-				$dropdownColumnsOnCreate .= '		';
-				$dropdownColumnsOnEdit   .= '		';
-			}
-
 			if ($row->extra == 'auto_increment') {
 				continue;
 			} elseif ($row->key == 'MUL') {
-				$entity = str_replace('_id', '', $row->field);
-
 				if (strpos($models, ",\n" . '			\'' . $row->referenced_table . '\'') === FALSE) {
 					$models .= ",\n" . '			\'' . $row->referenced_table . '\'';
 				}
 
 				$foreignTable = new Describe($row->referenced_table, $output);
 
-				$fieldDescription = $row->field;
+				$fieldDescription = $foreignTable->getPrimaryKey();
 				foreach ($foreignTable->result() as $foreignRow) {
 					$fieldDescription = in_array($foreignRow->field, $selectColumns) ? $foreignRow->field : $fieldDescription;
 				}
 
-				$dropdownColumn = '$data[\'' . Inflect::pluralize($entity) . '\'] = $this->factory->get_all(\'' . $row->referenced_table . '\')->as_dropdown(\'' . $fieldDescription . '\');' . "\n";
+				$dropdownColumn = '$data[\'' . Inflect::pluralize($row->referenced_table) . '\'] = $this->factory->get_all(\'' . $row->referenced_table . '\')->as_dropdown(\'' . $fieldDescription . '\');' . "\n";
 
-				$dropdownColumnsOnCreate .= $dropdownColumn;
-				$dropdownColumnsOnEdit   .= $dropdownColumn;
+				$dropdownColumnsOnCreate .= "\n\t\t" . $dropdownColumn;
+				$dropdownColumnsOnEdit   .= "\n\t\t" . $dropdownColumn;
 
 				$columnsOnCreate .= '$' . $row->referenced_table . ' = $this->factory->find(\'' . $row->referenced_table . '\', array(\'' . $row->referenced_column . '\' => $this->input->post(\'' . $row->field . '\')));' . "\n";
 				$columnsOnCreate .= '			$this->[singular]->' . $methodName . '($' . $row->referenced_table . ');' . "\n\n";
 
-				$columnsOnEdit .= '$' . $row->referenced_table . ' = $this->factory->find(\'' . $row->referenced_table . '\', array(\'' . $row->field . '\' => $this->input->post(\'' . $row->referenced_column . '\')));' . "\n";
+				$columnsOnEdit .= '$' . $row->referenced_table . ' = $this->factory->find(\'' . $row->referenced_table . '\', array(\'' . $row->referenced_column . '\' => $this->input->post(\'' . $row->field . '\')));' . "\n";
 				$columnsOnEdit .= '			$[singular]->' . $methodName . '($' . $row->referenced_table . ');' . "\n\n";
-
-				$dropdowns++;
 			} elseif ($row->field == 'password') {
 				$columnsOnCreate .= "\n" . file_get_contents(__DIR__ . '/Templates/Miscellaneous/CheckCreatePassword.txt') . "\n\n";
 				$columnsOnEdit   .= "\n" . file_get_contents(__DIR__ . '/Templates/Miscellaneous/CheckEditPassword.txt') . "\n\n";
@@ -163,7 +154,6 @@ class CreateControllerCommand extends Command
 
 		$search = array(
 			'[models]',
-			'[primaryKey]',
 			'[dropdownColumnsOnCreate]',
 			'[dropdownColumnsOnEdit]',
 			'[columnsOnCreate]',
@@ -171,6 +161,7 @@ class CreateControllerCommand extends Command
 			'[columnsToValidate]',
 			'[controller]',
 			'[controllerName]',
+			'[primaryKey]',
 			'[plural]',
 			'[singular]',
 			'[singularText]'
@@ -178,7 +169,6 @@ class CreateControllerCommand extends Command
 
 		$replace = array(
 			rtrim($models),
-			$primaryKey,
 			rtrim($dropdownColumnsOnCreate),
 			rtrim($dropdownColumnsOnEdit),
 			rtrim($columnsOnCreate),
@@ -186,6 +176,7 @@ class CreateControllerCommand extends Command
 			substr($columnsToValidate, 0, -2),
 			ucfirst(Inflect::pluralize($input->getArgument('name'))),
 			ucfirst(str_replace('_', ' ', Inflect::pluralize($input->getArgument('name')))),
+			$primaryKey,
 			Inflect::pluralize($input->getArgument('name')),
 			Inflect::singularize($input->getArgument('name')),
 			$singularText

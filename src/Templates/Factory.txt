@@ -1,0 +1,179 @@
+<?php defined('BASEPATH') OR exit('No direct script access allowed');
+
+use Combustor\Tools\Describe;
+
+class Factory {
+
+	private $_ci;
+	private $_rows  = array();
+	private $_table = NULL;
+
+	/**
+	 * Class constructor
+	 */
+	public function __construct()
+	{
+		$this->_ci =& get_instance();
+		$this->_ci->load->database();
+	}
+
+	/**
+	 * List all data in dropdown format
+	 *
+	 * @param  string $description
+	 * @return array
+	 */
+	public function as_dropdown($description = 'description')
+	{
+		$tableDescription = new Describe($this->_table);
+		
+		$data        = array('');
+		$description = 'get_' . $description;
+		$id          = 'get_' . $tableDescription->getPrimaryKey();
+
+		foreach ($this->_rows as $row) {
+			$data[$row->$id()] = ucwords($row->$description());
+		}
+
+		return $data;
+	}
+
+	/**
+	 * Delete the specified data from storage
+	 * 
+	 * @param  string $table
+	 * @param  array  $parameters
+	 * @return boolean
+	 */
+	public function delete($table, $parameters = array())
+	{
+		return ($this->_ci->db->delete($table, $parameters)) ? TRUE : FALSE;
+	}
+
+	/**
+	 * Find the row from the specified ID
+	 *
+	 * @param  string $table
+	 * @param  array  parameters
+	 * @return object | boolean
+	 */
+	public function find($table, $parameters = array())
+	{
+		$query = $this->_ci->db->get_where($table, $parameters);
+
+		if ($query->num_rows() > 0)
+		{
+			return $this->_create_object($table, $query->row());
+		}
+
+		return FALSE;
+	}
+
+	/**
+	 * Return all row from the specified table
+	 *
+	 * @param  array $delimiters
+	 * @return object | boolean
+	 */
+	public function get_all($table, $delimiters = array())
+	{
+		$this->_table = $table;
+
+		if (isset($delimiters['keyword']) && $delimiters['keyword'] != NULL)
+		{
+			$this->_find_by_keyword($delimiters['keyword']);
+		}
+
+		if (isset($delimiters['per_page']) && $delimiters['per_page'] != NULL)
+		{
+			$this->_ci->db->limit($delimiters['per_page'], $delimiters['page']);
+		}
+
+		$query = $this->_ci->db->select('*')->from($table)->get();
+
+		if ($query->num_rows() > 0)
+		{
+			$this->_rows = array();
+			
+			foreach ($query->result() as $row)
+			{
+				$this->_rows[] = $this->_create_object($table, $row);
+			}
+		}
+
+		return $this;
+	}
+
+	/**
+	 * Return the result
+	 * 
+	 * @return object
+	 */
+	public function result()
+	{
+		return $this->_rows;
+	}
+
+	/**
+	 * Return the number of rows from the result
+	 * 
+	 * @return int
+	 */
+	public function total_rows()
+	{
+		return count($this->_rows);
+	}
+
+	/**
+	 * Create an object from the specified data
+	 *
+	 * @param  string $table
+	 * @param  object $row
+	 * @return User
+	 */
+	protected function _create_object($table, $row)
+	{
+		$model = new $table();
+		$main_table = new Describe($table);
+
+		foreach ($main_table->result() as $table_row)
+		{
+			$mutator = 'set_' . $table_row->field;
+			$method = $table_row->field;
+			$data = $row->$method;
+
+			if ($table_row->key == 'MUL')
+			{
+				$parameters = array($table_row->referenced_column => $data);
+
+				$data = $this->find($table_row->referenced_table, $parameters);
+			}
+
+			$model->$mutator($data);
+		}
+
+		return $model;
+	}
+
+	/**
+	 * Search for keywords based on the list of columns in the storage
+	 * 
+	 * @param  string $keyword
+	 */
+	protected function _find_by_keyword($keyword)
+	{
+		if ($keyword != NULL)
+		{
+			$keywords = explode(' ', $keyword);
+
+			foreach ($keywords as $keyword)
+			{
+				foreach ($this->_columns as $column)
+				{
+					$this->_ci->db->like($column);
+				}
+			}
+		}
+	}
+
+}

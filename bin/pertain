@@ -1,3 +1,4 @@
+#!/usr/bin/env php
 <?php
 
 /**
@@ -188,11 +189,11 @@ if ($answer == 'factory' || $answer == 'both')
 {
 	/**
 	 * ---------------------------------------------------------------------------------------------
-	 * Contents of MY_Loader.php
+	 * Contents of Factory.php
 	 * ---------------------------------------------------------------------------------------------
 	 */
 
-	$loader = 
+	$factory = 
 '<?php defined(\'BASEPATH\') OR exit(\'No direct script access allowed\');
 
 use Combustor\Tools\Describe;
@@ -382,7 +383,7 @@ class Factory {
 	if ( ! file_exists('application/libraries/Factory.php'))
 	{
 		$file = fopen('application/libraries/Factory.php', 'wb');
-		file_put_contents('application/libraries/Factory.php', $loader);
+		file_put_contents('application/libraries/Factory.php', $factory);
 		fclose($file);
 	}
 

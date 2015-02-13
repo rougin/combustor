@@ -101,10 +101,7 @@ class [controller] extends CI_Controller
 	{
 		$this->load->library('pagination');
 		
-		if (file_exists('config/pagination.php'))
-		{
-			include APPPATH . 'config/pagination.php';
-		}
+		include APPPATH . 'config/pagination.php';
 
 		$config['suffix']     = '?keyword=' . $this->input->get('keyword');
 		$config['total_rows'] = $this->[singular]->all(NULL, 'count');

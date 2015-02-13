@@ -1,13 +1,12 @@
 <?php namespace Combustor;
 
 use Symfony\Component\Console\Command\Command;
-use Symfony\Component\Console\Input\ArrayInput;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 
-class InstallFactoryCommand extends Command
+class InstallCommand extends Command
 {
 
 	/**
@@ -69,22 +68,30 @@ class InstallFactoryCommand extends Command
 		if (strpos($combustor, '// $application->add(new Combustor\CreateControllerCommand);') !== FALSE) {
 			$search = array(
 '// $application->add(new Combustor\CreateControllerCommand);
-// $application->add(new Combustor\CreateLayoutCommand);
 // $application->add(new Combustor\CreateModelCommand);
-// $application->add(new Combustor\CreateScaffoldCommand);
-// $application->add(new Combustor\CreateViewCommand);',
-				'// $application->add(new Combustor\RemoveFactoryCommand);'
+// $application->add(new Combustor\CreateScaffoldCommand);',
+				'// $application->add(new Combustor\RemoveCommand);',
+				'$application->add(new Combustor\InstallCommand);',
 			);
 			$replace = array(
 '$application->add(new Combustor\CreateControllerCommand);
-$application->add(new Combustor\CreateLayoutCommand);
 $application->add(new Combustor\CreateModelCommand);
-$application->add(new Combustor\CreateScaffoldCommand);
-$application->add(new Combustor\CreateViewCommand);',
-				'$application->add(new Combustor\RemoveFactoryCommand);'
+$application->add(new Combustor\CreateScaffoldCommand);',
+				'$application->add(new Combustor\RemoveCommand);',
+				'// $application->add(new Combustor\InstallCommand);'
 			);
 
 			$combustor = str_replace($search, $replace, $combustor);
+
+			$createViewCommandExists = strpos($combustor, '// $application->add(new Combustor\CreateViewCommand);') !== FALSE;
+			$doctrineIsNotInstalled  = ! file_exists(APPPATH . 'libraries/Doctrine.php');
+
+			if ($createViewCommandExists && $doctrineIsNotInstalled) {
+				$search  = '// $application->add(new Combustor\CreateViewCommand);';
+				$replace = '$application->add(new Combustor\CreateViewCommand);';
+
+				$combustor = str_replace($search, $replace, $combustor);
+			}
 
 			$file = fopen(VENDOR . 'rougin/combustor/bin/combustor', 'wb');
 

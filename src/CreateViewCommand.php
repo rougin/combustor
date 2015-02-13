@@ -43,6 +43,10 @@ class CreateViewCommand extends Command
 	 */
 	protected function execute(InputInterface $input, OutputInterface $output)
 	{
+		if (! file_exists(APPPATH . 'views/layout')) {
+			$output->writeln('<error>Please create a layout first using "create:layout" command</error>');
+		}
+
 		/**
 		 * Integrate Bootstrap if enabled
 		 */
@@ -273,9 +277,7 @@ class CreateViewCommand extends Command
 		$filepath = APPPATH . 'views/' . Inflect::pluralize($input->getArgument('name')) . '/';
 
 		if ( ! @mkdir($filepath, 0777, true)) {
-			$output->writeln('<error>The ' . Inflect::pluralize($input->getArgument('name')) . ' views folder already exists!</error>');
-
-			exit();
+			exit($output->writeln('<error>The ' . Inflect::pluralize($input->getArgument('name')) . ' views folder already exists!</error>'));
 		}
 
 		/**

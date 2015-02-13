@@ -1,13 +1,12 @@
-<?php namespace Combustor;
+<?php namespace Combustor\Doctrine;
 
 use Symfony\Component\Console\Command\Command;
-use Symfony\Component\Console\Input\ArrayInput;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 
-class RemoveDoctrineCommand extends Command
+class RemoveCommand extends Command
 {
 
 	/**
@@ -35,6 +34,29 @@ class RemoveDoctrineCommand extends Command
 
 		if ( ! file_exists(APPPATH . 'libraries/Doctrine.php')) {
 			exit($output->writeln('<error>The Doctrine ORM is not installed!</error>'));
+		}
+
+		$autoload = file_get_contents(APPPATH . 'config/autoload.php');
+
+		preg_match_all('/\$autoload\[\'libraries\'\] = array\((.*?)\)/', $autoload, $match);
+
+		$libraries = explode(', ', end($match[1]));
+
+		if ( ! in_array('\'doctrine\'', $libraries)) {
+			$position = array_search('\'doctrine\'', $libraries);
+
+			unset($libraries[$position]);
+
+			$autoload = preg_replace(
+				'/\$autoload\[\'libraries\'\] = array\([^)]*\);/',
+				'$autoload[\'libraries\'] = array(' . implode(', ', $libraries) . ');',
+				$autoload
+			);
+
+			$file = fopen(APPPATH . 'config/autoload.php', 'wb');
+
+			file_put_contents(APPPATH . 'config/autoload.php', $autoload);
+			fclose($file);
 		}
 
 		$composer = file_get_contents('composer.json');
@@ -71,6 +93,40 @@ class RemoveDoctrineCommand extends Command
 		}
 
 		system('composer update');
+
+		$combustor = file_get_contents(VENDOR . 'rougin/combustor/bin/combustor');
+
+		$commandsExists = strpos($combustor, '$application->add(new Combustor\Doctrine\CreateControllerCommand);') !== FALSE;
+		$factoryIsNotInstalled = ! file_exists(APPPATH . 'libraries/Factory.php');
+
+		if ($commandsExists && $factoryIsNotInstalled) {
+			$search = array(
+'$application->add(new Combustor\Doctrine\CreateControllerCommand);
+$application->add(new Combustor\Doctrine\CreateModelCommand);',
+				'$application->add(new Combustor\Doctrine\RemoveCommand);'
+			);
+			$replace = array(
+'// $application->add(new Combustor\Doctrine\CreateControllerCommand);
+// $application->add(new Combustor\Doctrine\CreateModelCommand);',
+				'// $application->add(new Combustor\Doctrine\RemoveCommand);'
+			);
+
+			$combustor = str_replace($search, $replace, $combustor);
+
+			$createViewCommandExists = strpos($combustor, '$application->add(new Combustor\CreateViewCommand);') !== FALSE;
+
+			if ($createViewCommandExists && $factoryIsNotInstalled) {
+				$search  = '$application->add(new Combustor\CreateViewCommand);';
+				$replace = '// $application->add(new Combustor\CreateViewCommand);';
+
+				$combustor = str_replace($search, $replace, $combustor);
+			}
+
+			$file = fopen(VENDOR . 'rougin/combustor/bin/combustor', 'wb');
+
+			file_put_contents(VENDOR . 'rougin/combustor/bin/combustor', $combustor);
+			fclose($file);
+		}
 
 		if (unlink(APPPATH . 'libraries/Doctrine.php')) {
 			$output->writeln('<info>The Doctrine ORM is now successfully removed!</info>');

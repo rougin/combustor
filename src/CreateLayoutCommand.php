@@ -44,7 +44,7 @@ class CreateLayoutCommand extends Command
 		$scripts = '</div>';
 
 		if ($input->getOption('bootstrap')) {
-			$bootstrapContainer = 'container-fluid';
+			$bootstrapContainer = 'container';
 			$styleSheets .= "\n" . '	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap.min.css">';
 
 			$scripts .= "\n" . '<script src="https://code.jquery.com/jquery-2.1.1.min.js"></script>';

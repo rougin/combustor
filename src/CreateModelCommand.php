@@ -48,10 +48,6 @@ class CreateModelCommand extends Command
 	 */
 	protected function execute(InputInterface $input, OutputInterface $output)
 	{
-		if ($input->getOption('doctrine')) {
-			return $this->_doctrine($input, $output);
-		}
-
 		$accessors       = NULL;
 		$columns         = NULL;
 		$counter         = 0;

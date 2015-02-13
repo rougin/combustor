@@ -1,4 +1,4 @@
-<?php namespace Combustor;
+<?php namespace Combustor\Doctrine;
 
 use Combustor\Tools\Describe;
 use Combustor\Tools\Inflect;
@@ -17,8 +17,8 @@ class CreateScaffoldCommand extends Command
 	 */
 	protected function configure()
 	{
-		$this->setName('create:scaffold')
-			->setDescription('Create a new controller, model and view')
+		$this->setName('doctrine:scaffold')
+			->setDescription('Create a new Doctrine-based controller, Doctrine-based model and a view')
 			->addArgument(
 				'name',
 				InputArgument::REQUIRED,
@@ -65,8 +65,8 @@ class CreateScaffoldCommand extends Command
 		);
 
 		$commands = array(
-			'create:controller',
-			'create:model',
+			'doctrine:controller',
+			'doctrine:model',
 			'create:view'
 		);
 
@@ -89,11 +89,11 @@ class CreateScaffoldCommand extends Command
 				unset($arguments['--lowercase']);
 			}
 
-			if ($command == 'create:controller') {
+			if ($command == 'doctrine:controller') {
 				$arguments['--camel']     = $camel;
 				$arguments['--keep']      = $keep;
 				$arguments['--lowercase'] = $lowercase;
-			} elseif ($command == 'create:model') {
+			} elseif ($command == 'doctrine:model') {
 				$arguments['--camel']     = $camel;
 				$arguments['--lowercase'] = $lowercase;
 			} elseif ($command == 'create:view') {

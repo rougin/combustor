@@ -13,6 +13,7 @@ class PostInstallation {
 		 * Get the templates
 		 */
 
+		$codeigniterCore = file_get_contents(BASEPATH . 'core/CodeIgniter.php');
 		$htaccess = file_get_contents(VENDOR . 'rougin/combustor/src/Templates/Miscellaneous/Htaccess.txt');
 		$myPagination = file_get_contents(VENDOR . 'rougin/combustor/src/Templates/Miscellaneous/Pagination.txt');
 		$paginationConfiguration = file_get_contents(VENDOR . 'rougin/combustor/src/Templates/Miscellaneous/PaginationConfiguration.txt');

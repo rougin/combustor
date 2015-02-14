@@ -105,6 +105,10 @@ class CreateControllerCommand extends Command
 
 				$fieldDescription = $foreignTable->getPrimaryKey();
 				foreach ($foreignTable->result() as $foreignRow) {
+					if ($foreignRow->key == 'MUL') {
+						$models .= ",\n" . '			\'' . $foreignRow->referenced_table . '\'';
+					}
+
 					$fieldDescription = in_array($foreignRow->field, $selectColumns) ? $foreignRow->field : $fieldDescription;
 				}
 

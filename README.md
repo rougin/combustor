@@ -3,14 +3,14 @@ Combustor
 
 Combustor is a code generator console application for [CodeIgniter](https://ellislab.com/codeigniter/) in order to speed up the development of web applications. This library generates a [CRUD](http://en.wikipedia.org/wiki/Create,_read,_update_and_delete) interface (with [Bootstrap](http://www.getbootstrap.com), optional only) with an integration of an [ORM library](http://www.doctrine-project.org/) or with a structure that is based from this [link](http://www.revillweb.com/tutorials/codeigniter-tutorial-learn-codeigniter-in-40-minutes/).
 
-Instructions
+Installation
 ============
 
 1. Download the latest version of CodeIgniter from this [link](https://github.com/bcit-ci/CodeIgniter/archive/3.0rc2.zip) then type this command on the command line:
 
-    **NOTE**: This step requires [Composer](https://getcomposer.org) and [Git](http://git-scm.com) in order to get it to work. Download and install the latest version of it first. The instructions for that can be found [here](http://git-scm.com/downloads) and [here](https://getcomposer.org/download/). If you have already installed Composer and Git on your system, then you can skip this note. (This note was copied from [ignite.php](https://github.com/rougin/ignite.php))
+    **NOTE**: This step requires [Composer](https://getcomposer.org) and [Git](http://git-scm.com) in order to get it to work. Download and install the latest version of it first. The instructions for that can be found [here](http://git-scm.com/downloads) and [here](https://getcomposer.org/download/). If you have already installed Composer and Git on your system, then you can skip this note. (This note was referenced from [ignite.php](https://github.com/rougin/ignite.php))
 
-    **ANOTHER NOTE**: This is only optional for **version 3** above but if you are using **version 2.2.1 and below**, you need to clone [ignite.php](https://github.com/rougin/ignite.php) in order to setup the Composer autoloader before running the commands below. If you use the ```ignite.php``` script, then skip this step.
+    **ANOTHER NOTE**: This is only optional for **version 3 and above** but if you are using **version 2.2.1 and below**, you need to clone [ignite.php](https://github.com/rougin/ignite.php) in order to setup the Composer autoloader before running the commands below. If you use the ```ignite.php``` script, then skip this step.
 
 	```composer require rougin/combustor:dev-master```
 
@@ -47,6 +47,8 @@ Commands
 
 The help for following commands below are also available in the Combustor *command line interface*. Just type the command you want to get help and insert an option of ```--help``` (e.g ```create:controller --help```)
 
+*****
+
 ### create:layout [options]
 
 Creates a new header and footer file
@@ -58,6 +60,8 @@ Creates a new header and footer file
 **NOTE**: You must install the customized factory pattern to view this set of commands. See step 3 above.
 
 ### create:controller [arguments] [options]
+
+*****
 
 Creates a new controller
 
@@ -75,6 +79,8 @@ Creates a new controller
 
 ### create:model [arguments] [options]
 
+*****
+
 Creates a new model
 
 #### Arguments:
@@ -91,17 +97,23 @@ Creates a new model
 
 **NOTE**: This command is also available when you do the command ```install:doctrine```.
 
+*****
+
 Creates a new view
 
 #### Arguments:
 
 ```name``` Name of the directory to be included in the ```views``` directory
 
+**NOTE**: This command is also available when you install Doctrine ORM.
+
 #### Options:
 
 ```--bootstrap``` Include the [Bootstrap](http://getbootstrap.com/) tags
 
 ```--camel``` Use the camel case naming convention for the accessor and mutators
+
+*****
 
 ### create:scaffold [arguments] [options]
 
@@ -121,7 +133,11 @@ Creates a new controller, model, and view
 
 ```--lowercase``` Keep the first character of the name to lowercase
 
+*****
+
 **NOTE**: You must install the Doctrine ORM to view this set of commands. See step 3 above.
+
+*****
 
 ### doctrine:controller [arguments] [options]
 
@@ -139,6 +155,8 @@ Creates a new Doctrine-based controller
 
 ```--camel``` Use the camel case naming convention for the accessor and mutators
 
+*****
+
 ### doctrine:model [arguments] [options]
 
 Creates a new Doctrine-based model
@@ -152,6 +170,8 @@ Creates a new Doctrine-based model
 ```--lowercase``` Keep the first character of the name to lowercase
 
 ```--camel``` Use the camel case naming convention for the accessor and mutators
+
+*****
 
 ### doctrine:scaffold [arguments] [options]
 
@@ -170,6 +190,8 @@ Creates a new Doctrine-based controller, Doctrine-based model and a view
 ```--keep``` Keeps the name to be used
 
 ```--lowercase``` Keep the first character of the name to lowercase
+
+*****
 
 Reminders
 =========

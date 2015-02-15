@@ -6,7 +6,7 @@ Combustor is a code generator console application for [CodeIgniter](https://elli
 Installation
 ============
 
-1. Follow the instructions that can be found on [ignite.php](https://github.com/rougin/ignite.php)). Or you can manually download the latest version of CodeIgniter from this [link](https://github.com/bcit-ci/CodeIgniter/archive/3.0rc2.zip) and extract it to your web server. Then add a ```composer.json``` file (or update if it already exists) on the directory you recently extracted:
+1. Follow the instructions that can be found on [ignite.php](https://github.com/rougin/ignite.php). Or you can manually download the latest version of CodeIgniter from this [link](https://github.com/bcit-ci/CodeIgniter/archive/3.0rc2.zip) and extract it to your web server. Then add a ```composer.json``` file (or update if it already exists) on the directory you recently extracted:
 
 	```
 	{

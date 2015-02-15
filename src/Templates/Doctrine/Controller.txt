@@ -4,8 +4,7 @@
  * [controllerName] Controller Class
  */
 
-class [controller] extends CI_Controller
-{
+class [controller] extends CI_Controller {
 
 	public function __construct()
 	{

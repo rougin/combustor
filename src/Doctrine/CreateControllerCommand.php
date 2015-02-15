@@ -101,9 +101,23 @@ class CreateControllerCommand extends Command
 			if ($row->extra == 'auto_increment') {
 				continue;
 			} elseif ($row->key == 'MUL') {
-				$models .= ",\n" . '			\'' . $row->referenced_table . '\'';
+				if ($row->key == 'MUL') {
+					if (strpos($models, ",\n" . '			\'' . $row->referenced_table . '\'') === FALSE) {
+						$models .= ",\n" . '			\'' . $row->referenced_table . '\'';
+					}
+				}
 
-				$dropdownColumns .= '$data[\'' . Inflect::pluralize($row->referenced_table) . '\'] = $this->' . $row->referenced_table . '->select();' . "\n";
+				$foreignTable = new Describe($row->referenced_table, $output);
+
+				foreach ($foreignTable->result() as $foreignRow) {
+					if ($foreignRow->key == 'MUL') {
+						if (strpos($models, ",\n" . '			\'' . $foreignRow->referenced_table . '\'') === FALSE) {
+							$models .= ",\n" . '			\'' . $foreignRow->referenced_table . '\'';
+						}
+					}
+				}
+
+				$dropdownColumns .= '$data[\'' . Inflect::pluralize($row->referenced_table) . '\'] = $this->' . $row->referenced_table . '->select();';
 
 				$dropdownColumnsOnCreate .= "\n\t\t" . $dropdownColumn;
 				$dropdownColumnsOnEdit   .= "\n\t\t" . $dropdownColumn;
@@ -136,7 +150,9 @@ class CreateControllerCommand extends Command
 			}
 
 			if ($row->field != 'password' && $row->field != 'datetime_created' && $row->field != 'datetime_updated') {
-				$columnsToValidate .= '\'' . $row->field . '\' => \'' . str_replace('_', ' ', $row->field) . '\',' . "\n";
+				if ($row->null == 'NO') {
+					$columnsToValidate .= '\'' . $row->field . '\' => \'' . ucwords(str_replace('_', ' ', $row->field)) . '\',' . "\n";
+				}
 			}
 
 			$counter++;

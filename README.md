@@ -6,15 +6,23 @@ Combustor is a code generator console application for [CodeIgniter](https://elli
 Installation
 ============
 
-1. Download the latest version of CodeIgniter from this [link](https://github.com/bcit-ci/CodeIgniter/archive/3.0rc2.zip) then type this command on the command line:
+1. Follow the instructions that can be found on [ignite.php](https://github.com/rougin/ignite.php)). Or you can manually download the latest version of CodeIgniter from this [link](https://github.com/bcit-ci/CodeIgniter/archive/3.0rc2.zip) and extract it to your web server. Then add a ```composer.json``` file (or update if it already exists) on the directory you recently extracted:
 
-    **NOTE**: This step requires [Composer](https://getcomposer.org) and [Git](http://git-scm.com) in order to get it to work. Download and install the latest version of it first. The instructions for that can be found [here](http://git-scm.com/downloads) and [here](https://getcomposer.org/download/). If you have already installed Composer and Git on your system, then you can skip this note. (This note was referenced from [ignite.php](https://github.com/rougin/ignite.php))
-
-    **ANOTHER NOTE**: This is only optional for **version 3 and above** but if you are using **version 2.2.1 and below**, you need to clone [ignite.php](https://github.com/rougin/ignite.php) in order to setup the Composer autoloader before running the commands below. If you use the ```ignite.php``` script, then skip this step.
-
-	```composer require rougin/combustor:dev-master```
-
-	```composer install```
+	```
+	'{
+		"description" : "The CodeIgniter framework",
+		"name" : "codeigniter/framework",
+		"license": "MIT",
+		"require": {
+			"php": ">=5.2.4",
+			"rougin/combustor": "dev-master"
+		},
+		"require-dev": {
+			"mikey179/vfsStream": "1.1.*"
+		}
+	}'
+	```
+	Then type ```composer install``` in the command line.
 
 2. After the installation, access the application via the **PHP CLI** to retrieve the list of commands:
 	
@@ -28,17 +36,17 @@ Installation
 
 3. Just select if you want to install the customized factory pattern, or the Doctrine ORM.
 
-    **To install/remove the customized pattern:**
-    
-    ```php vendor/bin/combustor install:factory```
+	**To install/remove the customized pattern:**
+	
+	```php vendor/bin/combustor install:factory```
 
-    ```php vendor/bin/combustor remove:factory```
-    
-    **To install/remove Doctrine ORM:**
-    
-    ```php vendor/bin/combustor install:doctrine```
+	```php vendor/bin/combustor remove:factory```
+	
+	**To install/remove Doctrine ORM:**
+	
+	```php vendor/bin/combustor install:doctrine```
 
-    ```php vendor/bin/combustor remove:doctrine```
+	```php vendor/bin/combustor remove:doctrine```
 
 4. Then create now an awesome application!
 
@@ -47,9 +55,8 @@ Commands
 
 The help for following commands below are also available in the Combustor *command line interface*. Just type the command you want to get help and insert an option of ```--help``` (e.g ```create:controller --help```)
 
-*****
-
-### create:layout [options]
+create:layout [options]
+=======================
 
 Creates a new header and footer file
 
@@ -59,9 +66,8 @@ Creates a new header and footer file
 
 **NOTE**: You must install the customized factory pattern to view this set of commands. See step 3 above.
 
-### create:controller [arguments] [options]
-
-*****
+create:controller [arguments] [options]
+=======================================
 
 Creates a new controller
 
@@ -77,9 +83,8 @@ Creates a new controller
 
 ```--camel``` Use the camel case naming convention for the accessor and mutators
 
-### create:model [arguments] [options]
-
-*****
+create:model [arguments] [options]
+==================================
 
 Creates a new model
 
@@ -93,11 +98,10 @@ Creates a new model
 
 ```--camel``` Use the camel case naming convention for the accessor and mutators
 
-### create:view [arguments] [options]
+create:view [arguments] [options]
+=================================
 
 **NOTE**: This command is also available when you do the command ```install:doctrine```.
-
-*****
 
 Creates a new view
 
@@ -113,9 +117,8 @@ Creates a new view
 
 ```--camel``` Use the camel case naming convention for the accessor and mutators
 
-*****
-
-### create:scaffold [arguments] [options]
+create:scaffold [arguments] [options]
+=====================================
 
 Creates a new controller, model, and view
 
@@ -133,13 +136,10 @@ Creates a new controller, model, and view
 
 ```--lowercase``` Keep the first character of the name to lowercase
 
-*****
-
 **NOTE**: You must install the Doctrine ORM to view this set of commands. See step 3 above.
 
-*****
-
-### doctrine:controller [arguments] [options]
+doctrine:controller [arguments] [options]
+=========================================
 
 Creates a new Doctrine-based controller
 
@@ -155,9 +155,8 @@ Creates a new Doctrine-based controller
 
 ```--camel``` Use the camel case naming convention for the accessor and mutators
 
-*****
-
-### doctrine:model [arguments] [options]
+doctrine:model [arguments] [options]
+====================================
 
 Creates a new Doctrine-based model
 
@@ -171,9 +170,8 @@ Creates a new Doctrine-based model
 
 ```--camel``` Use the camel case naming convention for the accessor and mutators
 
-*****
-
-### doctrine:scaffold [arguments] [options]
+doctrine:scaffold [arguments] [options]
+=======================================
 
 Creates a new Doctrine-based controller, Doctrine-based model and a view
 
@@ -190,8 +188,6 @@ Creates a new Doctrine-based controller, Doctrine-based model and a view
 ```--keep``` Keeps the name to be used
 
 ```--lowercase``` Keep the first character of the name to lowercase
-
-*****
 
 Reminders
 =========

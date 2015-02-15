@@ -4,8 +4,7 @@
  * [model] Model Class
  */
 
-class [model] extends CI_Model
-{
+class [model] extends CI_Model {
 
 	[columns]
 

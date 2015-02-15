@@ -137,12 +137,13 @@ class CreateViewCommand extends Command
 
 				$fields .= '			<?php echo form_label(\'' . str_replace(' Id', '', Inflect::humanize($row->field)) . '\', \'' . $row->field . '\', array(\'class\' => \'[labelClass]\')); ?>' . "\n";
 				$fields .= '			<div class="[formColumn]">' . "\n";
-				
+
 				if ($row->key == 'MUL') {
 					$data    = Inflect::pluralize($row->referenced_table);
-					$fields .= '				<?php echo form_dropdown(\'' . $row->field . '\', $' . $data . ', set_value(\'' . $row->field . '\'), \'class="[bootstrapFormControl]"\'); ?>' . "\n";
+					$fields .= '				<?php echo form_dropdown(\'' . $row->field . '\', $' . $data . ', set_value(\'' . $row->field . '\'), \'class="[bootstrapFormControl] required"\'); ?>' . "\n";
 				} else {
-					$fields .= '				<?php echo form_input(\'' . $row->field . '\', set_value(\'' . $row->field . '\'), \'class="[bootstrapFormControl]"\'); ?>' . "\n";
+					$required = ($row->null) ? 'required' : NULL;
+					$fields .= '				<?php echo form_input(\'' . $row->field . '\', set_value(\'' . $row->field . '\'), \'class="[bootstrapFormControl] ' . $required . '"\'); ?>' . "\n";
 				}
 
 				$fields .= '				<?php echo form_error(\'' . $row->field . '\'); ?>' . "\n";

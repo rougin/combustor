@@ -106,13 +106,15 @@ class CreateControllerCommand extends Command
 				$fieldDescription = $foreignTable->getPrimaryKey();
 				foreach ($foreignTable->result() as $foreignRow) {
 					if ($foreignRow->key == 'MUL') {
-						$models .= ",\n" . '			\'' . $foreignRow->referenced_table . '\'';
+						if (strpos($models, ",\n" . '			\'' . $foreignRow->referenced_table . '\'') === FALSE) {
+							$models .= ",\n" . '			\'' . $foreignRow->referenced_table . '\'';
+						}
 					}
 
 					$fieldDescription = in_array($foreignRow->field, $selectColumns) ? $foreignRow->field : $fieldDescription;
 				}
 
-				$dropdownColumn = '$data[\'' . Inflect::pluralize($row->referenced_table) . '\'] = $this->factory->get_all(\'' . $row->referenced_table . '\')->as_dropdown(\'' . $fieldDescription . '\');' . "\n";
+				$dropdownColumn = '$data[\'' . Inflect::pluralize($row->referenced_table) . '\'] = $this->factory->get_all(\'' . $row->referenced_table . '\')->as_dropdown(\'' . $fieldDescription . '\');';
 
 				$dropdownColumnsOnCreate .= "\n\t\t" . $dropdownColumn;
 				$dropdownColumnsOnEdit   .= "\n\t\t" . $dropdownColumn;
@@ -145,7 +147,9 @@ class CreateControllerCommand extends Command
 			}
 
 			if ($row->field != 'password' && $row->field != 'datetime_created' && $row->field != 'datetime_updated') {
-				$columnsToValidate .= '\'' . $row->field . '\' => \'' . ucwords(str_replace('_', ' ', $row->field)) . '\',' . "\n";
+				if ($row->null == 'NO') {
+					$columnsToValidate .= '\'' . $row->field . '\' => \'' . ucwords(str_replace('_', ' ', $row->field)) . '\',' . "\n";
+				}
 			}
 
 			$counter++;

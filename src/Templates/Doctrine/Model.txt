@@ -9,8 +9,7 @@
  * 		}
  * )
  */
-class [model] extends CI_Model
-{
+class [model] extends CI_Model {
 
 	[columns]
 
@@ -120,6 +119,3 @@ class [model] extends CI_Model
 	}
 	
 }
-
-/* End of file [model].php */
-/* Location: ./application/controllers/[model].php */

@@ -68,7 +68,7 @@ class CreateLayoutCommand extends Command
 
 		$filepath = APPPATH . 'views/layout/';
 
-		if ( ! @mkdir($filepath, 0777, true)) {
+		if ( ! @mkdir($filepath, 0777, TRUE)) {
 			$output->writeln('<error>The layout directory already exists!</error>');
 
 			exit();

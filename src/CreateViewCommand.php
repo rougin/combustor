@@ -277,7 +277,7 @@ class CreateViewCommand extends Command
 
 		$filepath = APPPATH . 'views/' . Inflect::pluralize($input->getArgument('name')) . '/';
 
-		if ( ! @mkdir($filepath, 0777, true)) {
+		if ( ! @mkdir($filepath, 0777, TRUE)) {
 			exit($output->writeln('<error>The ' . Inflect::pluralize($input->getArgument('name')) . ' views folder already exists!</error>'));
 		}
 

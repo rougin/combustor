@@ -143,7 +143,7 @@ class CreateModelCommand extends Command
 
 				$columns .= '	 * @ManyToOne(targetEntity="' . ucfirst($row->referenced_table) . '", cascade={"persist"})' . "\n";
 				$columns .= '	 * @JoinColumns({' . "\n";
-				$columns .= '	 *   @JoinColumn(name="' . $row->field . '", referencedColumnName="' . $row->field . '", nullable=' . $nullable . ', onDelete="cascade")' . "\n";
+				$columns .= '	 * 	@JoinColumn(name="' . $row->field . '", referencedColumnName="' . $row->referenced_column . '", nullable=' . $nullable . ', onDelete="cascade")' . "\n";
 				$columns .= '	 * })' . "\n";
 
 				$indexesCounter++;
@@ -183,6 +183,8 @@ class CreateModelCommand extends Command
 
 			if (in_array($row->field, $selectColumns)) {
 				$model = str_replace('/* Column to be displayed in the dropdown */', $methodName . '()', $model);
+			} else {
+				$model = str_replace('/* Column to be displayed in the dropdown */', '[primaryKey]()', $model);
 			}
 
 			/**

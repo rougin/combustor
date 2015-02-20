@@ -33,10 +33,6 @@ class InstallCommand extends Command
 		 * ---------------------------------------------------------------------------------------------
 		 */
 
-		if (file_exists(APPPATH . 'libraries/Factory.php')) {
-			exit($output->writeln('<error>The customized factory pattern is already installed!</error>'));
-		}
-
 		$autoload = file_get_contents(APPPATH . 'config/autoload.php');
 
 		preg_match_all('/\$autoload\[\'libraries\'\] = array\((.*?)\)/', $autoload, $match);
@@ -49,6 +45,8 @@ class InstallCommand extends Command
 			if ( ! in_array('\'database\'', $libraries)) {
 				array_push($libraries, '\'database\'');
 			}
+
+			$libraries = array_filter($libraries);
 
 			$autoload = preg_replace(
 				'/\$autoload\[\'libraries\'\] = array\([^)]*\);/',

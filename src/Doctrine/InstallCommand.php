@@ -27,10 +27,6 @@ class InstallCommand extends Command
 	 */
 	protected function execute(InputInterface $input, OutputInterface $output)
 	{
-		if (file_exists(APPPATH . 'libraries/Doctrine.php')) {
-			exit($output->writeln('<error>The Doctrine ORM is already installed!</error>'));
-		}
-
 		$composer = file_get_contents('composer.json');
 		$composer = str_replace(array('	', "\n", "\r") , array('', '', ''), $composer);
 
@@ -75,6 +71,7 @@ class InstallCommand extends Command
 
 		$file = fopen(APPPATH . 'libraries/Doctrine.php', 'wb');
 		file_put_contents(APPPATH . 'libraries/Doctrine.php', $library);
+		fclose($file);
 
 		$autoload = file_get_contents(APPPATH . 'config/autoload.php');
 
@@ -90,6 +87,8 @@ class InstallCommand extends Command
 
 				unset($libraries[$position]);
 			}
+
+			$libraries = array_filter($libraries);
 
 			$autoload = preg_replace(
 				'/\$autoload\[\'libraries\'\] = array\([^)]*\);/',
@@ -107,8 +106,6 @@ class InstallCommand extends Command
 			mkdir(APPPATH . 'models/proxies');
 			chmod(APPPATH . 'models/proxies', 0777);
 		}
-
-		fclose($file);
 
 		/*
 		 * ---------------------------------------------------------------------------------------------

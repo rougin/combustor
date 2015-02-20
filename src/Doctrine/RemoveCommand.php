@@ -47,6 +47,8 @@ class RemoveCommand extends Command
 
 			unset($libraries[$position]);
 
+			$libraries = array_filter($libraries);
+
 			$autoload = preg_replace(
 				'/\$autoload\[\'libraries\'\] = array\([^)]*\);/',
 				'$autoload[\'libraries\'] = array(' . implode(', ', $libraries) . ');',

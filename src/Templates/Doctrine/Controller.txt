@@ -88,7 +88,7 @@ class [controller] extends CI_Controller {
 			redirect('[plural]');
 		}
 
-		[dropdownColumns]
+		[dropdownColumnsOnEdit]
 
 		$this->load->view('[plural]/edit', $data);
 	}

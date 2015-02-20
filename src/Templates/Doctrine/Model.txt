@@ -52,7 +52,14 @@ class [model] extends CI_Model {
 			$this->_query_builder->setMaxResults($delimiters['per_page']);
 		}
 
-		$result = ($type == 'count') ? count($this->_query_builder->getQuery()->getResult()) : $this->_query_builder->getQuery()->getResult();
+		if ($type == 'count')
+		{
+			$result = count($this->_query_builder->getQuery()->getResult());
+		}
+		else
+		{
+			$result = $this->_query_builder->getQuery()->getResult();
+		}
 
 		$this->_query_builder->resetDQLParts();
 

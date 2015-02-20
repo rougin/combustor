@@ -44,7 +44,7 @@ class CreateViewCommand extends Command
 	protected function execute(InputInterface $input, OutputInterface $output)
 	{
 		if (! file_exists(APPPATH . 'views/layout')) {
-			$output->writeln('<error>Please create a layout first using "create:layout" command</error>');
+			exit($output->writeln('<error>Please create a layout first using the "create:layout" command</error>'));
 		}
 
 		/**

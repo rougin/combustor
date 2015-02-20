@@ -48,7 +48,18 @@ Installation
 
 	```php vendor/bin/combustor remove:doctrine```
 
-4. Then create now an awesome application!
+4. Next, configure the database connectivity settings in ```application/config/database.php```.
+
+5. Then create now an awesome application!
+
+Reminders
+=========
+
+* **VERY IMPORTANT**: Before generating the models, views, and controllers, please make sure that you **set up your database** (foreign keys, indexes, relationships, normalizations) properly in order to minimize the modifications after the codes has been generated. Also, generate the models, views, and controllers first to tables that are having **no relationship with other tables** in the database. *The reason for this is that Combustor will generate controllers, models, and views based on your database schema. If there's something wrong in your database, definitely the Combustor will generated some bad code.*
+
+* If you want to know more about Doctrine ORM and its functionalities, you can always read their documentation [here](doctrine-orm.readthedocs.org/en/latest/tutorials/getting-started.html).
+
+* Found a bug? Want to contribute? Feel free to open an issue or create a pull request. :+1:
 
 Commands
 ========
@@ -188,12 +199,3 @@ Creates a new Doctrine-based controller, Doctrine-based model and a view
 ```--keep``` Keeps the name to be used
 
 ```--lowercase``` Keep the first character of the name to lowercase
-
-Reminders
-=========
-
-* **VERY IMPORTANT**: Before generating the models, views, and controllers, please make sure that you **set up your database** (foreign keys, indexes, relationships, normalizations) properly in order to minimize the modifications after the codes has been generated. Also, generate the models, views, and controllers first to tables that are having **no relationship with other tables** in the database. *The reason for this is that Combustor will generate controllers, models, and views based on your database schema. If there's something wrong in your database, definitely the Combustor will generated some bad code.*
-
-* If you want to know more about Doctrine ORM and its functionalities, you can always read their documentation [here](doctrine-orm.readthedocs.org/en/latest/tutorials/getting-started.html).
-
-* Found a bug? Want to contribute? Feel free to open an issue or create a pull request. :+1:

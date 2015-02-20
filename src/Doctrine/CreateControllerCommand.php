@@ -46,12 +46,6 @@ class CreateControllerCommand extends Command
 	 * @param  InputInterface  $input
 	 * @param  OutputInterface $output
 	 */
-	/**
-	 * Execute the command
-	 * 
-	 * @param  InputInterface  $input
-	 * @param  OutputInterface $output
-	 */
 	protected function execute(InputInterface $input, OutputInterface $output)
 	{
 		/**
@@ -79,9 +73,9 @@ class CreateControllerCommand extends Command
 		$columnsOnEdit           = NULL;
 		$columnsToValidate       = NULL;
 		$counter                 = 0;
+		$dropdownColumn          = NULL;
 		$dropdownColumnsOnCreate = '$data = array();';
 		$dropdownColumnsOnEdit   = '$data[\'[singular]\'] = $this->doctrine->em->find(\'[singular]\', $id);';
-		$dropdowns               = 0;
 		$singularText            = strtolower(Inflect::humanize($input->getArgument('name')));
 
 		foreach ($columns->result() as $row) {
@@ -95,7 +89,7 @@ class CreateControllerCommand extends Command
 			if ($counter != 0) {
 				$columnsOnCreate   .= ($row->field != 'datetime_updated') ? '			' : NULL;
 				$columnsOnEdit     .= ($row->field != 'datetime_created') ? '			' : NULL;
-				$columnsToValidate .= ($row->field != 'password' && $row->field != 'datetime_created' && $row->field != 'datetime_updated') ? '			' : NULL;
+				$columnsToValidate .= ($row->field != 'password' && $row->field != 'datetime_created' && $row->field != 'datetime_updated' && $row->null == 'NO') ? '			' : NULL;
 			}
 
 			if ($row->extra == 'auto_increment') {
@@ -117,7 +111,7 @@ class CreateControllerCommand extends Command
 					}
 				}
 
-				$dropdownColumns .= '$data[\'' . Inflect::pluralize($row->referenced_table) . '\'] = $this->' . $row->referenced_table . '->select();';
+				$dropdownColumn = '$data[\'' . Inflect::pluralize($row->referenced_table) . '\'] = $this->' . $row->referenced_table . '->select();';
 
 				$dropdownColumnsOnCreate .= "\n\t\t" . $dropdownColumn;
 				$dropdownColumnsOnEdit   .= "\n\t\t" . $dropdownColumn;

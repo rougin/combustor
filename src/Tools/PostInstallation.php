@@ -13,10 +13,55 @@ class PostInstallation {
 		 * Get the templates
 		 */
 
-		$codeigniterCore = file_get_contents(BASEPATH . 'core/CodeIgniter.php');
-		$htaccess = file_get_contents(VENDOR . 'rougin/combustor/src/Templates/Miscellaneous/Htaccess.txt');
-		$myPagination = file_get_contents(VENDOR . 'rougin/combustor/src/Templates/Miscellaneous/Pagination.txt');
+		$autoload                = file_get_contents(APPPATH . 'config/autoload.php');
+		$codeigniterCore         = file_get_contents(BASEPATH . 'core/CodeIgniter.php');
+		$htaccess                = file_get_contents(VENDOR . 'rougin/combustor/src/Templates/Miscellaneous/Htaccess.txt');
+		$myPagination            = file_get_contents(VENDOR . 'rougin/combustor/src/Templates/Miscellaneous/Pagination.txt');
 		$paginationConfiguration = file_get_contents(VENDOR . 'rougin/combustor/src/Templates/Miscellaneous/PaginationConfiguration.txt');
+
+		/**
+		 * Load the url and file helpers and the session library
+		 */
+
+		$autoload = file_get_contents(APPPATH . 'config/autoload.php');
+
+		preg_match_all('/\$autoload\[\'libraries\'\] = array\((.*?)\)/', $autoload, $match);
+		preg_match_all('/\$autoload\[\'helper\'\] = array\((.*?)\)/', $autoload, $otherMatch);
+
+		$helpers   = explode(', ', end($otherMatch[1]));
+		$libraries = explode(', ', end($match[1]));
+
+		if ( ! in_array('\'url\'', $helpers)) {
+			array_push($helpers, '\'url\'');
+		}
+
+		if ( ! in_array('\'form\'', $helpers)) {
+			array_push($helpers, '\'form\'');
+		}
+
+		if ( ! in_array('\'session\'', $libraries)) {
+			array_push($libraries, '\'session\'');
+		}
+
+		$helpers   = array_filter($helpers);
+		$libraries = array_filter($libraries);
+
+		$autoload = preg_replace(
+			'/\$autoload\[\'libraries\'\] = array\([^)]*\);/',
+			'$autoload[\'libraries\'] = array(' . implode(', ', $libraries) . ');',
+			$autoload
+		);
+
+		$autoload = preg_replace(
+			'/\$autoload\[\'helper\'\] = array\([^)]*\);/',
+			'$autoload[\'helper\'] = array(' . implode(', ', $helpers) . ');',
+			$autoload
+		);
+
+		$file = fopen(APPPATH . 'config/autoload.php', 'wb');
+
+		file_put_contents(APPPATH . 'config/autoload.php', $autoload);
+		fclose($file);
 
 		/**
 		 * Creates .htacess if it does not exists

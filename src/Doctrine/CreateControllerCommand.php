@@ -1,6 +1,6 @@
 <?php namespace Combustor\Doctrine;
 
-use Combustor\Tools\Describe;
+use Describe\Describe;
 use Combustor\Tools\Inflect;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputArgument;
@@ -65,7 +65,12 @@ class CreateControllerCommand extends Command
 		 * Get the columns from the specified name
 		 */
 
-		$columns = new Describe($input->getArgument('name'), $output);
+		require APPPATH . 'config/database.php';
+
+		$db['default']['driver'] = ($db['default']['dbdriver'] == 'mysqli') ? 'mysql' : $db['default']['dbdriver'];
+
+		$describe = new Describe($db['default']);
+		$tableInformation = $describe->getInformationFromTable($input->getArgument('name'));
 
 		$models = '\'[singular]\'';
 
@@ -78,7 +83,7 @@ class CreateControllerCommand extends Command
 		$dropdownColumnsOnEdit   = '$data[\'[singular]\'] = $this->doctrine->em->find(\'[singular]\', $id);';
 		$singularText            = strtolower(Inflect::humanize($input->getArgument('name')));
 
-		foreach ($columns->result() as $row) {
+		foreach ($tableInformation as $row) {
 			if ($row->key == 'PRI') {
 				$primaryKey = $row->field;
 			}
@@ -89,38 +94,38 @@ class CreateControllerCommand extends Command
 			if ($counter != 0) {
 				$columnsOnCreate   .= ($row->field != 'datetime_updated') ? '			' : NULL;
 				$columnsOnEdit     .= ($row->field != 'datetime_created') ? '			' : NULL;
-				$columnsToValidate .= ($row->field != 'password' && $row->field != 'datetime_created' && $row->field != 'datetime_updated' && $row->null == 'NO') ? '			' : NULL;
+				$columnsToValidate .= ($row->field != 'password' && $row->field != 'datetime_created' && $row->field != 'datetime_updated' &&  ! $row->isNull) ? '			' : NULL;
 			}
 
 			if ($row->extra == 'auto_increment') {
 				continue;
 			} elseif ($row->key == 'MUL') {
 				if ($row->key == 'MUL') {
-					if (strpos($models, ",\n" . '			\'' . $row->referenced_table . '\'') === FALSE) {
-						$models .= ",\n" . '			\'' . $row->referenced_table . '\'';
+					if (strpos($models, ",\n" . '			\'' . $row->referencedTable . '\'') === FALSE) {
+						$models .= ",\n" . '			\'' . $row->referencedTable . '\'';
 					}
 				}
 
-				$foreignTable = new Describe($row->referenced_table, $output);
+				$foreignTableInformation = $describe->getInformationFromTable($row->referencedTable);
 
-				foreach ($foreignTable->result() as $foreignRow) {
+				foreach ($foreignTableInformation as $foreignRow) {
 					if ($foreignRow->key == 'MUL') {
-						if (strpos($models, ",\n" . '			\'' . $foreignRow->referenced_table . '\'') === FALSE) {
-							$models .= ",\n" . '			\'' . $foreignRow->referenced_table . '\'';
+						if (strpos($models, ",\n" . '			\'' . $foreignRow->referencedTable . '\'') === FALSE) {
+							$models .= ",\n" . '			\'' . $foreignRow->referencedTable . '\'';
 						}
 					}
 				}
 
-				$dropdownColumn = '$data[\'' . Inflect::pluralize($row->referenced_table) . '\'] = $this->' . $row->referenced_table . '->select();';
+				$dropdownColumn = '$data[\'' . Inflect::pluralize($row->referencedTable) . '\'] = $this->' . $row->referencedTable . '->select();';
 
 				$dropdownColumnsOnCreate .= "\n\t\t" . $dropdownColumn;
 				$dropdownColumnsOnEdit   .= "\n\t\t" . $dropdownColumn;
 
-				$columnsOnCreate .= '$' . $row->referenced_table . ' = $this->doctrine->em->find(\'' . $row->referenced_table . '\', $this->input->post(\'' . $row->field . '\'));' . "\n";
-				$columnsOnCreate .= '			$this->[singular]->' . $methodName . '($' . $row->referenced_table . ');' . "\n\n";
+				$columnsOnCreate .= '$' . $row->referencedTable . ' = $this->doctrine->em->find(\'' . $row->referencedTable . '\', $this->input->post(\'' . $row->field . '\'));' . "\n";
+				$columnsOnCreate .= '			$this->[singular]->' . $methodName . '($' . $row->referencedTable . ');' . "\n\n";
 
-				$columnsOnEdit .= '$' . $row->referenced_table . ' = $this->doctrine->em->find(\'' . $row->referenced_table . '\', $this->input->post(\'' . $row->field . '\'));' . "\n";
-				$columnsOnEdit .= '			$[singular]->' . $methodName . '($' . $row->referenced_table . ');' . "\n\n";
+				$columnsOnEdit .= '$' . $row->referencedTable . ' = $this->doctrine->em->find(\'' . $row->referencedTable . '\', $this->input->post(\'' . $row->field . '\'));' . "\n";
+				$columnsOnEdit .= '			$[singular]->' . $methodName . '($' . $row->referencedTable . ');' . "\n\n";
 			} elseif ($row->field == 'password') {
 				$columnsOnCreate .= "\n" . file_get_contents($doctrineDirectory . '/Templates/Miscellaneous/CheckCreatePassword.txt') . "\n\n";
 				$columnsOnEdit   .= "\n" . file_get_contents($doctrineDirectory . '/Templates/Miscellaneous/CheckEditPassword.txt') . "\n\n";
@@ -144,7 +149,7 @@ class CreateControllerCommand extends Command
 			}
 
 			if ($row->field != 'password' && $row->field != 'datetime_created' && $row->field != 'datetime_updated') {
-				if ($row->null == 'NO') {
+				if ( ! $row->isNull) {
 					$columnsToValidate .= '\'' . $row->field . '\' => \'' . ucwords(str_replace('_', ' ', $row->field)) . '\',' . "\n";
 				}
 			}

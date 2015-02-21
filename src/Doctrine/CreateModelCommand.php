@@ -1,6 +1,6 @@
 <?php namespace Combustor\Doctrine;
 
-use Combustor\Tools\Describe;
+use Describe\Describe;
 use Combustor\Tools\Inflect;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputArgument;
@@ -102,14 +102,19 @@ class CreateModelCommand extends Command
 		 * Get the columns from the specified name
 		 */
 
-		$databaseColumns = new Describe($input->getArgument('name'), $output);
+		require APPPATH . 'config/database.php';
 
-		foreach ($databaseColumns->result() as $row) {
+		$db['default']['driver'] = ($db['default']['dbdriver'] == 'mysqli') ? 'mysql' : $db['default']['dbdriver'];
+
+		$describe = new Describe($db['default']);
+		$tableInformation = $describe->getInformationFromTable($input->getArgument('name'));
+
+		foreach ($tableInformation as $row) {
 			$accessors .= ($counter != 0) ? '	' : NULL;
 			$columns   .= ($counter != 0) ? '	' : NULL;
 			$mutators  .= ($mutatorsCounter != 0) ? '	' : NULL;
 
-			$nullable = ($row->null == 'YES') ? 'TRUE' : 'FALSE';
+			$nullable = ($row->isNull) ? 'TRUE' : 'FALSE';
 			$unique   = ($row->key == 'UNI') ? 'TRUE' : 'FALSE';
 
 			$type = $this->_getDataType($row->type);
@@ -139,11 +144,11 @@ class CreateModelCommand extends Command
 				$indexes .= ($indexesCounter != 0) ? ' *   		' : NULL;
 
 				$indexes .= '@index(name="' . $row->field . '", columns={"' . $row->field . '"}),' . "\n";
-				$type     = '\\' . ucfirst($row->referenced_table);
+				$type     = '\\' . ucfirst($row->referencedTable);
 
-				$columns .= '	 * @ManyToOne(targetEntity="' . ucfirst($row->referenced_table) . '", cascade={"persist"})' . "\n";
+				$columns .= '	 * @ManyToOne(targetEntity="' . ucfirst($row->referencedTable) . '", cascade={"persist"})' . "\n";
 				$columns .= '	 * @JoinColumns({' . "\n";
-				$columns .= '	 * 	@JoinColumn(name="' . $row->field . '", referencedColumnName="' . $row->referenced_column . '", nullable=' . $nullable . ', onDelete="cascade")' . "\n";
+				$columns .= '	 * 	@JoinColumn(name="' . $row->field . '", referencedColumnName="' . $row->referencedColumn . '", nullable=' . $nullable . ', onDelete="cascade")' . "\n";
 				$columns .= '	 * })' . "\n";
 
 				$indexesCounter++;
@@ -198,12 +203,12 @@ class CreateModelCommand extends Command
 				$methodName = 'set_' . $row->field;
 				$methodName = ($input->getOption('camel')) ? Inflect::camelize($methodName) : Inflect::underscore($methodName);
 
-				$nullable = ($row->null == 'YES') ? ' = NULL' : NULL;
+				$nullable = ($row->isNull) ? ' = NULL' : NULL;
 
 				$mutator = file_get_contents($doctrineDirectory . '/Templates/Doctrine/Miscellaneous/Mutator.txt');
 
 				if ($row->key == 'MUL') {
-					$classVariable = '\\' . ucfirst($row->referenced_table) . ' ';
+					$classVariable = '\\' . ucfirst($row->referencedTable) . ' ';
 				} elseif (in_array($this->_getDataType($row->type), $dataTypes)) {
 					$mutator = str_replace('$this->[field] = $[field];', '$this->[field] = new \DateTime($[field]);', $mutator);
 				}

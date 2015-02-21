@@ -1,6 +1,6 @@
 <?php namespace Combustor;
 
-use Combustor\Tools\Describe;
+use Describe\Describe;
 use Combustor\Tools\Inflect;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputArgument;
@@ -71,7 +71,12 @@ class CreateViewCommand extends Command
 		 * Get the columns from the specified name
 		 */
 
-		$databaseColumns = new Describe($input->getArgument('name'), $output);
+		require APPPATH . 'config/database.php';
+
+		$db['default']['driver'] = ($db['default']['dbdriver'] == 'mysqli') ? 'mysql' : $db['default']['dbdriver'];
+
+		$describe = new Describe($db['default']);
+		$tableInformation = $describe->getInformationFromTable($input->getArgument('name'));
 
 		$columns    = NULL;
 		$counter    = 0;
@@ -84,7 +89,7 @@ class CreateViewCommand extends Command
 
 		$selectColumns = array('name', 'description', 'label');
 
-		foreach ($databaseColumns->result() as $row) {
+		foreach ($tableInformation as $row) {
 			$methodName = 'get_' . $row->field;
 			$methodName = ($input->getOption('camel')) ? Inflect::camelize($methodName) : Inflect::underscore($methodName);
 
@@ -103,10 +108,10 @@ class CreateViewCommand extends Command
 				if (strpos($row->field, 'date') !== FALSE || strpos($row->field, 'time') !== FALSE) {
 					$extend = '->format(\'F d, Y\')';
 				} elseif ($row->key == 'MUL') {
-					$tableColumns = new Describe($row->referenced_table, $output);
+					$tableColumns = $describe->getInformationFromTable($row->referencedTable);
 
 					$tablePrimaryKey = NULL;
-					foreach ($tableColumns->result() as $column) {
+					foreach ($tableColumns as $column) {
 						if (in_array($column->field, $selectColumns) || $column->key == 'PRI') {
 							$tablePrimaryKey = 'get_' . $column->field;
 
@@ -139,10 +144,10 @@ class CreateViewCommand extends Command
 				$fields .= '			<div class="[formColumn]">' . "\n";
 
 				if ($row->key == 'MUL') {
-					$data    = Inflect::pluralize($row->referenced_table);
+					$data    = Inflect::pluralize($row->referencedTable);
 					$fields .= '				<?php echo form_dropdown(\'' . $row->field . '\', $' . $data . ', set_value(\'' . $row->field . '\'), \'class="[bootstrapFormControl] required"\'); ?>' . "\n";
 				} else {
-					$required = ($row->null) ? 'required' : NULL;
+					$required = ( ! $row->isNull) ? 'required' : NULL;
 					$fields .= '				<?php echo form_input(\'' . $row->field . '\', set_value(\'' . $row->field . '\'), \'class="[bootstrapFormControl] ' . $required . '"\'); ?>' . "\n";
 				}
 
@@ -151,10 +156,10 @@ class CreateViewCommand extends Command
 				$fields .= '		</div>' . "\n";
 
 				if ($row->key == 'MUL') {
-					$tableColumns = new Describe($row->referenced_table, $output);
+					$tableColumns = $describe->getInformationFromTable($row->referencedTable);
 
 					$tablePrimaryKey = NULL;
-					foreach ($tableColumns->result() as $column) {
+					foreach ($tableColumns as $column) {
 						if ($column->key == 'PRI') {
 							$tablePrimaryKey = 'get_' . $column->field;
 							
@@ -185,15 +190,15 @@ class CreateViewCommand extends Command
 
 		$editFields = $fields;
 
-		foreach ($databaseColumns->result() as $row) {
+		foreach ($tableInformation as $row) {
 			$methodName = 'get_' . $row->field;
 			$methodName = ($input->getOption('camel')) ? Inflect::camelize($methodName) : Inflect::underscore($methodName);
 
 			if ($row->key == 'MUL') {
-				$tableColumns = new Describe($row->referenced_table, $output);
+				$tableColumns = $describe->getInformationFromTable($row->referencedTable);
 
 				$tablePrimaryKey = NULL;
-				foreach ($tableColumns->result() as $column) {
+				foreach ($tableColumns as $column) {
 					if ($column->key == 'PRI') {
 						$tablePrimaryKey = 'get_' . $column->field;
 						

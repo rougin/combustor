@@ -1,6 +1,6 @@
 <?php namespace Combustor;
 
-use Combustor\Tools\Describe;
+use Describe\Describe;
 use Combustor\Tools\Inflect;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputArgument;
@@ -69,9 +69,14 @@ class CreateModelCommand extends Command
 		 * Get the columns from the specified name
 		 */
 
-		$databaseColumns = new Describe($input->getArgument('name'), $output);
+		require APPPATH . 'config/database.php';
 
-		foreach ($databaseColumns->result() as $row) {
+		$db['default']['driver'] = ($db['default']['dbdriver'] == 'mysqli') ? 'mysql' : $db['default']['dbdriver'];
+
+		$describe = new Describe($db['default']);
+		$tableInformation = $describe->getInformationFromTable($input->getArgument('name'));
+
+		foreach ($tableInformation as $row) {
 			$accessors .= ($counter != 0) ? '	' : NULL;
 			$columns   .= ($counter != 0) ? '	' : NULL;
 			$mutators  .= ($mutatorsCounter != 0) ? '	' : NULL;
@@ -129,9 +134,9 @@ class CreateModelCommand extends Command
 			$fields .= '\'' . $row->field . '\' => $this->' . $methodName . '()';
 
 			if ($row->key == 'MUL') {
-				$foreignTable = new Describe($row->referenced_table, $output);
+				$foreignTableInformation = $describe->getInformationFromTable($row->referencedTable);
 
-				foreach ($foreignTable->result() as $foreignRow) {
+				foreach ($foreignTableInformation->result() as $foreignRow) {
 					if ($foreignRow->key == 'PRI') {
 						$methodName = 'get_' . $foreignRow->field;
 						break;
@@ -167,7 +172,7 @@ class CreateModelCommand extends Command
 			$methodName = 'set_' . $row->field;
 			$methodName = ($input->getOption('camel')) ? Inflect::camelize($methodName) : Inflect::underscore($methodName);
 
-			$nullable = ($row->null == 'YES') ? ' = NULL' : NULL;
+			$nullable = ($row->isNull) ? ' = NULL' : NULL;
 
 			$mutator = file_get_contents(__DIR__ . '/Templates/Miscellaneous/Mutator.txt');
 

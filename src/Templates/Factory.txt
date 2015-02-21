@@ -1,12 +1,13 @@
 <?php defined('BASEPATH') OR exit('No direct script access allowed');
 
-use Combustor\Tools\Describe;
+use Describe\Describe;
 
 class Factory {
 
 	private $_ci;
 	private $_rows  = array();
 	private $_table = NULL;
+	private $_describe = NULL;
 
 	/**
 	 * Class constructor
@@ -15,6 +16,16 @@ class Factory {
 	{
 		$this->_ci =& get_instance();
 		$this->_ci->load->database();
+
+		$database_credentials = array(
+			'database' => $this->_ci->db->database
+			'hostname' => $this->_ci->db->hostname,
+			'username' => $this->_ci->db->username,
+			'password' => $this->_ci->db->password,
+			'driver' => $this->_ci->db->dbdriver,
+		);
+
+		$this->_describe = new Describe($database_credentials);
 	}
 
 	/**
@@ -25,12 +36,12 @@ class Factory {
 	 */
 	public function as_dropdown($description = 'description')
 	{
-		$tableDescription = new Describe($this->_table);
-		
+		$tableDescription = $this->_describe->getTableInformation($this->_table);
+
 		$data        = array('');
 		$description = 'get_' . $description;
 		$id          = 'get_' . $tableDescription->getPrimaryKey();
-
+ 
 		foreach ($this->_rows as $row) {
 			$data[$row->$id()] = ucwords($row->$description());
 		}

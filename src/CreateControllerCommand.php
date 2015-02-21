@@ -1,6 +1,6 @@
 <?php namespace Combustor;
 
-use Combustor\Tools\Describe;
+use Describe\Describe;
 use Combustor\Tools\Inflect;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputArgument;
@@ -65,7 +65,12 @@ class CreateControllerCommand extends Command
 		 * Get the columns from the specified name
 		 */
 
-		$columns = new Describe($input->getArgument('name'), $output);
+		require APPPATH . 'config/database.php';
+
+		$db['default']['driver'] = ($db['default']['dbdriver'] == 'mysqli') ? 'mysql' : $db['default']['dbdriver'];
+
+		$describe = new Describe($db['default']);
+		$tableInformation = $describe->getInformationFromTable($input->getArgument('name'));
 
 		$models = '\'[singular]\'';
 
@@ -80,7 +85,7 @@ class CreateControllerCommand extends Command
 		$selectColumns           = array('name', 'description', 'label');
 		$singularText            = strtolower(Inflect::humanize($input->getArgument('name')));
 
-		foreach ($columns->result() as $row) {
+		foreach ($tableInformation as $row) {
 			if ($row->key == 'PRI') {
 				$primaryKey = $row->field;
 			}
@@ -97,33 +102,33 @@ class CreateControllerCommand extends Command
 			if ($row->extra == 'auto_increment') {
 				continue;
 			} elseif ($row->key == 'MUL') {
-				if (strpos($models, ",\n" . '			\'' . $row->referenced_table . '\'') === FALSE) {
-					$models .= ",\n" . '			\'' . $row->referenced_table . '\'';
+				if (strpos($models, ",\n" . '			\'' . $row->referencedTable . '\'') === FALSE) {
+					$models .= ",\n" . '			\'' . $row->referencedTable . '\'';
 				}
 
-				$foreignTable = new Describe($row->referenced_table, $output);
+				$foreignTableInformation = $describe->getInformationFromTable($row->referencedTable);
 
-				$fieldDescription = $foreignTable->getPrimaryKey();
+				$fieldDescription = $foreignTableInformation->getPrimaryKey();
 				foreach ($foreignTable->result() as $foreignRow) {
 					if ($foreignRow->key == 'MUL') {
-						if (strpos($models, ",\n" . '			\'' . $foreignRow->referenced_table . '\'') === FALSE) {
-							$models .= ",\n" . '			\'' . $foreignRow->referenced_table . '\'';
+						if (strpos($models, ",\n" . '			\'' . $foreignRow->referencedTable . '\'') === FALSE) {
+							$models .= ",\n" . '			\'' . $foreignRow->referencedTable . '\'';
 						}
 					}
 
 					$fieldDescription = in_array($foreignRow->field, $selectColumns) ? $foreignRow->field : $fieldDescription;
 				}
 
-				$dropdownColumn = '$data[\'' . Inflect::pluralize($row->referenced_table) . '\'] = $this->factory->get_all(\'' . $row->referenced_table . '\')->as_dropdown(\'' . $fieldDescription . '\');';
+				$dropdownColumn = '$data[\'' . Inflect::pluralize($row->referencedTable) . '\'] = $this->factory->get_all(\'' . $row->referencedTable . '\')->as_dropdown(\'' . $fieldDescription . '\');';
 
 				$dropdownColumnsOnCreate .= "\n\t\t" . $dropdownColumn;
 				$dropdownColumnsOnEdit   .= "\n\t\t" . $dropdownColumn;
 
-				$columnsOnCreate .= '$' . $row->referenced_table . ' = $this->factory->find(\'' . $row->referenced_table . '\', array(\'' . $row->referenced_column . '\' => $this->input->post(\'' . $row->field . '\')));' . "\n";
-				$columnsOnCreate .= '			$this->[singular]->' . $methodName . '($' . $row->referenced_table . ');' . "\n\n";
+				$columnsOnCreate .= '$' . $row->referencedTable . ' = $this->factory->find(\'' . $row->referencedTable . '\', array(\'' . $row->referencedColumn . '\' => $this->input->post(\'' . $row->field . '\')));' . "\n";
+				$columnsOnCreate .= '			$this->[singular]->' . $methodName . '($' . $row->referencedTable . ');' . "\n\n";
 
-				$columnsOnEdit .= '$' . $row->referenced_table . ' = $this->factory->find(\'' . $row->referenced_table . '\', array(\'' . $row->referenced_column . '\' => $this->input->post(\'' . $row->field . '\')));' . "\n";
-				$columnsOnEdit .= '			$[singular]->' . $methodName . '($' . $row->referenced_table . ');' . "\n\n";
+				$columnsOnEdit .= '$' . $row->referencedTable . ' = $this->factory->find(\'' . $row->referencedTable . '\', array(\'' . $row->referencedColumn . '\' => $this->input->post(\'' . $row->field . '\')));' . "\n";
+				$columnsOnEdit .= '			$[singular]->' . $methodName . '($' . $row->referencedTable . ');' . "\n\n";
 			} elseif ($row->field == 'password') {
 				$columnsOnCreate .= "\n" . file_get_contents(__DIR__ . '/Templates/Miscellaneous/CheckCreatePassword.txt') . "\n\n";
 				$columnsOnEdit   .= "\n" . file_get_contents(__DIR__ . '/Templates/Miscellaneous/CheckEditPassword.txt') . "\n\n";
@@ -147,7 +152,7 @@ class CreateControllerCommand extends Command
 			}
 
 			if ($row->field != 'password' && $row->field != 'datetime_created' && $row->field != 'datetime_updated') {
-				if ($row->null == 'NO') {
+				if ( ! $row->isNull) {
 					$columnsToValidate .= '\'' . $row->field . '\' => \'' . ucwords(str_replace('_', ' ', $row->field)) . '\',' . "\n";
 				}
 			}

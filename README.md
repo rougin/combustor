@@ -15,38 +15,37 @@ Installation
 		"license": "MIT",
 		"require": {
 			"php": ">=5.2.4",
-			"rougin/combustor": "dev-master"
-		},
-		"require-dev": {
-			"mikey179/vfsStream": "1.1.*"
+			"rougin/combustor": "*"
 		}
 	}
 	```
-	Then type ```composer install``` in the command line.
+	Then install it in the command line:
+
+	```$ composer install```
 
 2. After the installation, access the application via the **PHP CLI** to retrieve the list of commands:
 	
 	**For Unix and Mac:**
 
-	```php vendor/bin/combustor```
+	```$ php vendor/bin/combustor```
 
 	**For Windows or if there are no symbolic links found at ```vendor/bin``` directory:**
 
-	```php vendor/rougin/combustor/bin/combustor```
+	```$ php vendor/rougin/combustor/bin/combustor```
 
 3. Just select if you want to install the customized factory pattern, or the Doctrine ORM.
 
 	**To install/remove the customized pattern:**
 	
-	```php vendor/bin/combustor install:factory```
+	```$ php vendor/bin/combustor install:factory```
 
-	```php vendor/bin/combustor remove:factory```
+	```$ php vendor/bin/combustor remove:factory```
 	
 	**To install/remove Doctrine ORM:**
 	
-	```php vendor/bin/combustor install:doctrine```
+	```$ php vendor/bin/combustor install:doctrine```
 
-	```php vendor/bin/combustor remove:doctrine```
+	```$ php vendor/bin/combustor remove:doctrine```
 
 4. Next, configure the database connectivity settings in ```application/config/database.php```.
 
@@ -78,7 +77,7 @@ Creates a new header and footer file
 create:controller [arguments] [options]
 =======================================
 
-**NOTE**: You must install the customized factory pattern to view this set of commands. See step 3 above.
+**NOTE**: You must install the customized factory pattern to view this set of commands.
 
 Creates a new controller
 
@@ -97,7 +96,7 @@ Creates a new controller
 create:model [arguments] [options]
 ==================================
 
-**NOTE**: You must install the customized factory pattern to view this set of commands. See step 3 above.
+**NOTE**: You must install the customized factory pattern to view this set of commands.
 
 Creates a new model
 
@@ -133,7 +132,7 @@ Creates a new view
 create:scaffold [arguments] [options]
 =====================================
 
-**NOTE**: You must install the customized factory pattern to view this set of commands. See step 3 above.
+**NOTE**: You must install the customized factory pattern to view this set of commands.
 
 Creates a new controller, model, and view
 
@@ -154,7 +153,7 @@ Creates a new controller, model, and view
 doctrine:controller [arguments] [options]
 =========================================
 
-**NOTE**: You must install the Doctrine ORM to view this set of commands. See step 3 above.
+**NOTE**: You must install the Doctrine ORM to view this set of commands.
 
 Creates a new Doctrine-based controller
 
@@ -173,7 +172,7 @@ Creates a new Doctrine-based controller
 doctrine:model [arguments] [options]
 ====================================
 
-**NOTE**: You must install the Doctrine ORM to view this set of commands. See step 3 above.
+**NOTE**: You must install the Doctrine ORM to view this set of commands.
 
 Creates a new Doctrine-based model
 
@@ -190,7 +189,7 @@ Creates a new Doctrine-based model
 doctrine:scaffold [arguments] [options]
 =======================================
 
-**NOTE**: You must install the Doctrine ORM to view this set of commands. See step 3 above.
+**NOTE**: You must install the Doctrine ORM to view this set of commands.
 
 Creates a new Doctrine-based controller, Doctrine-based model and a view
 

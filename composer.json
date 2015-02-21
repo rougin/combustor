@@ -4,7 +4,7 @@
 	"keywords": ["codeigniter", "combustor", "php", "code", "generator"],
 	"require": {
 		"symfony/console": "~2.0",
-		"rougin/describe": "dev-master"
+		"rougin/describe": "*"
 	},
 	"license": "MIT",
 	"authors": [

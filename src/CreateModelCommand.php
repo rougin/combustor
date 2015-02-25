@@ -167,7 +167,7 @@ class CreateModelCommand extends Command
 			 */
 
 			$class         = '\\' . ucfirst($name);
-			$classVariable = NULL;
+			$classVariable = ($row->key == 'MUL') ? '\\' . ucfirst($row->referencedTable) . ' ' : NULL;
 			
 			$methodName = 'set_' . $row->field;
 			$methodName = ($input->getOption('camel')) ? Inflect::camelize($methodName) : Inflect::underscore($methodName);
@@ -175,10 +175,6 @@ class CreateModelCommand extends Command
 			$nullable = ($row->isNull) ? ' = NULL' : NULL;
 
 			$mutator = file_get_contents(__DIR__ . '/Templates/Miscellaneous/Mutator.txt');
-
-			if ($row->key == 'MUL') {
-				$classVariable = '\\' . ucfirst(str_replace('_id', '', $row->field)) . ' ';
-			}
 
 			if (in_array($dataType, $dataTypes)) {
 				$mutator = str_replace('$this->_[field] = $[field]', '$this->_[field] = new DateTime($[field])', $mutator);

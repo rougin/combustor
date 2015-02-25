@@ -198,7 +198,7 @@ class CreateModelCommand extends Command
 
 			if ($row->extra != 'auto_increment') {
 				$class         = '\\' . ucfirst($name);
-				$classVariable = NULL;
+				$classVariable = ($row->key == 'MUL') ? '\\' . ucfirst($row->referencedTable) . ' ' : NULL;
 				
 				$methodName = 'set_' . $row->field;
 				$methodName = ($input->getOption('camel')) ? Inflect::camelize($methodName) : Inflect::underscore($methodName);
@@ -207,9 +207,7 @@ class CreateModelCommand extends Command
 
 				$mutator = file_get_contents($doctrineDirectory . '/Templates/Doctrine/Miscellaneous/Mutator.txt');
 
-				if ($row->key == 'MUL') {
-					$classVariable = '\\' . ucfirst($row->referencedTable) . ' ';
-				} elseif (in_array($this->_getDataType($row->type), $dataTypes)) {
+				if (in_array($this->_getDataType($row->type), $dataTypes)) {
 					$mutator = str_replace('$this->[field] = $[field];', '$this->[field] = new \DateTime($[field]);', $mutator);
 				}
 

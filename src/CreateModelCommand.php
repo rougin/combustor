@@ -136,7 +136,7 @@ class CreateModelCommand extends Command
 			if ($row->key == 'MUL') {
 				$foreignTableInformation = $describe->getInformationFromTable($row->referencedTable);
 
-				foreach ($foreignTableInformation->result() as $foreignRow) {
+				foreach ($foreignTableInformation as $foreignRow) {
 					if ($foreignRow->key == 'PRI') {
 						$methodName = 'get_' . $foreignRow->field;
 						break;

@@ -1,3 +1,5 @@
+<a href="https://coderwall.com/rougin"><img alt="Endorse rougin on Coderwall" src="https://api.coderwall.com/rougin/endorsecount.png" /></a>
+
 Combustor
 =========
 
@@ -19,6 +21,7 @@ Installation
 		}
 	}
 	```
+
 	Then install it in the command line:
 
 	```$ composer install```

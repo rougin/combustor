@@ -18,11 +18,11 @@ class Factory {
 		$this->_ci->load->database();
 
 		$database_credentials = array(
-			'database' => $this->_ci->db->database
+			'database' => $this->_ci->db->database,
 			'hostname' => $this->_ci->db->hostname,
 			'username' => $this->_ci->db->username,
 			'password' => $this->_ci->db->password,
-			'driver' => $this->_ci->db->dbdriver,
+			'driver' => $this->_ci->db->dbdriver
 		);
 
 		$this->_describe = new Describe($database_credentials);

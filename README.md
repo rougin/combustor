@@ -1,4 +1,4 @@
-<a href="https://coderwall.com/rougin"><img alt="Endorse rougin on Coderwall" src="https://api.coderwall.com/rougin/endorsecount.png" /></a>
+[![endorse](https://api.coderwall.com/rougin/endorsecount.png)](https://coderwall.com/rougin)
 
 Combustor
 =========
@@ -80,7 +80,7 @@ Creates a new header and footer file
 create:controller [arguments] [options]
 =======================================
 
-**NOTE**: You must install the customized factory pattern to view this set of commands.
+**NOTE**: You must install the customized factory pattern to view this command.
 
 Creates a new controller
 
@@ -99,7 +99,7 @@ Creates a new controller
 create:model [arguments] [options]
 ==================================
 
-**NOTE**: You must install the customized factory pattern to view this set of commands.
+**NOTE**: You must install the customized factory pattern to view this command.
 
 Creates a new model
 
@@ -135,7 +135,7 @@ Creates a new view
 create:scaffold [arguments] [options]
 =====================================
 
-**NOTE**: You must install the customized factory pattern to view this set of commands.
+**NOTE**: You must install the customized factory pattern to view this command.
 
 Creates a new controller, model, and view
 
@@ -156,7 +156,7 @@ Creates a new controller, model, and view
 doctrine:controller [arguments] [options]
 =========================================
 
-**NOTE**: You must install the Doctrine ORM to view this set of commands.
+**NOTE**: You must install the Doctrine ORM to view this command.
 
 Creates a new Doctrine-based controller
 
@@ -175,7 +175,7 @@ Creates a new Doctrine-based controller
 doctrine:model [arguments] [options]
 ====================================
 
-**NOTE**: You must install the Doctrine ORM to view this set of commands.
+**NOTE**: You must install the Doctrine ORM to view this command.
 
 Creates a new Doctrine-based model
 
@@ -192,7 +192,7 @@ Creates a new Doctrine-based model
 doctrine:scaffold [arguments] [options]
 =======================================
 
-**NOTE**: You must install the Doctrine ORM to view this set of commands.
+**NOTE**: You must install the Doctrine ORM to view this command.
 
 Creates a new Doctrine-based controller, Doctrine-based model and a view
 

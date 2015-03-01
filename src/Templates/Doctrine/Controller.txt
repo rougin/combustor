@@ -94,7 +94,7 @@ class [controller] extends CI_Controller {
 	}
 
 	/**
-	 * Display a listing of [plural]
+	 * Display a listing of [pluralText]
 	 */
 	public function index()
 	{

@@ -84,7 +84,6 @@ class CreateControllerCommand extends Command
 		$dropdownColumnsOnEdit   = '$data[\'[singular]\'] = $this->factory->find(\'[singular]\', array(\'[primaryKey]\' => $id));';
 		$dropdowns               = 0;
 		$selectColumns           = array('name', 'description', 'label');
-		$singularText            = strtolower(Inflect::humanize($input->getArgument('name')));
 
 		foreach ($tableInformation as $row) {
 			if ($row->key == 'PRI') {
@@ -176,6 +175,7 @@ class CreateControllerCommand extends Command
 			'[controllerName]',
 			'[primaryKey]',
 			'[plural]',
+			'[pluralText]',
 			'[singular]',
 			'[singularText]'
 		);
@@ -191,8 +191,9 @@ class CreateControllerCommand extends Command
 			ucfirst(str_replace('_', ' ', Inflect::pluralize($input->getArgument('name')))),
 			$primaryKey,
 			Inflect::pluralize($input->getArgument('name')),
+			strtolower(Inflect::pluralize($input->getArgument('name'))),
 			Inflect::singularize($input->getArgument('name')),
-			$singularText
+			strtolower(Inflect::humanize($input->getArgument('name')))
 		);
 
 		$controller = str_replace($search, $replace, $controller);

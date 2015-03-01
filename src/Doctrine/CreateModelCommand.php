@@ -104,6 +104,9 @@ class CreateModelCommand extends Command
 
 		require APPPATH . 'config/database.php';
 
+		$db['default']['driver'] = $db['default']['dbdriver'];
+		unset($db['default']['dbdriver']);
+
 		$describe = new Describe($db['default']);
 		$tableInformation = $describe->getInformationFromTable($input->getArgument('name'));
 

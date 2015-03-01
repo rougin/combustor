@@ -67,6 +67,12 @@ class CreateControllerCommand extends Command
 
 		require APPPATH . 'config/database.php';
 
+		$db['default']['driver'] = $db['default']['dbdriver'];
+		unset($db['default']['dbdriver']);
+
+		$db['default']['driver'] = $db['default']['dbdriver'];
+		unset($db['default']['dbdriver']);
+
 		$describe = new Describe($db['default']);
 		$tableInformation = $describe->getInformationFromTable($input->getArgument('name'));
 
@@ -94,7 +100,7 @@ class CreateControllerCommand extends Command
 			if ($counter != 0) {
 				$columnsOnCreate   .= ($row->field != 'datetime_updated') ? '			' : NULL;
 				$columnsOnEdit     .= ($row->field != 'datetime_created') ? '			' : NULL;
-				$columnsToValidate .= ($row->field != 'password' && $row->field != 'datetime_created' && $row->field != 'datetime_updated') ? '			' : NULL;
+				$columnsToValidate .= ($row->field != 'password' && $row->field != 'datetime_created' && $row->field != 'datetime_updated' && ! $row->isNull) ? '			' : NULL;
 			}
 
 			if ($row->extra == 'auto_increment') {
@@ -106,8 +112,8 @@ class CreateControllerCommand extends Command
 
 				$foreignTableInformation = $describe->getInformationFromTable($row->referencedTable);
 
-				$fieldDescription = $foreignTableInformation->getPrimaryKey();
-				foreach ($foreignTable->result() as $foreignRow) {
+				$fieldDescription = $describe->getPrimaryKey($row->referencedTable);
+				foreach ($foreignTableInformation as $foreignRow) {
 					if ($foreignRow->key == 'MUL') {
 						if (strpos($models, ",\n" . '			\'' . $foreignRow->referencedTable . '\'') === FALSE) {
 							$models .= ",\n" . '			\'' . $foreignRow->referencedTable . '\'';

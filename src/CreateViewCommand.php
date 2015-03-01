@@ -51,12 +51,12 @@ class CreateViewCommand extends Command
 		 * Integrate Bootstrap if enabled
 		 */
 
-		$bootstrapButton           = ($input->getOption('bootstrap')) ? 'btn btn-primary btn-lg' : NULL;		
-		$bootstrapFormControl      = ($input->getOption('bootstrap')) ? 'form-control' : NULL;
-		$bootstrapFormGroup        = ($input->getOption('bootstrap')) ? 'form-group' : NULL;
-		$bootstrapFormOpen         = ($input->getOption('bootstrap')) ? 'form-horizontal' : NULL;
-		$bootstrapFormSubmit       = ($input->getOption('bootstrap')) ? 'col-lg-12' : NULL;
-		$bootstrapTable            = ($input->getOption('bootstrap')) ? 'table table table-striped table-hover' : NULL;
+		$bootstrapButton      = ($input->getOption('bootstrap')) ? 'btn btn-primary btn-lg' : NULL;
+		$bootstrapFormControl = ($input->getOption('bootstrap')) ? 'form-control' : NULL;
+		$bootstrapFormGroup   = ($input->getOption('bootstrap')) ? 'form-group' : NULL;
+		$bootstrapFormOpen    = ($input->getOption('bootstrap')) ? 'form-horizontal' : NULL;
+		$bootstrapFormSubmit  = ($input->getOption('bootstrap')) ? 'col-lg-12' : NULL;
+		$bootstrapTable       = ($input->getOption('bootstrap')) ? 'table table table-striped table-hover' : NULL;
 
 		/**
 		 * Get the view template
@@ -72,6 +72,9 @@ class CreateViewCommand extends Command
 		 */
 
 		require APPPATH . 'config/database.php';
+
+		$db['default']['driver'] = $db['default']['dbdriver'];
+		unset($db['default']['dbdriver']);
 
 		$describe = new Describe($db['default']);
 		$tableInformation = $describe->getInformationFromTable($input->getArgument('name'));

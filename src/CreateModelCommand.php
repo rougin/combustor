@@ -62,14 +62,17 @@ class CreateModelCommand extends Command
 		/**
 		 * Get the model template
 		 */
-		
+
 		$model = file_get_contents(__DIR__ . '/Templates/Model.txt');
-		
+
 		/**
 		 * Get the columns from the specified name
 		 */
 
 		require APPPATH . 'config/database.php';
+
+		$db['default']['driver'] = $db['default']['dbdriver'];
+		unset($db['default']['dbdriver']);
 
 		$describe = new Describe($db['default']);
 		$tableInformation = $describe->getInformationFromTable($input->getArgument('name'));
@@ -78,6 +81,7 @@ class CreateModelCommand extends Command
 			$accessors .= ($counter != 0) ? '	' : NULL;
 			$columns   .= ($counter != 0) ? '	' : NULL;
 			$mutators  .= ($mutatorsCounter != 0) ? '	' : NULL;
+			$type       = ($row->key == 'MUL') ? '\\' . ucwords($row->referencedTable) : $row->type;
 
 			/**
 			 * Generate keywords
@@ -117,10 +121,11 @@ class CreateModelCommand extends Command
 
 		return new DateTime($this->_[field]);';
 				$accessor = str_replace('return $this->_[field];', $dateFormat, $accessor);
+				$type = 'varchar()';
 			}
 
 			$search  = array('[field]', '[type]', '[method]');
-			$replace = array($row->field, $row->type, $methodName);
+			$replace = array($row->field, $type, $methodName);
 
 			$accessors .= str_replace($search, $replace, $accessor) . "\n\n";
 
@@ -137,6 +142,8 @@ class CreateModelCommand extends Command
 				foreach ($foreignTableInformation as $foreignRow) {
 					if ($foreignRow->key == 'PRI') {
 						$methodName = 'get_' . $foreignRow->field;
+						$methodName = ($input->getOption('camel')) ? Inflect::camelize($methodName) : Inflect::underscore($methodName);
+
 						break;
 					}
 				}
@@ -179,12 +186,11 @@ class CreateModelCommand extends Command
 			}
 
 			$search  = array('[field]', '[type]', '[method]', '[classVariable]', '[nullable]');
-			$replace = array($row->field, $row->type, $methodName, $classVariable, $nullable);
-			
+			$replace = array($row->field, $type, $methodName, $classVariable, $nullable);
+
 			$mutators .= str_replace($search, $replace, $mutator) . "\n\n";
 
 			$mutatorsCounter++;
-
 			$counter++;
 		}
 
@@ -205,7 +211,8 @@ class CreateModelCommand extends Command
 			'[plural]',
 			'[singular]',
 			'[firstLetter]',
-			'[model]'
+			'[model]',
+			'[modelName]'
 		);
 
 		$replace = array(
@@ -219,7 +226,8 @@ class CreateModelCommand extends Command
 			Inflect::pluralize($input->getArgument('name')),
 			$name,
 			substr($input->getArgument('name'), 0, 1),
-			ucfirst($name)
+			ucfirst($name),
+			ucwords(str_replace('_', ' ', $name))
 		);
 
 		$model = str_replace($search, $replace, $model);

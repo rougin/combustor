@@ -70,9 +70,6 @@ class CreateControllerCommand extends Command
 		$db['default']['driver'] = $db['default']['dbdriver'];
 		unset($db['default']['dbdriver']);
 
-		$db['default']['driver'] = $db['default']['dbdriver'];
-		unset($db['default']['dbdriver']);
-
 		$describe = new Describe($db['default']);
 		$tableInformation = $describe->getInformationFromTable($input->getArgument('name'));
 

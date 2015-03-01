@@ -2,6 +2,10 @@
 
 use Describe\Describe;
 
+/**
+ * Factory Class
+ */
+
 class Factory {
 
 	private $_ci;
@@ -36,11 +40,11 @@ class Factory {
 	 */
 	public function as_dropdown($description = 'description')
 	{
-		$tableDescription = $this->_describe->getTableInformation($this->_table);
+		$table_information = $this->_describe->getInformationFromTable($this->_table);
 
 		$data        = array('');
 		$description = 'get_' . $description;
-		$id          = 'get_' . $tableDescription->getPrimaryKey();
+		$id          = 'get_' . $this->_describe->getPrimaryKey($this->_table);
  
 		foreach ($this->_rows as $row) {
 			$data[$row->$id()] = ucwords($row->$description());
@@ -146,19 +150,18 @@ class Factory {
 	protected function _create_object($table, $row)
 	{
 		$model = new $table();
-		$main_table = new Describe($table);
+		$main_table_information = $this->_describe->getInformationFromTable($table);
 
-		foreach ($main_table->result() as $table_row)
+		foreach ($main_table_information as $table_column)
 		{
-			$mutator = 'set_' . $table_row->field;
-			$method = $table_row->field;
+			$mutator = 'set_' . $table_column->field;
+			$method = $table_column->field;
 			$data = $row->$method;
 
-			if ($table_row->key == 'MUL')
+			if ($table_column->key == 'MUL')
 			{
-				$parameters = array($table_row->referenced_column => $data);
-
-				$data = $this->find($table_row->referenced_table, $parameters);
+				$parameters = array($table_column->referencedColumn => $data);
+				$data = $this->find($table_column->referencedTable, $parameters);
 			}
 
 			$model->$mutator($data);

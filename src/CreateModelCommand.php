@@ -115,7 +115,8 @@ class CreateModelCommand extends Command
 			}
 
 			if (in_array($dataType, $dataTypes)) {
-				$dateFormat = 'if (is_a($this->_[field], \'DateTime\')) {
+				$dateFormat = 'if (is_a($this->_[field], \'DateTime\'))
+		{
 			return $this->_[field];
 		}
 

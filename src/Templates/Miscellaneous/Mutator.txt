@@ -6,4 +6,6 @@
 	public function [method]([classVariable]$[field][nullable])
 	{
 		$this->_[field] = $[field];
+
+		return $this;
 	}

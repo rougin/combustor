@@ -212,6 +212,21 @@ class CreateViewCommand extends Command
 				}
 				
 				$value = '$[singular]->' . $methodName . '()->' . $tablePrimaryKey . '()';
+			} else if (strpos($row->type, 'date') !== FALSE || strpos($row->type, 'time') !== FALSE) {
+				$format = NULL;
+
+				switch ($row->type) {
+					case 'datetime':
+						$format = 'Y-m-d H:i:s';
+						break;
+					case 'date':
+						$format = 'Y-m-d';
+						break;
+					case 'time':
+						$format = 'H:i:s';
+						break;
+				}
+				$value = '$[singular]->' . $methodName . '()->format(\'' . $format . '\')';
 			} else {
 				$value = '$[singular]->' . $methodName . '()';
 			}

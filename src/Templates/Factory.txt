@@ -174,18 +174,52 @@ class Factory {
 	 * Search for keywords based on the list of columns in the storage
 	 * 
 	 * @param  string $keyword
+	 * @param  string $table_information
+	 * @param  array  $tables
+	 * @param  string $table_alias
 	 */
-	protected function _find_by_keyword($keyword)
+	protected function _find_by_keyword($keyword, $table = NULL, $tables = array(), $table_alias = NULL)
 	{
+		if ($table == NULL)
+		{
+			$table = $this->_table;
+		}
+
+		if ($table_alias == NULL)
+		{
+			$table_alias = $table;
+		}
+
+		$table_information = $this->_describe->getInformationFromTable($table);
+		array_push($tables, $table);
+
 		if ($keyword != NULL)
 		{
 			$keywords = explode(' ', $keyword);
 
 			foreach ($keywords as $keyword)
 			{
-				foreach ($this->_columns as $column)
+				foreach ($table_information as $column)
 				{
-					$this->_ci->db->like($column);
+					if ($column->key == 'MUL')
+					{
+						if ( ! in_array($column->referencedTable, $tables))
+						{
+							$foreign_primary_key = $this->_describe->getPrimaryKey($column->referencedTable);
+							$foreign_table_alias = $table . '_' . $column->referencedTable;
+							$condition = $foreign_table_alias . '.' . $foreign_primary_key . ' = ' . $table_alias . '.' . $column->field;
+
+							$this->_ci->db->join($column->referencedTable . ' as ' . $foreign_table_alias, $condition, 'left');
+
+							array_push($tables, $column->referencedTable);
+							$tables = array_unique($tables);
+							$this->_find_by_keyword($keyword, $column->referencedTable, $tables, $foreign_table_alias);
+						}
+					}
+					else
+					{
+						$this->_ci->db->or_like($table_alias . '.' . $column->field, $keyword);
+					}
 				}
 			}
 		}

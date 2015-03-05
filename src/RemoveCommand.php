@@ -61,7 +61,7 @@ class RemoveCommand extends Command
 			fclose($file);
 		}
 
-		$combustor = file_get_contents(VENDOR . 'rougin/combustor/bin/combustor');
+		$combustor = file_get_contents(VENDOR . 'rougin/combustor/bin/combustor.php');
 
 		$commandsExists = strpos($combustor, '$application->add(new Combustor\CreateControllerCommand);') !== FALSE;
 		$doctrineIsNotInstalled = ! file_exists(APPPATH . 'libraries/Doctrine.php');

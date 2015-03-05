@@ -96,8 +96,8 @@ class [controller] extends CI_Controller {
 		include APPPATH . 'config/pagination.php';
 
 		$delimiters['keyword'] = $this->input->get('keyword');
-		$config['suffix']     = '?keyword=' . $delimiters['keyword'];
-		$config['total_rows'] = $this->factory->get_all('[singular]', $delimiters)->total_rows();
+		$config['suffix']      = '?keyword=' . $delimiters['keyword'];
+		$config['total_rows']  = $this->factory->get_all('[singular]', $delimiters)->total_rows();
 
 		$this->pagination->initialize($config);
 

@@ -66,7 +66,7 @@ class InstallCommand extends Command
 		file_put_contents(APPPATH . 'libraries/Factory.php', $factory);
 		fclose($file);
 
-		$combustor = file_get_contents(VENDOR . 'rougin/combustor/bin/combustor');
+		$combustor = file_get_contents(VENDOR . 'rougin/combustor/bin/combustor.php');
 
 		if (strpos($combustor, '// $application->add(new Combustor\CreateControllerCommand);') !== FALSE) {
 			$search = array(

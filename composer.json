@@ -13,7 +13,7 @@
 			"email": "rougingutib@gmail.com"
 		}
 	],
-	"bin": ["bin/combustor"],
+	"bin": ["bin/combustor", "bin/combustor.php"],
 	"autoload": {
 		"psr-4": {
 			"Combustor\\": "src/"

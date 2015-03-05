@@ -45,7 +45,7 @@ class Factory {
 		$data        = array('');
 		$description = 'get_' . $description;
 		$id          = 'get_' . $this->_describe->getPrimaryKey($this->_table);
- 
+
 		foreach ($this->_rows as $row) {
 			$data[$row->$id()] = ucwords($row->$description());
 		}

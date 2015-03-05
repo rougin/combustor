@@ -92,7 +92,7 @@ class RemoveCommand extends Command
 
 		system('composer update');
 
-		$combustor = file_get_contents(VENDOR . 'rougin/combustor/bin/combustor');
+		$combustor = file_get_contents(VENDOR . 'rougin/combustor/bin/combustor.php');
 
 		$commandsExists = strpos($combustor, '$application->add(new Combustor\Doctrine\CreateControllerCommand);') !== FALSE;
 		$factoryIsNotInstalled = ! file_exists(APPPATH . 'libraries/Factory.php');

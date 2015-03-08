@@ -261,7 +261,9 @@ class CreateModelCommand extends Command
 		 * Create a new file and insert the generated template
 		 */
 
-		$filename = APPPATH . 'models/' . ucfirst($name) . '.php';
+		$modelFile = ($input->getOption('lowercase')) ? strtolower($name) : ucfirst($name);
+
+		$filename = APPPATH . 'models/' . $modelFile . '.php';
 
 		if (file_exists($filename)) {
 			$output->writeln('<error>The ' . $name . ' model already exists!</error>');

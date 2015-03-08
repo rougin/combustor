@@ -23,6 +23,11 @@ class CreateViewCommand extends Command
 				InputArgument::REQUIRED,
 				'Name of the view folder'
 			)->addOption(
+				'keep',
+				null,
+				InputOption::VALUE_NONE,
+				'Keeps the name to be used'
+			)->addOption(
 				'bootstrap',
 				NULL,
 				InputOption::VALUE_NONE,
@@ -55,7 +60,6 @@ class CreateViewCommand extends Command
 		$bootstrapFormControl = ($input->getOption('bootstrap')) ? 'form-control' : NULL;
 		$bootstrapFormGroup   = ($input->getOption('bootstrap')) ? 'form-group' : NULL;
 		$bootstrapFormOpen    = ($input->getOption('bootstrap')) ? 'form-horizontal' : NULL;
-		$bootstrapFormSubmit  = ($input->getOption('bootstrap')) ? 'col-lg-12' : NULL;
 		$bootstrapTable       = ($input->getOption('bootstrap')) ? 'table table table-striped table-hover' : NULL;
 
 		/**
@@ -84,7 +88,6 @@ class CreateViewCommand extends Command
 		$fields     = NULL;
 		$formColumn = ($input->getOption('bootstrap')) ? 'col-lg-11' : NULL;
 		$labelClass = ($input->getOption('bootstrap')) ? 'control-label col-lg-1' : NULL;
-		$pullRight  = ($input->getOption('bootstrap')) ? 'pull-right' : NULL;
 		$rows       = NULL;
 		$showFields = NULL;
 
@@ -254,9 +257,7 @@ class CreateViewCommand extends Command
 			'[bootstrapFormControl]',
 			'[bootstrapFormGroup]',
 			'[bootstrapFormOpen]',
-			'[bootstrapFormSubmit]',
 			'[bootstrapTable]',
-			'[pullRight]',
 			'[labelClass]',
 			'[formColumn]',
 			'[entity]',
@@ -264,6 +265,8 @@ class CreateViewCommand extends Command
 			'[plural]',
 			'[singular]'
 		);
+
+		$plural = ($input->getOption('keep')) ? $input->getArgument('name') : Inflect::pluralize($input->getArgument('name'));
 
 		$replace = array(
 			rtrim($showFields),
@@ -276,14 +279,12 @@ class CreateViewCommand extends Command
 			$bootstrapFormControl,
 			$bootstrapFormGroup,
 			$bootstrapFormOpen,
-			$bootstrapFormSubmit,
 			$bootstrapTable,
-			$pullRight,
 			$labelClass,
 			$formColumn,
 			ucwords(str_replace('_', ' ', Inflect::pluralize($input->getArgument('name')))),
 			ucwords(str_replace('_', ' ', Inflect::singularize($input->getArgument('name')))),
-			Inflect::pluralize($input->getArgument('name')),
+			$plural,
 			Inflect::singularize($input->getArgument('name'))
 		);
 
@@ -296,7 +297,9 @@ class CreateViewCommand extends Command
 		 * Create the directory first
 		 */
 
-		$filepath = APPPATH . 'views/' . Inflect::pluralize($input->getArgument('name')) . '/';
+		$view_directory = ($input->getOption('keep')) ? $input->getArgument('name') : Inflect::pluralize($input->getArgument('name'));
+
+		$filepath = APPPATH . 'views/' . $view_directory . '/';
 
 		if ( ! @mkdir($filepath, 0777, TRUE)) {
 			exit($output->writeln('<error>The ' . Inflect::pluralize($input->getArgument('name')) . ' views folder already exists!</error>'));

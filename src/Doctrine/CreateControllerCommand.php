@@ -172,9 +172,13 @@ class CreateControllerCommand extends Command
 			'[controllerName]',
 			'[primaryKey]',
 			'[plural]',
+			'[pluralText]',
 			'[singular]',
 			'[singularText]'
 		);
+
+		$plural = ($input->getOption('keep')) ? $name : Inflect::pluralize($name);
+		$pluralText = ($input->getOption('keep')) ? strtolower($name) : strtolower(Inflect::pluralize($name));
 
 		$replace = array(
 			rtrim($models),
@@ -183,13 +187,13 @@ class CreateControllerCommand extends Command
 			rtrim($columnsOnCreate),
 			rtrim($columnsOnEdit),
 			substr($columnsToValidate, 0, -2),
-			ucfirst(Inflect::pluralize($input->getArgument('name'))),
-			ucfirst(str_replace('_', ' ', Inflect::pluralize($input->getArgument('name')))),
+			ucfirst($name),
+			ucfirst(str_replace('_', ' ', $name)),
 			$primaryKey,
-			Inflect::pluralize($input->getArgument('name')),
-			strtolower(Inflect::pluralize($input->getArgument('name'))),
-			Inflect::singularize($input->getArgument('name')),
-			strtolower(Inflect::singularize($input->getArgument('name')))
+			$plural,
+			$pluralText,
+			Inflect::singularize($name),
+			strtolower(Inflect::humanize($name))
 		);
 
 		$controller = str_replace($search, $replace, $controller);

@@ -98,6 +98,7 @@ class CreateScaffoldCommand extends Command
 				$arguments['--lowercase'] = $lowercase;
 			} elseif ($command == 'create:view') {
 				$arguments['--bootstrap'] = $bootstrap;
+				$arguments['--keep']      = $keep;
 				$arguments['--camel']     = $camel;
 			}
 

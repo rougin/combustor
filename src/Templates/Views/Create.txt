@@ -5,8 +5,9 @@
 	</h1>
 	<?php echo form_open('[plural]/create', 'class="[bootstrapFormOpen]"'); ?>
 		[fields]
-		<div class="[bootstrapFormGroup] [pullRight]">
-			<div class="[bootstrapFormSubmit]">
+		<div class="[bootstrapFormGroup]">
+			<div class="[labelClass]"></div>
+			<div class="[formColumn]">
 				<a class="[bootstrapButton]" href="<?php echo base_url('[plural]'); ?>">Back</a>
 				<?php echo form_submit('', 'Submit', 'class="[bootstrapButton]"'); ?>
 			</div>

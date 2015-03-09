@@ -1,25 +1,32 @@
 <?php $this->load->view('layout/header'); ?>
-	<h1>[entity]</h1>
+	<h1>
+		<i class="fa fa-lg fa-fw fa-list"></i> 
+		[entity]
+	</h1>
 	<a class="[bootstrapButton]" href="<?php echo base_url('[plural]/create'); ?>">
 		Create a New [singularEntity]
 	</a>
-	<table class="[bootstrapTable]">
-		<thead>
-			<tr>
-				[columns]
-			</tr>
-		</thead>
-		<tbody>
-			<?php foreach ($[plural] as $[singular]): ?>
+	<?php if ($[plural]): ?>
+		<table class="[bootstrapTable]">
+			<thead>
 				<tr>
-					[rows]
-					<td>
-						<a class="fa fa-edit fa-2x" href="<?php echo base_url('[plural]/edit/' . $[singular]->[primaryKey]()); ?>"></a>
-						<a class="fa fa-close fa-2x" href="<?php echo base_url('[plural]/delete/' . $[singular]->[primaryKey]()); ?>"></a>
-					</td>
+					[columns]
 				</tr>
-			<?php endforeach; ?>
-		</tbody>
-	</table>
-	<?php echo $links; ?>
+			</thead>
+			<tbody>
+				<?php foreach ($[plural] as $[singular]): ?>
+					<tr>
+						[rows]
+						<td>
+							<a class="fa fa-edit fa-2x" href="<?php echo base_url('[plural]/edit/' . $[singular]->[primaryKey]()); ?>"></a>
+							<a class="fa fa-close fa-2x" href="<?php echo base_url('[plural]/delete/' . $[singular]->[primaryKey]()); ?>"></a>
+						</td>
+					</tr>
+				<?php endforeach; ?>
+			</tbody>
+		</table>
+		<?php echo $links; ?>
+	<?php else: ?>
+		There are no [plural] that are currently available.
+	<?php endif; ?>
 <?php $this->load->view('layout/footer'); ?>

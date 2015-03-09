@@ -97,7 +97,7 @@ class CreateModelCommand extends Command
 		
 		$doctrineDirectory = str_replace('/Doctrine', '', __DIR__);
 		$model = file_get_contents($doctrineDirectory . '/Templates/Doctrine/Model.txt');
-		
+
 		/**
 		 * Get the columns from the specified name
 		 */

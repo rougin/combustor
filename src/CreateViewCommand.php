@@ -101,8 +101,8 @@ class CreateViewCommand extends Command
 
 			if ($row->field == 'datetime_created' || $row->field == 'datetime_updated' || $row->extra == 'auto_increment') continue;
 
-			$columns    .= ($counter != 0 && $row->field != 'password') ? '				' : NULL;
-			$rows       .= ($counter != 0 && $row->field != 'password') ? '					' : NULL;
+			$columns    .= ($counter != 0 && $row->field != 'password') ? '					' : NULL;
+			$rows       .= ($counter != 0 && $row->field != 'password') ? '						' : NULL;
 			$fields     .= ($counter != 0 && $row->field != 'password') ? '		' : NULL;
 			$showFields .= ($counter != 0 && $row->field != 'password') ? '	' : NULL;
 

@@ -1,5 +1,6 @@
 <?php $this->load->view('layout/header'); ?>
 	<h1>
+		<i class="fa fa-lg fa-fw fa-eye"></i> 
 		[singularEntity] Information
 	</h1>
 	[showFields]

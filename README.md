@@ -22,6 +22,8 @@ Installation
 	}
 	```
 
+	**NOTE**: If you want the latest build, use ```dev-master``` instead of ```*``
+
 	Then install it in the command line:
 
 	```$ composer install```
@@ -59,14 +61,14 @@ Reminders
 
 * **VERY IMPORTANT**: Before generating the models, views, and controllers, please make sure that you **set up your database** (foreign keys, indexes, relationships, normalizations) properly in order to minimize the modifications after the codes has been generated. Also, generate the models, views, and controllers first to tables that are having **no relationship with other tables** in the database. *The reason for this is that Combustor will generate controllers, models, and views based on your database schema. If there's something wrong in your database, definitely the Combustor will generated some bad code.*
 
-* If you want to know more about Doctrine ORM and its functionalities, you can always read their documentation [here](doctrine-orm.readthedocs.org/en/latest/tutorials/getting-started.html).
+* If you want to know more about Doctrine ORM and its functionalities, you can always read their documentation [here](doctrine-orm.readthedocs.org/en/latest/tutorials/getting-started.html) to understand their concepts.
 
-* Found a bug? Want to contribute? Feel free to open an issue or create a pull request. :+1:
+* Have you found a bug? Or do you want to contribute? Feel free to open an issue or create a pull request here! :+1:
 
 Commands
 ========
 
-The help for following commands below are also available in the Combustor *command line interface*. Just type the command you want to get help and insert an option of ```--help``` (e.g ```create:controller --help```)
+The help for the following commands below are also available in the Combustor *command line interface* (CLI). Just type the command you want to get help and insert an option of ```--help``` (e.g ```create:controller --help```)
 
 create:layout [options]
 =======================

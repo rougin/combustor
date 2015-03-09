@@ -177,7 +177,7 @@ class CreateControllerCommand extends Command
 			'[singularText]'
 		);
 
-		$plural = ($input->getOption('keep')) ? $name : Inflect::pluralize($name);
+		$plural     = ($input->getOption('keep')) ? $name : Inflect::pluralize($name);
 		$pluralText = ($input->getOption('keep')) ? strtolower($name) : strtolower(Inflect::pluralize($name));
 
 		$replace = array(

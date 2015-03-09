@@ -124,9 +124,9 @@ $application->add(new Combustor\Doctrine\CreateScaffoldCommand);',
 				$combustor = str_replace($search, $replace, $combustor);
 			}
 
-			$file = fopen(VENDOR . 'rougin/combustor/bin/combustor', 'wb');
+			$file = fopen(VENDOR . 'rougin/combustor/bin/combustor.php', 'wb');
 
-			file_put_contents(VENDOR . 'rougin/combustor/bin/combustor', $combustor);
+			file_put_contents(VENDOR . 'rougin/combustor/bin/combustor.php', $combustor);
 			fclose($file);
 		}
 

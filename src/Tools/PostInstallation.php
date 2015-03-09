@@ -121,18 +121,17 @@ class PostInstallation {
 
 			$routes = file_get_contents(APPPATH . 'config/routes.php');
 
-			$search = 
-'$route[\'default_controller\'] = \'welcome\';
-$route[\'404_override\'] = \'\';';
+			$search  = NULL;
+			$search .= '$route[\'default_controller\'] = \'welcome\'' . "\n";
+			$search .= '$route[\'404_override\'] = \'\';' . "\n";
 
-			$replace = 
-'$route[\'default_controller\'] = \'welcome\';
-$route[\'(:any)/page/(:any)\'] = \'$1/index/page/$2\';
-$route[\'(:any)/page\'] = \'$1\';
-$route[\'404_override\'] = \'\';';
+			$replace  = NULL;
+			$replace .= '$route[\'default_controller\'] = \'welcome\'' . "\n";
+			$replace .= '$route[\'(:any)/page/(:any)\'] = \'$1/index/page/$2\'' . "\n";
+			$replace .= '$route[\'(:any)/page\'] = \'$1\'' . "\n";
+			$replace .= '$route[\'404_override\'] = \'\';' . "\n";
 
-			if (strpos($codeigniterCore, 'define(\'CI_VERSION\', \'3.0') !== FALSE)
-			{
+			if (strpos($codeigniterCore, 'define(\'CI_VERSION\', \'3.0') !== FALSE) {
 				$search  .= "\n" . '$route[\'translate_uri_dashes\'] = FALSE;';
 				$replace .= "\n" . '$route[\'translate_uri_dashes\'] = FALSE;';
 			}

@@ -78,7 +78,7 @@ Combustor is a code generator console application for [CodeIgniter](https://code
 
 The help for the following commands below are also available in the Combustor *command line interface* (CLI). Just type the command you want to get help and insert an option of ```--help``` (e.g ```create:controller --help```)
 
-# ```create:layout [--bootstrap]```
+#### ```create:layout [--bootstrap]```
 
 Creates a new header and footer file
 
@@ -86,7 +86,7 @@ Creates a new header and footer file
 
 ```--bootstrap``` Include the [Bootstrap](http://getbootstrap.com/) tags
 
-# ```create:controller [--keep] [--lowercase] [--camel] name```
+#### ```create:controller [--keep] [--lowercase] [--camel] name```
 
 **NOTE**: You must install the customized factory pattern to view this command.
 
@@ -104,7 +104,7 @@ Creates a new controller
 
 ```--camel``` Use the camel case naming convention for the accessor and mutators
 
-# ```create:model [--lowercase] [--camel] name```
+#### ```create:model [--lowercase] [--camel] name```
 
 **NOTE**: You must install the customized factory pattern to view this command.
 
@@ -122,7 +122,7 @@ Creates a new model
 
 ```--keep``` Keeps the name to be used
 
-# ```create:view [--bootstrap] [--camel] [--keep] name```
+#### ```create:view [--bootstrap] [--camel] [--keep] name```
 
 **NOTE**: This command is also available when you do the command ```install:doctrine```.
 
@@ -140,7 +140,7 @@ Creates a new view
 
 ```--camel``` Use the camel case naming convention for the accessor and mutators
 
-# ```create:scaffold [--bootstrap] [--keep] [--lowercase] [--camel] name```
+#### ```create:scaffold [--bootstrap] [--keep] [--lowercase] [--camel] name```
 
 **NOTE**: You must install the customized factory pattern to view this command.
 
@@ -160,7 +160,7 @@ Creates a new controller, model, and view
 
 ```--lowercase``` Keep the first character of the name to lowercase
 
-# ```doctrine:controller [--keep] [--lowercase] [--camel] name```
+#### ```doctrine:controller [--keep] [--lowercase] [--camel] name```
 
 **NOTE**: You must install the Doctrine ORM to view this command.
 
@@ -178,7 +178,7 @@ Creates a new Doctrine-based controller
 
 ```--camel``` Use the camel case naming convention for the accessor and mutators
 
-# ```doctrine:model [--lowercase] [--camel] name```
+#### ```doctrine:model [--lowercase] [--camel] name```
 
 **NOTE**: You must install the Doctrine ORM to view this command.
 
@@ -194,7 +194,7 @@ Creates a new Doctrine-based model
 
 ```--camel``` Use the camel case naming convention for the accessor and mutators
 
-# ```doctrine:scaffold [--bootstrap] [--keep] [--lowercase] [--camel] name```
+#### ```doctrine:scaffold [--bootstrap] [--keep] [--lowercase] [--camel] name```
 
 **NOTE**: You must install the Doctrine ORM to view this command.
 

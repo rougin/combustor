@@ -54,7 +54,7 @@ class CreateModelCommand extends Command
 				'Name of the model'
 			)->addOption(
 				'lowercase',
-				null,
+				NULL,
 				InputOption::VALUE_NONE,
 				'Keep the first character of the name to lowercase'
 			)->addOption(

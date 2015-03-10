@@ -24,12 +24,12 @@ class CreateControllerCommand extends Command
 				'Name of the controller'
 			)->addOption(
 				'keep',
-				null,
+				NULL,
 				InputOption::VALUE_NONE,
 				'Keeps the name to be used'
 			)->addOption(
 				'lowercase',
-				null,
+				NULL,
 				InputOption::VALUE_NONE,
 				'Keep the first character of the name to lowercase'
 			)->addOption(
@@ -150,7 +150,7 @@ class CreateControllerCommand extends Command
 
 			if ($row->field != 'password' && $row->field != 'datetime_created' && $row->field != 'datetime_updated') {
 				if ( ! $row->isNull) {
-					$columnsToValidate .= '\'' . $row->field . '\' => \'' . ucwords(str_replace('_', ' ', $row->field)) . '\',' . "\n";
+					$columnsToValidate .= '\'' . $row->field . '\' => \'' . strtolower(str_replace('_', ' ', $row->field)) . '\',' . "\n";
 				}
 			}
 

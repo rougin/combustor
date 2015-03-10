@@ -30,12 +30,12 @@ class CreateScaffoldCommand extends Command
 				'Include the Bootstrap CSS/JS Framework tags'
 			)->addOption(
 				'keep',
-				null,
+				NULL,
 				InputOption::VALUE_NONE,
 				'Keeps the name to be used'
 			)->addOption(
 				'lowercase',
-				null,
+				NULL,
 				InputOption::VALUE_NONE,
 				'Keep the first character of the name to lowercase'
 			)->addOption(

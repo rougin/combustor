@@ -24,7 +24,7 @@ class CreateModelCommand extends Command
 				'Name of the model'
 			)->addOption(
 				'lowercase',
-				null,
+				NULL,
 				InputOption::VALUE_NONE,
 				'Keep the first character of the name to lowercase'
 			)->addOption(
@@ -115,12 +115,12 @@ class CreateModelCommand extends Command
 			}
 
 			if (in_array($dataType, $dataTypes)) {
-				$dateFormat = 'if (is_a($this->_[field], \'DateTime\'))
-		{
-			return $this->_[field];
-		}
+				$dateFormat  = 'if (is_a($this->_[field], \'DateTime\'))' . "\n";
+				$dateFormat .= '		{' . "\n";
+				$dateFormat .= '			return $this->_[field];' . "\n";
+				$dateFormat .= '		}' . "\n\n";
+				$dateFormat .= '		return new DateTime($this->_[field]);';
 
-		return new DateTime($this->_[field]);';
 				$accessor = str_replace('return $this->_[field];', $dateFormat, $accessor);
 				$type = 'varchar()';
 			}

@@ -2,14 +2,21 @@
 
 /**
  * [modelName] Model Class
+ *
+ * @package     CodeIgniter
+ * @category    Model
  */
-
 class [model] extends CI_Model {
 
 	[columns]
 
 	[accessors]
-	
+
+	/**
+	 * Save the data to storage
+	 * 
+	 * @return boolean
+	 */
 	public function save()
 	{
 		$data = array(

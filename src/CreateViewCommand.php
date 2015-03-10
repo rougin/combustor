@@ -24,7 +24,7 @@ class CreateViewCommand extends Command
 				'Name of the view folder'
 			)->addOption(
 				'keep',
-				null,
+				NULL,
 				InputOption::VALUE_NONE,
 				'Keeps the name to be used'
 			)->addOption(
@@ -36,7 +36,7 @@ class CreateViewCommand extends Command
 				'camel',
 				NULL,
 				InputOption::VALUE_NONE,
-				'Use the camel case naming convention for the accessor and mutators'
+				'Use the camel case naming convention for the accessorS and mutators'
 			);
 	}
 
@@ -65,7 +65,7 @@ class CreateViewCommand extends Command
 		/**
 		 * Get the view template
 		 */
-		
+
 		$create = file_get_contents(__DIR__ . '/Templates/Views/Create.txt');
 		$edit   = file_get_contents(__DIR__ . '/Templates/Views/Edit.txt');
 		$index  = file_get_contents(__DIR__ . '/Templates/Views/Index.txt');
@@ -99,7 +99,9 @@ class CreateViewCommand extends Command
 
 			$primaryKey = ($row->key == 'PRI') ? $methodName : $primaryKey;
 
-			if ($row->field == 'datetime_created' || $row->field == 'datetime_updated' || $row->extra == 'auto_increment') continue;
+			if ($row->field == 'datetime_created' || $row->field == 'datetime_updated' || $row->extra == 'auto_increment') {
+				continue;
+			}
 
 			$columns    .= ($counter != 0 && $row->field != 'password') ? '					' : NULL;
 			$rows       .= ($counter != 0 && $row->field != 'password') ? '						' : NULL;
@@ -205,7 +207,7 @@ class CreateViewCommand extends Command
 				foreach ($tableColumns as $column) {
 					if ($column->key == 'PRI') {
 						$tablePrimaryKey = 'get_' . $column->field;
-						
+
 						if ($input->getOption('camel')) {
 							$tablePrimaryKey = Inflect::camelize($tablePrimaryKey);
 						} else {
@@ -213,7 +215,7 @@ class CreateViewCommand extends Command
 						}
 					}
 				}
-				
+
 				$value = '$[singular]->' . $methodName . '()->' . $tablePrimaryKey . '()';
 			} else if (strpos($row->type, 'date') !== FALSE || strpos($row->type, 'time') !== FALSE) {
 				$format = NULL;

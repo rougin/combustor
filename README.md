@@ -1,14 +1,24 @@
 [![endorse](https://api.coderwall.com/rougin/endorsecount.png)](https://coderwall.com/rougin)
 
-Combustor
-=========
+# Combustor
 
-Combustor is a code generator console application for [CodeIgniter](https://codeigniter.com/) in order to speed up the development of web applications. This library generates a [CRUD](http://en.wikipedia.org/wiki/Create,_read,_update_and_delete) interface (with [Bootstrap](http://www.getbootstrap.com), optional only) with an integration of an [ORM library](http://www.doctrine-project.org/) or with a structure that is based from this [link](http://www.revillweb.com/tutorials/codeigniter-tutorial-learn-codeigniter-in-40-minutes/).
+Combustor is a code generator console application for [CodeIgniter](https://codeigniter.com/) in order to speed up the development of web applications.
 
-Installation
-============
+# Features
 
-1. Follow the instructions that can be found on [ignite.php](https://github.com/rougin/ignite.php). Or you can manually download the latest version of CodeIgniter from this [link](https://github.com/bcit-ci/CodeIgniter/archive/3.0rc2.zip) and extract it to your web server. Then add a ```composer.json``` file (or update if it already exists) on the directory you recently extracted:
+* Generates a [CRUD](http://en.wikipedia.org/wiki/Create,_read,_update_and_delete) interface based on the specified table. Giving you time to focus more on the other parts of your awesome application.
+
+	* The generated is greatly based on [MVC](http://en.wikipedia.org/wiki/Model%E2%80%93view%E2%80%93controller) architectural pattern.
+
+	* Optionally, it can also generate a CRUD interface with [Bootstrap](http://www.getbootstrap.com) classes and tags.
+
+* Integrates [Doctrine](http://www.doctrine-project.org/) with ease or integrates a factory kind of pattern that is based from this [article](http://www.revillweb.com/tutorials/codeigniter-tutorial-learn-codeigniter-in-40-minutes/) to your current CodeIgniter project. Saving you from the hard work of accessing necessary data from the database.
+
+	* It also generates [encapsulation](http://en.wikipedia.org/wiki/Encapsulation_(object-oriented_programming)) to the models, for readbility and more [object-oriented](http://en.wikipedia.org/wiki/Object-oriented_programming) approach
+
+# Installation
+
+3. Follow the instructions that can be found on [ignite.php](https://github.com/rougin/ignite.php). Or you can manually download the latest version of CodeIgniter from this [link](https://github.com/bcit-ci/CodeIgniter/archive/3.0rc2.zip) and extract it to your web server. Then add a ```composer.json``` file (or update if it already exists) on the directory you recently extracted:
 
 	```
 	{
@@ -16,13 +26,13 @@ Installation
 		"name" : "codeigniter/framework",
 		"license": "MIT",
 		"require": {
-			"php": ">=5.2.4",
+			# "php": "5.2.4",
 			"rougin/combustor": "*"
 		}
 	}
 	```
 
-	**NOTE**: If you want the latest build, use ```dev-master``` instead of ```*``
+	**NOTE**: If you want the latest build, use ```dev-master``` instead of ```*```
 
 	Then install it in the command line:
 
@@ -54,10 +64,9 @@ Installation
 
 4. Next, configure the database connectivity settings in ```application/config/database.php```.
 
-5. Then create now an awesome application!
+5. Lastly, create now an awesome application!
 
-Reminders
-=========
+# Reminders
 
 * **VERY IMPORTANT**: Before generating the models, views, and controllers, please make sure that you **set up your database** (foreign keys, indexes, relationships, normalizations) properly in order to minimize the modifications after the codes has been generated. Also, generate the models, views, and controllers first to tables that are having **no relationship with other tables** in the database. *The reason for this is that Combustor will generate controllers, models, and views based on your database schema. If there's something wrong in your database, definitely the Combustor will generated some bad code.*
 
@@ -65,13 +74,11 @@ Reminders
 
 * Have you found a bug? Or do you want to contribute? Feel free to open an issue or create a pull request here! :+1:
 
-Commands
-========
+# Commands
 
 The help for the following commands below are also available in the Combustor *command line interface* (CLI). Just type the command you want to get help and insert an option of ```--help``` (e.g ```create:controller --help```)
 
-create:layout [options]
-=======================
+# ```create:layout [--bootstrap]```
 
 Creates a new header and footer file
 
@@ -79,8 +86,7 @@ Creates a new header and footer file
 
 ```--bootstrap``` Include the [Bootstrap](http://getbootstrap.com/) tags
 
-create:controller [arguments] [options]
-=======================================
+# ```create:controller [--keep] [--lowercase] [--camel] name```
 
 **NOTE**: You must install the customized factory pattern to view this command.
 
@@ -98,8 +104,7 @@ Creates a new controller
 
 ```--camel``` Use the camel case naming convention for the accessor and mutators
 
-create:model [arguments] [options]
-==================================
+# ```create:model [--lowercase] [--camel] name```
 
 **NOTE**: You must install the customized factory pattern to view this command.
 
@@ -115,8 +120,9 @@ Creates a new model
 
 ```--camel``` Use the camel case naming convention for the accessor and mutators
 
-create:view [arguments] [options]
-=================================
+```--keep``` Keeps the name to be used
+
+# ```create:view [--bootstrap] [--camel] [--keep] name```
 
 **NOTE**: This command is also available when you do the command ```install:doctrine```.
 
@@ -134,8 +140,7 @@ Creates a new view
 
 ```--camel``` Use the camel case naming convention for the accessor and mutators
 
-create:scaffold [arguments] [options]
-=====================================
+# ```create:scaffold [--bootstrap] [--keep] [--lowercase] [--camel] name```
 
 **NOTE**: You must install the customized factory pattern to view this command.
 
@@ -155,8 +160,7 @@ Creates a new controller, model, and view
 
 ```--lowercase``` Keep the first character of the name to lowercase
 
-doctrine:controller [arguments] [options]
-=========================================
+# ```doctrine:controller [--keep] [--lowercase] [--camel] name```
 
 **NOTE**: You must install the Doctrine ORM to view this command.
 
@@ -174,8 +178,7 @@ Creates a new Doctrine-based controller
 
 ```--camel``` Use the camel case naming convention for the accessor and mutators
 
-doctrine:model [arguments] [options]
-====================================
+# ```doctrine:model [--lowercase] [--camel] name```
 
 **NOTE**: You must install the Doctrine ORM to view this command.
 
@@ -191,8 +194,7 @@ Creates a new Doctrine-based model
 
 ```--camel``` Use the camel case naming convention for the accessor and mutators
 
-doctrine:scaffold [arguments] [options]
-=======================================
+# ```doctrine:scaffold [--bootstrap] [--keep] [--lowercase] [--camel] name```
 
 **NOTE**: You must install the Doctrine ORM to view this command.
 

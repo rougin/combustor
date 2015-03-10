@@ -2,10 +2,15 @@
 
 /**
  * [controllerName] Controller Class
+ *
+ * @package     CodeIgniter
+ * @category    Controller
  */
-
 class [controller] extends CI_Controller {
 
+	/**
+	 * Load the specified models
+	 */
 	public function __construct()
 	{
 		parent::__construct();

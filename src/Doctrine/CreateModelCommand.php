@@ -97,6 +97,7 @@ class CreateModelCommand extends Command
 		
 		$slash = (strpos(PHP_OS, 'WIN') !== FALSE) ? '\\' : '/';
 		$doctrineDirectory = str_replace($slash . 'Doctrine', '', __DIR__);
+
 		$model = file_get_contents($doctrineDirectory . '/Templates/Doctrine/Model.txt');
 
 		/**

@@ -80,6 +80,8 @@ The help for the following commands below are also available in the Combustor *c
 
 #### ```create:layout [--bootstrap]```
 
+#### Description:
+
 Creates a new header and footer file
 
 #### Options:

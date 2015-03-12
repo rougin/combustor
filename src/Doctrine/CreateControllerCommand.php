@@ -57,8 +57,10 @@ class CreateControllerCommand extends Command
 		/**
 		 * Get the controller template
 		 */
-		
-		$doctrineDirectory = str_replace('/Doctrine', '', __DIR__);
+
+		$slash = (strpos(PHP_OS, 'WIN') !== FALSE) ? '\\' : '/';
+		$doctrineDirectory = str_replace($slash . 'Doctrine', '', __DIR__);
+
 		$controller = file_get_contents($doctrineDirectory . '/Templates/Doctrine/Controller.txt');
 
 		/**

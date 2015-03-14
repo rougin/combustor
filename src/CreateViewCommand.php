@@ -150,18 +150,11 @@ class CreateViewCommand extends Command
 				$fields .= '			<div class="[formColumn]">' . "\n";
 
 				if ($row->key == 'MUL') {
-					$data    = Inflect::pluralize($row->referencedTable);
-					$fields .= '				<?php echo form_dropdown(\'' . $row->field . '\', $' . $data . ', set_value(\'' . $row->field . '\'), \'class="[bootstrapFormControl] required"\'); ?>' . "\n";
-				} else {
+					$data     = Inflect::pluralize($row->referencedTable);
 					$required = ( ! $row->isNull) ? 'required' : NULL;
-					$fields .= '				<?php echo form_input(\'' . $row->field . '\', set_value(\'' . $row->field . '\'), \'class="[bootstrapFormControl] ' . $required . '"\'); ?>' . "\n";
-				}
 
-				$fields .= '				<?php echo form_error(\'' . $row->field . '\'); ?>' . "\n";
-				$fields .= '			</div>' . "\n";
-				$fields .= '		</div>' . "\n";
+					$fields .= '				<?php echo form_dropdown(\'' . $row->field . '\', $' . $data . ', set_value(\'' . $row->field . '\'), \'class="[bootstrapFormControl] ' . $required . '"\'); ?>' . "\n";
 
-				if ($row->key == 'MUL') {
 					$tableColumns = $describe->getInformationFromTable($row->referencedTable);
 
 					$tablePrimaryKey = NULL;
@@ -178,9 +171,19 @@ class CreateViewCommand extends Command
 					}
 
 					$value = '$[singular]->' . $methodName . '()->' . $tablePrimaryKey . '()';
+				} else if ($row->field == 'gender') {
+					$required = ( ! $row->isNull) ? 'required' : NULL;
+					$fields .= '				<?php echo form_dropdown(\'' . $row->field . '\', $' . Inflect::pluralize($row->field) .', set_value(\'' . $row->field . '\'), \'class="[bootstrapFormControl] ' . $required . '"\'); ?>' . "\n";
 				} else {
+					$required = ( ! $row->isNull) ? 'required' : NULL;
+					$fields .= '				<?php echo form_input(\'' . $row->field . '\', set_value(\'' . $row->field . '\'), \'class="[bootstrapFormControl] ' . $required . '"\'); ?>' . "\n";
+
 					$value = '$[singular]->' . $methodName . '()';
 				}
+
+				$fields .= '				<?php echo form_error(\'' . $row->field . '\'); ?>' . "\n";
+				$fields .= '			</div>' . "\n";
+				$fields .= '		</div>' . "\n";
 
 				$showFields .= str_replace(' Id', '', Inflect::humanize($row->field)) . ': <?php echo ' . $value . '; ?><br>' . "\n";
 			} else {

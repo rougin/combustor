@@ -90,11 +90,9 @@ class CreateScaffoldCommand extends Command
 			}
 
 			if ($command == 'create:controller') {
-				$arguments['--camel']     = $camel;
 				$arguments['--keep']      = $keep;
 				$arguments['--lowercase'] = $lowercase;
 			} elseif ($command == 'create:model') {
-				$arguments['--camel']     = $camel;
 				$arguments['--lowercase'] = $lowercase;
 			} elseif ($command == 'create:view') {
 				$arguments['--bootstrap'] = $bootstrap;

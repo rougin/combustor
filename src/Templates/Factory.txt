@@ -176,8 +176,9 @@ class Factory {
 
 		foreach ($main_table_information as $table_column)
 		{
+			$method  = $table_column->field;
 			$mutator = 'set_' . $table_column->field;
-			$method = $table_column->field;
+
 			$data = $row->$method;
 
 			if ($table_column->key == 'MUL')

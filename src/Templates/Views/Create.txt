@@ -3,8 +3,9 @@
 		<i class="fa fa-lg fa-fw fa-plus"></i> 
 		Create New [singularEntity]
 	</h1>
+	<br>
 	<?php echo form_open('[plural]/create', 'class="[bootstrapFormOpen]"'); ?>
-		[fields]
+		[createFields]
 		<div class="[bootstrapFormGroup]">
 			<div class="[labelClass]"></div>
 			<div class="[formColumn]">

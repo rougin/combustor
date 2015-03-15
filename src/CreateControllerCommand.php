@@ -32,11 +32,6 @@ class CreateControllerCommand extends Command
 				NULL,
 				InputOption::VALUE_NONE,
 				'Keep the first character of the name to lowercase'
-			)->addOption(
-				'camel',
-				NULL,
-				InputOption::VALUE_NONE,
-				'Use the camel case naming convention for the accessor and mutators'
 			);
 	}
 
@@ -81,7 +76,7 @@ class CreateControllerCommand extends Command
 		$columnsToValidate       = NULL;
 		$counter                 = 0;
 		$dropdownColumnsOnCreate = '$data = array();';
-		$dropdownColumnsOnEdit   = '$data[\'[singular]\'] = $this->factory->find(\'[singular]\', array(\'[primaryKey]\' => $id));';
+		$dropdownColumnsOnEdit   = '$data[\'[singular]\'] = $this->factory->find(\'[singular]\', $id);';
 		$dropdowns               = 0;
 		$selectColumns           = array('name', 'description', 'label');
 
@@ -91,7 +86,6 @@ class CreateControllerCommand extends Command
 			}
 
 			$methodName = 'set_' . strtolower($row->field);
-			$methodName = ($input->getOption('camel')) ? Inflect::camelize($methodName) : Inflect::underscore($methodName);
 
 			if ($counter != 0) {
 				$columnsOnCreate   .= ($row->field != 'datetime_updated') ? '			' : NULL;
@@ -124,10 +118,10 @@ class CreateControllerCommand extends Command
 				$dropdownColumnsOnCreate .= "\n\t\t" . $dropdownColumn;
 				$dropdownColumnsOnEdit   .= "\n\t\t" . $dropdownColumn;
 
-				$columnsOnCreate .= '$' . $row->referencedTable . ' = $this->factory->find(\'' . $row->referencedTable . '\', array(\'' . $row->referencedColumn . '\' => $this->input->post(\'' . $row->field . '\')));' . "\n";
+				$columnsOnCreate .= '$' . $row->referencedTable . ' = $this->factory->find(\'' . $row->referencedTable . '\', $this->input->post(\'' . $row->field . '\'));' . "\n";
 				$columnsOnCreate .= '			$this->[singular]->' . $methodName . '($' . $row->referencedTable . ');' . "\n\n";
 
-				$columnsOnEdit .= '$' . $row->referencedTable . ' = $this->factory->find(\'' . $row->referencedTable . '\', array(\'' . $row->referencedColumn . '\' => $this->input->post(\'' . $row->field . '\')));' . "\n";
+				$columnsOnEdit .= '$' . $row->referencedTable . ' = $this->factory->find(\'' . $row->referencedTable . '\', $this->input->post(\'' . $row->field . '\'));' . "\n";
 				$columnsOnEdit .= '			$[singular]->' . $methodName . '($' . $row->referencedTable . ');' . "\n\n";
 			} elseif ($row->field == 'password') {
 				$columnsOnCreate .= "\n" . file_get_contents(__DIR__ . '/Templates/Miscellaneous/CheckCreatePassword.txt') . "\n\n";

@@ -49,7 +49,10 @@ class [controller] extends CI_Controller {
 	 */
 	public function delete($id)
 	{
-		if ( ! isset($id)) redirect('[plural]');
+		if ( ! isset($id))
+		{
+			redirect('[plural]');
+		}
 
 		$[singular] = $this->doctrine->em->find('[singular]', $id);
 
@@ -69,7 +72,10 @@ class [controller] extends CI_Controller {
 	 */
 	public function edit($id)
 	{
-		if ( ! isset($id)) redirect('[plural]');
+		if ( ! isset($id))
+		{
+			redirect('[plural]');
+		}
 
 		$this->_validate_input();
 
@@ -126,7 +132,10 @@ class [controller] extends CI_Controller {
 	 */
 	public function show($id)
 	{
-		if ( ! isset($id)) redirect('[plural]');
+		if ( ! isset($id))
+		{
+			redirect('[plural]');
+		}
 		
 		$data['[singular]'] = $this->doctrine->em->find('[singular]', $id);
 

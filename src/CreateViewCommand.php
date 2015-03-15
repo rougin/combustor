@@ -56,7 +56,7 @@ class CreateViewCommand extends Command
 		 * Integrate Bootstrap if enabled
 		 */
 
-		$bootstrapButton      = ($input->getOption('bootstrap')) ? 'btn btn-primary btn-lg' : NULL;
+		$bootstrapButton      = ($input->getOption('bootstrap')) ? 'btn btn-primary' : NULL;
 		$bootstrapFormControl = ($input->getOption('bootstrap')) ? 'form-control' : NULL;
 		$bootstrapFormGroup   = ($input->getOption('bootstrap')) ? 'form-group' : NULL;
 		$bootstrapFormOpen    = ($input->getOption('bootstrap')) ? 'form-horizontal' : NULL;
@@ -83,13 +83,13 @@ class CreateViewCommand extends Command
 		$describe = new Describe($db['default']);
 		$tableInformation = $describe->getInformationFromTable($input->getArgument('name'));
 
-		$columns    = NULL;
-		$counter    = 0;
-		$fields     = NULL;
-		$formColumn = ($input->getOption('bootstrap')) ? 'col-lg-11' : NULL;
-		$labelClass = ($input->getOption('bootstrap')) ? 'control-label col-lg-1' : NULL;
-		$rows       = NULL;
-		$showFields = NULL;
+		$columns      = NULL;
+		$counter      = 0;
+		$createFields = NULL;
+		$formColumn   = ($input->getOption('bootstrap')) ? 'col-lg-11' : NULL;
+		$labelClass   = ($input->getOption('bootstrap')) ? 'control-label col-lg-1' : NULL;
+		$rows         = NULL;
+		$showFields   = NULL;
 
 		$selectColumns = array('name', 'description', 'label');
 
@@ -103,10 +103,10 @@ class CreateViewCommand extends Command
 				continue;
 			}
 
-			$columns    .= ($counter != 0 && $row->field != 'password') ? '					' : NULL;
-			$rows       .= ($counter != 0 && $row->field != 'password') ? '						' : NULL;
-			$fields     .= ($counter != 0 && $row->field != 'password') ? '		' : NULL;
-			$showFields .= ($counter != 0 && $row->field != 'password') ? '	' : NULL;
+			$columns      .= ($counter != 0 && $row->field != 'password') ? '					' : NULL;
+			$createFields .= ($counter != 0 && $row->field != 'password') ? '		' : NULL;
+			$rows         .= ($counter != 0 && $row->field != 'password') ? '						' : NULL;
+			$showFields   .= ($counter != 0 && $row->field != 'password') ? '	' : NULL;
 
 			if ($row->field != 'password') {
 				$columns .= '<th>' . str_replace(' Id', '', Inflect::humanize($row->field)) . '</th>' . "\n";
@@ -137,25 +137,24 @@ class CreateViewCommand extends Command
 				$rows .= '<td><?php echo $[singular]->' . $methodName . '()' . $extend . '; ?></td>' . "\n";
 
 				if ($input->getOption('bootstrap')) {
-					$fields .= '<?php if (form_error(\'' . $row->field . '\')): ?>' . "\n";
-					$fields .= '			<div class="form-group has-error">' . "\n";
-					$fields .= '		<?php else: ?>' . "\n";
-					$fields .= '			<div class="form-group">' . "\n";
-					$fields .= '		<?php endif; ?>' . "\n";
+					$createFields .= '<?php if (form_error(\'' . $row->field . '\')): ?>' . "\n";
+					$createFields .= '			<div class="form-group has-error">' . "\n";
+					$createFields .= '		<?php else: ?>' . "\n";
+					$createFields .= '			<div class="form-group">' . "\n";
+					$createFields .= '		<?php endif; ?>' . "\n";
 				} else {
-					$fields .= '	<div class="[bootstrapFormGroup]">' . "\n";
+					$createFields .= '	<div class="[bootstrapFormGroup]">' . "\n";
 				}
 
-				$fields .= '			<?php echo form_label(\'' . str_replace(' Id', '', Inflect::humanize($row->field)) . '\', \'' . $row->field . '\', array(\'class\' => \'[labelClass]\')); ?>' . "\n";
-				$fields .= '			<div class="[formColumn]">' . "\n";
+				$createFields .= '			<?php echo form_label(\'' . str_replace(' Id', '', Inflect::humanize($row->field)) . '\', \'' . $row->field . '\', array(\'class\' => \'[labelClass]\')); ?>' . "\n";
+				$createFields .= '			<div class="[formColumn]">' . "\n";
 
 				if ($row->key == 'MUL') {
 					$data     = Inflect::pluralize($row->referencedTable);
 					$required = ( ! $row->isNull) ? 'required' : NULL;
 
-					$fields .= '				<?php echo form_dropdown(\'' . $row->field . '\', $' . $data . ', set_value(\'' . $row->field . '\'), \'class="[bootstrapFormControl] ' . $required . '"\'); ?>' . "\n";
-
-					$tableColumns = $describe->getInformationFromTable($row->referencedTable);
+					$createFields .= '				<?php echo form_dropdown(\'' . $row->field . '\', $' . $data . ', set_value(\'' . $row->field . '\'), \'class="[bootstrapFormControl] ' . $required . '"\'); ?>' . "\n";
+					$tableColumns  = $describe->getInformationFromTable($row->referencedTable);
 
 					$tablePrimaryKey = NULL;
 					foreach ($tableColumns as $column) {
@@ -173,21 +172,39 @@ class CreateViewCommand extends Command
 					$value = '$[singular]->' . $methodName . '()->' . $tablePrimaryKey . '()';
 				} else if ($row->field == 'gender') {
 					$required = ( ! $row->isNull) ? 'required' : NULL;
-					$fields .= '				<?php echo form_dropdown(\'' . $row->field . '\', $' . Inflect::pluralize($row->field) .', set_value(\'' . $row->field . '\'), \'class="[bootstrapFormControl] ' . $required . '"\'); ?>' . "\n";
+					$createFields .= '				<?php echo form_dropdown(\'' . $row->field . '\', $' . Inflect::pluralize($row->field) .', set_value(\'' . $row->field . '\'), \'class="[bootstrapFormControl] ' . $required . '"\'); ?>' . "\n";
 				} else {
 					$required = ( ! $row->isNull) ? 'required' : NULL;
-					$fields .= '				<?php echo form_input(\'' . $row->field . '\', set_value(\'' . $row->field . '\'), \'class="[bootstrapFormControl] ' . $required . '"\'); ?>' . "\n";
+					$createFields .= '				<?php echo form_input(\'' . $row->field . '\', set_value(\'' . $row->field . '\'), \'class="[bootstrapFormControl] ' . $required . '"\'); ?>' . "\n";
 
 					$value = '$[singular]->' . $methodName . '()';
 				}
 
-				$fields .= '				<?php echo form_error(\'' . $row->field . '\'); ?>' . "\n";
-				$fields .= '			</div>' . "\n";
-				$fields .= '		</div>' . "\n";
+				$createFields .= '				<?php echo form_error(\'' . $row->field . '\'); ?>' . "\n";
+				$createFields .= '			</div>' . "\n";
+				$createFields .= '		</div>' . "\n";
+
+				if (strpos($row->type, 'date') !== FALSE || strpos($row->type, 'time') !== FALSE) {
+					$format = NULL;
+
+					switch ($row->type) {
+						case 'datetime':
+							$format = 'Y-m-d H:i:s';
+							break;
+						case 'date':
+							$format = 'Y-m-d';
+							break;
+						case 'time':
+							$format = 'H:i:s';
+							break;
+					}
+
+					$value = '$[singular]->' . $methodName . '()->format(\'' . $format . '\')';
+				}
 
 				$showFields .= str_replace(' Id', '', Inflect::humanize($row->field)) . ': <?php echo ' . $value . '; ?><br>' . "\n";
 			} else {
-				$fields .= file_get_contents(__DIR__ . '/Templates/Miscellaneous/CreatePassword.txt') . "\n";
+				$createFields .= file_get_contents(__DIR__ . '/Templates/Miscellaneous/CreatePassword.txt') . "\n";
 			}
 
 			$counter++;
@@ -197,7 +214,7 @@ class CreateViewCommand extends Command
 		 * Generate form for edit.php
 		 */
 
-		$editFields = $fields;
+		$editFields = $createFields;
 
 		foreach ($tableInformation as $row) {
 			$methodName = 'get_' . $row->field;
@@ -254,7 +271,7 @@ class CreateViewCommand extends Command
 		$search = array(
 			'[showFields]',
 			'[editFields]',
-			'[fields]',
+			'[createFields]',
 			'[columns]',
 			'[rows]',
 			'[primaryKey]',
@@ -276,7 +293,7 @@ class CreateViewCommand extends Command
 		$replace = array(
 			rtrim($showFields),
 			rtrim($editFields),
-			rtrim($fields),
+			rtrim($createFields),
 			rtrim($columns),
 			rtrim($rows),
 			$primaryKey,

@@ -27,11 +27,6 @@ class CreateModelCommand extends Command
 				NULL,
 				InputOption::VALUE_NONE,
 				'Keep the first character of the name to lowercase'
-			)->addOption(
-				'camel',
-				NULL,
-				InputOption::VALUE_NONE,
-				'Use the camel case naming convention for the accessor and mutators'
 			);
 	}
 
@@ -101,7 +96,6 @@ class CreateModelCommand extends Command
 			 */
 
 			$methodName = 'get_' . $row->field;
-			$methodName = ($input->getOption('camel')) ? Inflect::camelize($methodName) : Inflect::underscore($methodName);
 			
 			$primaryKey = ($row->key == 'PRI') ? $row->field : $primaryKey;
 			
@@ -143,7 +137,6 @@ class CreateModelCommand extends Command
 				foreach ($foreignTableInformation as $foreignRow) {
 					if ($foreignRow->key == 'PRI') {
 						$methodName = 'get_' . $foreignRow->field;
-						$methodName = ($input->getOption('camel')) ? Inflect::camelize($methodName) : Inflect::underscore($methodName);
 
 						break;
 					}
@@ -176,7 +169,6 @@ class CreateModelCommand extends Command
 			$classVariable = ($row->key == 'MUL') ? '\\' . ucfirst($row->referencedTable) . ' ' : NULL;
 			
 			$methodName = 'set_' . $row->field;
-			$methodName = ($input->getOption('camel')) ? Inflect::camelize($methodName) : Inflect::underscore($methodName);
 
 			$nullable = ($row->isNull) ? ' = NULL' : NULL;
 

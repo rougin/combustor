@@ -3,9 +3,12 @@
 		<i class="fa fa-lg fa-fw fa-list"></i> 
 		[entity]
 	</h1>
+	<br>
 	<a class="[bootstrapButton]" href="<?php echo base_url('[plural]/create'); ?>">
 		Create a New [singularEntity]
 	</a>
+	<br>
+	<br>
 	<?php if ($[plural]): ?>
 		<table class="[bootstrapTable]">
 			<thead>

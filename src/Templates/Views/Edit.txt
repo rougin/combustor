@@ -3,6 +3,7 @@
 		<i class="fa fa-lg fa-fw fa-edit"></i> 
 		Update Current [singularEntity]
 	</h1>
+	<br>
 	<?php echo form_open('[plural]/edit/' . $[singular]->[primaryKey](), 'class="[bootstrapFormOpen]"'); ?>
 		[editFields]
 		<div class="[bootstrapFormGroup]">

@@ -8,25 +8,26 @@ use Describe\Describe;
 
 class Factory {
 
-	private $_ci;
-	private $_rows  = array();
-	private $_table = NULL;
-	private $_describe = NULL;
+	private $_codeigniter = NULL;
+	private $_describe    = NULL;
+	private $_query       = NULL;
+	private $_rows        = array();
+	private $_table       = NULL;
 
 	/**
 	 * Class constructor
 	 */
 	public function __construct()
 	{
-		$this->_ci =& get_instance();
-		$this->_ci->load->database();
+		$this->_codeigniter =& get_instance();
+		$this->_codeigniter->load->database();
 
 		$database_credentials = array(
-			'database' => $this->_ci->db->database,
-			'hostname' => $this->_ci->db->hostname,
-			'username' => $this->_ci->db->username,
-			'password' => $this->_ci->db->password,
-			'driver' => $this->_ci->db->dbdriver
+			'database' => $this->_codeigniter->db->database,
+			'driver'   => $this->_codeigniter->db->dbdriver,
+			'hostname' => $this->_codeigniter->db->hostname,
+			'password' => $this->_codeigniter->db->password,
+			'username' => $this->_codeigniter->db->username
 		);
 
 		$this->_describe = new Describe($database_credentials);
@@ -40,13 +41,15 @@ class Factory {
 	 */
 	public function as_dropdown($description = 'description')
 	{
-		$table_information = $this->_describe->getInformationFromTable($this->_table);
+		$table_information = $this->_describe->get_information_from_table($this->_table);
 
 		$data        = array('');
 		$description = 'get_' . $description;
-		$id          = 'get_' . $this->_describe->getPrimaryKey($this->_table);
+		$id          = 'get_' . $this->_describe->get_primary_key($this->_table);
 
-		foreach ($this->_rows as $row) {
+		$result = $this->result();
+
+		foreach ($result as $row) {
 			$data[$row->$id()] = ucwords($row->$description());
 		}
 
@@ -56,27 +59,43 @@ class Factory {
 	/**
 	 * Delete the specified data from storage
 	 * 
-	 * @param  string  $table
-	 * @param  array   $parameters
+	 * @param  string           $table
+	 * @param  array | integer  parameters
 	 * @return boolean
 	 */
 	public function delete($table, $parameters = array())
 	{
-		return ($this->_ci->db->delete($table, $parameters)) ? TRUE : FALSE;
+		if ( ! is_array($parameters))
+		{
+			$id = $parameters;
+			$primary_key = $this->_describe->get_primary_key($table);
+
+			$parameters = array($primary_key => $id);
+		}
+
+		$this->_codeigniter->db->where($parameters);
+		return ($this->_codeigniter->db->delete($table)) ? TRUE : FALSE;
 	}
 
 	/**
 	 * Find the row from the specified ID
 	 *
-	 * @param  string $table
-	 * @param  array  parameters
+	 * @param  string           $table
+	 * @param  array | integer  parameters
 	 * @return object | boolean
 	 */
 	public function find($table, $parameters = array())
 	{
-		$this->_ci->db->where($parameters);
+		if ( ! is_array($parameters))
+		{
+			$id = $parameters;
+			$primary_key = $this->_describe->get_primary_key($table);
 
-		$query = $this->_ci->db->get($table);
+			$parameters = array($primary_key => $id);
+		}
+
+		$this->_codeigniter->db->where($parameters);
+		$query = $this->_codeigniter->db->get($table);
 
 		if ($query->num_rows() > 0)
 		{
@@ -94,8 +113,7 @@ class Factory {
 	 */
 	public function get_all($table, $delimiters = array())
 	{
-		$this->_rows  = array();
-		$this->_table = $table;
+		$this->_rows = array();
 
 		if (isset($delimiters['keyword']) && $delimiters['keyword'] != NULL)
 		{
@@ -104,22 +122,19 @@ class Factory {
 
 		if (isset($delimiters['per_page']) && $delimiters['per_page'] != NULL)
 		{
-			$this->_ci->db->limit($delimiters['per_page'], $delimiters['page']);
+			$this->_codeigniter->db->limit($delimiters['per_page'], $delimiters['page']);
 		}
 
-		$query = $this->_ci->db->select($table . '.*')->from($table)->get();
+		$this->_query = $this->_codeigniter->db->select($table . '.*')->from($table)->get();
 
-		if ($query->num_rows() > 0)
+		if ($this->_query->num_rows() > 0)
 		{
-			$this->_rows = array();
-			
-			foreach ($query->result() as $row)
-			{
-				$this->_rows[] = $this->_create_object($table, $row);
-			}
+			$this->_table = $table;
+			return $this;
 		}
 
-		return $this;
+
+		return FALSE;
 	}
 
 	/**
@@ -129,6 +144,11 @@ class Factory {
 	 */
 	public function result()
 	{
+		foreach ($this->_query->result() as $row)
+		{
+			$this->_rows[] = $this->_create_object($this->_table, $row);
+		}
+
 		return $this->_rows;
 	}
 
@@ -139,7 +159,7 @@ class Factory {
 	 */
 	public function total_rows()
 	{
-		return count($this->_rows);
+		return $this->_query->num_rows();
 	}
 
 	/**
@@ -152,7 +172,7 @@ class Factory {
 	protected function _create_object($table, $row)
 	{
 		$model = new $table();
-		$main_table_information = $this->_describe->getInformationFromTable($table);
+		$main_table_information = $this->_describe->get_information_from_table($table);
 
 		foreach ($main_table_information as $table_column)
 		{
@@ -192,7 +212,7 @@ class Factory {
 			$table_alias = $table;
 		}
 
-		$table_information = $this->_describe->getInformationFromTable($table);
+		$table_information = $this->_describe->get_information_from_table($table);
 		array_push($tables, $table);
 
 		if ($keyword != NULL)
@@ -207,11 +227,11 @@ class Factory {
 					{
 						if ( ! in_array($column->referencedTable, $tables))
 						{
-							$foreign_primary_key = $this->_describe->getPrimaryKey($column->referencedTable);
+							$foreign_primary_key = $this->_describe->get_primary_key($column->referencedTable);
 							$foreign_table_alias = $table . '_' . $column->referencedTable;
 							$condition = $foreign_table_alias . '.' . $foreign_primary_key . ' = ' . $table_alias . '.' . $column->field;
 
-							$this->_ci->db->join($column->referencedTable . ' as ' . $foreign_table_alias, $condition, 'left');
+							$this->_codeigniter->db->join($column->referencedTable . ' as ' . $foreign_table_alias, $condition, 'left');
 
 							array_push($tables, $column->referencedTable);
 							$tables = array_unique($tables);
@@ -220,7 +240,7 @@ class Factory {
 					}
 					else
 					{
-						$this->_ci->db->or_like($table_alias . '.' . $column->field, $keyword);
+						$this->_codeigniter->db->or_like($table_alias . '.' . $column->field, $keyword);
 					}
 				}
 			}

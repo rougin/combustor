@@ -23,6 +23,11 @@ class CreateControllerCommand extends Command
 				InputArgument::REQUIRED,
 				'Name of the controller'
 			)->addOption(
+				'camel',
+				NULL,
+				InputOption::VALUE_NONE,
+				'Use the camel case naming convention for the accessor and mutators'
+			)->addOption(
 				'keep',
 				NULL,
 				InputOption::VALUE_NONE,
@@ -32,11 +37,6 @@ class CreateControllerCommand extends Command
 				NULL,
 				InputOption::VALUE_NONE,
 				'Keep the first character of the name to lowercase'
-			)->addOption(
-				'camel',
-				NULL,
-				InputOption::VALUE_NONE,
-				'Use the camel case naming convention for the accessor and mutators'
 			);
 	}
 

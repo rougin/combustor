@@ -60,41 +60,41 @@ class Factory {
 	 * Delete the specified data from storage
 	 * 
 	 * @param  string           $table
-	 * @param  array | integer  parameters
+	 * @param  array | integer  delimiters
 	 * @return boolean
 	 */
-	public function delete($table, $parameters = array())
+	public function delete($table, $delimiters = array())
 	{
-		if ( ! is_array($parameters))
+		if ( ! is_array($delimiters))
 		{
-			$id = $parameters;
+			$id = $delimiters;
 			$primary_key = $this->_describe->get_primary_key($table);
 
-			$parameters = array($primary_key => $id);
+			$delimiters = array($primary_key => $id);
 		}
 
-		$this->_codeigniter->db->where($parameters);
+		$this->_codeigniter->db->where($delimiters);
 		return ($this->_codeigniter->db->delete($table)) ? TRUE : FALSE;
 	}
 
 	/**
-	 * Find the row from the specified ID
+	 * Find the row from the specified ID or with the list of delimiters from the specified table
 	 *
 	 * @param  string           $table
-	 * @param  array | integer  parameters
+	 * @param  array | integer  delimiters
 	 * @return object | boolean
 	 */
-	public function find($table, $parameters = array())
+	public function find($table, $delimiters = array())
 	{
-		if ( ! is_array($parameters))
+		if ( ! is_array($delimiters))
 		{
-			$id = $parameters;
+			$id = $delimiters;
 			$primary_key = $this->_describe->get_primary_key($table);
 
-			$parameters = array($primary_key => $id);
+			$delimiters = array($primary_key => $id);
 		}
 
-		$this->_codeigniter->db->where($parameters);
+		$this->_codeigniter->db->where($delimiters);
 		$query = $this->_codeigniter->db->get($table);
 
 		if ($query->num_rows() > 0)
@@ -106,7 +106,7 @@ class Factory {
 	}
 
 	/**
-	 * Return all row from the specified table
+	 * Return all rows from the specified table
 	 *
 	 * @param  array $delimiters
 	 * @return object | boolean
@@ -125,14 +125,14 @@ class Factory {
 			$this->_codeigniter->db->limit($delimiters['per_page'], $delimiters['page']);
 		}
 
-		$this->_query = $this->_codeigniter->db->select($table . '.*')->from($table)->get();
+		$this->_codeigniter->db->select($table . '.*')->from($table);
+		$this->_query = $this->_codeigniter->db->get();
 
 		if ($this->_query->num_rows() > 0)
 		{
 			$this->_table = $table;
 			return $this;
 		}
-
 
 		return FALSE;
 	}
@@ -183,8 +183,8 @@ class Factory {
 
 			if ($table_column->key == 'MUL')
 			{
-				$parameters = array($table_column->referencedColumn => $data);
-				$data = $this->find($table_column->referencedTable, $parameters);
+				$delimiters = array($table_column->referencedColumn => $data);
+				$data = $this->find($table_column->referencedTable, $delimiters);
 			}
 
 			$model->$mutator($data);

@@ -29,6 +29,11 @@ class CreateScaffoldCommand extends Command
 				InputOption::VALUE_NONE,
 				'Include the Bootstrap CSS/JS Framework tags'
 			)->addOption(
+				'camel',
+				NULL,
+				InputOption::VALUE_NONE,
+				'Use the camel case naming convention for the accessor and mutators'
+			)->addOption(
 				'keep',
 				null,
 				InputOption::VALUE_NONE,
@@ -38,11 +43,6 @@ class CreateScaffoldCommand extends Command
 				null,
 				InputOption::VALUE_NONE,
 				'Keep the first character of the name to lowercase'
-			)->addOption(
-				'camel',
-				NULL,
-				InputOption::VALUE_NONE,
-				'Use the camel case naming convention for the accessor and mutators'
 			);
 	}
 

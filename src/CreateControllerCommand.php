@@ -81,10 +81,6 @@ class CreateControllerCommand extends Command
 		$selectColumns           = array('name', 'description', 'label');
 
 		foreach ($tableInformation as $row) {
-			if ($row->key == 'PRI') {
-				$primaryKey = $row->field;
-			}
-
 			$methodName = 'set_' . strtolower($row->field);
 
 			if ($counter != 0) {
@@ -172,7 +168,6 @@ class CreateControllerCommand extends Command
 			'[columnsToValidate]',
 			'[controller]',
 			'[controllerName]',
-			'[primaryKey]',
 			'[plural]',
 			'[pluralText]',
 			'[singular]',
@@ -191,7 +186,6 @@ class CreateControllerCommand extends Command
 			substr($columnsToValidate, 0, -2),
 			ucfirst($name),
 			ucfirst(str_replace('_', ' ', $name)),
-			$primaryKey,
 			$plural,
 			$pluralText,
 			Inflect::singularize($name),

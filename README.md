@@ -12,6 +12,22 @@ Combustor is a code generator console application for [CodeIgniter](https://code
 
 	* Optionally, it can also generate a CRUD interface with [Bootstrap](http://www.getbootstrap.com) classes and tags.
 
+	* Generates specific code on the following fields:
+
+		* ```gender``` Generates a ```form_dropdown()``` with an array of male and female values
+
+		* ```password``` Generates a new and confirm password fields on ```create.php```, while it also generates current, new, and confirm password fields on ```edit.php```
+
+	* Searching data within the table is also integrated. To enable it, just include the following code:
+		
+		```
+		<?php echo form_open($this->uri->segment(1), array('method' => 'GET', 'class' => 'navbar-form navbar-left', 'role' => 'Search')); ?>
+			<div class="form-group">
+				<?php echo form_input('keyword', $this->input->get('keyword'), 'class="form-control" placeholder="Search"'); ?>
+			</div>
+		<?php echo form_close(); ?>
+		```
+
 * Integrates [Doctrine](http://www.doctrine-project.org/) with ease or integrates a factory kind of pattern that is based from this [article](http://www.revillweb.com/tutorials/codeigniter-tutorial-learn-codeigniter-in-40-minutes/) to your current CodeIgniter project. Saving you from the hard work of accessing necessary data from the database.
 
 	* It also generates [encapsulation](http://en.wikipedia.org/wiki/Encapsulation_(object-oriented_programming)) to the models, for readbility and more [object-oriented](http://en.wikipedia.org/wiki/Object-oriented_programming) approach
@@ -88,7 +104,7 @@ Creates a new header and footer file
 
 ```--bootstrap``` Include the [Bootstrap](http://getbootstrap.com/) tags
 
-#### ```create:controller [--keep] [--lowercase] [--camel] name```
+#### ```create:controller [--keep] [--lowercase] name```
 
 **NOTE**: You must install the customized factory pattern to view this command.
 
@@ -106,9 +122,7 @@ Creates a new controller
 
 ```--lowercase``` Keep the first character of the name to lowercase
 
-```--camel``` Use the camel case naming convention for the accessor and mutators
-
-#### ```create:model [--lowercase] [--camel] name```
+#### ```create:model [--lowercase] name```
 
 **NOTE**: You must install the customized factory pattern to view this command.
 
@@ -122,11 +136,9 @@ Creates a new model
 
 #### Options:
 
-```--lowercase``` Keep the first character of the name to lowercase
-
-```--camel``` Use the camel case naming convention for the accessor and mutators
-
 ```--keep``` Keeps the name to be used
+
+```--lowercase``` Keep the first character of the name to lowercase
 
 #### ```create:view [--bootstrap] [--camel] [--keep] name```
 
@@ -148,7 +160,9 @@ Creates a new view
 
 ```--camel``` Use the camel case naming convention for the accessor and mutators
 
-#### ```create:scaffold [--bootstrap] [--keep] [--lowercase] [--camel] name```
+```--keep``` Keeps the name to be used
+
+#### ```create:scaffold [--bootstrap] [--camel] [--keep] [--lowercase] name```
 
 **NOTE**: You must install the customized factory pattern to view this command.
 
@@ -170,7 +184,7 @@ Creates a new controller, model, and view
 
 ```--lowercase``` Keep the first character of the name to lowercase
 
-#### ```doctrine:controller [--keep] [--lowercase] [--camel] name```
+#### ```doctrine:controller [--camel] [--keep] [--lowercase] name```
 
 **NOTE**: You must install the Doctrine ORM to view this command.
 
@@ -184,13 +198,13 @@ Creates a new Doctrine-based controller
 
 #### Options:
 
+```--camel``` Use the camel case naming convention for the accessor and mutators
+
 ```--keep``` Keeps the name to be used
 
 ```--lowercase``` Keep the first character of the name to lowercase
 
-```--camel``` Use the camel case naming convention for the accessor and mutators
-
-#### ```doctrine:model [--lowercase] [--camel] name```
+#### ```doctrine:model [--camel] [--lowercase] name```
 
 **NOTE**: You must install the Doctrine ORM to view this command.
 
@@ -204,11 +218,11 @@ Creates a new Doctrine-based model
 
 #### Options:
 
-```--lowercase``` Keep the first character of the name to lowercase
-
 ```--camel``` Use the camel case naming convention for the accessor and mutators
 
-#### ```doctrine:scaffold [--bootstrap] [--keep] [--lowercase] [--camel] name```
+```--lowercase``` Keep the first character of the name to lowercase
+
+#### ```doctrine:scaffold [--bootstrap] [--camel] [--keep] [--lowercase] name```
 
 **NOTE**: You must install the Doctrine ORM to view this command.
 
@@ -229,3 +243,57 @@ Creates a new Doctrine-based controller, Doctrine-based model and a view
 ```--keep``` Keeps the name to be used
 
 ```--lowercase``` Keep the first character of the name to lowercase
+
+# ```Factory.php```'s methods
+
+The following functions/methods are only available when you install the customized factory pattern (```install:factory```).
+
+#### ```$this->factory->delete($table, $parameters = array());```
+
+#### Description:
+
+Delete the specified data from storage
+
+#### Arguments:
+
+```$table``` Name of the specified table
+
+```$delimiters``` Delimits the list of rows to be returned.
+
+#### ```$this->factory->find($table, $parameters = array());```
+
+#### Description:
+
+Find the row from the specified ID or with the list of delimiters from the specified table
+
+#### Arguments:
+
+```$table``` Name of the specified table
+
+```$delimiters``` Delimits the list of rows to be returned.
+
+#### ```$this->factory->get_all($table, $delimiters = array());```
+
+#### Description:
+
+Return all rows from the specified table
+
+#### Arguments:
+
+```$table``` Name of the specified table
+
+```$delimiters``` Delimits the list of rows to be returned. The following required indexes are:
+
+	```$delimiters['keyword']``` Used for searching the data from the storage (this is related when you're implementing the search box)
+
+	```$delimiters['per_page']``` Displays the number of rows per page
+
+#### Returned results
+
+You can also specify the returned values of ```get_all()```:
+
+```$this->factory->get_all()->as_dropdown()``` Returns the list of rows in a ```form_dropdown()``` format
+
+```$this->factory->get_all()->result()``` Returns the list of rows from the storage
+
+```$this->factory->get_all()->total_rows()``` Returns the number of rows from the result

@@ -3,8 +3,8 @@
 /**
  * [modelName] Model Class
  *
- * @package     CodeIgniter
- * @category    Model
+ * @package  CodeIgniter
+ * @category Model
  */
 class [model] extends CI_Model {
 

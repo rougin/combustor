@@ -3,8 +3,8 @@
 /**
  * [controllerName] Controller Class
  *
- * @package     CodeIgniter
- * @category    Controller
+ * @package  CodeIgniter
+ * @category Controller
  */
 class [controller] extends CI_Controller {
 
@@ -56,7 +56,7 @@ class [controller] extends CI_Controller {
 			redirect('[plural]');
 		}
 
-		$this->factory->delete('[singular]', array('[primaryKey]' => $id));
+		$this->factory->delete('[singular]', $id);
 
 		$this->session->set_flashdata('notification', 'The [singularText] has been deleted successfully!');
 		$this->session->set_flashdata('alert', 'success');
@@ -80,7 +80,7 @@ class [controller] extends CI_Controller {
 
 		if ($this->form_validation->run())
 		{
-			$[singular] = $this->factory->find('[singular]', array('[primaryKey]' => $id));
+			$[singular] = $this->factory->find('[singular]', $id);
 
 			[columnsOnEdit]
 
@@ -133,7 +133,7 @@ class [controller] extends CI_Controller {
 			redirect('[plural]');
 		}
 		
-		$data['[singular]'] = $this->factory->find('[singular]', array('[primaryKey]' => $id));
+		$data['[singular]'] = $this->factory->find('[singular]', $id);
 
 		$this->load->view('[plural]/show', $data);
 	}

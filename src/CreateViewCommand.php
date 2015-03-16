@@ -23,11 +23,6 @@ class CreateViewCommand extends Command
 				InputArgument::REQUIRED,
 				'Name of the view folder'
 			)->addOption(
-				'keep',
-				NULL,
-				InputOption::VALUE_NONE,
-				'Keeps the name to be used'
-			)->addOption(
 				'bootstrap',
 				NULL,
 				InputOption::VALUE_NONE,
@@ -36,7 +31,12 @@ class CreateViewCommand extends Command
 				'camel',
 				NULL,
 				InputOption::VALUE_NONE,
-				'Use the camel case naming convention for the accessorS and mutators'
+				'Use the camel case naming convention for the accessors and mutators'
+			)->addOption(
+				'keep',
+				NULL,
+				InputOption::VALUE_NONE,
+				'Keeps the name to be used'
 			);
 	}
 
@@ -48,8 +48,9 @@ class CreateViewCommand extends Command
 	 */
 	protected function execute(InputInterface $input, OutputInterface $output)
 	{
-		if (! file_exists(APPPATH . 'views/layout')) {
-			exit($output->writeln('<error>Please create a layout first using the "create:layout" command</error>'));
+		if ( ! file_exists(APPPATH . 'views/layout')) {
+			$message = 'Please create a layout first using the "create:layout" command!';
+			exit($output->writeln('<error>' . $message . '</error>'));
 		}
 
 		/**
@@ -57,9 +58,11 @@ class CreateViewCommand extends Command
 		 */
 
 		$bootstrapButton      = ($input->getOption('bootstrap')) ? 'btn btn-primary' : NULL;
+		$bootstrapFormColumn  = ($input->getOption('bootstrap')) ? 'col-lg-11' : NULL;
 		$bootstrapFormControl = ($input->getOption('bootstrap')) ? 'form-control' : NULL;
 		$bootstrapFormGroup   = ($input->getOption('bootstrap')) ? 'form-group' : NULL;
 		$bootstrapFormOpen    = ($input->getOption('bootstrap')) ? 'form-horizontal' : NULL;
+		$bootstrapLabel       = ($input->getOption('bootstrap')) ? 'control-label col-lg-1' : NULL;
 		$bootstrapTable       = ($input->getOption('bootstrap')) ? 'table table table-striped table-hover' : NULL;
 
 		/**
@@ -83,42 +86,47 @@ class CreateViewCommand extends Command
 		$describe = new Describe($db['default']);
 		$tableInformation = $describe->getInformationFromTable($input->getArgument('name'));
 
-		$columns      = NULL;
-		$counter      = 0;
-		$createFields = NULL;
-		$formColumn   = ($input->getOption('bootstrap')) ? 'col-lg-11' : NULL;
-		$labelClass   = ($input->getOption('bootstrap')) ? 'control-label col-lg-1' : NULL;
-		$rows         = NULL;
-		$showFields   = NULL;
+		$columns        = NULL;
+		$counter        = 0;
+		$fieldsOnCreate = NULL;
+		$fieldsOnShow   = NULL;
+		$rows           = NULL;
 
-		$selectColumns = array('name', 'description', 'label');
+		$dropdownColumnLabels = array('name', 'description', 'label');
 
 		foreach ($tableInformation as $row) {
 			$methodName = 'get_' . $row->field;
 			$methodName = ($input->getOption('camel')) ? Inflect::camelize($methodName) : Inflect::underscore($methodName);
 
 			$primaryKey = ($row->key == 'PRI') ? $methodName : $primaryKey;
+			$required   = ( ! $row->isNull) ? 'required' : NULL;
+
+			if ($input->getOption('bootstrap')) {
+				$formClassTags  = $bootstrapFormControl;
+				$formClassTags .= ($required != NULL) ? ' ' . $required : NULL;
+			}
 
 			if ($row->field == 'datetime_created' || $row->field == 'datetime_updated' || $row->extra == 'auto_increment') {
 				continue;
 			}
 
-			$columns      .= ($counter != 0 && $row->field != 'password') ? '					' : NULL;
-			$createFields .= ($counter != 0 && $row->field != 'password') ? '		' : NULL;
-			$rows         .= ($counter != 0 && $row->field != 'password') ? '						' : NULL;
-			$showFields   .= ($counter != 0 && $row->field != 'password') ? '	' : NULL;
+			$columns        .= ($counter != 0 && $row->field != 'password') ? '					' : NULL;
+			$fieldsOnCreate .= ($counter != 0 && $row->field != 'password') ? '		' : NULL;
+			$fieldsOnShow   .= ($counter != 0 && $row->field != 'password') ? '	' : NULL;
+			$rows           .= ($counter != 0 && $row->field != 'password') ? '						' : NULL;
 
 			if ($row->field != 'password') {
 				$columns .= '<th>' . str_replace(' Id', '', Inflect::humanize($row->field)) . '</th>' . "\n";
 
+				$extension = NULL;
 				if (strpos($row->field, 'date') !== FALSE || strpos($row->field, 'time') !== FALSE) {
-					$extend = '->format(\'F d, Y\')';
+					$extension = '->format(\'F d, Y\')';
 				} elseif ($row->key == 'MUL') {
 					$tableColumns = $describe->getInformationFromTable($row->referencedTable);
 
 					$tablePrimaryKey = NULL;
 					foreach ($tableColumns as $column) {
-						if (in_array($column->field, $selectColumns) || $column->key == 'PRI') {
+						if (in_array($column->field, $dropdownColumnLabels) || $column->key == 'PRI') {
 							$tablePrimaryKey = 'get_' . $column->field;
 
 							if ($input->getOption('camel')) {
@@ -129,38 +137,36 @@ class CreateViewCommand extends Command
 						}
 					}
 
-					$extend = '->' . $tablePrimaryKey . '()';
-				} else {
-					$extend = NULL;
+					$extension = '->' . $tablePrimaryKey . '()';
 				}
 
-				$rows .= '<td><?php echo $[singular]->' . $methodName . '()' . $extend . '; ?></td>' . "\n";
+				$rows .= '<td><?php echo $[singular]->' . $methodName . '()' . $extension . '; ?></td>' . "\n";
 
 				if ($input->getOption('bootstrap')) {
-					$createFields .= '<?php if (form_error(\'' . $row->field . '\')): ?>' . "\n";
-					$createFields .= '			<div class="form-group has-error">' . "\n";
-					$createFields .= '		<?php else: ?>' . "\n";
-					$createFields .= '			<div class="form-group">' . "\n";
-					$createFields .= '		<?php endif; ?>' . "\n";
+					$fieldsOnCreate .= '<?php if (form_error(\'' . $row->field . '\')): ?>' . "\n";
+					$fieldsOnCreate .= '			<div class="form-group has-error">' . "\n";
+					$fieldsOnCreate .= '		<?php else: ?>' . "\n";
+					$fieldsOnCreate .= '			<div class="form-group">' . "\n";
+					$fieldsOnCreate .= '		<?php endif; ?>' . "\n";
 				} else {
-					$createFields .= '	<div class="[bootstrapFormGroup]">' . "\n";
+					$fieldsOnCreate .= '	<div class="">' . "\n";
 				}
 
-				$createFields .= '			<?php echo form_label(\'' . str_replace(' Id', '', Inflect::humanize($row->field)) . '\', \'' . $row->field . '\', array(\'class\' => \'[labelClass]\')); ?>' . "\n";
-				$createFields .= '			<div class="[formColumn]">' . "\n";
+				$label = str_replace(' Id', '', Inflect::humanize($row->field));
+				$fieldsOnCreate .= '			<?php echo form_label(\'' . $label . '\', \'' . $row->field . '\', array(\'class\' => \'[bootstrapLabel]\')); ?>' . "\n";
+				$fieldsOnCreate .= '			<div class="[bootstrapFormColumn]">' . "\n";
 
 				if ($row->key == 'MUL') {
-					$data     = Inflect::pluralize($row->referencedTable);
-					$required = ( ! $row->isNull) ? 'required' : NULL;
+					$data = Inflect::pluralize($row->referencedTable);
 
-					$createFields .= '				<?php echo form_dropdown(\'' . $row->field . '\', $' . $data . ', set_value(\'' . $row->field . '\'), \'class="[bootstrapFormControl] ' . $required . '"\'); ?>' . "\n";
+					$fieldsOnCreate .= '				<?php echo form_dropdown(\'' . $row->field . '\', $' . $data . ', set_value(\'' . $row->field . '\'), \'class="' . $formClassTags . '"\'); ?>' . "\n";
 					$tableColumns  = $describe->getInformationFromTable($row->referencedTable);
 
 					$tablePrimaryKey = NULL;
 					foreach ($tableColumns as $column) {
 						if ($column->key == 'PRI') {
 							$tablePrimaryKey = 'get_' . $column->field;
-							
+
 							if ($input->getOption('camel')) {
 								$tablePrimaryKey = Inflect::camelize($tablePrimaryKey);
 							} else {
@@ -171,18 +177,16 @@ class CreateViewCommand extends Command
 
 					$value = '$[singular]->' . $methodName . '()->' . $tablePrimaryKey . '()';
 				} else if ($row->field == 'gender') {
-					$required = ( ! $row->isNull) ? 'required' : NULL;
-					$createFields .= '				<?php echo form_dropdown(\'' . $row->field . '\', $' . Inflect::pluralize($row->field) .', set_value(\'' . $row->field . '\'), \'class="[bootstrapFormControl] ' . $required . '"\'); ?>' . "\n";
+					$fieldsOnCreate .= '				<?php echo form_dropdown(\'' . $row->field . '\', $' . Inflect::pluralize($row->field) .', set_value(\'' . $row->field . '\'), \'class="' . $formClassTags . '"\'); ?>' . "\n";
 				} else {
-					$required = ( ! $row->isNull) ? 'required' : NULL;
-					$createFields .= '				<?php echo form_input(\'' . $row->field . '\', set_value(\'' . $row->field . '\'), \'class="[bootstrapFormControl] ' . $required . '"\'); ?>' . "\n";
+					$fieldsOnCreate .= '				<?php echo form_input(\'' . $row->field . '\', set_value(\'' . $row->field . '\'), \'class="' . $formClassTags . '"\'); ?>' . "\n";
 
 					$value = '$[singular]->' . $methodName . '()';
 				}
 
-				$createFields .= '				<?php echo form_error(\'' . $row->field . '\'); ?>' . "\n";
-				$createFields .= '			</div>' . "\n";
-				$createFields .= '		</div>' . "\n";
+				$fieldsOnCreate .= '				<?php echo form_error(\'' . $row->field . '\'); ?>' . "\n";
+				$fieldsOnCreate .= '			</div>' . "\n";
+				$fieldsOnCreate .= '		</div>' . "\n";
 
 				if (strpos($row->type, 'date') !== FALSE || strpos($row->type, 'time') !== FALSE) {
 					$format = NULL;
@@ -202,9 +206,9 @@ class CreateViewCommand extends Command
 					$value = '$[singular]->' . $methodName . '()->format(\'' . $format . '\')';
 				}
 
-				$showFields .= str_replace(' Id', '', Inflect::humanize($row->field)) . ': <?php echo ' . $value . '; ?><br>' . "\n";
+				$fieldsOnShow .= str_replace(' Id', '', Inflect::humanize($row->field)) . ': <?php echo ' . $value . '; ?><br>' . "\n";
 			} else {
-				$createFields .= file_get_contents(__DIR__ . '/Templates/Miscellaneous/CreatePassword.txt') . "\n";
+				$fieldsOnCreate .= file_get_contents(__DIR__ . '/Templates/Miscellaneous/CreatePassword.txt') . "\n";
 			}
 
 			$counter++;
@@ -214,11 +218,13 @@ class CreateViewCommand extends Command
 		 * Generate form for edit.php
 		 */
 
-		$editFields = $createFields;
+		$fieldsOnEdit = $fieldsOnCreate;
 
 		foreach ($tableInformation as $row) {
 			$methodName = 'get_' . $row->field;
 			$methodName = ($input->getOption('camel')) ? Inflect::camelize($methodName) : Inflect::underscore($methodName);
+
+			$value = '$[singular]->' . $methodName . '()';
 
 			if ($row->key == 'MUL') {
 				$tableColumns = $describe->getInformationFromTable($row->referencedTable);
@@ -251,27 +257,31 @@ class CreateViewCommand extends Command
 						$format = 'H:i:s';
 						break;
 				}
+
 				$value = '$[singular]->' . $methodName . '()->format(\'' . $format . '\')';
-			} else {
-				$value = '$[singular]->' . $methodName . '()';
 			}
 
-			if (strpos($editFields, 'set_value(\'' . $row->field . '\')') !== FALSE) {
-				$editFields = str_replace('set_value(\'' . $row->field . '\')', 'set_value(\'' . $row->field . '\', ' . $value . ')', $editFields);
+			if (strpos($fieldsOnEdit, 'set_value(\'' . $row->field . '\')') !== FALSE) {
+				$replace = 'set_value(\'' . $row->field . '\', ' . $value . ')';
+				$search  = 'set_value(\'' . $row->field . '\')';
+
+				$fieldsOnEdit = str_replace($search, $replace, $fieldsOnEdit);
 			}
 
-			$createPassword  = file_get_contents(__DIR__ . '/Templates/Miscellaneous/CreatePassword.txt') . "\n";
-			
-			$editFields .= ($row->field == 'password') ? file_get_contents(__DIR__ . '/Templates/Miscellaneous/EditPassword.txt') . "\n" : NULL;
-			$editFields  = str_replace($createPassword, '', $editFields);
+			if ($row->field == 'password') {
+				$createPassword = file_get_contents(__DIR__ . '/Templates/Miscellaneous/CreatePassword.txt') . "\n";
+
+				$fieldsOnEdit .= file_get_contents(__DIR__ . '/Templates/Miscellaneous/EditPassword.txt') . "\n";
+				$fieldsOnEdit  = str_replace($createPassword, '', $fieldsOnEdit);
+			}			
 		}
 
 		$columns .= '				<th></th>' . "\n";
 
 		$search = array(
-			'[showFields]',
-			'[editFields]',
-			'[createFields]',
+			'[fieldsOnShow]',
+			'[fieldsOnEdit]',
+			'[fieldsOnCreate]',
 			'[columns]',
 			'[rows]',
 			'[primaryKey]',
@@ -280,8 +290,8 @@ class CreateViewCommand extends Command
 			'[bootstrapFormGroup]',
 			'[bootstrapFormOpen]',
 			'[bootstrapTable]',
-			'[labelClass]',
-			'[formColumn]',
+			'[bootstrapLabel]',
+			'[bootstrapFormColumn]',
 			'[entity]',
 			'[singularEntity]',
 			'[plural]',
@@ -291,9 +301,9 @@ class CreateViewCommand extends Command
 		$plural = ($input->getOption('keep')) ? $input->getArgument('name') : Inflect::pluralize($input->getArgument('name'));
 
 		$replace = array(
-			rtrim($showFields),
-			rtrim($editFields),
-			rtrim($createFields),
+			rtrim($fieldsOnShow),
+			rtrim($fieldsOnEdit),
+			rtrim($fieldsOnCreate),
 			rtrim($columns),
 			rtrim($rows),
 			$primaryKey,
@@ -302,8 +312,8 @@ class CreateViewCommand extends Command
 			$bootstrapFormGroup,
 			$bootstrapFormOpen,
 			$bootstrapTable,
-			$labelClass,
-			$formColumn,
+			$bootstrapLabel,
+			$bootstrapFormColumn,
 			ucwords(str_replace('_', ' ', Inflect::pluralize($input->getArgument('name')))),
 			ucwords(str_replace('_', ' ', Inflect::singularize($input->getArgument('name')))),
 			$plural,
@@ -319,12 +329,17 @@ class CreateViewCommand extends Command
 		 * Create the directory first
 		 */
 
-		$view_directory = ($input->getOption('keep')) ? $input->getArgument('name') : Inflect::pluralize($input->getArgument('name'));
+		$viewDirectory = Inflect::pluralize($input->getArgument('name'));
 
-		$filepath = APPPATH . 'views/' . $view_directory . '/';
+		if ($input->getOption('keep')) {
+			$viewDirectory = $input->getArgument('name');
+		}
+
+		$filepath = APPPATH . 'views/' . $viewDirectory . '/';
 
 		if ( ! @mkdir($filepath, 0777, TRUE)) {
-			exit($output->writeln('<error>The ' . Inflect::pluralize($input->getArgument('name')) . ' views folder already exists!</error>'));
+			$message = 'The ' . Inflect::pluralize($input->getArgument('name')) . ' views folder already exists!';
+			exit($output->writeln('<error>' . $message . '</error>'));
 		}
 
 		/**
@@ -341,7 +356,8 @@ class CreateViewCommand extends Command
 		file_put_contents($filepath . 'index.php', $index);
 		file_put_contents($filepath . 'show.php', $show);
 
-		$output->writeln('<info>The views folder "' . Inflect::pluralize($input->getArgument('name')) . '" has been created successfully!</info>');
+		$message = 'The views folder "' . Inflect::pluralize($input->getArgument('name')) . '" has been created successfully!';
+		$output->writeln('<info>' . $message . '</info>');
 	}
 
 }

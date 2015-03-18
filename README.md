@@ -20,7 +20,7 @@ Combustor is a code generator console application for [CodeIgniter](https://code
 
 	* Searching data within the table is also integrated. To enable it, just include the following code:
 		
-		```
+		```php
 		<?php echo form_open($this->uri->segment(1), array('method' => 'GET', 'class' => 'navbar-form navbar-left', 'role' => 'Search')); ?>
 			<div class="form-group">
 				<?php echo form_input('keyword', $this->input->get('keyword'), 'class="form-control" placeholder="Search"'); ?>
@@ -36,7 +36,7 @@ Combustor is a code generator console application for [CodeIgniter](https://code
 
 1. Follow the instructions that can be found on [ignite.php](https://github.com/rougin/ignite.php). Or you can manually download the latest version of CodeIgniter from this [link](https://github.com/bcit-ci/CodeIgniter/archive/3.0rc2.zip) and extract it to your web server. Then add a ```composer.json``` file (or update if it already exists) on the directory you recently extracted:
 
-	```
+	```json
 	{
 		"description" : "The CodeIgniter framework",
 		"name" : "codeigniter/framework",

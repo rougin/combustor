@@ -5,7 +5,7 @@
 	</h1>
 	<br>
 	<?php echo form_open('[plural]/edit/' . $[singular]->[primaryKey](), 'class="[bootstrapFormOpen]"'); ?>
-		[editFields]
+		[fieldsOnEdit]
 		<div class="[bootstrapFormGroup]">
 			<div class="[bootstrapLabel]"></div>
 			<div class="[bootstrapFormColumn]">

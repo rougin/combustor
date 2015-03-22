@@ -30,6 +30,6 @@
 		</table>
 		<?php echo $links; ?>
 	<?php else: ?>
-		There are no [plural] that are currently available.
+		There are no [pluralEntity] that are currently available.
 	<?php endif; ?>
 <?php $this->load->view('layout/footer'); ?>

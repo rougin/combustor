@@ -293,9 +293,10 @@ class CreateViewCommand extends Command
 			'[bootstrapLabel]',
 			'[bootstrapFormColumn]',
 			'[entity]',
-			'[singularEntity]',
+			'[singular]',
 			'[plural]',
-			'[singular]'
+			'[singularEntity]',
+			'[pluralEntity]'
 		);
 
 		$plural = ($input->getOption('keep')) ? $input->getArgument('name') : Inflect::pluralize($input->getArgument('name'));
@@ -314,10 +315,11 @@ class CreateViewCommand extends Command
 			$bootstrapTable,
 			$bootstrapLabel,
 			$bootstrapFormColumn,
-			ucwords(str_replace('_', ' ', Inflect::pluralize($input->getArgument('name')))),
 			ucwords(str_replace('_', ' ', Inflect::singularize($input->getArgument('name')))),
+			Inflect::singularize($input->getArgument('name')),
 			$plural,
-			Inflect::singularize($input->getArgument('name'))
+			ucwords(str_replace('_', ' ', Inflect::pluralize($input->getArgument('name')))),
+			str_replace('_', ' ', Inflect::pluralize($input->getArgument('name')))
 		);
 
 		$create = str_replace($search, $replace, $create);

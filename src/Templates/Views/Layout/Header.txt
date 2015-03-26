@@ -6,7 +6,7 @@
 	<meta name="viewport" content="width=device-width, initial-scale=1">
 	<meta name="description" content="">
 	<meta name="author" content="">
-	<title>Document</title>
+	<title>Document <?php echo ($this->uri->segment(1)) ? ' - ' . ucwords(str_replace('_', ' ', $this->uri->segment(1))) : NULL ?></title>
 	[styleSheets]
 </head>
 <body>

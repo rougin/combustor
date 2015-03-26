@@ -125,16 +125,18 @@ class CreateControllerCommand extends Command
 
 				$columnsOnCreate = str_replace('[method]', $methodName, $columnsOnCreate);
 				$columnsOnEdit   = str_replace('[method]', $methodName, $columnsOnEdit);
-			} elseif ($row->field == 'gender') {
-				$dropdownColumn = '$data[\'' . Inflect::pluralize($row->field) . '\'] = array(\'male\' => \'Male\', \'female\' => \'Female\');';
-
-				$dropdownColumnsOnCreate .= "\n\t\t" . $dropdownColumn;
-				$dropdownColumnsOnEdit   .= "\n\t\t" . $dropdownColumn;
 			} else {
 				if ($row->field == 'datetime_created' || $row->field == 'datetime_updated') {
 					$column = '\'now\'';
 				} else {
 					$column = '$this->input->post(\'' . $row->field . '\')';
+				}
+
+				if ($row->field == 'gender') {
+					$dropdownColumn = '$data[\'' . Inflect::pluralize($row->field) . '\'] = array(\'male\' => \'Male\', \'female\' => \'Female\');';
+
+					$dropdownColumnsOnCreate .= "\n\t\t" . $dropdownColumn;
+					$dropdownColumnsOnEdit   .= "\n\t\t" . $dropdownColumn;
 				}
 
 				if ($row->field != 'datetime_updated') {
@@ -144,6 +146,7 @@ class CreateControllerCommand extends Command
 				if ($row->field != 'datetime_created') {
 					$columnsOnEdit .= '$[singular]->' . $methodName . '(' . $column . ');' . "\n";
 				}
+
 			}
 
 			if ($row->field != 'password' && $row->field != 'datetime_created' && $row->field != 'datetime_updated') {
@@ -189,7 +192,7 @@ class CreateControllerCommand extends Command
 			$plural,
 			$pluralText,
 			Inflect::singularize($name),
-			strtolower(Inflect::humanize($name))
+			strtolower(Inflect::singularize($name))
 		);
 
 		$controller = str_replace($search, $replace, $controller);

@@ -45,10 +45,10 @@ class CreateLayoutCommand extends Command
 
 		if ($input->getOption('bootstrap')) {
 			$bootstrapContainer = 'container';
-			$styleSheets .= "\n" . '	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap.min.css">';
+			$styleSheets .= "\n\t" . '<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap.min.css">';
 
-			$scripts .= "\n" . '<script src="https://code.jquery.com/jquery-2.1.1.min.js"></script>';
-			$scripts .= "\n" . '<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.2.0/js/bootstrap.min.js"></script>';
+			$scripts .= "\n\t" . '<script src="https://code.jquery.com/jquery-2.1.1.min.js"></script>';
+			$scripts .= "\n\t" . '<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.2.0/js/bootstrap.min.js"></script>';
 		}
 
 		$search = array(

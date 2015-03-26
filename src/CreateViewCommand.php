@@ -99,12 +99,7 @@ class CreateViewCommand extends Command
 			$methodName = ($input->getOption('camel')) ? Inflect::camelize($methodName) : Inflect::underscore($methodName);
 
 			$primaryKey = ($row->key == 'PRI') ? $methodName : $primaryKey;
-			$required   = ( ! $row->isNull) ? 'required' : NULL;
-
-			if ($input->getOption('bootstrap')) {
-				$formClassTags  = $bootstrapFormControl;
-				$formClassTags .= ($required != NULL) ? ' ' . $required : NULL;
-			}
+			$required   = ( ! $row->isNull) ? ' required' : NULL;
 
 			if ($row->field == 'datetime_created' || $row->field == 'datetime_updated' || $row->extra == 'auto_increment') {
 				continue;
@@ -159,7 +154,7 @@ class CreateViewCommand extends Command
 				if ($row->key == 'MUL') {
 					$data = Inflect::pluralize($row->referencedTable);
 
-					$fieldsOnCreate .= '				<?php echo form_dropdown(\'' . $row->field . '\', $' . $data . ', set_value(\'' . $row->field . '\'), \'class="' . $formClassTags . '"\'); ?>' . "\n";
+					$fieldsOnCreate .= '				<?php echo form_dropdown(\'' . $row->field . '\', $' . $data . ', set_value(\'' . $row->field . '\'), \'class="[bootstrapFormControl]"' . $required . '\'); ?>' . "\n";
 					$tableColumns  = $describe->getInformationFromTable($row->referencedTable);
 
 					$tablePrimaryKey = NULL;
@@ -177,9 +172,9 @@ class CreateViewCommand extends Command
 
 					$value = '$[singular]->' . $methodName . '()->' . $tablePrimaryKey . '()';
 				} else if ($row->field == 'gender') {
-					$fieldsOnCreate .= '				<?php echo form_dropdown(\'' . $row->field . '\', $' . Inflect::pluralize($row->field) .', set_value(\'' . $row->field . '\'), \'class="' . $formClassTags . '"\'); ?>' . "\n";
+					$fieldsOnCreate .= '				<?php echo form_dropdown(\'' . $row->field . '\', $' . Inflect::pluralize($row->field) .', set_value(\'' . $row->field . '\'), \'class="[bootstrapFormControl]"' . $required . '\'); ?>' . "\n";
 				} else {
-					$fieldsOnCreate .= '				<?php echo form_input(\'' . $row->field . '\', set_value(\'' . $row->field . '\'), \'class="' . $formClassTags . '"\'); ?>' . "\n";
+					$fieldsOnCreate .= '				<?php echo form_input(\'' . $row->field . '\', set_value(\'' . $row->field . '\'), \'class="[bootstrapFormControl]"' . $required . '\'); ?>' . "\n";
 
 					$value = '$[singular]->' . $methodName . '()';
 				}
@@ -270,13 +265,14 @@ class CreateViewCommand extends Command
 
 			if ($row->field == 'password') {
 				$createPassword = file_get_contents(__DIR__ . '/Templates/Miscellaneous/CreatePassword.txt') . "\n";
+				$createPassword = str_replace('set_value(\'password\')', 'set_value(\'password\', $[singular]->' . $methodName . '())', $createPassword);
 
-				$fieldsOnEdit .= file_get_contents(__DIR__ . '/Templates/Miscellaneous/EditPassword.txt') . "\n";
 				$fieldsOnEdit  = str_replace($createPassword, '', $fieldsOnEdit);
+				$fieldsOnEdit .= file_get_contents(__DIR__ . '/Templates/Miscellaneous/EditPassword.txt') . "\n";
 			}			
 		}
 
-		$columns .= '				<th></th>' . "\n";
+		$columns .= '					<th></th>' . "\n";
 
 		$search = array(
 			'[fieldsOnShow]',
@@ -315,10 +311,10 @@ class CreateViewCommand extends Command
 			$bootstrapTable,
 			$bootstrapLabel,
 			$bootstrapFormColumn,
-			ucwords(str_replace('_', ' ', Inflect::singularize($input->getArgument('name')))),
+			ucwords(str_replace('_', ' ', Inflect::pluralize($input->getArgument('name')))),
 			Inflect::singularize($input->getArgument('name')),
 			$plural,
-			ucwords(str_replace('_', ' ', Inflect::pluralize($input->getArgument('name')))),
+			ucwords(str_replace('_', ' ', Inflect::singularize($input->getArgument('name')))),
 			str_replace('_', ' ', Inflect::pluralize($input->getArgument('name')))
 		);
 

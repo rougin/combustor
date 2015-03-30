@@ -30,7 +30,7 @@ class [model] extends CI_Model {
 	{
 		parent::__construct();
 
-		$this->_query_builder = $this->doctrine->em->createQueryBuilder();
+		$this->_query_builder = $this->doctrine->entity_manager->createQueryBuilder();
 	}
 	
 	/**
@@ -77,7 +77,7 @@ class [model] extends CI_Model {
 	{
 		$[plural] = array('');
 
-		$[singularRepository] = $this->doctrine->em->getRepository('[singular]');
+		$[singularRepository] = $this->doctrine->entity_manager->getRepository('[singular]');
 
 		foreach ($[singularRepository]->findAll() as $[singular])
 		{

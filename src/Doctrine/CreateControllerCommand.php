@@ -83,7 +83,7 @@ class CreateControllerCommand extends Command
 		$counter                 = 0;
 		$dropdownColumn          = NULL;
 		$dropdownColumnsOnCreate = '$data = array();';
-		$dropdownColumnsOnEdit   = '$data[\'[singular]\'] = $this->doctrine->em->find(\'[singular]\', $id);';
+		$dropdownColumnsOnEdit   = '$data[\'[singular]\'] = $this->doctrine->entity_manager->find(\'[singular]\', $id);';
 
 		foreach ($tableInformation as $row) {
 			if ($row->key == 'PRI') {
@@ -123,10 +123,10 @@ class CreateControllerCommand extends Command
 				$dropdownColumnsOnCreate .= "\n\t\t" . $dropdownColumn;
 				$dropdownColumnsOnEdit   .= "\n\t\t" . $dropdownColumn;
 
-				$columnsOnCreate .= '$' . $row->referencedTable . ' = $this->doctrine->em->find(\'' . $row->referencedTable . '\', $this->input->post(\'' . $row->field . '\'));' . "\n";
+				$columnsOnCreate .= '$' . $row->referencedTable . ' = $this->doctrine->entity_manager->find(\'' . $row->referencedTable . '\', $this->input->post(\'' . $row->field . '\'));' . "\n";
 				$columnsOnCreate .= '			$this->[singular]->' . $methodName . '($' . $row->referencedTable . ');' . "\n\n";
 
-				$columnsOnEdit .= '$' . $row->referencedTable . ' = $this->doctrine->em->find(\'' . $row->referencedTable . '\', $this->input->post(\'' . $row->field . '\'));' . "\n";
+				$columnsOnEdit .= '$' . $row->referencedTable . ' = $this->doctrine->entity_manager->find(\'' . $row->referencedTable . '\', $this->input->post(\'' . $row->field . '\'));' . "\n";
 				$columnsOnEdit .= '			$[singular]->' . $methodName . '($' . $row->referencedTable . ');' . "\n\n";
 			} elseif ($row->field == 'password') {
 				$columnsOnCreate .= "\n" . file_get_contents($doctrineDirectory . '/Templates/Miscellaneous/CheckCreatePassword.txt') . "\n\n";

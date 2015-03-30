@@ -28,8 +28,8 @@ class [controller] extends CI_Controller {
 		{
 			[columnsOnCreate]
 
-			$this->doctrine->em->persist($this->[singular]);
-			$this->doctrine->em->flush();
+			$this->doctrine->entity_manager->persist($this->[singular]);
+			$this->doctrine->entity_manager->flush();
 
 			$this->session->set_flashdata('notification', 'The [singularText] has been created successfully!');
 			$this->session->set_flashdata('alert', 'success');
@@ -54,10 +54,10 @@ class [controller] extends CI_Controller {
 			redirect('[plural]');
 		}
 
-		$[singular] = $this->doctrine->em->find('[singular]', $id);
+		$[singular] = $this->doctrine->entity_manager->find('[singular]', $id);
 
-		$this->doctrine->em->remove($[singular]);
-		$this->doctrine->em->flush();
+		$this->doctrine->entity_manager->remove($[singular]);
+		$this->doctrine->entity_manager->flush();
 
 		$this->session->set_flashdata('notification', 'The [singularText] has been deleted successfully!');
 		$this->session->set_flashdata('alert', 'success');
@@ -81,12 +81,12 @@ class [controller] extends CI_Controller {
 
 		if ($this->form_validation->run())
 		{
-			$[singular] = $this->doctrine->em->find('[singular]', $id);
+			$[singular] = $this->doctrine->entity_manager->find('[singular]', $id);
 
 			[columnsOnEdit]
 
-			$this->doctrine->em->persist($[singular]);
-			$this->doctrine->em->flush();
+			$this->doctrine->entity_manager->persist($[singular]);
+			$this->doctrine->entity_manager->flush();
 
 			$this->session->set_flashdata('notification', 'The [singularText] has been updated successfully!');
 			$this->session->set_flashdata('alert', 'success');
@@ -137,7 +137,7 @@ class [controller] extends CI_Controller {
 			redirect('[plural]');
 		}
 		
-		$data['[singular]'] = $this->doctrine->em->find('[singular]', $id);
+		$data['[singular]'] = $this->doctrine->entity_manager->find('[singular]', $id);
 
 		$this->load->view('[plural]/show', $data);
 	}

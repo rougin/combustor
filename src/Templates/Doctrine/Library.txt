@@ -5,20 +5,21 @@ use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\Tools\Setup;
 
 /**
- * Doctrine bootstrap library for CodeIgniter
+ * Doctrine wrapper library for CodeIgniter
  *
- * @author	Adam Elsodaney  <archfizz.co.uk>
- * @author  Rougin Gutib 	<rougin.royce@gmail.com>
- * @link	http://stackoverflow.com/questions/17121997/integrating-doctrine-with-codeigniter
+ * @package  CodeIgniter
+ * @category Library
+ * @author	 Adam Elsodaney  <archfizz.co.uk>
+ * @author   Rougin Gutib 	<rougingutib@gmail.com>
+ * @link	 http://stackoverflow.com/questions/17121997/integrating-doctrine-with-codeigniter
  */
-
 class Doctrine
 {
 
 	/**
 	 * The variable for handling the entity manager
 	 */
-	public $em;
+	public $entity_manager;
 
 	/**
 	 * Load the entity manager and load the classes
@@ -58,7 +59,7 @@ class Doctrine
 		 */
 		
 		$config = Setup::createAnnotationMetadataConfiguration($metadata_paths, $dev_mode = true, $proxies);
-		$this->em = EntityManager::create($connection_options, $config);
+		$this->entity_manager = EntityManager::create($connection_options, $config);
 
 		$loader = new ClassLoader($models_namespace, $models);
 		$loader->register();
@@ -71,16 +72,18 @@ class Doctrine
 	 */
 	public function cli()
 	{
-		foreach ($GLOBALS as $helperSetCandidate) {
-			if ($helperSetCandidate instanceof \Symfony\Component\Console\Helper\HelperSet) {
-				$helperSet = $helperSetCandidate;
+		foreach ($GLOBALS as $helper_set_candidate)
+		{
+			if ($helper_set_candidate instanceof \Symfony\Component\Console\Helper\HelperSet)
+			{
+				$helperSet = $helper_set_candidate;
 				break;
 			}
 		}
 
 		$helperSet = new \Symfony\Component\Console\Helper\HelperSet(array(
-			'db' => new \Doctrine\DBAL\Tools\Console\Helper\ConnectionHelper($this->em->getConnection()),
-			'em' => new \Doctrine\ORM\Tools\Console\Helper\EntityManagerHelper($this->em)
+			'db' => new \Doctrine\DBAL\Tools\Console\Helper\ConnectionHelper($this->entity_manager->getConnection()),
+			'em' => new \Doctrine\ORM\Tools\Console\Helper\EntityManagerHelper($this->entity_manager)
 		));
 
 		return \Doctrine\ORM\Tools\Console\ConsoleRunner::run($helperSet);

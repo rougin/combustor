@@ -29,6 +29,8 @@
 			</tbody>
 		</table>
 		<?php echo $links; ?>
+	<?php elseif ($this->input->get('keyword')): ?>
+		Your search - <b><?php echo $this->input->get('keyword') ?></b> - did not match any [pluralEntity].
 	<?php else: ?>
 		There are no [pluralEntity] that are currently available.
 	<?php endif; ?>

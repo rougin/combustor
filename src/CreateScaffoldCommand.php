@@ -34,6 +34,11 @@ class CreateScaffoldCommand extends Command
 				InputOption::VALUE_NONE,
 				'Use the camel case naming convention for the accessor and mutators'
 			)->addOption(
+				'doctrine',
+				NULL,
+				InputOption::VALUE_NONE,
+				'Use the Doctrine\'s specifications'
+			)->addOption(
 				'keep',
 				null,
 				InputOption::VALUE_NONE,
@@ -43,6 +48,11 @@ class CreateScaffoldCommand extends Command
 				null,
 				InputOption::VALUE_NONE,
 				'Keep the first character of the name to lowercase'
+			)->addOption(
+				'wildfire',
+				NULL,
+				InputOption::VALUE_NONE,
+				'Use the Wildfire\'s specifications'
 			);
 	}
 
@@ -56,9 +66,11 @@ class CreateScaffoldCommand extends Command
 	{
 		$bootstrap = $input->getOption('bootstrap');
 		$camel     = $input->getOption('camel');
+		$doctrine  = $input->getOption('doctrine');
 		$keep      = $input->getOption('keep');
 		$lowercase = $input->getOption('lowercase');
-		
+		$wildfire  = $input->getOption('wildfire');
+
 		$arguments = array(
 			'command' => NULL,
 			'name' => $input->getArgument('name')
@@ -81,6 +93,10 @@ class CreateScaffoldCommand extends Command
 				unset($arguments['--camel']);
 			}
 
+			if (isset($arguments['--doctrine'])) {
+				unset($arguments['--doctrine']);
+			}
+
 			if (isset($arguments['--keep'])) {
 				unset($arguments['--keep']);
 			}
@@ -89,11 +105,21 @@ class CreateScaffoldCommand extends Command
 				unset($arguments['--lowercase']);
 			}
 
+			if (isset($arguments['--wildfire'])) {
+				unset($arguments['--wildfire']);
+			}
+
 			if ($command == 'create:controller') {
+				$arguments['--camel']     = $camel;
+				$arguments['--doctrine']  = $doctrine;
 				$arguments['--keep']      = $keep;
 				$arguments['--lowercase'] = $lowercase;
+				$arguments['--wildfire']  = $wildfire;
 			} elseif ($command == 'create:model') {
+				$arguments['--camel']     = $camel;
+				$arguments['--doctrine']  = $doctrine;
 				$arguments['--lowercase'] = $lowercase;
+				$arguments['--wildfire']  = $wildfire;
 			} elseif ($command == 'create:view') {
 				$arguments['--bootstrap'] = $bootstrap;
 				$arguments['--camel']     = $camel;
@@ -101,9 +127,7 @@ class CreateScaffoldCommand extends Command
 			}
 
 			$input = new ArrayInput($arguments);
-
 			$application = $this->getApplication()->find($command);
-
 			$result = $application->run($input, $output);
 		}
 	}

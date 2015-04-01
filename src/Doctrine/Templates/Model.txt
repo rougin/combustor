@@ -1,0 +1,20 @@
+<?php defined('BASEPATH') OR exit('No direct script access allowed');
+
+/**
+ * @Entity
+ * @Table(
+ * 		name="[singular]",
+ * 		indexes={
+ * 			[indexes]
+ * 		}
+ * )
+ */
+class [model] extends CI_Model {
+
+	[columns]
+
+	[accessors]
+
+	[mutators]
+
+}

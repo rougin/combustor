@@ -62,7 +62,10 @@ class MY_Pagination extends CI_Pagination
 	public $offset = 0;
 	public $pagination_selector = 'page';
 
-	public function MY_Pagination()
+	/**
+	 * Initialize the extension
+	 */
+	public function __construct()
 	{
 		parent::__construct();
 
@@ -136,7 +139,8 @@ class MY_Pagination extends CI_Pagination
 			}
 		
 		}
-		else {
+		else
+		{
 			/**
 			 * Pagination selector was not found in URI string. So offset is 0
 			 */

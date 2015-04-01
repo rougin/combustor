@@ -19,19 +19,18 @@ use Symfony\Component\Console\Helper\HelperSet;
 
 $application = new Application('Combustor', '1');
 
-$application->add(new Combustor\InstallCommand);
-// $application->add(new Combustor\RemoveCommand);
-// $application->add(new Combustor\CreateControllerCommand);
-// $application->add(new Combustor\CreateModelCommand);
-// $application->add(new Combustor\CreateScaffoldCommand);
-
 $application->add(new Combustor\Doctrine\InstallCommand);
 // $application->add(new Combustor\Doctrine\RemoveCommand);
-// $application->add(new Combustor\Doctrine\CreateControllerCommand);
-// $application->add(new Combustor\Doctrine\CreateModelCommand);
-// $application->add(new Combustor\Doctrine\CreateScaffoldCommand);
+$application->add(new Combustor\Wildfire\InstallCommand);
+// $application->add(new Combustor\Wildfire\RemoveCommand);
+
+if ($application->has('remove:wildfire') || $application->has('remove:doctrine')) {
+	$application->add(new Combustor\CreateControllerCommand);
+	$application->add(new Combustor\CreateModelCommand);
+	$application->add(new Combustor\CreateScaffoldCommand);
+	$application->add(new Combustor\CreateViewCommand);
+}
 
 $application->add(new Combustor\CreateLayoutCommand);
-// $application->add(new Combustor\CreateViewCommand);
 
 $application->run();

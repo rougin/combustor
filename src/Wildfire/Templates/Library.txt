@@ -3,12 +3,12 @@
 use Describe\Describe;
 
 /**
- * Factory Class
+ * Wildfire Class
  *
  * @package  CodeIgniter
  * @category Library
  */
-class Factory {
+class Wildfire {
 
 	private $_codeigniter = NULL;
 	private $_describe    = NULL;

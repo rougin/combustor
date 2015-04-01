@@ -1,4 +1,4 @@
-<?php namespace Combustor\Doctrine;
+<?php namespace Combustor\Wildfire;
 
 use Describe\Describe;
 use Combustor\Tools\Inflect;
@@ -27,7 +27,6 @@ class CreateControllerCommand
 
 	/**
 	 * Execute the command
-	 * 
 	 */
 	public function execute()
 	{
@@ -40,12 +39,9 @@ class CreateControllerCommand
 		/**
 		 * Get the controller template
 		 */
-
-		$slash = (strpos(PHP_OS, 'WIN') !== FALSE) ? '\\' : '/';
-		$doctrineDirectory = str_replace($slash . 'Doctrine', '', __DIR__);
-
+		
 		$controller = file_get_contents(__DIR__ . '/Templates/Controller.txt');
-
+		
 		/**
 		 * Get the columns from the specified name
 		 */
@@ -61,17 +57,17 @@ class CreateControllerCommand
 		$models = '\'[singular]\'';
 
 		$columnsOnCreate         = NULL;
+		$columnsOnCreateCounter  = 0;
 		$columnsOnEdit           = NULL;
 		$columnsToValidate       = NULL;
 		$counter                 = 0;
-		$dropdownColumn          = NULL;
 		$dropdownColumnsOnCreate = '$data = array();';
-		$dropdownColumnsOnEdit   = '$data[\'[singular]\'] = $this->doctrine->entity_manager->find(\'[singular]\', $id);';
+		$dropdownColumnsOnEdit   = '$data[\'[singular]\'] = $this->wildfire->find(\'[singular]\', $id);';
+		$dropdowns               = 0;
 		$selectColumns           = array('name', 'description', 'label');
 
 		foreach ($tableInformation as $row) {
 			$methodName = 'set_' . strtolower($row->field);
-			$methodName = ($this->_input->getOption('camel')) ? Inflect::camelize($methodName) : Inflect::underscore($methodName);
 
 			if ($counter != 0) {
 				$columnsOnCreate   .= ($row->field != 'datetime_updated') ? '			' : NULL;
@@ -85,10 +81,8 @@ class CreateControllerCommand
 			if ($row->extra == 'auto_increment') {
 				continue;
 			} elseif ($row->key == 'MUL') {
-				if ($row->key == 'MUL') {
-					if (strpos($models, ",\n" . '			\'' . $row->referencedTable . '\'') === FALSE) {
-						$models .= ",\n" . '			\'' . $row->referencedTable . '\'';
-					}
+				if (strpos($models, ",\n" . '			\'' . $row->referencedTable . '\'') === FALSE) {
+					$models .= ",\n" . '			\'' . $row->referencedTable . '\'';
 				}
 
 				$foreignTableInformation = $describe->getInformationFromTable($row->referencedTable);
@@ -104,19 +98,19 @@ class CreateControllerCommand
 					$fieldDescription = in_array($foreignRow->field, $selectColumns) ? $foreignRow->field : $fieldDescription;
 				}
 
-				$dropdownColumn = '$data[\'' . Inflect::pluralize($row->referencedTable) . '\'] = $this->doctrine->get_all(\'' . $row->referencedTable . '\')->as_dropdown(\'' . $fieldDescription . '\');';
+				$dropdownColumn = '$data[\'' . Inflect::pluralize($row->referencedTable) . '\'] = $this->wildfire->get_all(\'' . $row->referencedTable . '\')->as_dropdown(\'' . $fieldDescription . '\');';
 
 				$dropdownColumnsOnCreate .= "\n\t\t" . $dropdownColumn;
 				$dropdownColumnsOnEdit   .= "\n\t\t" . $dropdownColumn;
 
-				$columnsOnCreate .= '$' . $row->referencedTable . ' = $this->doctrine->entity_manager->find(\'' . $row->referencedTable . '\', $this->input->post(\'' . $row->field . '\'));' . "\n";
+				$columnsOnCreate .= '$' . $row->referencedTable . ' = $this->wildfire->find(\'' . $row->referencedTable . '\', $this->input->post(\'' . $row->field . '\'));' . "\n";
 				$columnsOnCreate .= '			$this->[singular]->' . $methodName . '($' . $row->referencedTable . ');' . "\n\n";
 
-				$columnsOnEdit .= '$' . $row->referencedTable . ' = $this->doctrine->entity_manager->find(\'' . $row->referencedTable . '\', $this->input->post(\'' . $row->field . '\'));' . "\n";
+				$columnsOnEdit .= '$' . $row->referencedTable . ' = $this->wildfire->find(\'' . $row->referencedTable . '\', $this->input->post(\'' . $row->field . '\'));' . "\n";
 				$columnsOnEdit .= '			$[singular]->' . $methodName . '($' . $row->referencedTable . ');' . "\n\n";
 			} elseif ($row->field == 'password') {
-				$columnsOnCreate .= "\n" . file_get_contents($doctrineDirectory . '/Templates/Miscellaneous/CheckCreatePassword.txt') . "\n\n";
-				$columnsOnEdit   .= "\n" . file_get_contents($doctrineDirectory . '/Templates/Miscellaneous/CheckEditPassword.txt') . "\n\n";
+				$columnsOnCreate .= "\n" . file_get_contents(__DIR__ . '/../Templates/Miscellaneous/CheckCreatePassword.txt') . "\n\n";
+				$columnsOnEdit   .= "\n" . file_get_contents(__DIR__ . '/../Templates/Miscellaneous/CheckEditPassword.txt') . "\n\n";
 
 				$getMethodName = str_replace('set', 'get', $methodName);
 
@@ -143,6 +137,7 @@ class CreateControllerCommand
 				if ($row->field != 'datetime_created') {
 					$columnsOnEdit .= '$[singular]->' . $methodName . '(' . $column . ');' . "\n";
 				}
+
 			}
 
 			if ($row->field != 'password' && $row->field != 'datetime_created' && $row->field != 'datetime_updated') {
@@ -188,7 +183,7 @@ class CreateControllerCommand
 			$plural,
 			$pluralText,
 			Inflect::singularize($name),
-			strtolower(Inflect::humanize($name))
+			strtolower(Inflect::singularize($name))
 		);
 
 		$controller = str_replace($search, $replace, $controller);
@@ -201,16 +196,16 @@ class CreateControllerCommand
 
 		$filename = APPPATH . 'controllers/' . $controllerFile . '.php';
 
-		if (file_exists($filename)) {
-			$this->_output->writeln('<error>The ' . $name . ' controller already exists!</error>');
+		// if (file_exists($filename)) {
+		// 	$this->_output->writeln('<error>The ' . $name . ' controller already exists!</error>');
 
-			exit();
-		}
+		// 	exit();
+		// }
 
 		$file = fopen($filename, 'wb');
 		file_put_contents($filename, $controller);
 
 		$this->_output->writeln('<info>The controller "' . $name . '" has been created successfully!</info>');
 	}
-
+	
 }

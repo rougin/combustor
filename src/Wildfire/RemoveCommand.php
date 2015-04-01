@@ -1,4 +1,4 @@
-<?php namespace Combustor\Doctrine;
+<?php namespace Combustor\Wildfire;
 
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputArgument;
@@ -14,8 +14,8 @@ class RemoveCommand extends Command
 	 */
 	protected function configure()
 	{
-		$this->setName('remove:doctrine')
-			->setDescription('Remove the Doctrine ORM');
+		$this->setName('remove:wildfire')
+			->setDescription('Remove Wildfire');
 	}
 
 	/**
@@ -28,12 +28,12 @@ class RemoveCommand extends Command
 	{
 		/**
 		 * ---------------------------------------------------------------------------------------------
-		 * Adding the Doctrine.php to the "libraries" directory
+		 * Adding Wildfire.php to the "libraries" directory
 		 * ---------------------------------------------------------------------------------------------
 		 */
 
-		if ( ! file_exists(APPPATH . 'libraries/Doctrine.php')) {
-			exit($output->writeln('<error>The Doctrine ORM is not installed!</error>'));
+		if ( ! file_exists(APPPATH . 'libraries/Wildfire.php')) {
+			exit($output->writeln('<error>Wildfire is not installed!</error>'));
 		}
 
 		$autoload = file_get_contents(APPPATH . 'config/autoload.php');
@@ -42,10 +42,16 @@ class RemoveCommand extends Command
 
 		$libraries = explode(', ', end($match[1]));
 
-		if (in_array('\'doctrine\'', $libraries)) {
-			$position = array_search('\'doctrine\'', $libraries);
+		if (in_array('\'wildfire\'', $libraries)) {
+			$position = array_search('\'wildfire\'', $libraries);
 
 			unset($libraries[$position]);
+
+			if ( ! in_array('\'database\'', $libraries)) {
+				$position = array_search('\'database\'', $libraries);
+
+				unset($libraries[$position]);
+			}
 
 			$libraries = array_filter($libraries);
 
@@ -61,46 +67,15 @@ class RemoveCommand extends Command
 			fclose($file);
 		}
 
-		$composer = file_get_contents('composer.json');
-		$composer = str_replace(array('	', "\n", "\r") , array('', '', ''), $composer);
-
-		preg_match_all('/"require": \{(.*?)\}/', $composer, $match);
-		$requiredLibraries = explode(',', end($match[1]));
-
-		preg_match_all('/"require-dev": \{(.*?)\}/', $composer, $match);
-		$requiredDevLibraries = explode(',', end($match[1]));
-
-		if (in_array('"doctrine/orm": "2.4.*"', $requiredLibraries)) {
-			$position = array_search('"doctrine/orm": "2.4.*"', $requiredLibraries);
-
-			unset($requiredLibraries[$position]);
-
-			$composer =
-'{
-	"description" : "The CodeIgniter framework",
-	"name" : "codeigniter/framework",
-	"license": "MIT",
-	"require": {' . "\n\t\t" . implode(',' . "\n\t\t", $requiredLibraries) . "\n\t" . '},
-	"require-dev": {' . "\n\t\t" . implode(',' . "\n\t\t", $requiredDevLibraries) . "\n\t" . '}
-}';
-
-			$file = fopen('composer.json', 'wb');
-
-			file_put_contents('composer.json', $composer);
-			fclose($file);
-		}
-
-		system('composer update');
-
 		$combustor = file_get_contents(VENDOR . 'rougin/combustor/bin/combustor.php');
 
 		$search = array(
-			'$application->add(new Combustor\Doctrine\RemoveCommand);',
-			'// $application->add(new Combustor\Doctrine\InstallCommand);'
+			'$application->add(new Combustor\Wildfire\RemoveCommand);',
+			'// $application->add(new Combustor\Wildfire\InstallCommand);'
 		);
 		$replace = array(
-			'// $application->add(new Combustor\Doctrine\RemoveCommand);',
-			'$application->add(new Combustor\Doctrine\InstallCommand);'
+			'// $application->add(new Combustor\Wildfire\RemoveCommand);',
+			'$application->add(new Combustor\Wildfire\InstallCommand);'
 		);
 
 		$combustor = str_replace($search, $replace, $combustor);
@@ -110,8 +85,8 @@ class RemoveCommand extends Command
 		file_put_contents(VENDOR . 'rougin/combustor/bin/combustor.php', $combustor);
 		fclose($file);
 
-		if (unlink(APPPATH . 'libraries/Doctrine.php')) {
-			$output->writeln('<info>The Doctrine ORM is now successfully removed!</info>');
+		if (unlink(APPPATH . 'libraries/Wildfire.php')) {
+			$output->writeln('<info>Wildfire is now successfully removed!</info>');
 		} else {
 			$output->writeln('<error>There\'s something wrong while removing. Please try again later.</error>');
 		}

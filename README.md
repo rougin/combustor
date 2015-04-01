@@ -1,3 +1,4 @@
+
 [![endorse](https://api.coderwall.com/rougin/endorsecount.png)](https://coderwall.com/rougin)
 
 # Combustor
@@ -12,9 +13,9 @@ Combustor is a code generator console application for [CodeIgniter](https://code
 
 	* Optionally, it can also generate a CRUD interface with [Bootstrap](http://www.getbootstrap.com) classes and tags.
 
-	* Generates specific code on the following fields:
+	* It can also generate specific code on the following fields:
 
-		* ```gender``` Generates a ```form_dropdown()``` with an array of male and female values
+		* ```gender``` Generates a ```form_dropdown()``` with an array of "male" and "female" values
 
 		* ```password``` Generates a new and confirm password fields on ```create.php```, while it also generates current, new, and confirm password fields on ```edit.php```
 
@@ -28,7 +29,7 @@ Combustor is a code generator console application for [CodeIgniter](https://code
 		<?php echo form_close(); ?>
 		```
 
-* Integrates [Doctrine](http://www.doctrine-project.org/) with ease or integrates a factory kind of pattern that is based from this [article](http://www.revillweb.com/tutorials/codeigniter-tutorial-learn-codeigniter-in-40-minutes/) to your current CodeIgniter project. Saving you from the hard work of accessing necessary data from the database.
+* Integrates [**Doctrine**](http://www.doctrine-project.org/) or **Wildfire**, my implementation of a design pattern that is based from this [article](http://www.revillweb.com/tutorials/codeigniter-tutorial-learn-codeigniter-in-40-minutes/), with ease to your current CodeIgniter project. Saving you from the hard work of accessing necessary data from the database.
 
 	* It also generates [encapsulation](http://en.wikipedia.org/wiki/Encapsulation_(object-oriented_programming)) to the models, for readbility and more [object-oriented](http://en.wikipedia.org/wiki/Object-oriented_programming) approach
 
@@ -64,13 +65,13 @@ Combustor is a code generator console application for [CodeIgniter](https://code
 
 	```$ php vendor/rougin/combustor/bin/combustor```
 
-3. Just select if you want to install the customized factory pattern, or the Doctrine ORM.
+3. Just select if you want to install Wildfire or Doctrine ORM.
 
-	**To install/remove the customized pattern:**
+	**To install/remove Wildfire:**
 	
-	```$ php vendor/bin/combustor install:factory```
+	```$ php vendor/bin/combustor install:wildfire```
 
-	```$ php vendor/bin/combustor remove:factory```
+	```$ php vendor/bin/combustor remove:wildfire```
 	
 	**To install/remove Doctrine ORM:**
 	
@@ -85,6 +86,8 @@ Combustor is a code generator console application for [CodeIgniter](https://code
 # Reminders
 
 * **VERY IMPORTANT**: Before generating the models, views, and controllers, please make sure that you **set up your database** (foreign keys, indexes, relationships, normalizations) properly in order to minimize the modifications after the codes has been generated. Also, generate the models, views, and controllers first to tables that are having **no relationship with other tables** in the database. *The reason for this is that Combustor will generate controllers, models, and views based on your specified database schema. If there's something wrong in your database, definitely Combustor will generated a bad codebase.*
+
+* **VERY IMPORTANT**: If you installed either ```Wildfire``` or ```Doctrine```, there's no need to specify it as option in the specified command. You can specify an option, either ```--wildfire``` or ```--doctrine```, if both components were installed in the specified library.
 
 * If you want to know more about Doctrine ORM and its functionalities, you can always read their documentation [here](doctrine-orm.readthedocs.org/en/latest/tutorials/getting-started.html) to understand their concepts.
 
@@ -102,11 +105,9 @@ Creates a new header and footer file
 
 #### Options:
 
-```--bootstrap``` Include the [Bootstrap](http://getbootstrap.com/) tags
+* ```--bootstrap``` - Include the [Bootstrap](http://getbootstrap.com/) tags
 
-#### ```create:controller [--keep] [--lowercase] name```
-
-**NOTE**: You must install the customized factory pattern to view this command.
+#### ```create:controller [--camel] [--doctrine] [--keep] [--lowercase] [--wildfire] name```
 
 #### Description:
 
@@ -114,17 +115,23 @@ Creates a new controller
 
 #### Arguments:
 
-```name``` Name of the controller
+* ```name``` - Name of the controller
 
 #### Options:
 
-```--keep``` Keeps the name to be used
+* ```--camel``` - Use the camel case naming convention for the accessor and mutators
 
-```--lowercase``` Keep the first character of the name to lowercase
+	* This option only works if Doctrine is installed
 
-#### ```create:model [--lowercase] name```
+* ```--doctrine``` - Generate a controller based from Doctrine
 
-**NOTE**: You must install the customized factory pattern to view this command.
+* ```--keep``` - Keeps the name to be used
+
+* ```--lowercase``` - Keep the first character of the name to lowercase
+
+* ```--wildfire``` - Generate a controller based from Wildfire
+
+#### ```create:model [--camel] [--doctrine] [--lowercase] [--wildfire] name```
 
 #### Description:
 
@@ -132,17 +139,23 @@ Creates a new model
 
 #### Arguments:
 
-```name``` Name of the model
+* ```name``` - Name of the model
 
 #### Options:
 
-```--keep``` Keeps the name to be used
+* ```--camel``` - Use the camel case naming convention for the accessor and mutators
 
-```--lowercase``` Keep the first character of the name to lowercase
+	* This option only works if Doctrine is installed
 
-#### ```create:view [--bootstrap] [--camel] [--keep] name```
+* ```--doctrine``` - Generate a model based from Doctrine
 
-**NOTE**: This command is also available when you do the command ```install:doctrine```.
+* ```--keep``` - Keeps the name to be used
+
+* ```--lowercase``` - Keep the first character of the name to lowercase
+
+* ```--wildfire``` - Generate a model based from Wildfire
+
+#### ```create:view [--bootstrap] [--camel] [--doctrine] [--keep] [--wildfire] name```
 
 #### Description:
 
@@ -150,21 +163,23 @@ Creates a new view
 
 #### Arguments:
 
-```name``` Name of the directory to be included in the ```views``` directory
-
-**NOTE**: This command is also available when you install Doctrine ORM.
+* ```name``` - Name of the directory to be included in the ```views``` directory
 
 #### Options:
 
-```--bootstrap``` Include the [Bootstrap](http://getbootstrap.com/) tags
+* ```--bootstrap``` - Include the [Bootstrap](http://getbootstrap.com/) tags
 
-```--camel``` Use the camel case naming convention for the accessor and mutators
+* ```--camel``` - Use the camel case naming convention for the accessor and mutators
 
-```--keep``` Keeps the name to be used
+	* This option only works if Doctrine is installed
+
+* ```--doctrine``` - Generate a model based from Doctrine
+
+* ```--keep``` - Keeps the name to be used
+
+* ```--wildfire``` - Generate a model based from Wildfire
 
 #### ```create:scaffold [--bootstrap] [--camel] [--keep] [--lowercase] name```
-
-**NOTE**: You must install the customized factory pattern to view this command.
 
 #### Description:
 
@@ -172,107 +187,57 @@ Creates a new controller, model, and view
 
 #### Arguments:
 
-```name``` Name of the directory to be included in the ```views``` directory
+* ```name``` - Name of the directory to be included in the ```views``` directory
 
 #### Options:
 
-```--bootstrap``` Include the [Bootstrap](http://getbootstrap.com/) tags
+* ```--bootstrap``` - Include the [Bootstrap](http://getbootstrap.com/) tags
 
-```--camel``` Use the camel case naming convention for the accessor and mutators
+* ```--camel``` - Use the camel case naming convention for the accessor and mutators
 
-```--keep``` Keeps the name to be used
+* ```--doctrine``` - Generate a model based from Doctrine
 
-```--lowercase``` Keep the first character of the name to lowercase
+* ```--keep``` - Keeps the name to be used
 
-#### ```doctrine:controller [--camel] [--keep] [--lowercase] name```
+* ```--lowercase``` - Keep the first character of the name to lowercase
 
-**NOTE**: You must install the Doctrine ORM to view this command.
+* ```--wildfire``` - Generate a model based from Wildfire
 
-#### Description:
+# Methods
 
-Creates a new Doctrine-based controller
-
-#### Arguments:
-
-```name``` Name of the controller
-
-#### Options:
-
-```--camel``` Use the camel case naming convention for the accessor and mutators
-
-```--keep``` Keeps the name to be used
-
-```--lowercase``` Keep the first character of the name to lowercase
-
-#### ```doctrine:model [--camel] [--lowercase] name```
-
-**NOTE**: You must install the Doctrine ORM to view this command.
+#### ```$this->wildfire->delete($table, $parameters = array());```
 
 #### Description:
 
-Creates a new Doctrine-based model
-
-#### Arguments:
-
-```name``` Name of the model
-
-#### Options:
-
-```--camel``` Use the camel case naming convention for the accessor and mutators
-
-```--lowercase``` Keep the first character of the name to lowercase
-
-#### ```doctrine:scaffold [--bootstrap] [--camel] [--keep] [--lowercase] name```
-
-**NOTE**: You must install the Doctrine ORM to view this command.
-
-#### Description:
-
-Creates a new Doctrine-based controller, Doctrine-based model and a view
-
-#### Arguments:
-
-```name``` Name of the directory to be included in the ```views``` directory
-
-#### Options:
-
-```--bootstrap``` Include the [Bootstrap](http://getbootstrap.com/) tags
-
-```--camel``` Use the camel case naming convention for the accessor and mutators
-
-```--keep``` Keeps the name to be used
-
-```--lowercase``` Keep the first character of the name to lowercase
-
-# ```Factory.php```'s methods
-
-The following functions/methods are only available when you install the customized factory pattern (```install:factory```).
-
-#### ```$this->factory->delete($table, $parameters = array());```
-
-#### Description:
+**NOTE**: This method in only available in Wildfire.
 
 Delete the specified data from storage
 
 #### Arguments:
 
-```$table``` Name of the specified table
+* ```$table``` - Name of the specified table
 
-```$delimiters``` Delimits the list of rows to be returned.
+* ```$delimiters``` - Delimits the list of rows to be returned
 
-#### ```$this->factory->find($table, $parameters = array());```
+#### ```$this->wildfire->find($table, $parameters = array());```
 
 #### Description:
+
+**NOTE**: This method in only available in Wildfire.
 
 Find the row from the specified ID or with the list of delimiters from the specified table
 
 #### Arguments:
 
-```$table``` Name of the specified table
+* ```$table``` - Name of the specified table
 
-```$delimiters``` Delimits the list of rows to be returned.
+* ```$delimiters``` - Delimits the list of rows to be returned
 
-#### ```$this->factory->get_all($table, $delimiters = array());```
+#### ```$this->wildfire->get_all($table, $delimiters = array());``` or
+
+#### ```$this->doctrine->get_all($table, $delimiters = array());```
+
+**NOTE**: This method in only available in Wildfire and Doctrine.
 
 #### Description:
 
@@ -280,20 +245,24 @@ Return all rows from the specified table
 
 #### Arguments:
 
-```$table``` Name of the specified table
+* ```$table``` - Name of the specified table
 
-```$delimiters``` Delimits the list of rows to be returned. The following required indexes are:
+* ```$delimiters``` - Delimits the list of rows to be returned
 
-	```$delimiters['keyword']``` Used for searching the data from the storage (this is related when you're implementing the search box)
+	* The following required indexes are:
 
-	```$delimiters['per_page']``` Displays the number of rows per page
+		* ```$delimiters['keyword']``` - Used for searching the data from the storage (this is used in the "search box" implementation)
 
-#### Returned results
+		* ```$delimiters['per_page']``` - Displays the number of rows per page
 
-You can also specify the returned values of ```get_all()```:
+* Returned values for ```get_all()```:
 
-```$this->factory->get_all()->as_dropdown()``` Returns the list of rows in a ```form_dropdown()``` format
+	* ```->as_dropdown($description)``` - Returns the list of rows in a ```form_dropdown()``` format
 
-```$this->factory->get_all()->result()``` Returns the list of rows from the storage
+		* ```$description``` - The field to be display in the dropdown
 
-```$this->factory->get_all()->total_rows()``` Returns the number of rows from the result
+			* The default value is ```description```
+
+	* ```->result()``` - Returns the list of rows from the storage
+
+	* ```->total_rows()``` - Returns the number of rows from the result

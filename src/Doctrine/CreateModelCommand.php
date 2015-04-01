@@ -11,67 +11,25 @@ use Symfony\Component\Console\Output\OutputInterface;
 class CreateModelCommand extends Command
 {
 
+	private $_input  = NULL;
+	private $_output = NULL;
+
 	/**
-	 * Get the data type of the specified column
+	 * Integrate InputInterface and OutputInterface to the specified command
 	 * 
-	 * @param  string $type
-	 * @return string
+	 * @param InputInterface  $input
+	 * @param OutputInterface $output
 	 */
-	protected function _getDataType($type)
+	public function __construct(InputInterface $input, OutputInterface $output)
 	{
-		if (strpos($type, 'array') !== FALSE) $type = 'array';
-		elseif (strpos($type, 'bigint') !== FALSE) $type = 'bigint';
-		elseif (strpos($type, 'blob') !== FALSE) $type = 'blob';
-		elseif (strpos($type, 'boolean') !== FALSE) $type = 'boolean';
-		elseif (strpos($type, 'datetime') !== FALSE || strpos($type, 'timestamp') !== FALSE) $type = 'datetime';
-		elseif (strpos($type, 'datetimetz') !== FALSE) $type = 'datetimetz';
-		elseif (strpos($type, 'date') !== FALSE) $type = 'date';
-		elseif (strpos($type, 'decimal') !== FALSE || strpos($type, 'double') !== FALSE) $type = 'decimal';
-		elseif (strpos($type, 'float') !== FALSE) $type = 'float';
-		elseif (strpos($type, 'guid') !== FALSE) $type = 'guid';
-		elseif (strpos($type, 'int') !== FALSE) $type = 'integer';
-		elseif (strpos($type, 'json_array') !== FALSE) $type = 'json_array';
-		elseif (strpos($type, 'object') !== FALSE) $type = 'object';
-		elseif (strpos($type, 'simple_array') !== FALSE) $type = 'simple_array';
-		elseif (strpos($type, 'smallint') !== FALSE) $type = 'smallint';
-		elseif (strpos($type, 'text') !== FALSE) $type = 'text';
-		elseif (strpos($type, 'time') !== FALSE) $type = 'time';
-		elseif (strpos($type, 'varchar') !== FALSE) $type = 'string';
-
-		return $type;
-	}
-
-	/**
-	 * Set the configurations of the specified command
-	 */
-	protected function configure()
-	{
-		$this->setName('doctrine:model')
-			->setDescription('Create a new Doctrine-based model')
-			->addArgument(
-				'name',
-				InputArgument::REQUIRED,
-				'Name of the model'
-			)->addOption(
-				'camel',
-				NULL,
-				InputOption::VALUE_NONE,
-				'Use the camel case naming convention for the accessor and mutators'
-			)->addOption(
-				'lowercase',
-				NULL,
-				InputOption::VALUE_NONE,
-				'Keep the first character of the name to lowercase'
-			);
+		$this->_input  = $input;
+		$this->_output = $output;
 	}
 
 	/**
 	 * Execute the command
-	 * 
-	 * @param  InputInterface  $input
-	 * @param  OutputInterface $output
 	 */
-	protected function execute(InputInterface $input, OutputInterface $output)
+	public function execute()
 	{
 		$accessors       = NULL;
 		$columns         = NULL;
@@ -83,22 +41,15 @@ class CreateModelCommand extends Command
 		$keywordsCounter = NULL;
 		$mutators        = NULL;
 		$mutatorsCounter = 0;
-		$name            = Inflect::singularize($input->getArgument('name'));
-		$primaryKey      = NULL;
-
-		$repository         = $name . '_repository';
-		$singularRepository = ($input->getOption('camel')) ? Inflect::camelize($repository) : Inflect::underscore($repository);
+		$name            = Inflect::singularize($this->_input->getArgument('name'));
 
 		$selectColumns = array('name', 'description', 'label');
 
 		/**
 		 * Get the model template
 		 */
-		
-		$slash = (strpos(PHP_OS, 'WIN') !== FALSE) ? '\\' : '/';
-		$doctrineDirectory = str_replace($slash . 'Doctrine', '', __DIR__);
 
-		$model = file_get_contents($doctrineDirectory . '/Templates/Doctrine/Model.txt');
+		$model = file_get_contents(__DIR__ . '/Templates/Model.txt');
 
 		/**
 		 * Get the columns from the specified name
@@ -110,7 +61,7 @@ class CreateModelCommand extends Command
 		unset($db['default']['dbdriver']);
 
 		$describe = new Describe($db['default']);
-		$tableInformation = $describe->getInformationFromTable($input->getArgument('name'));
+		$tableInformation = $describe->getInformationFromTable($this->_input->getArgument('name'));
 
 		foreach ($tableInformation as $row) {
 			$accessors .= ($counter != 0) ? '	' : NULL;
@@ -174,26 +125,14 @@ class CreateModelCommand extends Command
 			 */
 
 			$methodName = 'get_' . $row->field;
-			$methodName = ($input->getOption('camel')) ? Inflect::camelize($methodName) : Inflect::underscore($methodName);
+			$methodName = ($this->_input->getOption('camel')) ? Inflect::camelize($methodName) : Inflect::underscore($methodName);
 			
-			$primaryKey = ($row->key == 'PRI') ? $methodName : $primaryKey;
-			
-			$accessor = file_get_contents($doctrineDirectory . '/Templates/Doctrine/Miscellaneous/Accessor.txt');
+			$accessor = file_get_contents(__DIR__ . '/Templates/Miscellaneous/Accessor.txt');
 			
 			$search  = array('[field]', '[type]', '[method]');
 			$replace = array($row->field, $type, $methodName);
 
 			$accessors .= str_replace($search, $replace, $accessor) . "\n\n";
-
-			/**
-			 * The column to be displayed in the select() public method
-			 */
-
-			if (in_array($row->field, $selectColumns)) {
-				$model = str_replace('/* Column to be displayed in the dropdown */', $methodName . '()', $model);
-			} else {
-				$model = str_replace('/* Column to be displayed in the dropdown */', '[primaryKey]()', $model);
-			}
 
 			/**
 			 * Generate the mutators
@@ -204,11 +143,11 @@ class CreateModelCommand extends Command
 				$classVariable = ($row->key == 'MUL') ? '\\' . ucfirst($row->referencedTable) . ' ' : NULL;
 				
 				$methodName = 'set_' . $row->field;
-				$methodName = ($input->getOption('camel')) ? Inflect::camelize($methodName) : Inflect::underscore($methodName);
+				$methodName = ($this->_input->getOption('camel')) ? Inflect::camelize($methodName) : Inflect::underscore($methodName);
 
 				$nullable = ($row->isNull) ? ' = NULL' : NULL;
 
-				$mutator = file_get_contents($doctrineDirectory . '/Templates/Doctrine/Miscellaneous/Mutator.txt');
+				$mutator = file_get_contents(__DIR__ . '/Templates/Miscellaneous/Mutator.txt');
 
 				if (in_array($this->_getDataType($row->type), $dataTypes)) {
 					$mutator = str_replace('$this->[field] = $[field];', '$this->[field] = new \DateTime($[field]);', $mutator);
@@ -230,30 +169,22 @@ class CreateModelCommand extends Command
 		 */
 
 		$search = array(
-			'[singularRepository]',
 			'[indexes]',
 			'[columns]',
-			'[keywords]',
 			'[accessors]',
 			'[mutators]',
-			'[primaryKey]',
-			'[plural]',
 			'[singular]',
 			'[firstLetter]',
 			'[model]'
 		);
 
 		$replace = array(
-			$singularRepository,
 			rtrim(substr($indexes, 0, -2)),
 			rtrim($columns),
-			rtrim(substr($keywords, 0, -2)),
 			rtrim($accessors),
 			rtrim($mutators),
-			$primaryKey,
-			Inflect::pluralize($input->getArgument('name')),
 			$name,
-			substr($input->getArgument('name'), 0, 1),
+			substr($this->_input->getArgument('name'), 0, 1),
 			ucfirst($name)
 		);
 
@@ -263,12 +194,12 @@ class CreateModelCommand extends Command
 		 * Create a new file and insert the generated template
 		 */
 
-		$modelFile = ($input->getOption('lowercase')) ? strtolower($name) : ucfirst($name);
+		$modelFile = ($this->_input->getOption('lowercase')) ? strtolower($name) : ucfirst($name);
 
 		$filename = APPPATH . 'models/' . $modelFile . '.php';
 
 		if (file_exists($filename)) {
-			$output->writeln('<error>The ' . $name . ' model already exists!</error>');
+			$this->_output->writeln('<error>The ' . $name . ' model already exists!</error>');
 			
 			exit();
 		}
@@ -276,7 +207,37 @@ class CreateModelCommand extends Command
 		$file = fopen($filename, 'wb');
 		file_put_contents($filename, $model);
 
-		$output->writeln('<info>The model "' . $name . '" has been created successfully!</info>');
+		$this->_output->writeln('<info>The model "' . $name . '" has been created successfully!</info>');
+	}
+
+	/**
+	 * Get the data type of the specified column
+	 * 
+	 * @param  string $type
+	 * @return string
+	 */
+	private function _getDataType($type)
+	{
+		if (strpos($type, 'array') !== FALSE) $type = 'array';
+		elseif (strpos($type, 'bigint') !== FALSE) $type = 'bigint';
+		elseif (strpos($type, 'blob') !== FALSE) $type = 'blob';
+		elseif (strpos($type, 'boolean') !== FALSE) $type = 'boolean';
+		elseif (strpos($type, 'datetime') !== FALSE || strpos($type, 'timestamp') !== FALSE) $type = 'datetime';
+		elseif (strpos($type, 'datetimetz') !== FALSE) $type = 'datetimetz';
+		elseif (strpos($type, 'date') !== FALSE) $type = 'date';
+		elseif (strpos($type, 'decimal') !== FALSE || strpos($type, 'double') !== FALSE) $type = 'decimal';
+		elseif (strpos($type, 'float') !== FALSE) $type = 'float';
+		elseif (strpos($type, 'guid') !== FALSE) $type = 'guid';
+		elseif (strpos($type, 'int') !== FALSE) $type = 'integer';
+		elseif (strpos($type, 'json_array') !== FALSE) $type = 'json_array';
+		elseif (strpos($type, 'object') !== FALSE) $type = 'object';
+		elseif (strpos($type, 'simple_array') !== FALSE) $type = 'simple_array';
+		elseif (strpos($type, 'smallint') !== FALSE) $type = 'smallint';
+		elseif (strpos($type, 'text') !== FALSE) $type = 'text';
+		elseif (strpos($type, 'time') !== FALSE) $type = 'time';
+		elseif (strpos($type, 'varchar') !== FALSE) $type = 'string';
+
+		return $type;
 	}
 
 }

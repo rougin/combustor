@@ -23,6 +23,16 @@ class CreateControllerCommand extends Command
 				InputArgument::REQUIRED,
 				'Name of the controller'
 			)->addOption(
+				'camel',
+				NULL,
+				InputOption::VALUE_NONE,
+				'Use the camel case naming convention for the accessor and mutators'
+			)->addOption(
+				'doctrine',
+				NULL,
+				InputOption::VALUE_NONE,
+				'Generate a controller based on Doctrine'
+			)->addOption(
 				'keep',
 				NULL,
 				InputOption::VALUE_NONE,
@@ -32,6 +42,11 @@ class CreateControllerCommand extends Command
 				NULL,
 				InputOption::VALUE_NONE,
 				'Keep the first character of the name to lowercase'
+			)->addOption(
+				'wildfire',
+				NULL,
+				InputOption::VALUE_NONE,
+				'Generate a controller based on Wildfire'
 			);
 	}
 
@@ -43,178 +58,65 @@ class CreateControllerCommand extends Command
 	 */
 	protected function execute(InputInterface $input, OutputInterface $output)
 	{
+		$wildfireExists = FALSE;
+		$doctrineExists = FALSE;
 
-		/**
-		 * Set the name for the controller
-		 */
-
-		$name = ($input->getOption('keep')) ? $input->getArgument('name') : Inflect::pluralize($input->getArgument('name'));
-
-		/**
-		 * Get the controller template
-		 */
-		
-		$controller = file_get_contents(__DIR__ . '/Templates/Controller.txt');
-		
-		/**
-		 * Get the columns from the specified name
-		 */
-
-		require APPPATH . 'config/database.php';
-
-		$db['default']['driver'] = $db['default']['dbdriver'];
-		unset($db['default']['dbdriver']);
-
-		$describe = new Describe($db['default']);
-		$tableInformation = $describe->getInformationFromTable($input->getArgument('name'));
-
-		$models = '\'[singular]\'';
-
-		$columnsOnCreate         = NULL;
-		$columnsOnCreateCounter  = 0;
-		$columnsOnEdit           = NULL;
-		$columnsToValidate       = NULL;
-		$counter                 = 0;
-		$dropdownColumnsOnCreate = '$data = array();';
-		$dropdownColumnsOnEdit   = '$data[\'[singular]\'] = $this->factory->find(\'[singular]\', $id);';
-		$dropdowns               = 0;
-		$selectColumns           = array('name', 'description', 'label');
-
-		foreach ($tableInformation as $row) {
-			$methodName = 'set_' . strtolower($row->field);
-
-			if ($counter != 0) {
-				$columnsOnCreate   .= ($row->field != 'datetime_updated') ? '			' : NULL;
-				$columnsOnEdit     .= ($row->field != 'datetime_created') ? '			' : NULL;
-				$columnsToValidate .= ($row->field != 'password' && $row->field != 'datetime_created' && $row->field != 'datetime_updated' && ! $row->isNull) ? '			' : NULL;
+		if ( ! $input->getOption('doctrine') && ! $input->getOption('wildfire')) {
+			if (file_exists(APPPATH . 'libraries/Wildfire.php')) {
+				$wildfireExists = TRUE;
 			}
 
-			if ($row->extra == 'auto_increment') {
-				continue;
-			} elseif ($row->key == 'MUL') {
-				if (strpos($models, ",\n" . '			\'' . $row->referencedTable . '\'') === FALSE) {
-					$models .= ",\n" . '			\'' . $row->referencedTable . '\'';
-				}
+			if (file_exists(APPPATH . 'libraries/Doctrine.php')) {
+				$doctrineExists = TRUE;
+			}
 
-				$foreignTableInformation = $describe->getInformationFromTable($row->referencedTable);
-
-				$fieldDescription = $describe->getPrimaryKey($row->referencedTable);
-				foreach ($foreignTableInformation as $foreignRow) {
-					if ($foreignRow->key == 'MUL') {
-						if (strpos($models, ",\n" . '			\'' . $foreignRow->referencedTable . '\'') === FALSE) {
-							$models .= ",\n" . '			\'' . $foreignRow->referencedTable . '\'';
-						}
-					}
-
-					$fieldDescription = in_array($foreignRow->field, $selectColumns) ? $foreignRow->field : $fieldDescription;
-				}
-
-				$dropdownColumn = '$data[\'' . Inflect::pluralize($row->referencedTable) . '\'] = $this->factory->get_all(\'' . $row->referencedTable . '\')->as_dropdown(\'' . $fieldDescription . '\');';
-
-				$dropdownColumnsOnCreate .= "\n\t\t" . $dropdownColumn;
-				$dropdownColumnsOnEdit   .= "\n\t\t" . $dropdownColumn;
-
-				$columnsOnCreate .= '$' . $row->referencedTable . ' = $this->factory->find(\'' . $row->referencedTable . '\', $this->input->post(\'' . $row->field . '\'));' . "\n";
-				$columnsOnCreate .= '			$this->[singular]->' . $methodName . '($' . $row->referencedTable . ');' . "\n\n";
-
-				$columnsOnEdit .= '$' . $row->referencedTable . ' = $this->factory->find(\'' . $row->referencedTable . '\', $this->input->post(\'' . $row->field . '\'));' . "\n";
-				$columnsOnEdit .= '			$[singular]->' . $methodName . '($' . $row->referencedTable . ');' . "\n\n";
-			} elseif ($row->field == 'password') {
-				$columnsOnCreate .= "\n" . file_get_contents(__DIR__ . '/Templates/Miscellaneous/CheckCreatePassword.txt') . "\n\n";
-				$columnsOnEdit   .= "\n" . file_get_contents(__DIR__ . '/Templates/Miscellaneous/CheckEditPassword.txt') . "\n\n";
-
-				$columnsOnCreate = str_replace('[method]', $methodName, $columnsOnCreate);
-				$columnsOnEdit   = str_replace('[method]', $methodName, $columnsOnEdit);
+			if ($doctrineExists && $wildfireExists) {
+				$message = 'Please select --wildfire or --doctrine';
+				exit($output->writeln('<error>' . $message . '</error>'));
+			} else if ($doctrineExists) {
+				echo $this->_install_doctrine_controller($input, $output);
+			} else if ($wildfireExists) {
+				echo $this->_install_wildfire_controller($input, $output);
 			} else {
-				if ($row->field == 'datetime_created' || $row->field == 'datetime_updated') {
-					$column = '\'now\'';
-				} else {
-					$column = '$this->input->post(\'' . $row->field . '\')';
-				}
-
-				if ($row->field == 'gender') {
-					$dropdownColumn = '$data[\'' . Inflect::pluralize($row->field) . '\'] = array(\'male\' => \'Male\', \'female\' => \'Female\');';
-
-					$dropdownColumnsOnCreate .= "\n\t\t" . $dropdownColumn;
-					$dropdownColumnsOnEdit   .= "\n\t\t" . $dropdownColumn;
-				}
-
-				if ($row->field != 'datetime_updated') {
-					$columnsOnCreate .= '$this->[singular]->' . $methodName . '(' . $column . ');' . "\n";
-				}
-
-				if ($row->field != 'datetime_created') {
-					$columnsOnEdit .= '$[singular]->' . $methodName . '(' . $column . ');' . "\n";
-				}
-
+				$message = 'Please install Wildfire or Doctrine!';
+				exit($output->writeln('<error>' . $message . '</error>'));
 			}
-
-			if ($row->field != 'password' && $row->field != 'datetime_created' && $row->field != 'datetime_updated') {
-				if ( ! $row->isNull) {
-					$columnsToValidate .= '\'' . $row->field . '\' => \'' . strtolower(str_replace('_', ' ', $row->field)) . '\',' . "\n";
-				}
-			}
-
-			$counter++;
+		} else if ($input->getOption('doctrine')) {
+			echo $this->_install_doctrine_controller($input, $output);
+		} else if ($input->getOption('wildfire')) {
+			echo $this->_install_wildfire_controller($input, $output);
 		}
-
-		/**
-		 * Search and replace the following keywords from the template
-		 */
-
-		$search = array(
-			'[models]',
-			'[dropdownColumnsOnCreate]',
-			'[dropdownColumnsOnEdit]',
-			'[columnsOnCreate]',
-			'[columnsOnEdit]',
-			'[columnsToValidate]',
-			'[controller]',
-			'[controllerName]',
-			'[plural]',
-			'[pluralText]',
-			'[singular]',
-			'[singularText]'
-		);
-
-		$plural     = ($input->getOption('keep')) ? $name : Inflect::pluralize($name);
-		$pluralText = ($input->getOption('keep')) ? strtolower($name) : strtolower(Inflect::pluralize($name));
-
-		$replace = array(
-			rtrim($models),
-			rtrim($dropdownColumnsOnCreate),
-			rtrim($dropdownColumnsOnEdit),
-			rtrim($columnsOnCreate),
-			rtrim($columnsOnEdit),
-			substr($columnsToValidate, 0, -2),
-			ucfirst($name),
-			ucfirst(str_replace('_', ' ', $name)),
-			$plural,
-			$pluralText,
-			Inflect::singularize($name),
-			strtolower(Inflect::singularize($name))
-		);
-
-		$controller = str_replace($search, $replace, $controller);
-
-		/**
-		 * Create a new file and insert the generated template
-		 */
-
-		$controllerFile = ($input->getOption('lowercase')) ? strtolower($name) : ucfirst($name);
-
-		$filename = APPPATH . 'controllers/' . $controllerFile . '.php';
-
-		if (file_exists($filename)) {
-			$output->writeln('<error>The ' . $name . ' controller already exists!</error>');
-
-			exit();
-		}
-
-		$file = fopen($filename, 'wb');
-		file_put_contents($filename, $controller);
-
-		$output->writeln('<info>The controller "' . $name . '" has been created successfully!</info>');
 	}
-	
+
+	/**
+	 * Install a Doctrine-based controller
+	 * 
+	 * @param  InputInterface  $input
+	 * @param  OutputInterface $output
+	 * @return CreateControllerCommand
+	 */
+	private function _install_doctrine_controller(InputInterface $input, OutputInterface $output)
+	{
+		$command = new \Combustor\Doctrine\CreateControllerCommand($input, $output);
+		return $command->execute();
+	}
+
+	/**
+	 * Install a Wildfire-based controller
+	 * 
+	 * @param  InputInterface  $input
+	 * @param  OutputInterface $output
+	 * @return CreateControllerCommand
+	 */
+	private function _install_wildfire_controller(InputInterface $input, OutputInterface $output)
+	{
+		if ($input->getOption('camel')) {
+			$message = 'Wildfire does not support --camel!.';
+			exit($output->writeln('<error>' . $message . '</error>'));
+		}
+
+		$command = new \Combustor\Wildfire\CreateControllerCommand($input, $output);
+		return $command->execute();
+	}
+
 }

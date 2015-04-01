@@ -56,8 +56,8 @@ class InstallCommand extends Command
 
 		system('composer update');
 
-		$cli     = file_get_contents(VENDOR . 'rougin/combustor/src/Templates/Doctrine/Cli.txt');
-		$library = file_get_contents(VENDOR . 'rougin/combustor/src/Templates/Doctrine/Library.txt');
+		$cli     = file_get_contents(__DIR__ . '/Templates/Cli.txt');
+		$library = file_get_contents(__DIR__ . '/Templates/Library.txt');
 
 		/**
 		 * ---------------------------------------------------------------------------------------------
@@ -130,39 +130,21 @@ class InstallCommand extends Command
 
 		$combustor = file_get_contents(VENDOR . 'rougin/combustor/bin/combustor.php');
 
-		if (strpos($combustor, '// $application->add(new Combustor\Doctrine\CreateControllerCommand);') !== FALSE) {
-			$search = array(
-'// $application->add(new Combustor\Doctrine\CreateControllerCommand);
-// $application->add(new Combustor\Doctrine\CreateModelCommand);
-// $application->add(new Combustor\Doctrine\CreateScaffoldCommand);',
-				'// $application->add(new Combustor\Doctrine\RemoveCommand);',
-				'$application->add(new Combustor\Doctrine\InstallCommand);'
-			);
-			$replace = array(
-'$application->add(new Combustor\Doctrine\CreateControllerCommand);
-$application->add(new Combustor\Doctrine\CreateModelCommand);
-$application->add(new Combustor\Doctrine\CreateScaffoldCommand);',
-				'$application->add(new Combustor\Doctrine\RemoveCommand);',
-				'// $application->add(new Combustor\Doctrine\InstallCommand);'
-			);
+		$search = array(
+			'// $application->add(new Combustor\Doctrine\RemoveCommand);',
+			'$application->add(new Combustor\Doctrine\InstallCommand);'
+		);
+		$replace = array(
+			'$application->add(new Combustor\Doctrine\RemoveCommand);',
+			'// $application->add(new Combustor\Doctrine\InstallCommand);'
+		);
 
-			$combustor = str_replace($search, $replace, $combustor);
+		$combustor = str_replace($search, $replace, $combustor);
 
-			$createViewCommandExists = strpos($combustor, '// $application->add(new Combustor\CreateViewCommand);') !== FALSE;
-			$factoryIsNotInstalled   = ! file_exists(APPPATH . 'libraries/Factory.php');
+		$file = fopen(VENDOR . 'rougin/combustor/bin/combustor.php', 'wb');
 
-			if ($createViewCommandExists && $factoryIsNotInstalled) {
-				$search  = '// $application->add(new Combustor\CreateViewCommand);';
-				$replace = '$application->add(new Combustor\CreateViewCommand);';
-
-				$combustor = str_replace($search, $replace, $combustor);
-			}
-
-			$file = fopen(VENDOR . 'rougin/combustor/bin/combustor.php', 'wb');
-
-			file_put_contents(VENDOR . 'rougin/combustor/bin/combustor.php', $combustor);
-			fclose($file);
-		}
+		file_put_contents(VENDOR . 'rougin/combustor/bin/combustor.php', $combustor);
+		fclose($file);
 
 		$postInstallation = new PostInstallation();
 		$postInstallation->run();

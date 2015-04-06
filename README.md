@@ -97,7 +97,7 @@ Combustor is a code generator console application for [CodeIgniter](https://code
 
 The help for the following commands below are also available in the Combustor *command line interface* (CLI). Just type the command you want to get help and insert an option of ```--help``` (e.g ```create:controller --help```)
 
-#### ```create:layout [--bootstrap]```
+#### ```create:layout [options]```
 
 #### Description:
 
@@ -107,7 +107,7 @@ Creates a new header and footer file
 
 * ```--bootstrap``` - Include the [Bootstrap](http://getbootstrap.com/) tags
 
-#### ```create:controller [--camel] [--doctrine] [--keep] [--lowercase] [--wildfire] name```
+#### ```create:controller [options] name```
 
 #### Description:
 
@@ -131,7 +131,7 @@ Creates a new controller
 
 * ```--wildfire``` - Generate a controller based from Wildfire
 
-#### ```create:model [--camel] [--doctrine] [--lowercase] [--wildfire] name```
+#### ```create:model [options] name```
 
 #### Description:
 
@@ -155,7 +155,7 @@ Creates a new model
 
 * ```--wildfire``` - Generate a model based from Wildfire
 
-#### ```create:view [--bootstrap] [--camel] [--doctrine] [--keep] [--wildfire] name```
+#### ```create:view [options] name```
 
 #### Description:
 
@@ -179,7 +179,7 @@ Creates a new view
 
 * ```--wildfire``` - Generate a model based from Wildfire
 
-#### ```create:scaffold [--bootstrap] [--camel] [--keep] [--lowercase] name```
+#### ```create:scaffold [options] name```
 
 #### Description:
 

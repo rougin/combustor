@@ -1,4 +1,3 @@
-
 [![endorse](https://api.coderwall.com/rougin/endorsecount.png)](https://coderwall.com/rougin)
 
 # Combustor
@@ -82,16 +81,6 @@ Combustor is a code generator console application for [CodeIgniter](https://code
 4. Next, configure the database connectivity settings in ```application/config/database.php```.
 
 5. Lastly, create now an awesome web application!
-
-# Reminders
-
-* **VERY IMPORTANT**: Before generating the models, views, and controllers, please make sure that you **set up your database** (foreign keys, indexes, relationships, normalizations) properly in order to minimize the modifications after the codes has been generated. Also, generate the models, views, and controllers first to tables that are having **no relationship with other tables** in the database. *The reason for this is that Combustor will generate controllers, models, and views based on your specified database schema. If there's something wrong in your database, definitely Combustor will generated a bad codebase.*
-
-* **VERY IMPORTANT**: If you installed either ```Wildfire``` or ```Doctrine```, there's no need to specify it as option in the specified command. You can specify an option, either ```--wildfire``` or ```--doctrine```, if both components were installed in the specified library.
-
-* If you want to know more about Doctrine ORM and its functionalities, you can always read their documentation [here](doctrine-orm.readthedocs.org/en/latest/tutorials/getting-started.html) to understand their concepts.
-
-* Have you found a bug? Or do you want to contribute? Feel free to open an issue or create a pull request here! :+1:
 
 # Commands
 
@@ -266,3 +255,13 @@ Return all rows from the specified table
 	* ```->result()``` - Returns the list of rows from the storage
 
 	* ```->total_rows()``` - Returns the number of rows from the result
+
+# Reminders
+
+* **VERY IMPORTANT**: Before generating the models, views, and controllers, please make sure that you **set up your database** (foreign keys, indexes, relationships, normalizations) properly in order to minimize the modifications after the codes has been generated. Also, generate the models, views, and controllers first to tables that are having **no relationship with other tables** in the database. *The reason for this is that Combustor will generate controllers, models, and views based on your specified database schema. If there's something wrong in your database, definitely Combustor will generated a bad codebase.*
+
+* **VERY IMPORTANT**: If you installed either ```Wildfire``` or ```Doctrine```, there's no need to specify it as option in the specified command. You can specify an option, either ```--wildfire``` or ```--doctrine```, if both components were installed in the specified library.
+
+* If you want to know more about Doctrine ORM and its functionalities, you can always read their documentation [here](doctrine-orm.readthedocs.org/en/latest/tutorials/getting-started.html) to understand their concepts.
+
+* Have you found a bug? Or do you want to contribute? Feel free to open an issue or create a pull request here! :+1:

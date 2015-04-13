@@ -14,9 +14,9 @@ Combustor is a code generator console application for [CodeIgniter](https://code
 
 	* It can also generate specific code on the following fields:
 
-		* ```gender``` Generates a ```form_dropdown()``` with an array of "male" and "female" values
+		* ```gender``` - Generates a ```form_dropdown()``` with an array of "male" and "female" values
 
-		* ```password``` Generates a new and confirm password fields on ```create.php```, while it also generates current, new, and confirm password fields on ```edit.php```
+		* ```password``` - Generates a new and confirm password fields on ```create.php```, while it also generates current, new, and confirm password fields on ```edit.php```
 
 	* Searching data within the table is also integrated. To enable it, just include the following code:
 		

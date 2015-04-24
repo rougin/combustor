@@ -22,7 +22,7 @@
 						[rows]
 						<td>
 							<a class="fa fa-edit fa-2x" href="<?php echo base_url('[plural]/edit/' . $[singular]->[primaryKey]()); ?>"></a>
-							<a class="fa fa-close fa-2x" href="<?php echo base_url('[plural]/delete/' . $[singular]->[primaryKey]()); ?>"></a>
+							<a class="fa fa-trash fa-2x" href="<?php echo base_url('[plural]/delete/' . $[singular]->[primaryKey]()); ?>"></a>
 						</td>
 					</tr>
 				<?php endforeach; ?>

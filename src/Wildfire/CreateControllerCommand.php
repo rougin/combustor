@@ -27,6 +27,8 @@ class CreateControllerCommand
 
 	/**
 	 * Execute the command
+	 *
+	 * @return int
 	 */
 	public function execute()
 	{
@@ -34,7 +36,13 @@ class CreateControllerCommand
 		 * Set the name for the controller
 		 */
 
-		$name = ($this->_input->getOption('keep')) ? $this->_input->getArgument('name') : Inflect::pluralize($this->_input->getArgument('name'));
+		if ($this->_input->getOption('keep')) {
+			$name = $this->_input->getArgument('name');
+		} else {
+			$name = Inflect::pluralize($this->_input->getArgument('name'));
+		}
+
+		$plural = ($this->_input->getOption('keep')) ? $name : Inflect::pluralize($name);
 
 		/**
 		 * Get the controller template
@@ -54,8 +62,6 @@ class CreateControllerCommand
 		$describe = new Describe($db['default']);
 		$tableInformation = $describe->getInformationFromTable($this->_input->getArgument('name'));
 
-		$models = '\'[singular]\'';
-
 		$columnsOnCreate         = NULL;
 		$columnsOnCreateCounter  = 0;
 		$columnsOnEdit           = NULL;
@@ -64,23 +70,31 @@ class CreateControllerCommand
 		$dropdownColumnsOnCreate = '$data = array();';
 		$dropdownColumnsOnEdit   = '$data[\'[singular]\'] = $this->wildfire->find(\'[singular]\', $id);';
 		$dropdowns               = 0;
+		$models                  = '\'[singular]\'';
 		$selectColumns           = array('name', 'description', 'label');
 
 		foreach ($tableInformation as $row) {
+			if ($row->extra == 'auto_increment') {
+				continue;
+			}
+
 			$methodName = 'set_' . strtolower($row->field);
 
 			if ($counter != 0) {
-				$columnsOnCreate   .= ($row->field != 'datetime_updated') ? '			' : NULL;
-				$columnsOnEdit     .= ($row->field != 'datetime_created') ? '			' : NULL;
+				$columnsOnCreate   .= ($row->field != 'datetime_updated' && $row->key != 'MUL') ? '			' : NULL;
+				$columnsOnEdit     .= ($row->field != 'datetime_created' && $row->key != 'MUL') ? '			' : NULL;
 
 				if ($row->field != 'password' && $row->field != 'datetime_created' && $row->field != 'datetime_updated' && ! $row->isNull) {
 					$columnsToValidate .= '			';
 				}
+
+				if ($tableInformation[$counter + 1]->key == 'MUL' && $tableInformation[$counter]->key != 'MUL') {
+					$columnsOnCreate .= "\n";
+					$columnsOnEdit   .= "\n";
+				}
 			}
 
-			if ($row->extra == 'auto_increment') {
-				continue;
-			} elseif ($row->key == 'MUL') {
+			if ($row->key == 'MUL') {
 				if (strpos($models, ",\n" . '			\'' . $row->referencedTable . '\'') === FALSE) {
 					$models .= ",\n" . '			\'' . $row->referencedTable . '\'';
 				}
@@ -103,12 +117,17 @@ class CreateControllerCommand
 				$dropdownColumnsOnCreate .= "\n\t\t" . $dropdownColumn;
 				$dropdownColumnsOnEdit   .= "\n\t\t" . $dropdownColumn;
 
+				if ($counter != 0) {
+					$columnsOnCreate .= "\t\t\t";
+					$columnsOnEdit   .= "\t\t\t";
+				}
+
 				$columnsOnCreate .= '$' . $row->referencedTable . ' = $this->wildfire->find(\'' . $row->referencedTable . '\', $this->input->post(\'' . $row->field . '\'));' . "\n";
 				$columnsOnCreate .= '			$this->[singular]->' . $methodName . '($' . $row->referencedTable . ');' . "\n\n";
 
 				$columnsOnEdit .= '$' . $row->referencedTable . ' = $this->wildfire->find(\'' . $row->referencedTable . '\', $this->input->post(\'' . $row->field . '\'));' . "\n";
 				$columnsOnEdit .= '			$[singular]->' . $methodName . '($' . $row->referencedTable . ');' . "\n\n";
-			} elseif ($row->field == 'password') {
+			} else if ($row->field == 'password') {
 				$columnsOnCreate .= "\n" . file_get_contents(__DIR__ . '/../Templates/Miscellaneous/CheckCreatePassword.txt') . "\n\n";
 				$columnsOnEdit   .= "\n" . file_get_contents(__DIR__ . '/../Templates/Miscellaneous/CheckEditPassword.txt') . "\n\n";
 
@@ -137,13 +156,10 @@ class CreateControllerCommand
 				if ($row->field != 'datetime_created') {
 					$columnsOnEdit .= '$[singular]->' . $methodName . '(' . $column . ');' . "\n";
 				}
-
 			}
 
-			if ($row->field != 'password' && $row->field != 'datetime_created' && $row->field != 'datetime_updated') {
-				if ( ! $row->isNull) {
-					$columnsToValidate .= '\'' . $row->field . '\' => \'' . strtolower(str_replace('_', ' ', $row->field)) . '\',' . "\n";
-				}
+			if (! $row->isNull && $row->field != 'password' && $row->field != 'datetime_created' && $row->field != 'datetime_updated') {
+				$columnsToValidate .= '\'' . $row->field . '\' => \'' . strtolower(str_replace('_', ' ', $row->field)) . '\',' . "\n";
 			}
 
 			$counter++;
@@ -168,9 +184,6 @@ class CreateControllerCommand
 			'[singularText]'
 		);
 
-		$plural     = ($this->_input->getOption('keep')) ? $name : Inflect::pluralize($name);
-		$pluralText = ($this->_input->getOption('keep')) ? strtolower($name) : strtolower(Inflect::pluralize($name));
-
 		$replace = array(
 			rtrim($models),
 			rtrim($dropdownColumnsOnCreate),
@@ -181,7 +194,7 @@ class CreateControllerCommand
 			ucfirst($name),
 			ucfirst(str_replace('_', ' ', $name)),
 			$plural,
-			$pluralText,
+			strtolower($plural),
 			Inflect::singularize($name),
 			strtolower(Inflect::singularize($name))
 		);
@@ -196,16 +209,16 @@ class CreateControllerCommand
 
 		$filename = APPPATH . 'controllers/' . $controllerFile . '.php';
 
-		// if (file_exists($filename)) {
-		// 	$this->_output->writeln('<error>The ' . $name . ' controller already exists!</error>');
-
-		// 	exit();
-		// }
+		if (file_exists($filename)) {
+			$this->_output->writeln('<error>The ' . $name . ' controller already exists!</error>');
+			return 0;
+		}
 
 		$file = fopen($filename, 'wb');
 		file_put_contents($filename, $controller);
 
 		$this->_output->writeln('<info>The controller "' . $name . '" has been created successfully!</info>');
+		return 0;
 	}
-	
+
 }

@@ -226,8 +226,6 @@ Find the row from the specified ID or with the list of delimiters from the speci
 
 #### ```$this->doctrine->get_all($table, $delimiters = array());```
 
-**NOTE**: This method in only available in Wildfire and Doctrine.
-
 #### Description:
 
 Return all rows from the specified table
@@ -258,9 +256,9 @@ Return all rows from the specified table
 
 # Reminders
 
-* **VERY IMPORTANT**: Before generating the models, views, and controllers, please make sure that you **set up your database** (foreign keys, indexes, relationships, normalizations) properly in order to minimize the modifications after the codes has been generated. Also, generate the models, views, and controllers first to tables that are having **no relationship with other tables** in the database. *The reason for this is that Combustor will generate controllers, models, and views based on your specified database schema. If there's something wrong in your database, definitely Combustor will generated a bad codebase.*
+* If you installed either ```Wildfire``` or ```Doctrine```, there's no need to specify it as option in the specified command. You can specify an option, either ```--wildfire``` or ```--doctrine```, if both components were installed in the specified library.
 
-* **VERY IMPORTANT**: If you installed either ```Wildfire``` or ```Doctrine```, there's no need to specify it as option in the specified command. You can specify an option, either ```--wildfire``` or ```--doctrine```, if both components were installed in the specified library.
+* Before generating the models, views, and controllers, please make sure that you **set up your database** (foreign keys, indexes, relationships, normalizations) properly in order to minimize the modifications after the codes has been generated. Also, generate the models, views, and controllers first to tables that are having **no relationship with other tables** in the database. *The reason for this is that Combustor will generate controllers, models, and views based on your specified database schema. If there's something wrong in your database, definitely Combustor will generated a bad codebase.*
 
 * If you want to know more about Doctrine ORM and its functionalities, you can always read their documentation [here](doctrine-orm.readthedocs.org/en/latest/tutorials/getting-started.html) to understand their concepts.
 

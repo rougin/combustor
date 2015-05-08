@@ -70,17 +70,15 @@ class CreateLayoutCommand extends Command
 
 		if ( ! @mkdir($filepath, 0777, TRUE)) {
 			$output->writeln('<error>The layout directory already exists!</error>');
+		} else {
+			$headerFile = fopen($filepath . 'header.php', 'wb');
+			$footerFile = fopen($filepath . 'footer.php', 'wb');
 
-			exit();
+			file_put_contents($filepath . 'header.php', $header);
+			file_put_contents($filepath . 'footer.php', $footer);
+
+			$output->writeln('<info>The layout folder has been created successfully!</info>');
 		}
-
-		$headerFile = fopen($filepath . 'header.php', 'wb');
-		$footerFile = fopen($filepath . 'footer.php', 'wb');
-
-		file_put_contents($filepath . 'header.php', $header);
-		file_put_contents($filepath . 'footer.php', $footer);
-
-		$output->writeln('<info>The layout folder has been created successfully!</info>');
 	}
 
 }

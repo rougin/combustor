@@ -40,7 +40,7 @@ class CreateLayoutCommand extends Command
 		$footer = file_get_contents(__DIR__ . '/Templates/Views/Layout/Footer.txt');
 
 		$bootstrapContainer = NULL;
-		$styleSheets = '<link href="//maxcdn.bootstrapcdn.com/font-awesome/4.2.0/css/font-awesome.min.css" rel="stylesheet">';
+		$styleSheets = '<link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/font-awesome/4.2.0/css/font-awesome.min.css">';
 		$scripts = '</div>';
 
 		if ($input->getOption('bootstrap')) {

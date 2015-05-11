@@ -69,17 +69,17 @@ class CreateModelCommand extends Command
 				$message = 'Please select --wildfire or --doctrine';
 				exit($output->writeln('<error>' . $message . '</error>'));
 			} else if ($doctrineExists) {
-				echo $this->_install_doctrine_model($input, $output);
+				$this->_install_doctrine_model($input, $output);
 			} else if ($wildfireExists) {
-				echo $this->_install_wildfire_model($input, $output);
+				$this->_install_wildfire_model($input, $output);
 			} else {
 				$message = 'Please install Wildfire or Doctrine!';
 				exit($output->writeln('<error>' . $message . '</error>'));
 			}
 		} else if ($input->getOption('doctrine')) {
-			echo $this->_install_doctrine_model($input, $output);
+			$this->_install_doctrine_model($input, $output);
 		} else if ($input->getOption('wildfire')) {
-			echo $this->_install_wildfire_model($input, $output);
+			$this->_install_wildfire_model($input, $output);
 		}
 	}
 

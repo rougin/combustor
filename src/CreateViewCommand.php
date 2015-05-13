@@ -110,101 +110,102 @@ class CreateViewCommand extends Command
 			$fieldsOnShow   .= ($counter != 0 && $row->field != 'password') ? '	' : NULL;
 			$rows           .= ($counter != 0 && $row->field != 'password') ? '						' : NULL;
 
-			if ($row->field != 'password') {
-				$columns .= '<th>' . str_replace(' Id', '', Inflect::humanize($row->field)) . '</th>' . "\n";
-
-				$extension = NULL;
-				if (strpos($row->field, 'date') !== FALSE || strpos($row->field, 'time') !== FALSE) {
-					$extension = '->format(\'F d, Y\')';
-				} elseif ($row->key == 'MUL') {
-					$tableColumns = $describe->getInformationFromTable($row->referencedTable);
-
-					$tablePrimaryKey = NULL;
-					foreach ($tableColumns as $column) {
-						if (in_array($column->field, $dropdownColumnLabels) || $column->key == 'PRI') {
-							$tablePrimaryKey = 'get_' . $column->field;
-
-							if ($input->getOption('camel')) {
-								$tablePrimaryKey = Inflect::camelize($tablePrimaryKey);
-							} else {
-								$tablePrimaryKey = Inflect::underscore($tablePrimaryKey);
-							}
-						}
-					}
-
-					$extension = '->' . $tablePrimaryKey . '()';
-				}
-
-				$rows .= '<td><?php echo $[singular]->' . $methodName . '()' . $extension . '; ?></td>' . "\n";
-
-				if ($input->getOption('bootstrap')) {
-					$fieldsOnCreate .= '<?php if (form_error(\'' . $row->field . '\')): ?>' . "\n";
-					$fieldsOnCreate .= '			<div class="form-group has-error">' . "\n";
-					$fieldsOnCreate .= '		<?php else: ?>' . "\n";
-					$fieldsOnCreate .= '			<div class="form-group">' . "\n";
-					$fieldsOnCreate .= '		<?php endif; ?>' . "\n";
-				} else {
-					$fieldsOnCreate .= '	<div class="">' . "\n";
-				}
-
-				$label = str_replace(' Id', '', Inflect::humanize($row->field));
-				$fieldsOnCreate .= '			<?php echo form_label(\'' . $label . '\', \'' . $row->field . '\', array(\'class\' => \'[bootstrapLabel]\')); ?>' . "\n";
-				$fieldsOnCreate .= '			<div class="[bootstrapFormColumn]">' . "\n";
-
-				if ($row->key == 'MUL') {
-					$data = Inflect::pluralize($row->referencedTable);
-
-					$fieldsOnCreate .= '				<?php echo form_dropdown(\'' . $row->field . '\', $' . $data . ', set_value(\'' . $row->field . '\'), \'class="[bootstrapFormControl]"' . $required . '\'); ?>' . "\n";
-					$tableColumns  = $describe->getInformationFromTable($row->referencedTable);
-
-					$tablePrimaryKey = NULL;
-					foreach ($tableColumns as $column) {
-						if ($column->key == 'PRI') {
-							$tablePrimaryKey = 'get_' . $column->field;
-
-							if ($input->getOption('camel')) {
-								$tablePrimaryKey = Inflect::camelize($tablePrimaryKey);
-							} else {
-								$tablePrimaryKey = Inflect::underscore($tablePrimaryKey);
-							}
-						}
-					}
-
-					$value = '$[singular]->' . $methodName . '()->' . $tablePrimaryKey . '()';
-				} else if ($row->field == 'gender') {
-					$fieldsOnCreate .= '				<?php echo form_dropdown(\'' . $row->field . '\', $' . Inflect::pluralize($row->field) .', set_value(\'' . $row->field . '\'), \'class="[bootstrapFormControl]"' . $required . '\'); ?>' . "\n";
-				} else {
-					$fieldsOnCreate .= '				<?php echo form_input(\'' . $row->field . '\', set_value(\'' . $row->field . '\'), \'class="[bootstrapFormControl]"' . $required . '\'); ?>' . "\n";
-
-					$value = '$[singular]->' . $methodName . '()';
-				}
-
-				$fieldsOnCreate .= '				<?php echo form_error(\'' . $row->field . '\'); ?>' . "\n";
-				$fieldsOnCreate .= '			</div>' . "\n";
-				$fieldsOnCreate .= '		</div>' . "\n";
-
-				if (strpos($row->type, 'date') !== FALSE || strpos($row->type, 'time') !== FALSE) {
-					$format = NULL;
-
-					switch ($row->type) {
-						case 'datetime':
-							$format = 'Y-m-d H:i:s';
-							break;
-						case 'date':
-							$format = 'Y-m-d';
-							break;
-						case 'time':
-							$format = 'H:i:s';
-							break;
-					}
-
-					$value = '$[singular]->' . $methodName . '()->format(\'' . $format . '\')';
-				}
-
-				$fieldsOnShow .= str_replace(' Id', '', Inflect::humanize($row->field)) . ': <?php echo ' . $value . '; ?><br>' . "\n";
-			} else {
+			if ($row->field == 'password') {
 				$fieldsOnCreate .= file_get_contents(__DIR__ . '/Templates/Miscellaneous/CreatePassword.txt') . "\n";
+				continue;
 			}
+
+			$columns .= '<th>' . str_replace(' Id', '', Inflect::humanize($row->field)) . '</th>' . "\n";
+
+			$extension = NULL;
+			if (strpos($row->field, 'date') !== FALSE || strpos($row->field, 'time') !== FALSE) {
+				$extension = '->format(\'F d, Y\')';
+			} else if ($row->key == 'MUL') {
+				$tableColumns = $describe->getInformationFromTable($row->referencedTable);
+
+				$tablePrimaryKey = NULL;
+				foreach ($tableColumns as $column) {
+					if (in_array($column->field, $dropdownColumnLabels) || $column->key == 'PRI') {
+						$tablePrimaryKey = 'get_' . $column->field;
+
+						if ($input->getOption('camel')) {
+							$tablePrimaryKey = Inflect::camelize($tablePrimaryKey);
+						} else {
+							$tablePrimaryKey = Inflect::underscore($tablePrimaryKey);
+						}
+					}
+				}
+
+				$extension = '->' . $tablePrimaryKey . '()';
+			}
+
+			$rows .= '<td><?php echo $[singular]->' . $methodName . '()' . $extension . '; ?></td>' . "\n";
+
+			if ($input->getOption('bootstrap')) {
+				$fieldsOnCreate .= '<?php if (form_error(\'' . $row->field . '\')): ?>' . "\n";
+				$fieldsOnCreate .= '			<div class="form-group has-error">' . "\n";
+				$fieldsOnCreate .= '		<?php else: ?>' . "\n";
+				$fieldsOnCreate .= '			<div class="form-group">' . "\n";
+				$fieldsOnCreate .= '		<?php endif; ?>' . "\n";
+			} else {
+				$fieldsOnCreate .= '	<div class="">' . "\n";
+			}
+
+			$label = str_replace(' Id', '', Inflect::humanize($row->field));
+			$fieldsOnCreate .= '			<?php echo form_label(\'' . $label . '\', \'' . $row->field . '\', array(\'class\' => \'[bootstrapLabel]\')); ?>' . "\n";
+			$fieldsOnCreate .= '			<div class="[bootstrapFormColumn]">' . "\n";
+
+			if ($row->key == 'MUL') {
+				$data = Inflect::pluralize($row->referencedTable);
+
+				$fieldsOnCreate .= '				<?php echo form_dropdown(\'' . $row->field . '\', $' . $data . ', set_value(\'' . $row->field . '\'), \'class="[bootstrapFormControl]"' . $required . '\'); ?>' . "\n";
+				$tableColumns  = $describe->getInformationFromTable($row->referencedTable);
+
+				$tablePrimaryKey = NULL;
+				foreach ($tableColumns as $column) {
+					if ($column->key == 'PRI') {
+						$tablePrimaryKey = 'get_' . $column->field;
+
+						if ($input->getOption('camel')) {
+							$tablePrimaryKey = Inflect::camelize($tablePrimaryKey);
+						} else {
+							$tablePrimaryKey = Inflect::underscore($tablePrimaryKey);
+						}
+					}
+				}
+
+				$value = '$[singular]->' . $methodName . '()->' . $tablePrimaryKey . '()';
+			} else if ($row->field == 'gender') {
+				$fieldsOnCreate .= '				<?php echo form_dropdown(\'' . $row->field . '\', $' . Inflect::pluralize($row->field) .', set_value(\'' . $row->field . '\'), \'class="[bootstrapFormControl]"' . $required . '\'); ?>' . "\n";
+			} else {
+				$fieldsOnCreate .= '				<?php echo form_input(\'' . $row->field . '\', set_value(\'' . $row->field . '\'), \'class="[bootstrapFormControl]"' . $required . '\'); ?>' . "\n";
+
+				$value = '$[singular]->' . $methodName . '()';
+			}
+
+			$fieldsOnCreate .= '				<?php echo form_error(\'' . $row->field . '\'); ?>' . "\n";
+			$fieldsOnCreate .= '			</div>' . "\n";
+			$fieldsOnCreate .= '		</div>' . "\n";
+
+			if (strpos($row->type, 'date') !== FALSE || strpos($row->type, 'time') !== FALSE) {
+				$format = NULL;
+
+				switch ($row->type) {
+					case 'datetime':
+						$format = 'Y-m-d H:i:s';
+						break;
+					case 'date':
+						$format = 'Y-m-d';
+						break;
+					case 'time':
+						$format = 'H:i:s';
+						break;
+				}
+
+				$value = '$[singular]->' . $methodName . '()->format(\'' . $format . '\')';
+			}
+
+			$fieldsOnShow .= str_replace(' Id', '', Inflect::humanize($row->field)) . ': <?php echo ' . $value . '; ?><br>' . "\n";
 
 			$counter++;
 		}
@@ -269,7 +270,7 @@ class CreateViewCommand extends Command
 
 				$fieldsOnEdit  = str_replace($createPassword, '', $fieldsOnEdit);
 				$fieldsOnEdit .= file_get_contents(__DIR__ . '/Templates/Miscellaneous/EditPassword.txt') . "\n";
-			}			
+			}
 		}
 
 		$columns .= '					<th></th>' . "\n";
@@ -337,25 +338,25 @@ class CreateViewCommand extends Command
 
 		if ( ! @mkdir($filepath, 0777, TRUE)) {
 			$message = 'The ' . Inflect::pluralize($input->getArgument('name')) . ' views folder already exists!';
-			exit($output->writeln('<error>' . $message . '</error>'));
+			$output->writeln('<error>' . $message . '</error>');
+		} else {
+			/**
+			 * Create the files
+			 */
+
+			$createFile = fopen($filepath . 'create.php', 'wb');
+			$editFile   = fopen($filepath . 'edit.php', 'wb');
+			$indexFile  = fopen($filepath . 'index.php', 'wb');
+			$showFile   = fopen($filepath . 'show.php', 'wb');
+
+			file_put_contents($filepath . 'create.php', $create);
+			file_put_contents($filepath . 'edit.php', $edit);
+			file_put_contents($filepath . 'index.php', $index);
+			file_put_contents($filepath . 'show.php', $show);
+
+			$message = 'The views folder "' . Inflect::pluralize($input->getArgument('name')) . '" has been created successfully!';
+			$output->writeln('<info>' . $message . '</info>');
 		}
-
-		/**
-		 * Create the files
-		 */
-
-		$createFile = fopen($filepath . 'create.php', 'wb');
-		$editFile   = fopen($filepath . 'edit.php', 'wb');
-		$indexFile  = fopen($filepath . 'index.php', 'wb');
-		$showFile   = fopen($filepath . 'show.php', 'wb');
-
-		file_put_contents($filepath . 'create.php', $create);
-		file_put_contents($filepath . 'edit.php', $edit);
-		file_put_contents($filepath . 'index.php', $index);
-		file_put_contents($filepath . 'show.php', $show);
-
-		$message = 'The views folder "' . Inflect::pluralize($input->getArgument('name')) . '" has been created successfully!';
-		$output->writeln('<info>' . $message . '</info>');
 	}
 
 }

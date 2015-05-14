@@ -4,34 +4,6 @@
 
 Combustor is a code generator console application for [CodeIgniter](https://codeigniter.com/) in order to speed up the development of web applications.
 
-# Features
-
-* Generates a [CRUD](http://en.wikipedia.org/wiki/Create,_read,_update_and_delete) interface based on the specified table. Giving you time to focus more on the other parts of your awesome application.
-
-	* The generated is greatly based on [MVC](http://en.wikipedia.org/wiki/Model%E2%80%93view%E2%80%93controller) architectural pattern.
-
-	* Optionally, it can also generate a CRUD interface with [Bootstrap](http://www.getbootstrap.com) classes and tags.
-
-	* It can also generate specific code on the following fields:
-
-		* ```gender``` - Generates a ```form_dropdown()``` with an array of "male" and "female" values
-
-		* ```password``` - Generates a new and confirm password fields on ```create.php```, while it also generates current, new, and confirm password fields on ```edit.php```
-
-	* Searching data within the table is also integrated. To enable it, just include the following code:
-		
-		```php
-		<?php echo form_open($this->uri->segment(1), array('method' => 'GET', 'class' => 'navbar-form navbar-left', 'role' => 'Search')); ?>
-			<div class="form-group">
-				<?php echo form_input('keyword', $this->input->get('keyword'), 'class="form-control" placeholder="Search"'); ?>
-			</div>
-		<?php echo form_close(); ?>
-		```
-
-* Integrates [**Doctrine**](http://www.doctrine-project.org/) or **Wildfire**, my implementation of a design pattern that is based from this [article](http://www.revillweb.com/tutorials/codeigniter-tutorial-learn-codeigniter-in-40-minutes/), with ease to your current CodeIgniter project. Saving you from the hard work of accessing necessary data from the database.
-
-	* It also generates [encapsulation](http://en.wikipedia.org/wiki/Encapsulation_(object-oriented_programming)) to the models, for readbility and more [object-oriented](http://en.wikipedia.org/wiki/Object-oriented_programming) approach
-
 # Installation
 
 1. Follow the instructions that can be found on [ignite.php](https://github.com/rougin/ignite.php). Or you can manually download the latest version of CodeIgniter from this [link](https://github.com/bcit-ci/CodeIgniter/archive/3.0rc2.zip) and extract it to your web server. Then add a ```composer.json``` file (or update if it already exists) on the directory you recently extracted:
@@ -78,9 +50,35 @@ Combustor is a code generator console application for [CodeIgniter](https://code
 
 	```$ php vendor/bin/combustor remove:doctrine```
 
-4. Next, configure the database connectivity settings in ```application/config/database.php```.
+4. Lastly, configure the database connectivity settings in ```application/config/database.php```.
 
-5. Lastly, create now an awesome web application!
+# Features
+
+* Generates a [CRUD](http://en.wikipedia.org/wiki/Create,_read,_update_and_delete) interface based on the specified table. Giving you time to focus more on the other parts of your awesome application.
+
+	* The generated is greatly based on [MVC](http://en.wikipedia.org/wiki/Model%E2%80%93view%E2%80%93controller) architectural pattern.
+
+	* Optionally, it can also generate a CRUD interface with [Bootstrap](http://www.getbootstrap.com) classes and tags.
+
+	* It can also generate specific code on the following fields:
+
+		* ```gender``` - Generates a ```form_dropdown()``` with an array of "male" and "female" values
+
+		* ```password``` - Generates a new and confirm password fields on ```create.php```, while it also generates current, new, and confirm password fields on ```edit.php```
+
+	* Searching data within the table is also integrated. To enable it, just include the following code:
+
+		```php
+		<?php echo form_open($this->uri->segment(1), array('method' => 'GET', 'class' => 'navbar-form navbar-left', 'role' => 'Search')); ?>
+			<div class="form-group">
+				<?php echo form_input('keyword', $this->input->get('keyword'), 'class="form-control" placeholder="Search"'); ?>
+			</div>
+		<?php echo form_close(); ?>
+		```
+
+* Integrates [**Doctrine**](http://www.doctrine-project.org/) or **Wildfire**, my implementation of a design pattern that is based from this [article](http://www.revillweb.com/tutorials/codeigniter-tutorial-learn-codeigniter-in-40-minutes/), with ease to your current CodeIgniter project. Saving you from the hard work of accessing necessary data from the database.
+
+	* It also generates [encapsulation](http://en.wikipedia.org/wiki/Encapsulation_(object-oriented_programming)) to the models, for readbility and more [object-oriented](http://en.wikipedia.org/wiki/Object-oriented_programming) approach
 
 # Commands
 

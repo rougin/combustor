@@ -14,7 +14,7 @@ Combustor is a code generator console application for [CodeIgniter](https://code
 		"name" : "codeigniter/framework",
 		"license": "MIT",
 		"require": {
-			"php": "5.2.4",
+			"php": ">=5.2.4",
 			"rougin/combustor": "*"
 		}
 	}

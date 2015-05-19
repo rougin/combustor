@@ -3,7 +3,8 @@
 	"description": "A code generator console application for CodeIgniter",
 	"keywords": ["codeigniter", "combustor", "php", "code", "generator"],
 	"require": {
-		"symfony/console": "~2.0",
+		"symfony/console": "*",
+		"oodle/inflect": "*",
 		"rougin/describe": "*"
 	},
 	"license": "MIT",

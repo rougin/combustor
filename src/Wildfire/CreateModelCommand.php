@@ -1,4 +1,4 @@
-<?php namespace Combustor\Wildfire;
+<?php namespace Rougin\Combustor\Wildfire;
 
 use Describe\Describe;
 use Combustor\Tools\Inflect;

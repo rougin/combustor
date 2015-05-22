@@ -1,4 +1,4 @@
-<?php namespace Combustor\Doctrine;
+<?php namespace Rougin\Combustor\Doctrine;
 
 use Combustor\Tools\PostInstallation;
 use Symfony\Component\Console\Command\Command;

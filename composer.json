@@ -17,7 +17,7 @@
 	"bin": ["bin/combustor", "bin/combustor.php"],
 	"autoload": {
 		"psr-4": {
-			"Combustor\\": "src/"
+			"Rougin\\Combustor\\": "src/"
 		}
 	}
 }

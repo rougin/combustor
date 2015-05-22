@@ -1,4 +1,4 @@
-<?php namespace Combustor\Tools;
+<?php namespace Rougin\Combustor\Tools;
 
 class PostInstallation {
 

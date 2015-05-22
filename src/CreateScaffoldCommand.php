@@ -1,4 +1,4 @@
-<?php namespace Combustor;
+<?php namespace Rougin\Combustor;
 
 use Describe\Describe;
 use Combustor\Tools\Inflect;

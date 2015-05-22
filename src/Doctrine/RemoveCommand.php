@@ -1,4 +1,4 @@
-<?php namespace Combustor\Doctrine;
+<?php namespace Rougin\Combustor\Doctrine;
 
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputArgument;

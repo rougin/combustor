@@ -1,4 +1,4 @@
-<?php namespace Combustor\Wildfire;
+<?php namespace Rougin\Combustor\Wildfire;
 
 use Combustor\Tools\PostInstallation;
 use Symfony\Component\Console\Command\Command;

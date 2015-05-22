@@ -1,4 +1,4 @@
-<?php namespace Combustor\Wildfire;
+<?php namespace Rougin\Combustor\Wildfire;
 
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputArgument;

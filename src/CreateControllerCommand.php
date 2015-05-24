@@ -97,7 +97,7 @@ class CreateControllerCommand extends Command
 	 */
 	private function _install_doctrine_controller(InputInterface $input, OutputInterface $output)
 	{
-		$command = new \Combustor\Doctrine\CreateControllerCommand($input, $output);
+		$command = new \Rougin\Combustor\Doctrine\CreateControllerCommand($input, $output);
 		return $command->execute();
 	}
 
@@ -115,7 +115,7 @@ class CreateControllerCommand extends Command
 			exit($output->writeln('<error>' . $message . '</error>'));
 		}
 
-		$command = new \Combustor\Wildfire\CreateControllerCommand($input, $output);
+		$command = new \Rougin\Combustor\Wildfire\CreateControllerCommand($input, $output);
 		return $command->execute();
 	}
 

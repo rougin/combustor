@@ -90,7 +90,7 @@ class CreateModelCommand extends Command
 	 */
 	private function _install_doctrine_model(InputInterface $input, OutputInterface $output)
 	{
-		$command = new \Combustor\Doctrine\CreateModelCommand($input, $output);
+		$command = new \Rougin\Combustor\Doctrine\CreateModelCommand($input, $output);
 		return $command->execute();
 	}
 
@@ -108,7 +108,7 @@ class CreateModelCommand extends Command
 			exit($output->writeln('<error>' . $message . '</error>'));
 		}
 
-		$command = new \Combustor\Wildfire\CreateModelCommand($input, $output);
+		$command = new \Rougin\Combustor\Wildfire\CreateModelCommand($input, $output);
 		return $command->execute();
 	}
 

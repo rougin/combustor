@@ -1,13 +1,63 @@
-<?php namespace Rougin\Combustor\Tools;
+<?php namespace Rougin\Combustor;
 
-class PostInstallation {
+class Tools
+{
 
 	/**
-	 * Run the installation
+	 * Get the data type of the specified column
 	 * 
-	 * @return array
+	 * @param  string $type
+	 * @return string
 	 */
-	public function run()
+	public static function getDataType($type)
+	{
+		if (strpos($type, 'array') !== FALSE) {
+			$type = 'array';
+		} else if (strpos($type, 'bigint') !== FALSE) {
+			$type = 'bigint';
+		} else if (strpos($type, 'blob') !== FALSE) {
+			$type = 'blob';
+		} else if (strpos($type, 'boolean') !== FALSE) {
+			$type = 'boolean';
+		} else if (strpos($type, 'datetime') !== FALSE || strpos($type, 'timestamp') !== FALSE) {
+			$type = 'datetime';
+		} else if (strpos($type, 'datetimetz') !== FALSE) {
+			$type = 'datetimetz';
+		} else if (strpos($type, 'date') !== FALSE) {
+			$type = 'date';
+		} else if (strpos($type, 'decimal') !== FALSE || strpos($type, 'double') !== FALSE) {
+			$type = 'decimal';
+		} else if (strpos($type, 'float') !== FALSE) {
+			$type = 'float';
+		} else if (strpos($type, 'guid') !== FALSE) {
+			$type = 'guid';
+		} else if (strpos($type, 'int') !== FALSE) {
+			$type = 'integer';
+		} else if (strpos($type, 'json_array') !== FALSE) {
+			$type = 'json_array';
+		} else if (strpos($type, 'object') !== FALSE) {
+			$type = 'object';
+		} else if (strpos($type, 'simple_array') !== FALSE) {
+			$type = 'simple_array';
+		} else if (strpos($type, 'smallint') !== FALSE) {
+			$type = 'smallint';
+		} else if (strpos($type, 'text') !== FALSE) {
+			$type = 'text';
+		} else if (strpos($type, 'time') !== FALSE) {
+			$type = 'time';
+		} else if (strpos($type, 'varchar') !== FALSE) {
+			$type = 'string';
+		}
+
+		return $type;
+	}
+
+	/**
+	 * Run the post installation process
+	 * 
+	 * @return integer
+	 */
+	public static function ignite(Event $event)
 	{
 		/**
 		 * Get the templates
@@ -18,6 +68,46 @@ class PostInstallation {
 		$htaccess                = file_get_contents(VENDOR . 'rougin/combustor/src/Templates/Miscellaneous/Htaccess.txt');
 		$myPagination            = file_get_contents(VENDOR . 'rougin/combustor/src/Templates/Miscellaneous/Pagination.txt');
 		$paginationConfiguration = file_get_contents(VENDOR . 'rougin/combustor/src/Templates/Miscellaneous/PaginationConfiguration.txt');
+
+		/**
+		 * Add the Composer either in autoload.php (in 3.0dev) or in the index.php
+		 */
+
+		if (strpos($codeigniterCore, 'define(\'CI_VERSION\', \'3.0') === FALSE)
+		{
+			$index = file_get_contents('index.php');
+			
+			if (strpos($index, 'include_once \'vendor/autoload.php\';') === FALSE)
+			{
+				$search   = ' * LOAD THE BOOTSTRAP FILE';
+				$replace  = ' * LOAD THE COMPOSER AUTOLOAD FILE' . "\n";
+				$replace .= ' * --------------------------------------------------------------------' . "\n";
+				$replace .= ' */' . "\n";
+				$replace .= 'include_once \'vendor/autoload.php\';' . "\n";
+				$replace .= '/*' . "\n";
+				$replace .= ' * --------------------------------------------------------------------' . "\n";
+				$replace .= ' * LOAD THE BOOTSTRAP FILE';
+
+				$index = str_replace($search, $replace, $index);
+
+				$file = fopen('index.php', 'wb');
+				file_put_contents('index.php', $index);
+				fclose($file);
+			}
+		}
+		else
+		{
+			$config = file_get_contents('application/config/config.php');
+
+			$search  = '$config[\'composer_autoload\'] = FALSE;';
+			$replace = '$config[\'composer_autoload\'] = \'vendor/autoload.php\';';
+
+			$config = str_replace($search, $replace, $config);
+
+			$file = fopen('application/config/config.php', 'wb');
+			file_put_contents('application/config/config.php', $config);
+			fclose($file);
+		}
 
 		/**
 		 * Load the url and file helpers and the session library
@@ -149,6 +239,21 @@ class PostInstallation {
 		}
 
 		return 0;
+	}
+
+	/**
+	 * Strip the table schema from the table name
+	 * 
+	 * @param  string $table
+	 * @return string
+	 */
+	public static function stripTableSchema($table)
+	{
+		if (strpos($table, '.') !== FALSE) {
+			return substr($table, strpos($table, '.') + 1);
+		}
+
+		return $table;
 	}
 
 }

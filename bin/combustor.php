@@ -11,6 +11,12 @@ define('BASEPATH', __DIR__ . '/../../../../system/');
 define('VENDOR',   __DIR__ . '/../../../../vendor/');
 
 /**
+ * Include the Inflector Helper Class from CodeIgniter
+ */
+
+require BASEPATH . 'helpers/inflector_helper.php';
+
+/**
  * Import the Symfony Console Component
  */
 

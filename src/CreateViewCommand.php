@@ -1,7 +1,7 @@
 <?php namespace Rougin\Combustor;
 
 use Describe\Describe;
-use Combustor\Tools\Inflect;
+use Rougin\Combustor\Tools;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;

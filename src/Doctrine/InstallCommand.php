@@ -1,6 +1,6 @@
 <?php namespace Rougin\Combustor\Doctrine;
 
-use Combustor\Tools\PostInstallation;
+use Rougin\Combustor\Tools;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
@@ -145,9 +145,6 @@ class InstallCommand extends Command
 
 		file_put_contents(VENDOR . 'rougin/combustor/bin/combustor.php', $combustor);
 		fclose($file);
-
-		$postInstallation = new PostInstallation();
-		$postInstallation->run();
 
 		$output->writeln('<info>The Doctrine ORM is now installed successfully!</info>');
 	}

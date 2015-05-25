@@ -4,7 +4,6 @@
 	"keywords": ["codeigniter", "combustor", "php", "code", "generator"],
 	"require": {
 		"symfony/console": "*",
-		"oodle/inflect": "*",
 		"rougin/describe": "*"
 	},
 	"license": "MIT",

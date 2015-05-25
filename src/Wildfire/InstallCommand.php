@@ -1,6 +1,6 @@
 <?php namespace Rougin\Combustor\Wildfire;
 
-use Combustor\Tools\PostInstallation;
+use Rougin\Combustor\Tools;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;

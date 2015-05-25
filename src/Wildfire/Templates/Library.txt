@@ -1,6 +1,7 @@
 <?php defined('BASEPATH') OR exit('No direct script access allowed');
 
 use Describe\Describe;
+use Rougin\Combustor\Tools;
 
 /**
  * Wildfire Class

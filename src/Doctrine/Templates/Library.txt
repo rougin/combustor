@@ -1,6 +1,5 @@
 <?php
 
-use Combustor\Tools\Inflect;
 use Describe\Describe;
 use Doctrine\Common\ClassLoader;
 use Doctrine\ORM\EntityManager;

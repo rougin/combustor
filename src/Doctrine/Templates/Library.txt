@@ -1,9 +1,9 @@
 <?php
 
-use Describe\Describe;
 use Doctrine\Common\ClassLoader;
 use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\Tools\Setup;
+use Rougin\Describe\Describe;
 
 /**
  * Doctrine wrapper library for CodeIgniter

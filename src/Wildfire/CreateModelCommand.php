@@ -1,8 +1,8 @@
 <?php namespace Rougin\Combustor\Wildfire;
 
-use Describe\Describe;
 use Symfony\Component\Console\Command\Command;
 use Rougin\Combustor\Tools;
+use Rougin\Describe\Describe;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;

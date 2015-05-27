@@ -41,7 +41,7 @@ class CreateModelCommand extends Command
 		$keywordsCounter = NULL;
 		$mutators        = NULL;
 		$mutatorsCounter = 0;
-		$name            = Inflect::singularize($this->_input->getArgument('name'));
+		$name            = singular($this->_input->getArgument('name'));
 
 		$selectColumns = array('name', 'description', 'label');
 
@@ -125,7 +125,7 @@ class CreateModelCommand extends Command
 			 */
 
 			$methodName = 'get_' . $row->field;
-			$methodName = ($this->_input->getOption('camel')) ? Inflect::camelize($methodName) : Inflect::underscore($methodName);
+			$methodName = ($this->_input->getOption('camel')) ? camelize($methodName) : underscore($methodName);
 			
 			$accessor = file_get_contents(__DIR__ . '/Templates/Miscellaneous/Accessor.txt');
 			
@@ -143,7 +143,7 @@ class CreateModelCommand extends Command
 				$classVariable = ($row->key == 'MUL') ? '\\' . ucfirst($row->referencedTable) . ' ' : NULL;
 				
 				$methodName = 'set_' . $row->field;
-				$methodName = ($this->_input->getOption('camel')) ? Inflect::camelize($methodName) : Inflect::underscore($methodName);
+				$methodName = ($this->_input->getOption('camel')) ? camelize($methodName) : underscore($methodName);
 
 				$nullable = ($row->isNull) ? ' = NULL' : NULL;
 

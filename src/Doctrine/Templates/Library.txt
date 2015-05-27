@@ -102,12 +102,12 @@ class Doctrine {
 
 		if ( ! method_exists($this->_table, $id))
 		{
-			$id = Inflect::camelize($id);
+			$id = camelize($id);
 		}
 
 		if ( ! method_exists($this->_table, $description))
 		{
-			$description = Inflect::camelize($description);
+			$description = camelize($description);
 		}
 
 		$result = $this->_query->getResult();

@@ -41,7 +41,7 @@ class CreateModelCommand
 		$keywordsCounter = NULL;
 		$mutators        = NULL;
 		$mutatorsCounter = 0;
-		$name            = Inflect::singularize($this->_input->getArgument('name'));
+		$name            = singular(Tools::stripTableSchema($this->_input->getArgument('name')));
 		$primaryKey      = NULL;
 
 		$foreignKeys        = NULL;
@@ -209,8 +209,8 @@ class CreateModelCommand
 			rtrim($accessors),
 			rtrim($mutators),
 			$primaryKey,
-			Inflect::pluralize($this->_input->getArgument('name')),
 			$name,
+			plural($this->_input->getArgument('name')),
 			substr($this->_input->getArgument('name'), 0, 1),
 			ucfirst($name),
 			ucwords(str_replace('_', ' ', $name))

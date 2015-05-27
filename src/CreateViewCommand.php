@@ -96,7 +96,7 @@ class CreateViewCommand extends Command
 
 		foreach ($tableInformation as $row) {
 			$methodName = 'get_' . $row->field;
-			$methodName = ($input->getOption('camel')) ? Inflect::camelize($methodName) : Inflect::underscore($methodName);
+			$methodName = ($input->getOption('camel')) ? camelize($methodName) : underscore($methodName);
 
 			$primaryKey = ($row->key == 'PRI') ? $methodName : $primaryKey;
 			$required   = ( ! $row->isNull) ? ' required' : NULL;
@@ -115,7 +115,7 @@ class CreateViewCommand extends Command
 				continue;
 			}
 
-			$columns .= '<th>' . str_replace(' Id', '', Inflect::humanize($row->field)) . '</th>' . "\n";
+			$columns .= '<th>' . str_replace(' Id', '', humanize($row->field)) . '</th>' . "\n";
 
 			$extension = NULL;
 			if (strpos($row->field, 'date') !== FALSE || strpos($row->field, 'time') !== FALSE) {
@@ -129,9 +129,9 @@ class CreateViewCommand extends Command
 						$tablePrimaryKey = 'get_' . $column->field;
 
 						if ($input->getOption('camel')) {
-							$tablePrimaryKey = Inflect::camelize($tablePrimaryKey);
+							$tablePrimaryKey = camelize($tablePrimaryKey);
 						} else {
-							$tablePrimaryKey = Inflect::underscore($tablePrimaryKey);
+							$tablePrimaryKey = underscore($tablePrimaryKey);
 						}
 					}
 				}
@@ -151,12 +151,12 @@ class CreateViewCommand extends Command
 				$fieldsOnCreate .= '	<div class="">' . "\n";
 			}
 
-			$label = str_replace(' Id', '', Inflect::humanize($row->field));
+			$label = str_replace(' Id', '', humanize($row->field));
 			$fieldsOnCreate .= '			<?php echo form_label(\'' . $label . '\', \'' . $row->field . '\', array(\'class\' => \'[bootstrapLabel]\')); ?>' . "\n";
 			$fieldsOnCreate .= '			<div class="[bootstrapFormColumn]">' . "\n";
 
 			if ($row->key == 'MUL') {
-				$data = Inflect::pluralize($row->referencedTable);
+				$data = plural($row->referencedTable);
 
 				$fieldsOnCreate .= '				<?php echo form_dropdown(\'' . $row->field . '\', $' . $data . ', set_value(\'' . $row->field . '\'), \'class="[bootstrapFormControl]"' . $required . '\'); ?>' . "\n";
 				$tableColumns  = $describe->getInformationFromTable($row->referencedTable);
@@ -167,16 +167,16 @@ class CreateViewCommand extends Command
 						$tablePrimaryKey = 'get_' . $column->field;
 
 						if ($input->getOption('camel')) {
-							$tablePrimaryKey = Inflect::camelize($tablePrimaryKey);
+							$tablePrimaryKey = camelize($tablePrimaryKey);
 						} else {
-							$tablePrimaryKey = Inflect::underscore($tablePrimaryKey);
+							$tablePrimaryKey = underscore($tablePrimaryKey);
 						}
 					}
 				}
 
 				$value = '$[singular]->' . $methodName . '()->' . $tablePrimaryKey . '()';
 			} else if ($row->field == 'gender') {
-				$fieldsOnCreate .= '				<?php echo form_dropdown(\'' . $row->field . '\', $' . Inflect::pluralize($row->field) .', set_value(\'' . $row->field . '\'), \'class="[bootstrapFormControl]"' . $required . '\'); ?>' . "\n";
+				$fieldsOnCreate .= '				<?php echo form_dropdown(\'' . $row->field . '\', $' . plural($row->field) .', set_value(\'' . $row->field . '\'), \'class="[bootstrapFormControl]"' . $required . '\'); ?>' . "\n";
 			} else {
 				$fieldsOnCreate .= '				<?php echo form_input(\'' . $row->field . '\', set_value(\'' . $row->field . '\'), \'class="[bootstrapFormControl]"' . $required . '\'); ?>' . "\n";
 
@@ -205,7 +205,7 @@ class CreateViewCommand extends Command
 				$value = '$[singular]->' . $methodName . '()->format(\'' . $format . '\')';
 			}
 
-			$fieldsOnShow .= str_replace(' Id', '', Inflect::humanize($row->field)) . ': <?php echo ' . $value . '; ?><br>' . "\n";
+			$fieldsOnShow .= str_replace(' Id', '', humanize($row->field)) . ': <?php echo ' . $value . '; ?><br>' . "\n";
 
 			$counter++;
 		}
@@ -218,7 +218,7 @@ class CreateViewCommand extends Command
 
 		foreach ($tableInformation as $row) {
 			$methodName = 'get_' . $row->field;
-			$methodName = ($input->getOption('camel')) ? Inflect::camelize($methodName) : Inflect::underscore($methodName);
+			$methodName = ($input->getOption('camel')) ? camelize($methodName) : underscore($methodName);
 
 			$value = '$[singular]->' . $methodName . '()';
 
@@ -231,9 +231,9 @@ class CreateViewCommand extends Command
 						$tablePrimaryKey = 'get_' . $column->field;
 
 						if ($input->getOption('camel')) {
-							$tablePrimaryKey = Inflect::camelize($tablePrimaryKey);
+							$tablePrimaryKey = camelize($tablePrimaryKey);
 						} else {
-							$tablePrimaryKey = Inflect::underscore($tablePrimaryKey);
+							$tablePrimaryKey = underscore($tablePrimaryKey);
 						}
 					}
 				}
@@ -296,7 +296,7 @@ class CreateViewCommand extends Command
 			'[pluralEntity]'
 		);
 
-		$plural = ($input->getOption('keep')) ? $input->getArgument('name') : Inflect::pluralize($input->getArgument('name'));
+		$plural = ($input->getOption('keep')) ? $input->getArgument('name') : plural($input->getArgument('name'));
 
 		$replace = array(
 			rtrim($fieldsOnShow),
@@ -312,11 +312,11 @@ class CreateViewCommand extends Command
 			$bootstrapTable,
 			$bootstrapLabel,
 			$bootstrapFormColumn,
-			ucwords(str_replace('_', ' ', Inflect::pluralize($input->getArgument('name')))),
-			Inflect::singularize($input->getArgument('name')),
-			$plural,
-			ucwords(str_replace('_', ' ', Inflect::singularize($input->getArgument('name')))),
-			str_replace('_', ' ', Inflect::pluralize($input->getArgument('name')))
+			ucwords(Tools::stripTableSchema(str_replace('_', ' ', plural($input->getArgument('name'))))),
+			Tools::stripTableSchema(singular($input->getArgument('name'))),
+			Tools::stripTableSchema($plural),
+			ucwords(Tools::stripTableSchema(str_replace('_', ' ', singular($input->getArgument('name'))))),
+			Tools::stripTableSchema(str_replace('_', ' ', plural($input->getArgument('name'))))
 		);
 
 		$create = str_replace($search, $replace, $create);
@@ -328,16 +328,17 @@ class CreateViewCommand extends Command
 		 * Create the directory first
 		 */
 
-		$viewDirectory = Inflect::pluralize($input->getArgument('name'));
+		$viewDirectory = plural($input->getArgument('name'));
 
 		if ($input->getOption('keep')) {
 			$viewDirectory = $input->getArgument('name');
 		}
 
+		$viewDirectory = Tools::stripTableSchema($viewDirectory);
 		$filepath = APPPATH . 'views/' . $viewDirectory . '/';
 
 		if ( ! @mkdir($filepath, 0777, TRUE)) {
-			$message = 'The ' . Inflect::pluralize($input->getArgument('name')) . ' views folder already exists!';
+			$message = 'The ' . plural($input->getArgument('name')) . ' views folder already exists!';
 			$output->writeln('<error>' . $message . '</error>');
 		} else {
 			/**
@@ -354,7 +355,7 @@ class CreateViewCommand extends Command
 			file_put_contents($filepath . 'index.php', $index);
 			file_put_contents($filepath . 'show.php', $show);
 
-			$message = 'The views folder "' . Inflect::pluralize($input->getArgument('name')) . '" has been created successfully!';
+			$message = 'The views folder "' . plural($input->getArgument('name')) . '" has been created successfully!';
 			$output->writeln('<info>' . $message . '</info>');
 		}
 	}

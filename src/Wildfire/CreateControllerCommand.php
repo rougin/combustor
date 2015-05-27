@@ -39,10 +39,10 @@ class CreateControllerCommand
 		if ($this->_input->getOption('keep')) {
 			$name = $this->_input->getArgument('name');
 		} else {
-			$name = Inflect::pluralize($this->_input->getArgument('name'));
+			$name = plural($this->_input->getArgument('name'));
 		}
 
-		$plural = ($this->_input->getOption('keep')) ? $name : Inflect::pluralize($name);
+		$plural = ($this->_input->getOption('keep')) ? $name : plural($name);
 
 		/**
 		 * Get the controller template
@@ -68,7 +68,7 @@ class CreateControllerCommand
 		$columnsToValidate       = NULL;
 		$counter                 = 0;
 		$dropdownColumnsOnCreate = '$data = array();';
-		$dropdownColumnsOnEdit   = '$data[\'[singular]\'] = $this->wildfire->find(\'[singular]\', $id);';
+		$dropdownColumnsOnEdit   = '$data[\'[singular]\'] = $this->wildfire->find(\'[table]\', $id);';
 		$dropdowns               = 0;
 		$models                  = '\'[singular]\'';
 		$selectColumns           = array('name', 'description', 'label');
@@ -79,6 +79,7 @@ class CreateControllerCommand
 			}
 
 			$methodName = 'set_' . strtolower($row->field);
+			$methodName = ($this->_input->getOption('camel')) ? camelize($methodName) : underscore($methodName);
 
 			if ($counter != 0) {
 				$columnsOnCreate   .= ($row->field != 'datetime_updated' && $row->key != 'MUL') ? '			' : NULL;
@@ -112,7 +113,7 @@ class CreateControllerCommand
 					$fieldDescription = in_array($foreignRow->field, $selectColumns) ? $foreignRow->field : $fieldDescription;
 				}
 
-				$dropdownColumn = '$data[\'' . Inflect::pluralize($row->referencedTable) . '\'] = $this->wildfire->get_all(\'' . $row->referencedTable . '\')->as_dropdown(\'' . $fieldDescription . '\');';
+				$dropdownColumn = '$data[\'' . plural(Tools::stripTableSchema($row->referencedTable)) . '\'] = $this->wildfire->get_all(\'' . $row->referencedTable . '\')->as_dropdown(\'' . $fieldDescription . '\');';
 
 				$dropdownColumnsOnCreate .= "\n\t\t" . $dropdownColumn;
 				$dropdownColumnsOnEdit   .= "\n\t\t" . $dropdownColumn;
@@ -143,7 +144,7 @@ class CreateControllerCommand
 				}
 
 				if ($row->field == 'gender') {
-					$dropdownColumn = '$data[\'' . Inflect::pluralize($row->field) . '\'] = array(\'male\' => \'Male\', \'female\' => \'Female\');';
+					$dropdownColumn = '$data[\'' . plural(Tools::stripTableSchema($row->field)) . '\'] = array(\'male\' => \'Male\', \'female\' => \'Female\');';
 
 					$dropdownColumnsOnCreate .= "\n\t\t" . $dropdownColumn;
 					$dropdownColumnsOnEdit   .= "\n\t\t" . $dropdownColumn;
@@ -181,7 +182,7 @@ class CreateControllerCommand
 			'[plural]',
 			'[pluralText]',
 			'[singular]',
-			'[singularText]'
+			'[singularText]',
 		);
 
 		$replace = array(
@@ -190,13 +191,13 @@ class CreateControllerCommand
 			rtrim($dropdownColumnsOnEdit),
 			rtrim($columnsOnCreate),
 			rtrim($columnsOnEdit),
-			substr($columnsToValidate, 0, -2),
-			ucfirst($name),
-			ucfirst(str_replace('_', ' ', $name)),
-			$plural,
+			rtrim($columnsToValidate),
+			ucfirst(Tools::stripTableSchema($name)),
+			ucfirst(Tools::stripTableSchema(str_replace('_', ' ', $name))),
+			Tools::stripTableSchema($plural),
 			strtolower($plural),
-			Inflect::singularize($name),
-			strtolower(Inflect::singularize($name))
+			Tools::stripTableSchema(singular($name)),
+			strtolower(humanize($name)),
 		);
 
 		$controller = str_replace($search, $replace, $controller);

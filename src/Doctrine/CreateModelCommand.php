@@ -140,7 +140,7 @@ class CreateModelCommand extends Command
 
 			if ($row->extra != 'auto_increment') {
 				$class         = '\\' . ucfirst($name);
-				$classVariable = ($row->key == 'MUL') ? '\\' . ucfirst($row->referencedTable) . ' ' : NULL;
+				$classVariable = ($row->key == 'MUL') ? '\\' . ucfirst(Tools::stripTableSchema($row->referencedTable)) . ' ' : NULL;
 				
 				$methodName = 'set_' . $row->field;
 				$methodName = ($this->_input->getOption('camel')) ? camelize($methodName) : underscore($methodName);

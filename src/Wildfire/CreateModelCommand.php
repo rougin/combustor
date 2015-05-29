@@ -159,7 +159,7 @@ class CreateModelCommand
 			 */
 
 			$class         = '\\' . ucfirst($name);
-			$classVariable = ($row->key == 'MUL') ? '\\' . ucfirst($row->referencedTable) . ' ' : NULL;
+			$classVariable = ($row->key == 'MUL') ? '\\' . ucfirst(Tools::stripTableSchema($row->referencedTable)) . ' ' : NULL;
 			
 			$methodName = 'set_' . $row->field;
 

@@ -158,7 +158,7 @@ class CreateViewCommand extends Command
 			if ($row->key == 'MUL') {
 				$data = plural($row->referencedTable);
 
-				$fieldsOnCreate .= '				<?php echo form_dropdown(\'' . $row->field . '\', $' . $data . ', set_value(\'' . $row->field . '\'), \'class="[bootstrapFormControl]"' . $required . '\'); ?>' . "\n";
+				$fieldsOnCreate .= '				<?php echo form_dropdown(\'' . $row->field . '\', $' . Tools::stripTableSchema($data) . ', set_value(\'' . $row->field . '\'), \'class="[bootstrapFormControl]"' . $required . '\'); ?>' . "\n";
 				$tableColumns  = $describe->getInformationFromTable($row->referencedTable);
 
 				$tablePrimaryKey = NULL;

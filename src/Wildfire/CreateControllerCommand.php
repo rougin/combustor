@@ -96,8 +96,10 @@ class CreateControllerCommand
 			}
 
 			if ($row->key == 'MUL') {
-				if (strpos($models, ",\n" . '			\'' . $row->referencedTable . '\'') === FALSE) {
-					$models .= ",\n" . '			\'' . $row->referencedTable . '\'';
+				$referencedTable = Tools::stripTableSchema($row->referencedTable);
+
+				if (strpos($models, ",\n" . '			\'' . $referencedTable . '\'') === FALSE) {
+					$models .= ",\n" . '			\'' . $referencedTable . '\'';
 				}
 
 				$foreignTableInformation = $describe->getInformationFromTable($row->referencedTable);
@@ -123,11 +125,11 @@ class CreateControllerCommand
 					$columnsOnEdit   .= "\t\t\t";
 				}
 
-				$columnsOnCreate .= '$' . $row->referencedTable . ' = $this->wildfire->find(\'' . $row->referencedTable . '\', $this->input->post(\'' . $row->field . '\'));' . "\n";
-				$columnsOnCreate .= '			$this->[singular]->' . $methodName . '($' . $row->referencedTable . ');' . "\n\n";
+				$columnsOnCreate .= '$' . Tools::stripTableSchema($row->referencedTable) . ' = $this->wildfire->find(\'' . $row->referencedTable . '\', $this->input->post(\'' . $row->field . '\'));' . "\n";
+				$columnsOnCreate .= '			$this->[singular]->' . $methodName . '($' . Tools::stripTableSchema($row->referencedTable) . ');' . "\n\n";
 
-				$columnsOnEdit .= '$' . $row->referencedTable . ' = $this->wildfire->find(\'' . $row->referencedTable . '\', $this->input->post(\'' . $row->field . '\'));' . "\n";
-				$columnsOnEdit .= '			$[singular]->' . $methodName . '($' . $row->referencedTable . ');' . "\n\n";
+				$columnsOnEdit .= '$' . Tools::stripTableSchema($row->referencedTable) . ' = $this->wildfire->find(\'' . $row->referencedTable . '\', $this->input->post(\'' . $row->field . '\'));' . "\n";
+				$columnsOnEdit .= '			$[singular]->' . $methodName . '($' . Tools::stripTableSchema($row->referencedTable) . ');' . "\n\n";
 			} else if ($row->field == 'password') {
 				$columnsOnCreate .= "\n" . file_get_contents(__DIR__ . '/../Templates/Miscellaneous/CheckCreatePassword.txt') . "\n\n";
 				$columnsOnEdit   .= "\n" . file_get_contents(__DIR__ . '/../Templates/Miscellaneous/CheckEditPassword.txt') . "\n\n";
@@ -206,6 +208,7 @@ class CreateControllerCommand
 		 * Create a new file and insert the generated template
 		 */
 
+		$name = Tools::stripTableSchema($name);
 		$controllerFile = ($this->_input->getOption('lowercase')) ? strtolower($name) : ucfirst($name);
 		$filename = APPPATH . 'controllers/' . $controllerFile . '.php';
 

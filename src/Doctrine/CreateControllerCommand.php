@@ -88,13 +88,11 @@ class CreateControllerCommand
 				}
 			}
 
-			if ($row->extra == 'auto_increment') {
-				continue;
-			} elseif ($row->key == 'MUL') {
-				if ($row->key == 'MUL') {
-					if (strpos($models, ",\n" . '			\'' . $row->referencedTable . '\'') === FALSE) {
-						$models .= ",\n" . '			\'' . $row->referencedTable . '\'';
-					}
+			if ($row->key == 'MUL') {
+				$referencedTable = Tools::stripTableSchema($row->referencedTable);
+
+				if (strpos($models, ",\n" . '			\'' . $referencedTable . '\'') === FALSE) {
+					$models .= ",\n" . '			\'' . $referencedTable . '\'';
 				}
 
 				$foreignTableInformation = $describe->getInformationFromTable($row->referencedTable);
@@ -115,12 +113,12 @@ class CreateControllerCommand
 				$dropdownColumnsOnCreate .= "\n\t\t" . $dropdownColumn;
 				$dropdownColumnsOnEdit   .= "\n\t\t" . $dropdownColumn;
 
-				$columnsOnCreate .= '$' . $row->referencedTable . ' = $this->doctrine->entity_manager->find(\'' . $row->referencedTable . '\', $this->input->post(\'' . $row->field . '\'));' . "\n";
-				$columnsOnCreate .= '			$this->[singular]->' . $methodName . '($' . $row->referencedTable . ');' . "\n\n";
+				$columnsOnCreate .= '$' . Tools::stripTableSchema($row->referencedTable) . ' = $this->doctrine->entity_manager->find(\'' . $row->referencedTable . '\', $this->input->post(\'' . $row->field . '\'));' . "\n";
+				$columnsOnCreate .= '			$this->[singular]->' . $methodName . '($' . Tools::stripTableSchema($row->referencedTable) . ');' . "\n\n";
 
-				$columnsOnEdit .= '$' . $row->referencedTable . ' = $this->doctrine->entity_manager->find(\'' . $row->referencedTable . '\', $this->input->post(\'' . $row->field . '\'));' . "\n";
-				$columnsOnEdit .= '			$[singular]->' . $methodName . '($' . $row->referencedTable . ');' . "\n\n";
-			} elseif ($row->field == 'password') {
+				$columnsOnEdit .= '$' . Tools::stripTableSchema($row->referencedTable) . ' = $this->doctrine->entity_manager->find(\'' . $row->referencedTable . '\', $this->input->post(\'' . $row->field . '\'));' . "\n";
+				$columnsOnEdit .= '			$[singular]->' . $methodName . '($' . Tools::stripTableSchema($row->referencedTable) . ');' . "\n\n";
+			} else if ($row->field == 'password') {
 				$columnsOnCreate .= "\n" . file_get_contents($doctrineDirectory . '/Templates/Miscellaneous/CheckCreatePassword.txt') . "\n\n";
 				$columnsOnEdit   .= "\n" . file_get_contents($doctrineDirectory . '/Templates/Miscellaneous/CheckEditPassword.txt') . "\n\n";
 

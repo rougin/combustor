@@ -4,11 +4,11 @@
  * Include the Composer Autoloader
  */
 
-(@include_once __DIR__ . '/../vendor/autoload.php') || @include_once __DIR__ . '/../../../autoload.php';
+include_once realpath('vendor/autoload.php');
 
-define('APPPATH',  __DIR__ . '/../../../../application/');
-define('BASEPATH', __DIR__ . '/../../../../system/');
-define('VENDOR',   __DIR__ . '/../../../../vendor/');
+define('APPPATH',  realpath('application') . '/');
+define('BASEPATH', realpath('system') . '/');
+define('VENDOR',   realpath('vendor') . '/');
 
 /**
  * Include the Inflector Helper Class from CodeIgniter

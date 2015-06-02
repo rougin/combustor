@@ -86,7 +86,7 @@ class CreateControllerCommand
 				$columnsOnEdit     .= ($row->field != 'datetime_created' && $row->key != 'MUL') ? '			' : NULL;
 
 				if ($row->field != 'password' && $row->field != 'datetime_created' && $row->field != 'datetime_updated' && ! $row->isNull) {
-					$columnsToValidate .= '			';
+					$columnsToValidate .= '		';
 				}
 
 				if ($tableInformation[$counter + 1]->key == 'MUL' && $tableInformation[$counter]->key != 'MUL') {
@@ -161,8 +161,15 @@ class CreateControllerCommand
 				}
 			}
 
+			$rule = 'required';
+
 			if (! $row->isNull && $row->field != 'password' && $row->field != 'datetime_created' && $row->field != 'datetime_updated') {
-				$columnsToValidate .= '\'' . $row->field . '\' => \'' . strtolower(str_replace('_', ' ', $row->field)) . '\',' . "\n";
+				if (strpos($row->field, 'email') !== FALSE)
+				{
+					$rule .= '|valid_email';
+				}
+
+				$columnsToValidate .= '$this->form_validation->set_rules(\'' . $row->field . '\', \'' . strtolower(str_replace('_', ' ', $row->field)) . '\', \'' . $rule . '\');' . "\n";
 			}
 
 			$counter++;
@@ -185,6 +192,7 @@ class CreateControllerCommand
 			'[pluralText]',
 			'[singular]',
 			'[singularText]',
+			'[table]'
 		);
 
 		$replace = array(
@@ -200,6 +208,7 @@ class CreateControllerCommand
 			strtolower($plural),
 			Tools::stripTableSchema(singular($name)),
 			strtolower(humanize($name)),
+			singular($name)
 		);
 
 		$controller = str_replace($search, $replace, $controller);

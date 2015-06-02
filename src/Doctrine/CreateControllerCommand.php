@@ -28,6 +28,7 @@ class CreateControllerCommand
 	/**
 	 * Execute the command
 	 * 
+	 * @return int
 	 */
 	public function execute()
 	{
@@ -72,19 +73,28 @@ class CreateControllerCommand
 		$counter                 = 0;
 		$dropdownColumn          = NULL;
 		$dropdownColumnsOnCreate = '$data = array();';
-		$dropdownColumnsOnEdit   = '$data[\'[singular]\'] = $this->doctrine->entity_manager->find(\'[singular]\', $id);';
+		$dropdownColumnsOnEdit   = '$data[\'[singular]\'] = $this->doctrine->entity_manager->find(\'[table]\', $id);';
 		$selectColumns           = array('name', 'description', 'label');
 
 		foreach ($tableInformation as $row) {
+			if ($row->extra == 'auto_increment') {
+				continue;
+			}
+
 			$methodName = 'set_' . strtolower($row->field);
 			$methodName = ($this->_input->getOption('camel')) ? camelize($methodName) : underscore($methodName);
 
 			if ($counter != 0) {
-				$columnsOnCreate   .= ($row->field != 'datetime_updated') ? '			' : NULL;
-				$columnsOnEdit     .= ($row->field != 'datetime_created') ? '			' : NULL;
+				$columnsOnCreate   .= ($row->field != 'datetime_updated' && $row->key != 'MUL') ? '			' : NULL;
+				$columnsOnEdit     .= ($row->field != 'datetime_created' && $row->key != 'MUL') ? '			' : NULL;
 
 				if ($row->field != 'password' && $row->field != 'datetime_created' && $row->field != 'datetime_updated' && ! $row->isNull) {
-					$columnsToValidate .= '			';
+					$columnsToValidate .= '		';
+				}
+
+				if ($tableInformation[$counter + 1]->key == 'MUL' && $tableInformation[$counter]->key != 'MUL') {
+					$columnsOnCreate .= "\n";
+					$columnsOnEdit   .= "\n";
 				}
 			}
 
@@ -112,6 +122,11 @@ class CreateControllerCommand
 
 				$dropdownColumnsOnCreate .= "\n\t\t" . $dropdownColumn;
 				$dropdownColumnsOnEdit   .= "\n\t\t" . $dropdownColumn;
+
+				if ($counter != 0) {
+					$columnsOnCreate .= "\t\t\t";
+					$columnsOnEdit   .= "\t\t\t";
+				}
 
 				$columnsOnCreate .= '$' . Tools::stripTableSchema($row->referencedTable) . ' = $this->doctrine->entity_manager->find(\'' . $row->referencedTable . '\', $this->input->post(\'' . $row->field . '\'));' . "\n";
 				$columnsOnCreate .= '			$this->[singular]->' . $methodName . '($' . Tools::stripTableSchema($row->referencedTable) . ');' . "\n\n";
@@ -149,10 +164,16 @@ class CreateControllerCommand
 				}
 			}
 
-			if ($row->field != 'password' && $row->field != 'datetime_created' && $row->field != 'datetime_updated') {
-				if ( ! $row->isNull) {
-					$columnsToValidate .= '\'' . $row->field . '\' => \'' . strtolower(str_replace('_', ' ', $row->field)) . '\',' . "\n";
+			
+			$rule = 'required';
+
+			if (! $row->isNull && $row->field != 'password' && $row->field != 'datetime_created' && $row->field != 'datetime_updated') {
+				if (strpos($row->field, 'email') !== FALSE)
+				{
+					$rule .= '|valid_email';
 				}
+
+				$columnsToValidate .= '$this->form_validation->set_rules(\'' . $row->field . '\', \'' . strtolower(str_replace('_', ' ', $row->field)) . '\', \'' . $rule . '\');' . "\n";
 			}
 
 			$counter++;
@@ -174,7 +195,8 @@ class CreateControllerCommand
 			'[plural]',
 			'[pluralText]',
 			'[singular]',
-			'[singularText]'
+			'[singularText]',
+			'[table]'
 		);
 
 		$replace = array(
@@ -199,20 +221,18 @@ class CreateControllerCommand
 		 * Create a new file and insert the generated template
 		 */
 
+		$name = Tools::stripTableSchema($name);
 		$controllerFile = ($this->_input->getOption('lowercase')) ? strtolower($name) : ucfirst($name);
-
 		$filename = APPPATH . 'controllers/' . $controllerFile . '.php';
 
 		if (file_exists($filename)) {
 			$this->_output->writeln('<error>The ' . $name . ' controller already exists!</error>');
+		} else {
+			$file = fopen($filename, 'wb');
+			file_put_contents($filename, $controller);
 
-			exit();
+			$this->_output->writeln('<info>The controller "' . $name . '" has been created successfully!</info>');
 		}
-
-		$file = fopen($filename, 'wb');
-		file_put_contents($filename, $controller);
-
-		$this->_output->writeln('<info>The controller "' . $name . '" has been created successfully!</info>');
 	}
 
 }

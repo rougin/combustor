@@ -18,5 +18,11 @@
 		"psr-4": {
 			"Rougin\\Combustor\\": "src/"
 		}
+	},
+	"scripts" : {
+		"post-install-cmd": [
+			"Rougin\\Combustor\\Tools::ignite",
+			"composer update"
+		]
 	}
 }

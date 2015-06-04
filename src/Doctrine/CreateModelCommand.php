@@ -1,6 +1,5 @@
 <?php namespace Rougin\Combustor\Doctrine;
 
-use Symfony\Component\Console\Command\Command;
 use Rougin\Combustor\Tools;
 use Rougin\Describe\Describe;
 use Symfony\Component\Console\Input\InputArgument;
@@ -8,7 +7,7 @@ use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 
-class CreateModelCommand extends Command
+class CreateModelCommand
 {
 
 	private $_input  = NULL;
@@ -28,6 +27,8 @@ class CreateModelCommand extends Command
 
 	/**
 	 * Execute the command
+	 * 
+	 * @return int
 	 */
 	public function execute()
 	{
@@ -71,16 +72,16 @@ class CreateModelCommand extends Command
 			$nullable = ($row->isNull) ? 'TRUE' : 'FALSE';
 			$unique   = ($row->key == 'UNI') ? 'TRUE' : 'FALSE';
 
-			$type = $this->_getDataType($row->type);
+			$type = Tools::getDataType($row->type);
 
 			/**
-			 * The data type is an integer or string? Set the length of the specified data type
+			 * Is the data type an integer or a string? Set the length of the specified data type
 			 */
+
+			$length = NULL;
 
 			if ((strpos($row->type, 'int') !== FALSE) || (strpos($row->type, 'varchar') !== FALSE)) {
 				$length =  ', length=' . str_replace(array($type, '(', ')', 'varchar', 'int'), array('', '', '', '', ''), $row->type);
-			} else {
-				$length = NULL;
 			}
 
 			/**
@@ -94,7 +95,7 @@ class CreateModelCommand extends Command
 
 				$columns .= '	 * @Id ' . $autoIncrement . "\n";
 				$columns .= '	 * @Column(type="' . $type . '"' . $length . ', nullable=' . $nullable . ', unique=' . $unique . ')' . "\n";
-			} elseif ($row->key == 'MUL') {
+			} else if ($row->key == 'MUL') {
 				$indexes .= ($indexesCounter != 0) ? ' *   		' : NULL;
 
 				$indexes .= '@index(name="' . $row->field . '", columns={"' . $row->field . '"}),' . "\n";
@@ -149,7 +150,7 @@ class CreateModelCommand extends Command
 
 				$mutator = file_get_contents(__DIR__ . '/Templates/Miscellaneous/Mutator.txt');
 
-				if (in_array($this->_getDataType($row->type), $dataTypes)) {
+				if (in_array(Tools::getDataType($row->type), $dataTypes)) {
 					$mutator = str_replace('$this->[field] = $[field];', '$this->[field] = new \DateTime($[field]);', $mutator);
 				}
 
@@ -195,49 +196,16 @@ class CreateModelCommand extends Command
 		 */
 
 		$modelFile = ($this->_input->getOption('lowercase')) ? strtolower($name) : ucfirst($name);
-
 		$filename = APPPATH . 'models/' . $modelFile . '.php';
 
 		if (file_exists($filename)) {
 			$this->_output->writeln('<error>The ' . $name . ' model already exists!</error>');
-			
-			exit();
+		} else {
+			$file = fopen($filename, 'wb');
+			file_put_contents($filename, $model);
+
+			$this->_output->writeln('<info>The model "' . $name . '" has been created successfully!</info>');
 		}
-
-		$file = fopen($filename, 'wb');
-		file_put_contents($filename, $model);
-
-		$this->_output->writeln('<info>The model "' . $name . '" has been created successfully!</info>');
-	}
-
-	/**
-	 * Get the data type of the specified column
-	 * 
-	 * @param  string $type
-	 * @return string
-	 */
-	private function _getDataType($type)
-	{
-		if (strpos($type, 'array') !== FALSE) $type = 'array';
-		elseif (strpos($type, 'bigint') !== FALSE) $type = 'bigint';
-		elseif (strpos($type, 'blob') !== FALSE) $type = 'blob';
-		elseif (strpos($type, 'boolean') !== FALSE) $type = 'boolean';
-		elseif (strpos($type, 'datetime') !== FALSE || strpos($type, 'timestamp') !== FALSE) $type = 'datetime';
-		elseif (strpos($type, 'datetimetz') !== FALSE) $type = 'datetimetz';
-		elseif (strpos($type, 'date') !== FALSE) $type = 'date';
-		elseif (strpos($type, 'decimal') !== FALSE || strpos($type, 'double') !== FALSE) $type = 'decimal';
-		elseif (strpos($type, 'float') !== FALSE) $type = 'float';
-		elseif (strpos($type, 'guid') !== FALSE) $type = 'guid';
-		elseif (strpos($type, 'int') !== FALSE) $type = 'integer';
-		elseif (strpos($type, 'json_array') !== FALSE) $type = 'json_array';
-		elseif (strpos($type, 'object') !== FALSE) $type = 'object';
-		elseif (strpos($type, 'simple_array') !== FALSE) $type = 'simple_array';
-		elseif (strpos($type, 'smallint') !== FALSE) $type = 'smallint';
-		elseif (strpos($type, 'text') !== FALSE) $type = 'text';
-		elseif (strpos($type, 'time') !== FALSE) $type = 'time';
-		elseif (strpos($type, 'varchar') !== FALSE) $type = 'string';
-
-		return $type;
 	}
 
 }

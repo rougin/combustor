@@ -1,6 +1,5 @@
 <?php namespace Rougin\Combustor\Wildfire;
 
-use Symfony\Component\Console\Command\Command;
 use Rougin\Combustor\Tools;
 use Rougin\Describe\Describe;
 use Symfony\Component\Console\Input\InputArgument;
@@ -28,6 +27,8 @@ class CreateModelCommand
 
 	/**
 	 * Execute the command
+	 * 
+	 * @return int
 	 */
 	public function execute()
 	{
@@ -209,8 +210,8 @@ class CreateModelCommand
 			rtrim($accessors),
 			rtrim($mutators),
 			$primaryKey,
-			$name,
 			plural($this->_input->getArgument('name')),
+			$this->_input->getArgument('name'),
 			substr($this->_input->getArgument('name'), 0, 1),
 			ucfirst($name),
 			ucwords(str_replace('_', ' ', $name))
@@ -223,19 +224,16 @@ class CreateModelCommand
 		 */
 
 		$modelFile = ($this->_input->getOption('lowercase')) ? strtolower($name) : ucfirst($name);
-
 		$filename = APPPATH . 'models/' . $modelFile . '.php';
 
 		if (file_exists($filename)) {
 			$this->_output->writeln('<error>The ' . $name . ' model already exists!</error>');
+		} else {
+			$file = fopen($filename, 'wb');
+			file_put_contents($filename, $model);
 			
-			exit();
+			$this->_output->writeln('<info>The model "' . $name . '" has been created successfully!</info>');
 		}
-
-		$file = fopen($filename, 'wb');
-		file_put_contents($filename, $model);
-
-		$this->_output->writeln('<info>The model "' . $name . '" has been created successfully!</info>');
 	}
 
 }

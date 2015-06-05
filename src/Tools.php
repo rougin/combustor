@@ -196,38 +196,8 @@ class Tools
 		file_put_contents(APPPATH . 'config/config.php', $configurationFile);
 
 		/**
-		 * ---------------------------------------------------------------------------------------------
-		 * Extended the Pagination class and add a pagination selector in the routes.php
-		 * ---------------------------------------------------------------------------------------------
+		 * Add an autoload for Pagination Library's configurations in app/config/pagination.php
 		 */
-
-		if ( ! file_exists(APPPATH . 'libraries/MY_Pagination.php')) {
-			$myPaginationFile = fopen(APPPATH . 'libraries/MY_Pagination.php', 'wb');
-			
-			chmod(APPPATH . 'libraries/MY_Pagination.php', 0777);
-			file_put_contents(APPPATH . 'libraries/MY_Pagination.php', $myPagination);
-			
-			fclose($myPaginationFile);
-
-			$routes = file_get_contents(APPPATH . 'config/routes.php');
-
-			$search  = '$route[\'default_controller\'] = \'welcome\';' . "\n";
-			$search .= '$route[\'404_override\'] = \'\';';
-
-			$replace  = '$route[\'default_controller\'] = \'welcome\';' . "\n";
-			$replace .= '$route[\'(:any)/page/(:any)\'] = \'$1/index/page/$2\';' . "\n";
-			$replace .= '$route[\'(:any)/page\'] = \'$1\';' . "\n";
-			$replace .= '$route[\'404_override\'] = \'\';';
-
-			if (strpos($codeigniterCore, 'define(\'CI_VERSION\', \'3.0') !== FALSE) {
-				$search  .= "\n" . '$route[\'translate_uri_dashes\'] = FALSE;';
-				$replace .= "\n" . '$route[\'translate_uri_dashes\'] = FALSE;';
-			}
-
-			$routes = str_replace($search, $replace, $routes);
-
-			file_put_contents(APPPATH . 'config/routes.php', $routes);
-		}
 
 		if ( ! file_exists(APPPATH . 'config/pagination.php')) {
 			$paginationConfigurationFile = fopen(APPPATH . 'config/pagination.php', 'wb');

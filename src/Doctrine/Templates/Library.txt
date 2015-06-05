@@ -165,8 +165,15 @@ class Doctrine {
 
 		if (isset($delimiters['per_page']) && $delimiters['per_page'] != NULL)
 		{
+			$page = $delimiters['page'];
+
+			if ($page != NULL)
+			{
+				$page = $delimiters['per_page'] * $page - $delimiters['per_page'];
+			}
+
 			$this->_query_builder->setFirstResult($delimiters['page']);
-			$this->_query_builder->setMaxResults($delimiters['per_page']);
+			$this->_query_builder->setMaxResults($page);
 		}
 
 		$this->_query = $this->_query_builder->getQuery();

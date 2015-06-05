@@ -117,6 +117,8 @@ class Wildfire {
 	 */
 	public function get_all($table, $delimiters = array())
 	{
+		$this->_codeigniter->load->helper('inflector');
+
 		$this->_rows = array();
 		$this->_table = $table;
 
@@ -127,7 +129,14 @@ class Wildfire {
 
 		if (isset($delimiters['per_page']) && $delimiters['per_page'] != NULL)
 		{
-			$this->_codeigniter->db->limit($delimiters['per_page'], $delimiters['page']);
+			$page = $delimiters['page'];
+
+			if ($page != NULL)
+			{
+				$page = $delimiters['per_page'] * $page - $delimiters['per_page'];
+			}
+
+			$this->_codeigniter->db->limit($delimiters['per_page'], $page);
 		}
 
 		$this->_codeigniter->db->select($table . '.*')->from($table);

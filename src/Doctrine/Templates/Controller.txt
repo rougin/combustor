@@ -149,21 +149,7 @@ class [controller] extends CI_Controller {
 	{
 		$this->load->library('form_validation');
 
-		$columns = array(
-			[columnsToValidate]
-		);
-
-		foreach ($columns as $column => $label)
-		{
-			$rules = 'required';
-
-			if (strpos($column, 'email') !== FALSE)
-			{
-				$rules .= '|valid_email';
-			}
-
-			$this->form_validation->set_rules($column, $label, $rules);
-		}
+		[columnsToValidate]
 	}
 
 }

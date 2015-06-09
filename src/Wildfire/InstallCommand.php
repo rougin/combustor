@@ -42,10 +42,6 @@ class InstallCommand extends Command
 		if ( ! in_array('\'wildfire\'', $libraries)) {
 			array_push($libraries, '\'wildfire\'');
 
-			if ( ! in_array('\'database\'', $libraries)) {
-				array_push($libraries, '\'database\'');
-			}
-
 			$libraries = array_filter($libraries);
 
 			$autoload = preg_replace(
@@ -69,12 +65,12 @@ class InstallCommand extends Command
 		$combustor = file_get_contents(VENDOR . 'rougin/combustor/bin/combustor.php');
 
 		$search = array(
-			'// $application->add(new Combustor\Wildfire\RemoveCommand);',
-			'$application->add(new Combustor\Wildfire\InstallCommand);',
+			'// $application->add(new Rougin\Combustor\Wildfire\RemoveCommand);',
+			'$application->add(new Rougin\Combustor\Wildfire\InstallCommand);',
 		);
 		$replace = array(
-			'$application->add(new Combustor\Wildfire\RemoveCommand);',
-			'// $application->add(new Combustor\Wildfire\InstallCommand);'
+			'$application->add(new Rougin\Combustor\Wildfire\RemoveCommand);',
+			'// $application->add(new Rougin\Combustor\Wildfire\InstallCommand);'
 		);
 
 		$combustor = str_replace($search, $replace, $combustor);
@@ -83,9 +79,6 @@ class InstallCommand extends Command
 
 		file_put_contents(VENDOR . 'rougin/combustor/bin/combustor.php', $combustor);
 		fclose($file);
-
-		$postInstallation = new PostInstallation();
-		$postInstallation->run();
 
 		$output->writeln('<info>Wildfire is now installed successfully!</info>');
 	}

@@ -27,9 +27,7 @@ class RemoveCommand extends Command
 	protected function execute(InputInterface $input, OutputInterface $output)
 	{
 		/**
-		 * ---------------------------------------------------------------------------------------------
 		 * Adding Wildfire.php to the "libraries" directory
-		 * ---------------------------------------------------------------------------------------------
 		 */
 
 		if ( ! file_exists(APPPATH . 'libraries/Wildfire.php')) {
@@ -46,12 +44,6 @@ class RemoveCommand extends Command
 			$position = array_search('\'wildfire\'', $libraries);
 
 			unset($libraries[$position]);
-
-			if ( ! in_array('\'database\'', $libraries)) {
-				$position = array_search('\'database\'', $libraries);
-
-				unset($libraries[$position]);
-			}
 
 			$libraries = array_filter($libraries);
 
@@ -70,12 +62,12 @@ class RemoveCommand extends Command
 		$combustor = file_get_contents(VENDOR . 'rougin/combustor/bin/combustor.php');
 
 		$search = array(
-			'$application->add(new Combustor\Wildfire\RemoveCommand);',
-			'// $application->add(new Combustor\Wildfire\InstallCommand);'
+			'$application->add(new Rougin\Combustor\Wildfire\RemoveCommand);',
+			'// $application->add(new Rougin\Combustor\Wildfire\InstallCommand);'
 		);
 		$replace = array(
-			'// $application->add(new Combustor\Wildfire\RemoveCommand);',
-			'$application->add(new Combustor\Wildfire\InstallCommand);'
+			'// $application->add(new Rougin\Combustor\Wildfire\RemoveCommand);',
+			'$application->add(new Rougin\Combustor\Wildfire\InstallCommand);'
 		);
 
 		$combustor = str_replace($search, $replace, $combustor);

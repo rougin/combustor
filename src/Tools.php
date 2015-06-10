@@ -226,4 +226,15 @@ class Tools
 		return $table;
 	}
 
+	/**
+	 * Strip the table schema from the table name
+	 * 
+	 * @param  string $table
+	 * @return string
+	 */
+	public static function strip_table_schema($table)
+	{
+		return self::stripTableSchema($table);
+	}
+
 }

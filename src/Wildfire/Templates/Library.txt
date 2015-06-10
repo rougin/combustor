@@ -19,7 +19,7 @@ class Wildfire {
 	private $_tables      = array();
 
 	/**
-	 * Class constructor
+	 * Loads the database and initialize Describe
 	 */
 	public function __construct()
 	{
@@ -179,7 +179,7 @@ class Wildfire {
 	 */
 	protected function _create_object($table, $row)
 	{
-		$new_table = Tools::stripTableSchema($table);
+		$new_table = singular(Tools::strip_table_schema($table));
 		$model = new $new_table();
 
 		if ( ! array_key_exists($table, $this->_tables))
@@ -201,8 +201,8 @@ class Wildfire {
 
 			if ($table_column->key == 'MUL')
 			{
-				$delimiters = array($table_column->referencedColumn => $data);
-				$data = $this->find($table_column->referencedTable, $delimiters);
+				$delimiters = array($table_column->referenced_column => $data);
+				$data = $this->find($table_column->referenced_table, $delimiters);
 			}
 
 			$model->$mutator($data);

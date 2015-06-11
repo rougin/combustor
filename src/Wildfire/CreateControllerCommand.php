@@ -208,7 +208,7 @@ class CreateControllerCommand
 			strtolower($plural),
 			Tools::stripTableSchema(singular($name)),
 			strtolower(humanize($name)),
-			singular($name)
+			$this->_input->getArgument('name')
 		);
 
 		$controller = str_replace($search, $replace, $controller);
@@ -217,9 +217,9 @@ class CreateControllerCommand
 		 * Create a new file and insert the generated template
 		 */
 
-		$name = Tools::stripTableSchema($name);
+		$name           = Tools::stripTableSchema($name);
 		$controllerFile = ($this->_input->getOption('lowercase')) ? strtolower($name) : ucfirst($name);
-		$filename = APPPATH . 'controllers/' . $controllerFile . '.php';
+		$filename       = APPPATH . 'controllers/' . $controllerFile . '.php';
 
 		if (file_exists($filename)) {
 			$this->_output->writeln('<error>The ' . $name . ' controller already exists!</error>');

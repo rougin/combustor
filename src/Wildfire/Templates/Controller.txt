@@ -56,7 +56,7 @@ class [controller] extends CI_Controller {
 			redirect('[plural]');
 		}
 
-		$this->wildfire->delete('[singular]', $id);
+		$this->wildfire->delete('[table]', $id);
 
 		$this->session->set_flashdata('notification', 'The [singularText] has been deleted successfully!');
 		$this->session->set_flashdata('alert', 'success');
@@ -80,7 +80,7 @@ class [controller] extends CI_Controller {
 
 		if ($this->form_validation->run())
 		{
-			$[singular] = $this->wildfire->find('[singular]', $id);
+			$[singular] = $this->wildfire->find('[table]', $id);
 
 			[columnsOnEdit]
 
@@ -135,7 +135,7 @@ class [controller] extends CI_Controller {
 			redirect('[plural]');
 		}
 		
-		$data['[singular]'] = $this->wildfire->find('[singular]', $id);
+		$data['[singular]'] = $this->wildfire->find('[table]', $id);
 
 		$this->load->view('[plural]/show', $data);
 	}
@@ -147,21 +147,7 @@ class [controller] extends CI_Controller {
 	{
 		$this->load->library('form_validation');
 
-		$columns = array(
-			[columnsToValidate]
-		);
-
-		foreach ($columns as $column => $label)
-		{
-			$rules = 'required';
-
-			if (strpos($column, 'email') !== FALSE)
-			{
-				$rules .= '|valid_email';
-			}
-
-			$this->form_validation->set_rules($column, $label, $rules);
-		}
+		[columnsToValidate]
 	}
 
 }

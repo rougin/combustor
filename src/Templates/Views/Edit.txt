@@ -9,8 +9,8 @@
 		<div class="[bootstrapFormGroup]">
 			<div class="[bootstrapLabel]"></div>
 			<div class="[bootstrapFormColumn]">
-				<a class="[bootstrapButton]" href="<?php echo base_url('[plural]'); ?>">Back</a>
-				<?php echo form_submit('', 'Submit', 'class="[bootstrapButton]"'); ?>
+				<a class="[bootstrapButtonBack]" href="<?php echo base_url('[plural]'); ?>">Back</a>
+				<?php echo form_submit('', 'Submit', 'class="[bootstrapButtonSubmit]"'); ?>
 			</div>
 		</div>
 	<?php echo form_close(); ?>

@@ -5,5 +5,5 @@
 	</h1>
 	<br>
 	[fieldsOnShow]
-	<a class="[bootstrapButton]" href="<?php echo base_url('[plural]'); ?>">Back</a>
+	<a class="[bootstrapButtonBack]" href="<?php echo base_url('[plural]'); ?>">Back</a>
 <?php $this->load->view('layout/footer'); ?>

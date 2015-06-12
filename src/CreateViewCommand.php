@@ -57,13 +57,17 @@ class CreateViewCommand extends Command
 		 * Integrate Bootstrap if enabled
 		 */
 
-		$bootstrapButton      = ($input->getOption('bootstrap')) ? 'btn btn-primary' : NULL;
-		$bootstrapFormColumn  = ($input->getOption('bootstrap')) ? 'col-lg-11' : NULL;
-		$bootstrapFormControl = ($input->getOption('bootstrap')) ? 'form-control' : NULL;
-		$bootstrapFormGroup   = ($input->getOption('bootstrap')) ? 'form-group' : NULL;
-		$bootstrapFormOpen    = ($input->getOption('bootstrap')) ? 'form-horizontal' : NULL;
-		$bootstrapLabel       = ($input->getOption('bootstrap')) ? 'control-label col-lg-1' : NULL;
-		$bootstrapTable       = ($input->getOption('bootstrap')) ? 'table table table-striped table-hover' : NULL;
+		$bootstrap = array(
+			'button' => ($input->getOption('bootstrap')) ? 'btn btn-primary' : NULL,
+			'buttonBack'   => ($input->getOption('bootstrap')) ? 'btn btn-default' : NULL,
+			'buttonSubmit' => ($input->getOption('bootstrap')) ? 'btn btn-primary' : NULL,
+			'formColumn'   => ($input->getOption('bootstrap')) ? '' : NULL,
+			'formControl'  => ($input->getOption('bootstrap')) ? 'form-control' : NULL,
+			'formGroup'    => ($input->getOption('bootstrap')) ? 'form-group col-lg-12 col-md-12 col-sm-12 col-xs-12' : NULL,
+			'formOpen'     => ($input->getOption('bootstrap')) ? '' : NULL,
+			'label'        => ($input->getOption('bootstrap')) ? 'control-label' : NULL,
+			'table'        => ($input->getOption('bootstrap')) ? 'table table table-striped table-hover' : NULL
+		);
 
 		/**
 		 * Get the view template
@@ -283,6 +287,8 @@ class CreateViewCommand extends Command
 			'[rows]',
 			'[primaryKey]',
 			'[bootstrapButton]',
+			'[bootstrapButtonBack]',
+			'[bootstrapButtonSubmit]',
 			'[bootstrapFormControl]',
 			'[bootstrapFormGroup]',
 			'[bootstrapFormOpen]',
@@ -305,13 +311,15 @@ class CreateViewCommand extends Command
 			rtrim($columns),
 			rtrim($rows),
 			$primaryKey,
-			$bootstrapButton,
-			$bootstrapFormControl,
-			$bootstrapFormGroup,
-			$bootstrapFormOpen,
-			$bootstrapTable,
-			$bootstrapLabel,
-			$bootstrapFormColumn,
+			$bootstrap['button'],
+			$bootstrap['buttonBack'],
+			$bootstrap['buttonSubmit'],
+			$bootstrap['formControl'],
+			$bootstrap['formGroup'],
+			$bootstrap['formOpen'],
+			$bootstrap['table'],
+			$bootstrap['label'],
+			$bootstrap['formColumn'],
 			ucwords(Tools::stripTableSchema(str_replace('_', ' ', plural($input->getArgument('name'))))),
 			Tools::stripTableSchema(singular($input->getArgument('name'))),
 			Tools::stripTableSchema($plural),

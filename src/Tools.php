@@ -63,11 +63,13 @@ class Tools
 		 * Get the templates
 		 */
 
+		$miscellaneous           = VENDOR . 'rougin/combustor/src/Templates/Miscellaneous/';
+
 		$autoload                = file_get_contents(APPPATH . 'config/autoload.php');
 		$codeigniterCore         = file_get_contents(BASEPATH . 'core/CodeIgniter.php');
-		$htaccess                = file_get_contents(VENDOR . 'rougin/combustor/src/Templates/Miscellaneous/Htaccess.txt');
-		$myPagination            = file_get_contents(VENDOR . 'rougin/combustor/src/Templates/Miscellaneous/Pagination.txt');
-		$paginationConfiguration = file_get_contents(VENDOR . 'rougin/combustor/src/Templates/Miscellaneous/PaginationConfiguration.txt');
+		$htaccess                = file_get_contents($miscellaneous . 'Htaccess.txt');
+		$myPagination            = file_get_contents($miscellaneous . 'Pagination.txt');
+		$paginationConfiguration = file_get_contents($miscellaneous . 'PaginationConfiguration.txt');
 
 		/**
 		 * Add the Composer either in autoload.php (in 3.0dev) or in the index.php

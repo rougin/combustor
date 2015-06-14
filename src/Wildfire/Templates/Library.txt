@@ -247,17 +247,17 @@ class Wildfire {
 		{
 			if ($column->key == 'MUL')
 			{
-				if ( ! in_array($column->referencedTable, $tables))
+				if ( ! in_array($column->referenced_table, $tables))
 				{
-					$foreign_primary_key = $this->_describe->get_primary_key($column->referencedTable);
-					$foreign_table_alias = $table . '_' . $column->referencedTable;
+					$foreign_primary_key = $this->_describe->get_primary_key($column->referenced_table);
+					$foreign_table_alias = $table . '_' . $column->referenced_table;
 					$condition = $foreign_table_alias . '.' . $foreign_primary_key . ' = ' . $table_alias . '.' . $column->field;
 
-					$this->_codeigniter->db->join($column->referencedTable . ' as ' . $foreign_table_alias, $condition, 'left');
+					$this->_codeigniter->db->join($column->referenced_table . ' as ' . $foreign_table_alias, $condition, 'left');
 
-					array_push($tables, $column->referencedTable);
+					array_push($tables, $column->referenced_table);
 					$tables = array_unique($tables);
-					$this->_find_by_keyword($keyword, $column->referencedTable, $tables, $foreign_table_alias);
+					$this->_find_by_keyword($keyword, $column->referenced_table, $tables, $foreign_table_alias);
 				}
 			}
 			else if ($column->key != 'PRI')

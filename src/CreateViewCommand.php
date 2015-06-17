@@ -359,7 +359,7 @@ class CreateViewCommand extends Command
 		$viewDirectory = Tools::stripTableSchema($viewDirectory);
 		$filepath = APPPATH . 'views/' . $viewDirectory . '/';
 
-		if ( ! @mkdir($filepath, 0777, TRUE)) {
+		if ( ! @mkdir($filepath, 0775, TRUE)) {
 			$message = 'The "' . $na . '" views folder already exists!';
 			$output->writeln('<error>' . $message . '</error>');
 		} else {

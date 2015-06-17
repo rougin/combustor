@@ -207,7 +207,7 @@ class Tools
 		if ( ! file_exists(APPPATH . 'config/pagination.php')) {
 			$paginationConfigurationFile = fopen(APPPATH . 'config/pagination.php', 'wb');
 
-			chmod(APPPATH . 'config/pagination.php', 0777);
+			chmod(APPPATH . 'config/pagination.php', 0664);
 			file_put_contents(APPPATH . 'config/pagination.php', $paginationConfiguration);
 
 			fclose($paginationConfigurationFile);

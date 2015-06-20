@@ -10,7 +10,7 @@ Combustor is a tool for speeding up web development in [CodeIgniter](https://cod
 
 2. Install ```Combustor``` using [Composer](https://getcomposer.org/):
 
-	```composer require rougin/combustor```
+	```$ composer require rougin/combustor```
 
 3. Choose if you want to install Wildfire or Doctrine ORM or both :smile::
 

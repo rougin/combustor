@@ -1,6 +1,6 @@
 {
 	"name": "rougin/combustor",
-	"description": "A code generator console application for CodeIgniter",
+	"description": "A tool for speeding up web development in CodeIgniter",
 	"keywords": ["codeigniter", "combustor", "php", "code", "generator"],
 	"require": {
 		"symfony/console": "*",
@@ -24,5 +24,9 @@
 			"Rougin\\Combustor\\Tools::ignite",
 			"composer update"
 		]
+	},
+	"suggest": {
+		"rougin/codeigniter": "Yet another way to install CodeIgniter via Composer",
+		"rougin/refinery": "A command line interface for Migrations Class in CodeIgniter"
 	}
 }

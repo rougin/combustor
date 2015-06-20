@@ -1,14 +1,29 @@
 <?php
 
 /**
+ * Define the APPPATH, VENDOR, and BASEPATH paths
+ */
+
+define('APPPATH',  realpath('application') . '/');
+define('ICONV_ENABLED', extension_loaded('iconv') ? TRUE : FALSE);
+define('MB_ENABLED', extension_loaded('mbstring') ? TRUE : FALSE);
+define('VENDOR',   realpath('vendor') . '/');
+
+$directory = new RecursiveDirectoryIterator(getcwd(), FilesystemIterator::SKIP_DOTS);
+foreach (new RecursiveIteratorIterator($directory, RecursiveIteratorIterator::SELF_FIRST) as $path) {
+	if (strpos($path->__toString(), 'core/CodeIgniter.php') !== FALSE) {
+		$basepath = str_replace('core/CodeIgniter.php', '', $path->__toString());
+		define('BASEPATH', $basepath);
+
+		break;
+	}
+}
+
+/**
  * Include the Composer Autoloader
  */
 
-include_once realpath('vendor/autoload.php');
-
-define('APPPATH',  realpath('application') . '/');
-define('BASEPATH', realpath('system') . '/');
-define('VENDOR',   realpath('vendor') . '/');
+require VENDOR . 'autoload.php';
 
 /**
  * Include the Inflector Helper Class from CodeIgniter
@@ -17,14 +32,15 @@ define('VENDOR',   realpath('vendor') . '/');
 require BASEPATH . 'helpers/inflector_helper.php';
 
 /**
- * Import the Symfony Console Component
+ * Import the Symfony Components
  */
 
 use Symfony\Component\Console\Application;
 use Symfony\Component\Console\Helper\HelperSet;
 
-$application = new Application('Combustor', '1');
+$application = new Application('Combustor', '1.1.0');
 
+$application->add(new Rougin\Combustor\CreateLayoutCommand);
 $application->add(new Rougin\Combustor\Doctrine\InstallCommand);
 // $application->add(new Rougin\Combustor\Doctrine\RemoveCommand);
 $application->add(new Rougin\Combustor\Wildfire\InstallCommand);
@@ -36,7 +52,5 @@ if ($application->has('remove:wildfire') || $application->has('remove:doctrine')
 	$application->add(new Rougin\Combustor\CreateScaffoldCommand);
 	$application->add(new Rougin\Combustor\CreateViewCommand);
 }
-
-$application->add(new Rougin\Combustor\CreateLayoutCommand);
 
 $application->run();

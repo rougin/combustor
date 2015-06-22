@@ -63,6 +63,23 @@ class Tools
 	public static function ignite(Event $event = null)
 	{
 		/**
+		 * Setup the directory paths
+		 */
+
+		define('APPPATH',  realpath('application') . '/');
+		define('VENDOR',   realpath('vendor') . '/');
+
+		$directory = new \RecursiveDirectoryIterator(getcwd(), \FilesystemIterator::SKIP_DOTS);
+		foreach (new \RecursiveIteratorIterator($directory, \RecursiveIteratorIterator::SELF_FIRST) as $path) {
+			if (strpos($path->__toString(), 'core/CodeIgniter.php') !== FALSE) {
+				$basepath = str_replace('core/CodeIgniter.php', '', $path->__toString());
+				define('BASEPATH', $basepath);
+
+				break;
+			}
+		}
+
+		/**
 		 * Get the templates
 		 */
 
@@ -71,7 +88,6 @@ class Tools
 		$autoload                = file_get_contents(APPPATH . 'config/autoload.php');
 		$codeigniterCore         = file_get_contents(BASEPATH . 'core/CodeIgniter.php');
 		$htaccess                = file_get_contents($miscellaneous . 'Htaccess.txt');
-		$myPagination            = file_get_contents($miscellaneous . 'Pagination.txt');
 		$paginationConfiguration = file_get_contents($miscellaneous . 'PaginationConfiguration.txt');
 
 		/**

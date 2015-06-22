@@ -1,5 +1,8 @@
 <?php namespace Rougin\Combustor;
 
+use Composer\Installer\PackageEvent;
+use Composer\Script\Event;
+
 class Tools
 {
 
@@ -57,7 +60,7 @@ class Tools
 	 * 
 	 * @return integer
 	 */
-	public static function ignite(Event $event)
+	public static function ignite(Event $event = null)
 	{
 		/**
 		 * Get the templates

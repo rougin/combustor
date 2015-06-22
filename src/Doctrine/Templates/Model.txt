@@ -3,7 +3,7 @@
 /**
  * @Entity
  * @Table(
- * 		name="[singular]",
+ * 		name="[table]",
  * 		indexes={
  * 			[indexes]
  * 		}

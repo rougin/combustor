@@ -176,7 +176,8 @@ class CreateModelCommand
 			'[mutators]',
 			'[singular]',
 			'[firstLetter]',
-			'[model]'
+			'[model]',
+			'[table]'
 		);
 
 		$replace = array(
@@ -186,7 +187,8 @@ class CreateModelCommand
 			rtrim($mutators),
 			$name,
 			substr($this->_input->getArgument('name'), 0, 1),
-			ucfirst($name)
+			ucfirst($name),
+			$this->_input->getArgument('name')
 		);
 
 		$model = str_replace($search, $replace, $model);

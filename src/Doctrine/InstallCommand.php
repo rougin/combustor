@@ -44,8 +44,8 @@ class InstallCommand extends Command
   "description" : "The CodeIgniter framework",
   "name" : "codeigniter/framework",
   "license": "MIT",
-  "require": {' . "\n  " . implode(',' . "\n  ", $requiredLibraries) . "\n " . '},
-  "require-dev": {' . "\n  " . implode(',' . "\n  ", $requiredDevLibraries) . "\n " . '}
+  "require": {' . "\n  " . implode(',' . "\n    ", $requiredLibraries) . "\n  " . '},
+  "require-dev": {' . "\n  " . implode(',' . "\n    ", $requiredDevLibraries) . "\n  " . '}
 }';
 
 			$file = fopen('composer.json', 'wb');

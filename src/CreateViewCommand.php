@@ -58,15 +58,16 @@ class CreateViewCommand extends Command
 		 */
 
 		$bootstrap = array(
-			'button' => ($input->getOption('bootstrap')) ? 'btn btn-primary' : NULL,
-			'buttonBack'   => ($input->getOption('bootstrap')) ? 'btn btn-default' : NULL,
-			'buttonSubmit' => ($input->getOption('bootstrap')) ? 'btn btn-primary' : NULL,
-			'formColumn'   => ($input->getOption('bootstrap')) ? '' : NULL,
-			'formControl'  => ($input->getOption('bootstrap')) ? 'form-control' : NULL,
-			'formGroup'    => ($input->getOption('bootstrap')) ? 'form-group col-lg-12 col-md-12 col-sm-12 col-xs-12' : NULL,
-			'formOpen'     => ($input->getOption('bootstrap')) ? '' : NULL,
-			'label'        => ($input->getOption('bootstrap')) ? 'control-label' : NULL,
-			'table'        => ($input->getOption('bootstrap')) ? 'table table table-striped table-hover' : NULL
+			'button'           => ($input->getOption('bootstrap')) ? 'btn btn-primary' : NULL,
+			'buttonBack'       => ($input->getOption('bootstrap')) ? 'btn btn-default' : NULL,
+			'buttonSubmit'     => ($input->getOption('bootstrap')) ? 'btn btn-primary' : NULL,
+			'formColumn'       => ($input->getOption('bootstrap')) ? '' : NULL,
+			'formControl'      => ($input->getOption('bootstrap')) ? 'form-control' : NULL,
+			'formGroup'        => ($input->getOption('bootstrap')) ? 'form-group col-lg-12 col-md-12 col-sm-12 col-xs-12' : NULL,
+			'formGroupButtons' => ($input->getOption('bootstrap')) ? 'form-group' : NULL,
+			'formOpen'         => ($input->getOption('bootstrap')) ? '' : NULL,
+			'label'            => ($input->getOption('bootstrap')) ? 'control-label' : NULL,
+			'table'            => ($input->getOption('bootstrap')) ? 'table table table-striped table-hover' : NULL
 		);
 
 		/**
@@ -291,6 +292,7 @@ class CreateViewCommand extends Command
 			'[bootstrapButtonSubmit]',
 			'[bootstrapFormControl]',
 			'[bootstrapFormGroup]',
+			'[bootstrapFormGroupButtons]',
 			'[bootstrapFormOpen]',
 			'[bootstrapTable]',
 			'[bootstrapLabel]',
@@ -316,6 +318,7 @@ class CreateViewCommand extends Command
 			$bootstrap['buttonSubmit'],
 			$bootstrap['formControl'],
 			$bootstrap['formGroup'],
+			$bootstrap['formGroupButtons'],
 			$bootstrap['formOpen'],
 			$bootstrap['table'],
 			$bootstrap['label'],

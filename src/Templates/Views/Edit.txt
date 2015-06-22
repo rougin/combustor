@@ -6,7 +6,7 @@
 	<br>
 	<?php echo form_open('[plural]/edit/' . $[singular]->[primaryKey](), 'class="[bootstrapFormOpen]"'); ?>
 		[fieldsOnEdit]
-		<div class="[bootstrapFormGroup]">
+		<div class="[bootstrapFormGroupButtons]">
 			<div class="[bootstrapLabel]"></div>
 			<div class="[bootstrapFormColumn]">
 				<a class="[bootstrapButtonBack]" href="<?php echo base_url('[plural]'); ?>">Back</a>

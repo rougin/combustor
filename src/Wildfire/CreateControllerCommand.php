@@ -207,7 +207,7 @@ class CreateControllerCommand
 			Tools::stripTableSchema($plural),
 			strtolower($plural),
 			Tools::stripTableSchema(singular($name)),
-			strtolower(humanize($name)),
+			strtolower(humanize(singular($name))),
 			$this->_input->getArgument('name')
 		);
 

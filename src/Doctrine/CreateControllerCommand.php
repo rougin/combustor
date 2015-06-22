@@ -195,8 +195,7 @@ class CreateControllerCommand
 			'[plural]',
 			'[pluralText]',
 			'[singular]',
-			'[singularText]',
-			'[table]'
+			'[singularText]'
 		);
 
 		$replace = array(
@@ -211,8 +210,7 @@ class CreateControllerCommand
 			Tools::stripTableSchema($plural),
 			strtolower($plural),
 			Tools::stripTableSchema(singular($name)),
-			strtolower(humanize($name)),
-			$this->_input->getArgument('name')
+			strtolower(humanize(singular($name)))
 		);
 
 		$controller = str_replace($search, $replace, $controller);

@@ -1,8 +1,5 @@
 <?php namespace Rougin\Combustor;
 
-use Composer\Installer\PackageEvent;
-use Composer\Script\Event;
-
 class Tools
 {
 
@@ -60,30 +57,13 @@ class Tools
 	 * 
 	 * @return integer
 	 */
-	public static function ignite(Event $event = null)
+	public static function ignite()
 	{
-		/**
-		 * Setup the directory paths
-		 */
-
-		define('APPPATH',  realpath('application') . '/');
-		define('VENDOR',   realpath('vendor') . '/');
-
-		$directory = new \RecursiveDirectoryIterator(getcwd(), \FilesystemIterator::SKIP_DOTS);
-		foreach (new \RecursiveIteratorIterator($directory, \RecursiveIteratorIterator::SELF_FIRST) as $path) {
-			if (strpos($path->__toString(), 'core/CodeIgniter.php') !== FALSE) {
-				$basepath = str_replace('core/CodeIgniter.php', '', $path->__toString());
-				define('BASEPATH', $basepath);
-
-				break;
-			}
-		}
-
 		/**
 		 * Get the templates
 		 */
 
-		$miscellaneous           = VENDOR . 'rougin/combustor/src/Templates/Miscellaneous/';
+		$miscellaneous = VENDOR . 'rougin/combustor/src/Templates/Miscellaneous/';
 
 		$autoload                = file_get_contents(APPPATH . 'config/autoload.php');
 		$codeigniterCore         = file_get_contents(BASEPATH . 'core/CodeIgniter.php');
@@ -121,7 +101,7 @@ class Tools
 			$config = file_get_contents('application/config/config.php');
 
 			$search  = '$config[\'composer_autoload\'] = FALSE;';
-			$replace = '$config[\'composer_autoload\'] = \'vendor/autoload.php\';';
+			$replace = '$config[\'composer_autoload\'] = realpath(\'vendor\') . \'/autoload.php\';';
 
 			$config = str_replace($search, $replace, $config);
 

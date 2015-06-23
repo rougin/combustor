@@ -19,12 +19,6 @@
 			"Rougin\\Combustor\\": "src/"
 		}
 	},
-	"scripts" : {
-		"post-install-cmd": [
-			"Rougin\\Combustor\\Tools::ignite",
-			"composer update"
-		]
-	},
 	"suggest": {
 		"rougin/codeigniter": "Yet another way to install CodeIgniter via Composer",
 		"rougin/refinery": "A command line interface for Migrations Class in CodeIgniter"

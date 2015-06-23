@@ -80,6 +80,7 @@ class InstallCommand extends Command
 		file_put_contents(VENDOR . 'rougin/combustor/bin/combustor.php', $combustor);
 		fclose($file);
 
+		Tools::ignite();
 		$output->writeln('<info>Wildfire is now installed successfully!</info>');
 	}
 

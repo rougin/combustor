@@ -62,12 +62,12 @@ class RemoveCommand extends Command
 		$combustor = file_get_contents(VENDOR . 'rougin/combustor/bin/combustor.php');
 
 		$search = array(
-			'$application->add(new Rougin\Combustor\Wildfire\RemoveCommand);',
-			'// $application->add(new Rougin\Combustor\Wildfire\InstallCommand);'
+			'$application->add(new Rougin\Combustor\Wildfire\RemoveCommand());',
+			'// $application->add(new Rougin\Combustor\Wildfire\InstallCommand());'
 		);
 		$replace = array(
-			'// $application->add(new Rougin\Combustor\Wildfire\RemoveCommand);',
-			'$application->add(new Rougin\Combustor\Wildfire\InstallCommand);'
+			'// $application->add(new Rougin\Combustor\Wildfire\RemoveCommand());',
+			'$application->add(new Rougin\Combustor\Wildfire\InstallCommand());'
 		);
 
 		$combustor = str_replace($search, $replace, $combustor);

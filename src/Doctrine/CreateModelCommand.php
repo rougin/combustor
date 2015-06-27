@@ -64,24 +64,26 @@ class CreateModelCommand
 		$describe = new Describe($db['default']);
 		$tableInformation = $describe->getInformationFromTable($this->_input->getArgument('name'));
 
+		if (empty($tableInformation)) {
+			$message = 'The table "' . $this->_input->getArgument('name') . '" does not exists in the database!';
+			$this->_output->writeln('<error>' . $message . '</error>');
+
+			return;
+		}
+
 		foreach ($tableInformation as $row) {
 			$accessors .= ($counter != 0) ? '	' : NULL;
 			$columns   .= ($counter != 0) ? '	' : NULL;
 			$mutators  .= ($mutatorsCounter != 0) ? '	' : NULL;
 
-			$nullable = ($row->isNull) ? 'TRUE' : 'FALSE';
-			$unique   = ($row->key == 'UNI') ? 'TRUE' : 'FALSE';
+			$nullable = ($row->isNull()) ? 'TRUE' : 'FALSE';
+			$unique   = ($row->isUnique()) ? 'TRUE' : 'FALSE';
 
-			$type = Tools::getDataType($row->type);
-
-			/**
-			 * Is the data type an integer or a string? Set the length of the specified data type
-			 */
-
+			$type = Tools::getDataType($row->getDataType());
 			$length = NULL;
 
-			if ((strpos($row->type, 'int') !== FALSE) || (strpos($row->type, 'varchar') !== FALSE)) {
-				$length =  ', length=' . str_replace(array($type, '(', ')', 'varchar', 'int'), array('', '', '', '', ''), $row->type);
+			if ($row->getLength()) {
+				$length = ', length=' . $row->getLength();
 			}
 
 			/**
@@ -90,48 +92,48 @@ class CreateModelCommand
 
 			$columns .= '/**' . "\n";
 
-			if ($row->key == 'PRI') {
-				$autoIncrement = ($row->extra == 'auto_increment') ? '@GeneratedValue' : NULL;
+			if ($row->isPrimaryKey()) {
+				$autoIncrement = ($row->isAutoIncrement()) ? '@GeneratedValue' : NULL;
 
 				$columns .= '	 * @Id ' . $autoIncrement . "\n";
 				$columns .= '	 * @Column(type="' . $type . '"' . $length . ', nullable=' . $nullable . ', unique=' . $unique . ')' . "\n";
-			} else if ($row->key == 'MUL') {
+			} else if ($row->isForeignKey()) {
 				$indexes .= ($indexesCounter != 0) ? ' *   		' : NULL;
 
-				$indexes .= '@index(name="' . $row->field . '", columns={"' . $row->field . '"}),' . "\n";
-				$type     = '\\' . ucfirst($row->referencedTable);
+				$indexes .= '@index(name="' . $row->getField() . '", columns={"' . $row->getField() . '"}),' . "\n";
+				$type     = '\\' . ucfirst($row->getReferencedTable());
 
-				$columns .= '	 * @ManyToOne(targetEntity="' . ucfirst($row->referencedTable) . '", cascade={"persist"})' . "\n";
+				$columns .= '	 * @ManyToOne(targetEntity="' . ucfirst($row->getReferencedTable()) . '", cascade={"persist"})' . "\n";
 				$columns .= '	 * @JoinColumns({' . "\n";
-				$columns .= '	 * 	@JoinColumn(name="' . $row->field . '", referencedColumnName="' . $row->referencedColumn . '", nullable=' . $nullable . ', onDelete="cascade")' . "\n";
+				$columns .= '	 * 	@JoinColumn(name="' . $row->getField() . '", referencedColumnName="' . $row->getReferencedField() . '", nullable=' . $nullable . ', onDelete="cascade")' . "\n";
 				$columns .= '	 * })' . "\n";
 
 				$indexesCounter++;
 			} else {
 				$columns .= '	 * @Column(type="' . $type . '"' . $length . ', nullable=' . $nullable . ', unique=' . $unique . ')' . "\n";
 
-				if ($row->field != 'datetime_created' && $row->field != 'datetime_updated' && $row->field != 'password') {
+				if ($row->getField() != 'datetime_created' && $row->getField() != 'datetime_updated' && $row->getField() != 'password') {
 					$keywords .= ($keywordsCounter != 0) ? '		' : NULL;
-					$keywords .= '\'[firstLetter].' . $row->field . '\'' . ",\n";
+					$keywords .= '\'[firstLetter].' . $row->getField() . '\'' . ",\n";
 
 					$keywordsCounter++;
 				}
 			}
 
 			$columns .= '	 */' . "\n";
-			$columns .= '	protected $' . $row->field . ';' . "\n\n";
+			$columns .= '	protected $' . $row->getField() . ';' . "\n\n";
 
 			/**
 			 * Generate the accessors
 			 */
 
-			$methodName = 'get_' . $row->field;
+			$methodName = 'get_' . $row->getField();
 			$methodName = ($this->_input->getOption('camel')) ? camelize($methodName) : underscore($methodName);
 			
 			$accessor = file_get_contents(__DIR__ . '/Templates/Miscellaneous/Accessor.txt');
 			
 			$search  = array('[field]', '[type]', '[method]');
-			$replace = array($row->field, $type, $methodName);
+			$replace = array($row->getField(), $type, $methodName);
 
 			$accessors .= str_replace($search, $replace, $accessor) . "\n\n";
 
@@ -139,23 +141,23 @@ class CreateModelCommand
 			 * Generate the mutators
 			 */
 
-			if ($row->extra != 'auto_increment') {
+			if ( ! $row->isAutoIncrement()) {
 				$class         = '\\' . ucfirst($name);
-				$classVariable = ($row->key == 'MUL') ? '\\' . ucfirst(Tools::stripTableSchema($row->referencedTable)) . ' ' : NULL;
+				$classVariable = ($row->isForeignKey()) ? '\\' . ucfirst(Tools::stripTableSchema($row->getReferencedTable())) . ' ' : NULL;
 				
-				$methodName = 'set_' . $row->field;
+				$methodName = 'set_' . $row->getField();
 				$methodName = ($this->_input->getOption('camel')) ? camelize($methodName) : underscore($methodName);
 
-				$nullable = ($row->isNull) ? ' = NULL' : NULL;
+				$nullable = ($row->isNull()) ? ' = NULL' : NULL;
 
 				$mutator = file_get_contents(__DIR__ . '/Templates/Miscellaneous/Mutator.txt');
 
-				if (in_array(Tools::getDataType($row->type), $dataTypes)) {
+				if (in_array(Tools::getDataType($row->getDataType()), $dataTypes)) {
 					$mutator = str_replace('$this->[field] = $[field];', '$this->[field] = new \DateTime($[field]);', $mutator);
 				}
 
 				$search  = array('[field]', '[type]', '[method]', '[classVariable]', '[class]', '[nullable]');
-				$replace = array($row->field, $type, $methodName, $classVariable, $class, $nullable);
+				$replace = array($row->getField(), $type, $methodName, $classVariable, $class, $nullable);
 				
 				$mutators .= str_replace($search, $replace, $mutator) . "\n\n";
 
@@ -201,7 +203,7 @@ class CreateModelCommand
 		$filename = APPPATH . 'models/' . $modelFile . '.php';
 
 		if (file_exists($filename)) {
-			$this->_output->writeln('<error>The ' . $name . ' model already exists!</error>');
+			$this->_output->writeln('<error>The "' . $name . '" model already exists!</error>');
 		} else {
 			$file = fopen($filename, 'wb');
 			file_put_contents($filename, $model);

@@ -50,7 +50,9 @@ class CreateViewCommand extends Command
 	{
 		if ( ! file_exists(APPPATH . 'views/layout')) {
 			$message = 'Please create a layout first using the "create:layout" command!';
-			exit($output->writeln('<error>' . $message . '</error>'));
+			$output->writeln('<error>' . $message . '</error>');
+
+			return;
 		}
 
 		/**
@@ -91,6 +93,13 @@ class CreateViewCommand extends Command
 		$describe = new Describe($db['default']);
 		$tableInformation = $describe->getInformationFromTable($input->getArgument('name'));
 
+		if (empty($tableInformation)) {
+			$message = 'The table "' . $this->_input->getArgument('name') . '" does not exists in the database!';
+			$this->_output->writeln('<error>' . $message . '</error>');
+
+			return;
+		}
+
 		$columns        = NULL;
 		$counter        = 0;
 		$fieldsOnCreate = NULL;
@@ -100,38 +109,38 @@ class CreateViewCommand extends Command
 		$dropdownColumnLabels = array('name', 'description', 'label');
 
 		foreach ($tableInformation as $row) {
-			$methodName = 'get_' . $row->field;
+			$methodName = 'get_' . $row->getField();
 			$methodName = ($input->getOption('camel')) ? camelize($methodName) : underscore($methodName);
 
-			$primaryKey = ($row->key == 'PRI') ? $methodName : $primaryKey;
-			$required   = ( ! $row->isNull) ? ' required' : NULL;
+			$primaryKey = ($row->isPrimaryKey()) ? $methodName : $primaryKey;
+			$required   = ( ! $row->isNull()) ? ' required' : NULL;
 
-			if ($row->field == 'datetime_created' || $row->field == 'datetime_updated' || $row->extra == 'auto_increment') {
+			if ($row->getField() == 'datetime_created' || $row->getField() == 'datetime_updated' || $row->isAutoIncrement()) {
 				continue;
 			}
 
-			$columns        .= ($counter != 0 && $row->field != 'password') ? '					' : NULL;
-			$fieldsOnCreate .= ($counter != 0 && $row->field != 'password') ? '		' : NULL;
-			$fieldsOnShow   .= ($counter != 0 && $row->field != 'password') ? '	' : NULL;
-			$rows           .= ($counter != 0 && $row->field != 'password') ? '						' : NULL;
+			$columns        .= ($counter != 0 && $row->getField() != 'password') ? '					' : NULL;
+			$fieldsOnCreate .= ($counter != 0 && $row->getField() != 'password') ? '		' : NULL;
+			$fieldsOnShow   .= ($counter != 0 && $row->getField() != 'password') ? '	' : NULL;
+			$rows           .= ($counter != 0 && $row->getField() != 'password') ? '						' : NULL;
 
-			if ($row->field == 'password') {
+			if ($row->getField() == 'password') {
 				$fieldsOnCreate .= file_get_contents(__DIR__ . '/Templates/Miscellaneous/CreatePassword.txt') . "\n";
 				continue;
 			}
 
-			$columns .= '<th>' . str_replace(' Id', '', humanize($row->field)) . '</th>' . "\n";
-
+			$columns .= '<th>' . str_replace(' Id', '', humanize($row->getField())) . '</th>' . "\n";
 			$extension = NULL;
-			if (strpos($row->field, 'date') !== FALSE || strpos($row->field, 'time') !== FALSE) {
+
+			if (strpos($row->getField(), 'date') !== FALSE || strpos($row->getField(), 'time') !== FALSE) {
 				$extension = '->format(\'F d, Y\')';
-			} else if ($row->key == 'MUL') {
-				$tableColumns = $describe->getInformationFromTable($row->referencedTable);
+			} else if ($row->isForeignKey()) {
+				$tableColumns = $describe->getInformationFromTable($row->getReferencedTable());
 
 				$tablePrimaryKey = NULL;
 				foreach ($tableColumns as $column) {
-					if (in_array($column->field, $dropdownColumnLabels) || $column->key == 'PRI') {
-						$tablePrimaryKey = 'get_' . $column->field;
+					if (in_array($column->getField(), $dropdownColumnLabels) || $column->isPrimaryKey()) {
+						$tablePrimaryKey = 'get_' . $column->getField();
 
 						if ($input->getOption('camel')) {
 							$tablePrimaryKey = camelize($tablePrimaryKey);
@@ -147,7 +156,7 @@ class CreateViewCommand extends Command
 			$rows .= '<td><?php echo $[singular]->' . $methodName . '()' . $extension . '; ?></td>' . "\n";
 
 			if ($input->getOption('bootstrap')) {
-				$fieldsOnCreate .= '<?php if (form_error(\'' . $row->field . '\')): ?>' . "\n";
+				$fieldsOnCreate .= '<?php if (form_error(\'' . $row->getField() . '\')): ?>' . "\n";
 				$fieldsOnCreate .= '			<div class="form-group has-error">' . "\n";
 				$fieldsOnCreate .= '		<?php else: ?>' . "\n";
 				$fieldsOnCreate .= '			<div class="form-group">' . "\n";
@@ -156,20 +165,21 @@ class CreateViewCommand extends Command
 				$fieldsOnCreate .= '	<div class="">' . "\n";
 			}
 
-			$label = str_replace(' Id', '', humanize($row->field));
-			$fieldsOnCreate .= '			<?php echo form_label(\'' . $label . '\', \'' . $row->field . '\', array(\'class\' => \'[bootstrapLabel]\')); ?>' . "\n";
+			$label = str_replace(' Id', '', humanize($row->getField()));
+			$fieldsOnCreate .= '			<?php echo form_label(\'' . $label . '\', \'' . $row->getField() . '\', array(\'class\' => \'[bootstrapLabel]\')); ?>' . "\n";
 			$fieldsOnCreate .= '			<div class="[bootstrapFormColumn]">' . "\n";
 
-			if ($row->key == 'MUL') {
-				$data = plural($row->referencedTable);
+			if ($row->isForeignKey()) {
+				$data = plural($row->getReferencedTable());
 
-				$fieldsOnCreate .= '				<?php echo form_dropdown(\'' . $row->field . '\', $' . Tools::stripTableSchema($data) . ', set_value(\'' . $row->field . '\'), \'class="[bootstrapFormControl]"' . $required . '\'); ?>' . "\n";
-				$tableColumns  = $describe->getInformationFromTable($row->referencedTable);
+				$fieldsOnCreate .= '				<?php echo form_dropdown(\'' . $row->getField() . '\', $' . Tools::stripTableSchema($data) . ', set_value(\'' . $row->getField() . '\'), \'class="[bootstrapFormControl]"' . $required . '\'); ?>' . "\n";
+				$tableColumns  = $describe->getInformationFromTable($row->getReferencedTable());
 
 				$tablePrimaryKey = NULL;
+
 				foreach ($tableColumns as $column) {
-					if ($column->key == 'PRI') {
-						$tablePrimaryKey = 'get_' . $column->field;
+					if ($column->isPrimaryKey()) {
+						$tablePrimaryKey = 'get_' . $column->getField();
 
 						if ($input->getOption('camel')) {
 							$tablePrimaryKey = camelize($tablePrimaryKey);
@@ -180,22 +190,22 @@ class CreateViewCommand extends Command
 				}
 
 				$value = '$[singular]->' . $methodName . '()->' . $tablePrimaryKey . '()';
-			} else if ($row->field == 'gender') {
-				$fieldsOnCreate .= '				<?php echo form_dropdown(\'' . $row->field . '\', $' . plural($row->field) .', set_value(\'' . $row->field . '\'), \'class="[bootstrapFormControl]"' . $required . '\'); ?>' . "\n";
+			} else if ($row->getField() == 'gender') {
+				$fieldsOnCreate .= '				<?php echo form_dropdown(\'' . $row->getField() . '\', $' . plural($row->getField()) .', set_value(\'' . $row->getField() . '\'), \'class="[bootstrapFormControl]"' . $required . '\'); ?>' . "\n";
 			} else {
-				$fieldsOnCreate .= '				<?php echo form_input(\'' . $row->field . '\', set_value(\'' . $row->field . '\'), \'class="[bootstrapFormControl]"' . $required . '\'); ?>' . "\n";
+				$fieldsOnCreate .= '				<?php echo form_input(\'' . $row->getField() . '\', set_value(\'' . $row->getField() . '\'), \'class="[bootstrapFormControl]"' . $required . '\'); ?>' . "\n";
 
 				$value = '$[singular]->' . $methodName . '()';
 			}
 
-			$fieldsOnCreate .= '				<?php echo form_error(\'' . $row->field . '\'); ?>' . "\n";
+			$fieldsOnCreate .= '				<?php echo form_error(\'' . $row->getField() . '\'); ?>' . "\n";
 			$fieldsOnCreate .= '			</div>' . "\n";
 			$fieldsOnCreate .= '		</div>' . "\n";
 
-			if (strpos($row->type, 'date') !== FALSE || strpos($row->type, 'time') !== FALSE) {
+			if (strpos($row->getDataType(), 'date') !== FALSE || strpos($row->getDataType(), 'time') !== FALSE) {
 				$format = NULL;
 
-				switch ($row->type) {
+				switch ($row->getDataType()) {
 					case 'datetime':
 						$format = 'Y-m-d H:i:s';
 						break;
@@ -210,7 +220,7 @@ class CreateViewCommand extends Command
 				$value = '$[singular]->' . $methodName . '()->format(\'' . $format . '\')';
 			}
 
-			$fieldsOnShow .= str_replace(' Id', '', humanize($row->field)) . ': <?php echo ' . $value . '; ?><br>' . "\n";
+			$fieldsOnShow .= str_replace(' Id', '', humanize($row->getField())) . ': <?php echo ' . $value . '; ?><br>' . "\n";
 
 			$counter++;
 		}
@@ -222,18 +232,18 @@ class CreateViewCommand extends Command
 		$fieldsOnEdit = $fieldsOnCreate;
 
 		foreach ($tableInformation as $row) {
-			$methodName = 'get_' . $row->field;
+			$methodName = 'get_' . $row->getField();
 			$methodName = ($input->getOption('camel')) ? camelize($methodName) : underscore($methodName);
 
 			$value = '$[singular]->' . $methodName . '()';
 
-			if ($row->key == 'MUL') {
-				$tableColumns = $describe->getInformationFromTable($row->referencedTable);
+			if ($row->isForeignKey()) {
+				$tableColumns = $describe->getInformationFromTable($row->getReferencedTable());
 
 				$tablePrimaryKey = NULL;
 				foreach ($tableColumns as $column) {
-					if ($column->key == 'PRI') {
-						$tablePrimaryKey = 'get_' . $column->field;
+					if ($column->isPrimaryKey()) {
+						$tablePrimaryKey = 'get_' . $column->getField();
 
 						if ($input->getOption('camel')) {
 							$tablePrimaryKey = camelize($tablePrimaryKey);
@@ -244,10 +254,10 @@ class CreateViewCommand extends Command
 				}
 
 				$value = '$[singular]->' . $methodName . '()->' . $tablePrimaryKey . '()';
-			} else if (strpos($row->type, 'date') !== FALSE || strpos($row->type, 'time') !== FALSE) {
+			} else if (strpos($row->getDataType(), 'date') !== FALSE || strpos($row->getDataType(), 'time') !== FALSE) {
 				$format = NULL;
 
-				switch ($row->type) {
+				switch ($row->getDataType()) {
 					case 'datetime':
 						$format = 'Y-m-d H:i:s';
 						break;
@@ -262,14 +272,14 @@ class CreateViewCommand extends Command
 				$value = '$[singular]->' . $methodName . '()->format(\'' . $format . '\')';
 			}
 
-			if (strpos($fieldsOnEdit, 'set_value(\'' . $row->field . '\')') !== FALSE) {
-				$replace = 'set_value(\'' . $row->field . '\', ' . $value . ')';
-				$search  = 'set_value(\'' . $row->field . '\')';
+			if (strpos($fieldsOnEdit, 'set_value(\'' . $row->getField() . '\')') !== FALSE) {
+				$replace = 'set_value(\'' . $row->getField() . '\', ' . $value . ')';
+				$search  = 'set_value(\'' . $row->getField() . '\')';
 
 				$fieldsOnEdit = str_replace($search, $replace, $fieldsOnEdit);
 			}
 
-			if ($row->field == 'password') {
+			if ($row->getField() == 'password') {
 				$createPassword = file_get_contents(__DIR__ . '/Templates/Miscellaneous/CreatePassword.txt') . "\n";
 				$createPassword = str_replace('set_value(\'password\')', 'set_value(\'password\', $[singular]->' . $methodName . '())', $createPassword);
 
@@ -305,6 +315,7 @@ class CreateViewCommand extends Command
 		);
 
 		$plural = ($input->getOption('keep')) ? $input->getArgument('name') : plural($input->getArgument('name'));
+		$pluralHumanized = str_replace('_', ' ', plural($input->getArgument('name')));
 
 		$replace = array(
 			rtrim($fieldsOnShow),
@@ -323,11 +334,11 @@ class CreateViewCommand extends Command
 			$bootstrap['table'],
 			$bootstrap['label'],
 			$bootstrap['formColumn'],
-			ucwords(Tools::stripTableSchema(str_replace('_', ' ', plural($input->getArgument('name'))))),
+			ucwords(Tools::stripTableSchema($pluralHumanized)),
 			Tools::stripTableSchema(singular($input->getArgument('name'))),
 			Tools::stripTableSchema($plural),
 			ucwords(Tools::stripTableSchema(str_replace('_', ' ', singular($input->getArgument('name'))))),
-			Tools::stripTableSchema(str_replace('_', ' ', plural($input->getArgument('name'))))
+			Tools::stripTableSchema($pluralHumanized)
 		);
 
 		$create = str_replace($search, $replace, $create);
@@ -349,7 +360,7 @@ class CreateViewCommand extends Command
 		$filepath = APPPATH . 'views/' . $viewDirectory . '/';
 
 		if ( ! @mkdir($filepath, 0777, TRUE)) {
-			$message = 'The ' . plural($input->getArgument('name')) . ' views folder already exists!';
+			$message = 'The "' . $na . '" views folder already exists!';
 			$output->writeln('<error>' . $message . '</error>');
 		} else {
 			/**

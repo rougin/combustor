@@ -31,7 +31,7 @@ class Tools
 			$type = 'float';
 		} else if (strpos($type, 'guid') !== FALSE) {
 			$type = 'guid';
-		} else if (strpos($type, 'int') !== FALSE) {
+		} else if (strpos($type, 'int') !== FALSE || $type == 'INTEGER') {
 			$type = 'integer';
 		} else if (strpos($type, 'json_array') !== FALSE) {
 			$type = 'json_array';
@@ -41,7 +41,7 @@ class Tools
 			$type = 'simple_array';
 		} else if (strpos($type, 'smallint') !== FALSE) {
 			$type = 'smallint';
-		} else if (strpos($type, 'text') !== FALSE) {
+		} else if (strpos($type, 'text') !== FALSE || $type == 'TEXT') {
 			$type = 'text';
 		} else if (strpos($type, 'time') !== FALSE) {
 			$type = 'time';

@@ -35,6 +35,7 @@ class CreateModelCommand
 		$accessors       = NULL;
 		$columns         = NULL;
 		$counter         = 0;
+		$class           = NULL;
 		$dataTypes       = array('time', 'date', 'datetime', 'datetimetz');
 		$fields          = NULL;
 		$fieldsCounter   = 0;
@@ -66,40 +67,47 @@ class CreateModelCommand
 		$describe = new Describe($db['default']);
 		$tableInformation = $describe->getInformationFromTable($this->_input->getArgument('name'));
 
+		if (empty($tableInformation)) {
+			$message = 'The table "' . $this->_input->getArgument('name') . '" does not exists in the database!';
+			$this->_output->writeln('<error>' . $message . '</error>');
+
+			return;
+		}
+
 		foreach ($tableInformation as $row) {
 			$accessors .= ($counter != 0) ? '	' : NULL;
 			$columns   .= ($counter != 0) ? '	' : NULL;
 			$mutators  .= ($mutatorsCounter != 0) ? '	' : NULL;
-			$type       = ($row->key == 'MUL') ? '\\' . ucwords($row->referencedTable) : $row->type;
+			$type       = ($row->isForeignKey()) ? '\\' . ucwords($row->getReferencedTable()) : $row->getDataType();
 
 			/**
 			 * Generate keywords
 			 */
 
-			if ($row->field != 'datetime_created' && $row->field != 'datetime_updated' && $row->field != 'password') {
+			if ($row->getField() != 'datetime_created' && $row->getField() != 'datetime_updated' && $row->getField() != 'password') {
 				$keywords .= ($keywordsCounter != 0) ? '		' : NULL;
-				$keywords .= '\'[firstLetter].' . $row->field . '\'' . ",\n";
+				$keywords .= '\'[firstLetter].' . $row->getField() . '\'' . ",\n";
 
 				$keywordsCounter++;
 			}
 			
-			$columns .= 'protected $_' . $row->field . ';' . "\n";
+			$columns .= 'protected $_' . $row->getField() . ';' . "\n";
 
 			/**
 			 * Generate the accessors
 			 */
 
-			$methodName = 'get_' . $row->field;
+			$methodName = 'get_' . $row->getField();
 			
-			$primaryKey = ($row->key == 'PRI') ? $row->field : $primaryKey;
+			$primaryKey = ($row->isPrimaryKey()) ? $row->getField() : $primaryKey;
 			
 			$accessor = file_get_contents(__DIR__ . '/Templates/Miscellaneous/Accessor.txt');
 			
-			$dataType = $row->type;
+			$dataType = $row->getDataType();
 
-			if (strpos($row->type, '(') !== FALSE) {
-				$leftParenthesis = strpos($row->type, '(');
-				$dataType = substr($row->type, 0, $leftParenthesis);
+			if (strpos($row->getDataType(), '(') !== FALSE) {
+				$leftParenthesis = strpos($row->getDataType(), '(');
+				$dataType = substr($row->getDataType(), 0, $leftParenthesis);
 			}
 
 			if (in_array($dataType, $dataTypes)) {
@@ -114,7 +122,7 @@ class CreateModelCommand
 			}
 
 			$search  = array('[field]', '[type]', '[method]');
-			$replace = array($row->field, $type, $methodName);
+			$replace = array($row->getField(), $type, $methodName);
 
 			$accessors .= str_replace($search, $replace, $accessor) . "\n\n";
 
@@ -123,14 +131,14 @@ class CreateModelCommand
 			 */
 
 			$fields .= ($fieldsCounter != 0) ? ",\n" . '			' : NULL;
-			$fields .= '\'' . $row->field . '\' => $this->' . $methodName . '()';
+			$fields .= '\'' . $row->getField() . '\' => $this->' . $methodName . '()';
 
-			if ($row->key == 'MUL') {
-				$foreignTableInformation = $describe->getInformationFromTable($row->referencedTable);
+			if ($row->isForeignKey()) {
+				$foreignTableInformation = $describe->getInformationFromTable($row->getReferencedTable());
 
 				foreach ($foreignTableInformation as $foreignRow) {
-					if ($foreignRow->key == 'PRI') {
-						$methodName = 'get_' . $foreignRow->field;
+					if ($foreignRow->isPrimaryKey()) {
+						$methodName = 'get_' . $foreignRow->getField();
 
 						break;
 					}
@@ -160,11 +168,11 @@ class CreateModelCommand
 			 */
 
 			$class         = '\\' . ucfirst($name);
-			$classVariable = ($row->key == 'MUL') ? '\\' . ucfirst(Tools::stripTableSchema($row->referencedTable)) . ' ' : NULL;
+			$classVariable = ($row->isForeignKey()) ? '\\' . ucfirst(Tools::stripTableSchema($row->getReferencedTable())) . ' ' : NULL;
 			
-			$methodName = 'set_' . $row->field;
+			$methodName = 'set_' . $row->getField();
 
-			$nullable = ($row->isNull) ? ' = NULL' : NULL;
+			$nullable = ($row->isNull()) ? ' = NULL' : NULL;
 
 			$mutator = file_get_contents(__DIR__ . '/Templates/Miscellaneous/Mutator.txt');
 
@@ -173,7 +181,7 @@ class CreateModelCommand
 			}
 
 			$search  = array('[field]', '[type]', '[method]', '[classVariable]', '[nullable]');
-			$replace = array($row->field, $type, $methodName, $classVariable, $nullable);
+			$replace = array($row->getField(), $type, $methodName, $classVariable, $nullable);
 
 			$mutators .= str_replace($search, $replace, $mutator) . "\n\n";
 
@@ -199,7 +207,8 @@ class CreateModelCommand
 			'[singular]',
 			'[firstLetter]',
 			'[model]',
-			'[modelName]'
+			'[modelName]',
+			'[table]'
 		);
 
 		$replace = array(
@@ -214,7 +223,8 @@ class CreateModelCommand
 			$this->_input->getArgument('name'),
 			substr($this->_input->getArgument('name'), 0, 1),
 			ucfirst($name),
-			ucwords(str_replace('_', ' ', $name))
+			ucwords(str_replace('_', ' ', $name)),
+			$this->_input->getArgument('name')
 		);
 
 		$model = str_replace($search, $replace, $model);
@@ -227,7 +237,7 @@ class CreateModelCommand
 		$filename = APPPATH . 'models/' . $modelFile . '.php';
 
 		if (file_exists($filename)) {
-			$this->_output->writeln('<error>The ' . $name . ' model already exists!</error>');
+			$this->_output->writeln('<error>The "' . $name . '" model already exists!</error>');
 		} else {
 			$file = fopen($filename, 'wb');
 			file_put_contents($filename, $model);

@@ -131,12 +131,12 @@ class InstallCommand extends Command
 		$combustor = file_get_contents(VENDOR . 'rougin/combustor/bin/combustor.php');
 
 		$search = array(
-			'// $application->add(new Rougin\Combustor\Doctrine\RemoveCommand);',
-			'$application->add(new Rougin\Combustor\Doctrine\InstallCommand);'
+			'// $application->add(new Rougin\Combustor\Doctrine\RemoveCommand());',
+			'$application->add(new Rougin\Combustor\Doctrine\InstallCommand());'
 		);
 		$replace = array(
-			'$application->add(new Rougin\Combustor\Doctrine\RemoveCommand);',
-			'// $application->add(new Rougin\Combustor\Doctrine\InstallCommand);'
+			'$application->add(new Rougin\Combustor\Doctrine\RemoveCommand());',
+			'// $application->add(new Rougin\Combustor\Doctrine\InstallCommand());'
 		);
 
 		$combustor = str_replace($search, $replace, $combustor);

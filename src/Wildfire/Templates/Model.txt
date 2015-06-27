@@ -27,16 +27,16 @@ class [model] extends CI_Model {
 		{
 			$this->db->where('[primaryKey]', $this->_[primaryKey]);
 
-			if ($this->db->get('[singular]')->num_rows())
+			if ($this->db->get('[table]')->num_rows())
 			{
-				if ($this->db->update('[singular]', $data, array('[primaryKey]' => $this->_[primaryKey])))
+				if ($this->db->update('[table]', $data, array('[primaryKey]' => $this->_[primaryKey])))
 				{
 					return TRUE;
 				}
 			}
 			else
 			{
-				if ($this->db->insert('[singular]', $data))
+				if ($this->db->insert('[table]', $data))
 				{	
 					return TRUE;
 				}
@@ -44,7 +44,7 @@ class [model] extends CI_Model {
 		}
 		else
 		{
-			if ($this->db->insert('[singular]', $data))
+			if ($this->db->insert('[table]', $data))
 			{
 				$this->_[primaryKey] = $this->db->insert_id();
 				

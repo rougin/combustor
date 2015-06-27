@@ -36,13 +36,11 @@ class CreateControllerCommand
 		 * Set the name for the controller
 		 */
 
+		$name = plural($this->_input->getArgument('name'));
+
 		if ($this->_input->getOption('keep')) {
 			$name = $this->_input->getArgument('name');
-		} else {
-			$name = plural($this->_input->getArgument('name'));
 		}
-
-		$plural = ($this->_input->getOption('keep')) ? $name : plural($name);
 
 		/**
 		 * Get the controller template
@@ -62,6 +60,13 @@ class CreateControllerCommand
 		$describe = new Describe($db['default']);
 		$tableInformation = $describe->getInformationFromTable($this->_input->getArgument('name'));
 
+		if (empty($tableInformation)) {
+			$message = 'The table "' . $this->_input->getArgument('name') . '" does not exists in the database!';
+			$this->_output->writeln('<error>' . $message . '</error>');
+
+			return;
+		}
+
 		$columnsOnCreate         = NULL;
 		$columnsOnCreateCounter  = 0;
 		$columnsOnEdit           = NULL;
@@ -74,48 +79,64 @@ class CreateControllerCommand
 		$selectColumns           = array('name', 'description', 'label');
 
 		foreach ($tableInformation as $row) {
-			if ($row->extra == 'auto_increment') {
+			if ($row->isAutoIncrement()) {
 				continue;
 			}
 
-			$methodName = 'set_' . strtolower($row->field);
+			$methodName = 'set_' . strtolower($row->getField());
 			$methodName = ($this->_input->getOption('camel')) ? camelize($methodName) : underscore($methodName);
 
 			if ($counter != 0) {
-				$columnsOnCreate   .= ($row->field != 'datetime_updated' && $row->key != 'MUL') ? '			' : NULL;
-				$columnsOnEdit     .= ($row->field != 'datetime_created' && $row->key != 'MUL') ? '			' : NULL;
+				$columnsOnCreate   .= ($row->getField() != 'datetime_updated' && ! $row->isForeignKey()) ? '			' : NULL;
+				$columnsOnEdit     .= ($row->getField() != 'datetime_created' && ! $row->isForeignKey()) ? '			' : NULL;
 
-				if ($row->field != 'password' && $row->field != 'datetime_created' && $row->field != 'datetime_updated' && ! $row->isNull) {
+				if ( ! $row->isNull() && $row->getField() != 'password' && $row->getField() != 'datetime_created' && $row->getField() != 'datetime_updated') {
 					$columnsToValidate .= '		';
 				}
 
-				if ($tableInformation[$counter + 1]->key == 'MUL' && $tableInformation[$counter]->key != 'MUL') {
+				if ($tableInformation[$counter + 1]->isForeignKey() && ! $tableInformation[$counter]->isForeignKey()) {
 					$columnsOnCreate .= "\n";
 					$columnsOnEdit   .= "\n";
 				}
 			}
 
-			if ($row->key == 'MUL') {
-				$referencedTable = Tools::stripTableSchema($row->referencedTable);
+			/**
+			 * Add validations per field
+			 */
+
+			$rule = 'required';
+
+			if ( ! $row->isNull() && $row->getField() != 'password' && $row->getField() != 'datetime_created' && $row->getField() != 'datetime_updated') {
+				$label = strtolower(str_replace('_', ' ', $row->getField()));
+
+				if (strpos($row->getField(), 'email') !== FALSE) {
+					$rule .= '|valid_email';
+				}
+
+				$columnsToValidate .= '$this->form_validation->set_rules(\'' . $row->getField() . '\', \'' . $label . '\', \'' . $rule . '\');' . "\n";
+			}
+
+			if ($row->isForeignKey()) {
+				$referencedTable = Tools::stripTableSchema($row->getReferencedTable());
 
 				if (strpos($models, ",\n" . '			\'' . $referencedTable . '\'') === FALSE) {
 					$models .= ",\n" . '			\'' . $referencedTable . '\'';
 				}
 
-				$foreignTableInformation = $describe->getInformationFromTable($row->referencedTable);
-				$fieldDescription = $describe->getPrimaryKey($row->referencedTable);
+				$foreignTableInformation = $describe->getInformationFromTable($row->getReferencedTable());
+				$fieldDescription = $describe->getPrimaryKey($row->getReferencedTable());
 
 				foreach ($foreignTableInformation as $foreignRow) {
-					if ($foreignRow->key == 'MUL') {
-						if (strpos($models, ",\n" . '			\'' . $foreignRow->referencedTable . '\'') === FALSE) {
-							$models .= ",\n" . '			\'' . $foreignRow->referencedTable . '\'';
+					if ($foreignRow->isForeignKey()) {
+						if (strpos($models, ",\n" . '			\'' . $foreignRow->getReferencedTable() . '\'') === FALSE) {
+							$models .= ",\n" . '			\'' . $foreignRow->getReferencedTable() . '\'';
 						}
 					}
 
 					$fieldDescription = in_array($foreignRow->field, $selectColumns) ? $foreignRow->field : $fieldDescription;
 				}
 
-				$dropdownColumn = '$data[\'' . plural(Tools::stripTableSchema($row->referencedTable)) . '\'] = $this->wildfire->get_all(\'' . $row->referencedTable . '\')->as_dropdown(\'' . $fieldDescription . '\');';
+				$dropdownColumn = '$data[\'' . plural(Tools::stripTableSchema($row->getReferencedTable())) . '\'] = $this->wildfire->get_all(\'' . $row->getReferencedTable() . '\')->as_dropdown(\'' . $fieldDescription . '\');';
 
 				$dropdownColumnsOnCreate .= "\n\t\t" . $dropdownColumn;
 				$dropdownColumnsOnEdit   .= "\n\t\t" . $dropdownColumn;
@@ -125,12 +146,16 @@ class CreateControllerCommand
 					$columnsOnEdit   .= "\t\t\t";
 				}
 
-				$columnsOnCreate .= '$' . Tools::stripTableSchema($row->referencedTable) . ' = $this->wildfire->find(\'' . $row->referencedTable . '\', $this->input->post(\'' . $row->field . '\'));' . "\n";
-				$columnsOnCreate .= '			$this->[singular]->' . $methodName . '($' . Tools::stripTableSchema($row->referencedTable) . ');' . "\n\n";
+				$columnsOnCreate .= '$' . Tools::stripTableSchema($row->getReferencedTable()) . ' = $this->wildfire->find(\'' . $row->getReferencedTable() . '\', $this->input->post(\'' . $row->getField() . '\'));' . "\n";
+				$columnsOnCreate .= '			$this->[singular]->' . $methodName . '($' . Tools::stripTableSchema($row->getReferencedTable()) . ');' . "\n\n";
 
-				$columnsOnEdit .= '$' . Tools::stripTableSchema($row->referencedTable) . ' = $this->wildfire->find(\'' . $row->referencedTable . '\', $this->input->post(\'' . $row->field . '\'));' . "\n";
-				$columnsOnEdit .= '			$[singular]->' . $methodName . '($' . Tools::stripTableSchema($row->referencedTable) . ');' . "\n\n";
-			} else if ($row->field == 'password') {
+				$columnsOnEdit .= '$' . Tools::stripTableSchema($row->getReferencedTable()) . ' = $this->wildfire->find(\'' . $row->getReferencedTable() . '\', $this->input->post(\'' . $row->getField() . '\'));' . "\n";
+				$columnsOnEdit .= '			$[singular]->' . $methodName . '($' . Tools::stripTableSchema($row->getReferencedTable()) . ');' . "\n\n";
+
+				continue;
+			}
+
+			if ($row->getField() == 'password') {
 				$columnsOnCreate .= "\n" . file_get_contents(__DIR__ . '/../Templates/Miscellaneous/CheckCreatePassword.txt') . "\n\n";
 				$columnsOnEdit   .= "\n" . file_get_contents(__DIR__ . '/../Templates/Miscellaneous/CheckEditPassword.txt') . "\n\n";
 
@@ -138,38 +163,29 @@ class CreateControllerCommand
 
 				$columnsOnCreate = str_replace('[method]', $methodName, $columnsOnCreate);
 				$columnsOnEdit   = str_replace(array('[method]', '[getMethod]'), array($methodName, $getMethodName), $columnsOnEdit);
-			} else {
-				if ($row->field == 'datetime_created' || $row->field == 'datetime_updated') {
-					$column = '\'now\'';
-				} else {
-					$column = '$this->input->post(\'' . $row->field . '\')';
-				}
 
-				if ($row->field == 'gender') {
-					$dropdownColumn = '$data[\'' . plural(Tools::stripTableSchema($row->field)) . '\'] = array(\'male\' => \'Male\', \'female\' => \'Female\');';
-
-					$dropdownColumnsOnCreate .= "\n\t\t" . $dropdownColumn;
-					$dropdownColumnsOnEdit   .= "\n\t\t" . $dropdownColumn;
-				}
-
-				if ($row->field != 'datetime_updated') {
-					$columnsOnCreate .= '$this->[singular]->' . $methodName . '(' . $column . ');' . "\n";
-				}
-
-				if ($row->field != 'datetime_created') {
-					$columnsOnEdit .= '$[singular]->' . $methodName . '(' . $column . ');' . "\n";
-				}
+				continue;
 			}
 
-			$rule = 'required';
+			if ($row->getField() == 'datetime_created' || $row->getField() == 'datetime_updated') {
+				$column = '\'now\'';
+			} else {
+				$column = '$this->input->post(\'' . $row->getField() . '\')';
+			}
 
-			if (! $row->isNull && $row->field != 'password' && $row->field != 'datetime_created' && $row->field != 'datetime_updated') {
-				if (strpos($row->field, 'email') !== FALSE)
-				{
-					$rule .= '|valid_email';
-				}
+			if ($row->getField() == 'gender') {
+				$dropdownColumn = '$data[\'' . plural('gender') . '\'] = array(\'male\' => \'Male\', \'female\' => \'Female\');';
 
-				$columnsToValidate .= '$this->form_validation->set_rules(\'' . $row->field . '\', \'' . strtolower(str_replace('_', ' ', $row->field)) . '\', \'' . $rule . '\');' . "\n";
+				$dropdownColumnsOnCreate .= "\n\t\t" . $dropdownColumn;
+				$dropdownColumnsOnEdit   .= "\n\t\t" . $dropdownColumn;
+			}
+
+			if ($row->getField() != 'datetime_updated') {
+				$columnsOnCreate .= '$this->[singular]->' . $methodName . '(' . $column . ');' . "\n";
+			}
+
+			if ($row->getField() != 'datetime_created') {
+				$columnsOnEdit .= '$[singular]->' . $methodName . '(' . $column . ');' . "\n";
 			}
 
 			$counter++;
@@ -204,8 +220,8 @@ class CreateControllerCommand
 			rtrim($columnsToValidate),
 			ucfirst(Tools::stripTableSchema($name)),
 			ucfirst(Tools::stripTableSchema(str_replace('_', ' ', $name))),
-			Tools::stripTableSchema($plural),
-			strtolower($plural),
+			Tools::stripTableSchema(plural($name)),
+			strtolower(plural($name)),
 			Tools::stripTableSchema(singular($name)),
 			strtolower(humanize(singular($name))),
 			$this->_input->getArgument('name')
@@ -221,14 +237,14 @@ class CreateControllerCommand
 		$controllerFile = ($this->_input->getOption('lowercase')) ? strtolower($name) : ucfirst($name);
 		$filename       = APPPATH . 'controllers/' . $controllerFile . '.php';
 
-		if (file_exists($filename)) {
-			$this->_output->writeln('<error>The ' . $name . ' controller already exists!</error>');
-		} else {
+		// if (file_exists($filename)) {
+		// 	$this->_output->writeln('<error>The "' . $name . '" controller already exists!</error>');
+		// } else {
 			$file = fopen($filename, 'wb');
 			file_put_contents($filename, $controller);
 
 			$this->_output->writeln('<info>The controller "' . $name . '" has been created successfully!</info>');
-		}
+		// }
 	}
 
 }

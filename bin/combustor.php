@@ -35,10 +35,10 @@ use Symfony\Component\Console\Helper\HelperSet;
 $application = new Application('Combustor', '1.2.0');
 
 $application->add(new Rougin\Combustor\CreateLayoutCommand());
-// $application->add(new Rougin\Combustor\Doctrine\InstallCommand());
-$application->add(new Rougin\Combustor\Doctrine\RemoveCommand());
-// $application->add(new Rougin\Combustor\Wildfire\InstallCommand());
-$application->add(new Rougin\Combustor\Wildfire\RemoveCommand());
+$application->add(new Rougin\Combustor\Doctrine\InstallCommand());
+// $application->add(new Rougin\Combustor\Doctrine\RemoveCommand());
+$application->add(new Rougin\Combustor\Wildfire\InstallCommand());
+// $application->add(new Rougin\Combustor\Wildfire\RemoveCommand());
 
 if (class_exists('Rougin\Refinery\MigrateCommand')) {
 	$application->add(new Rougin\Refinery\MigrateCommand($codeigniter));

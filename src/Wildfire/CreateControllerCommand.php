@@ -237,14 +237,14 @@ class CreateControllerCommand
 		$controllerFile = ($this->_input->getOption('lowercase')) ? strtolower($name) : ucfirst($name);
 		$filename       = APPPATH . 'controllers/' . $controllerFile . '.php';
 
-		// if (file_exists($filename)) {
-		// 	$this->_output->writeln('<error>The "' . $name . '" controller already exists!</error>');
-		// } else {
+		if (file_exists($filename)) {
+			$this->_output->writeln('<error>The "' . $name . '" controller already exists!</error>');
+		} else {
 			$file = fopen($filename, 'wb');
 			file_put_contents($filename, $controller);
 
 			$this->_output->writeln('<info>The controller "' . $name . '" has been created successfully!</info>');
-		// }
+		}
 	}
 
 }

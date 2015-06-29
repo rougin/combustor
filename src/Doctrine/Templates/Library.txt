@@ -38,8 +38,17 @@ class Doctrine {
 		
 		require APPPATH . 'config/database.php';
 
+		$driver   = $db['default']['dbdriver'];
+		$hostname = $db['default']['hostname'];
+
+		if ($driver == 'pdo' && strpos($hostname, ':') !== FALSE)
+		{
+			$keys    = explode(':', $hostname);
+			$driver .= '_' . $keys[0];
+		}
+
 		$connection_options = array(
-			'driver'        => 'pdo_mysql',
+			'driver'        => $driver,
 			'user'          => $db['default']['username'],
 			'password'      => $db['default']['password'],
 			'host'          => $db['default']['hostname'],
@@ -49,6 +58,12 @@ class Doctrine {
 				'charset'   => $db['default']['char_set'],
 			),
 		);
+
+		if ($driver == 'pdo_sqlite')
+		{
+			$keys = explode(':', $db['default']['hostname']);
+			$connection_options['path'] = $keys[1];
+		}
 
 		/**
 		 * With this configuration, your model files need to be in application/models/
@@ -239,23 +254,23 @@ class Doctrine {
 
 		foreach ($table_information as $column)
 		{
-			if ($column->key == 'MUL')
+			if ($column->isForeignKey())
 			{
-				if ( ! in_array($column->referencedTable, $tables))
+				if ( ! in_array($column->get_referenced_table(), $tables))
 				{
-					$foreign_table_alias = $this->_get_alias($column->referencedTable);
+					$foreign_table_alias = $this->_get_alias($column->get_referenced_table());
 
-					$this->_query_builder->leftJoin($table_alias . '.' . $column->field, $foreign_table_alias);
+					$this->_query_builder->leftJoin($table_alias . '.' . $column->get_field(), $foreign_table_alias);
 
-					array_push($tables, $column->referencedTable);
+					array_push($tables, $column->get_referenced_table());
 					$tables = array_unique($tables);
-					$this->_find_by_keyword($keyword, $column->referencedTable, $tables, $foreign_table_alias);
+					$this->_find_by_keyword($keyword, $column->get_referenced_table(), $tables, $foreign_table_alias);
 				}
 			}
-			else if ($column->key != 'PRI')
+			else if ( ! $column->isPrimaryKey())
 			{
 				$this->_query_builder->orWhere(
-					$this->_query_builder->expr()->like($table_alias . '.' . $column->field,
+					$this->_query_builder->expr()->like($table_alias . '.' . $column->get_field(),
 					$this->_query_builder->expr()->literal('%' . $keyword . '%'))
 				);
 			}

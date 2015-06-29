@@ -122,12 +122,16 @@ class Tools
 		$helpers   = explode(', ', end($otherMatch[1]));
 		$libraries = explode(', ', end($match[1]));
 
-		if ( ! in_array('\'url\'', $helpers)) {
-			array_push($helpers, '\'url\'');
-		}
-
 		if ( ! in_array('\'form\'', $helpers)) {
 			array_push($helpers, '\'form\'');
+		}
+
+		if ( ! in_array('\'inflector\'', $helpers)) {
+			array_push($helpers, '\'inflector\'');
+		}
+
+		if ( ! in_array('\'url\'', $helpers)) {
+			array_push($helpers, '\'url\'');
 		}
 
 		if ( ! in_array('\'session\'', $libraries)) {

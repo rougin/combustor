@@ -25,16 +25,14 @@ class Wildfire {
 	{
 		$this->_codeigniter =& get_instance();
 		$this->_codeigniter->load->database();
+		$this->_codeigniter->load->helper('inflector');
 
-		$database_credentials = array(
-			'database' => $this->_codeigniter->db->database,
-			'driver'   => $this->_codeigniter->db->dbdriver,
-			'hostname' => $this->_codeigniter->db->hostname,
-			'password' => $this->_codeigniter->db->password,
-			'username' => $this->_codeigniter->db->username
-		);
+		require APPPATH . 'config/database.php';
 
-		$this->_describe = new Describe($database_credentials);
+		$db['default']['driver'] = $db['default']['dbdriver'];
+		unset($db['default']['dbdriver']);
+
+		$this->_describe = new Describe($db['default']);
 	}
 
 	/**
@@ -117,8 +115,6 @@ class Wildfire {
 	 */
 	public function get_all($table, $delimiters = array())
 	{
-		$this->_codeigniter->load->helper('inflector');
-
 		$this->_rows = array();
 		$this->_table = $table;
 
@@ -194,15 +190,15 @@ class Wildfire {
 
 		foreach ($main_table_information as $table_column)
 		{
-			$method  = $table_column->field;
-			$mutator = 'set_' . $table_column->field;
+			$method  = $table_column->get_field();
+			$mutator = 'set_' . $table_column->get_field();
 
 			$data = $row->$method;
 
-			if ($table_column->key == 'MUL')
+			if ($table_column->is_foreign_key())
 			{
-				$delimiters = array($table_column->referenced_column => $data);
-				$data = $this->find($table_column->referenced_table, $delimiters);
+				$delimiters = array($table_column->get_referenced_field() => $data);
+				$data = $this->find($table_column->get_referenced_table(), $delimiters);
 			}
 
 			$model->$mutator($data);
@@ -245,24 +241,24 @@ class Wildfire {
 
 		foreach ($table_information as $column)
 		{
-			if ($column->key == 'MUL')
+			if ($column->is_foreign_key())
 			{
-				if ( ! in_array($column->referenced_table, $tables))
+				if ( ! in_array($column->get_referenced_table(), $tables))
 				{
-					$foreign_primary_key = $this->_describe->get_primary_key($column->referenced_table);
-					$foreign_table_alias = $table . '_' . $column->referenced_table;
-					$condition = $foreign_table_alias . '.' . $foreign_primary_key . ' = ' . $table_alias . '.' . $column->field;
+					$foreign_primary_key = $this->_describe->get_primary_key($column->get_referenced_table());
+					$foreign_table_alias = $table . '_' . $column->get_referenced_table();
+					$condition = $foreign_table_alias . '.' . $foreign_primary_key . ' = ' . $table_alias . '.' . $column->get_field();
 
-					$this->_codeigniter->db->join($column->referenced_table . ' as ' . $foreign_table_alias, $condition, 'left');
+					$this->_codeigniter->db->join($column->get_referenced_table() . ' as ' . $foreign_table_alias, $condition, 'left');
 
-					array_push($tables, $column->referenced_table);
+					array_push($tables, $column->get_referenced_table());
 					$tables = array_unique($tables);
-					$this->_find_by_keyword($keyword, $column->referenced_table, $tables, $foreign_table_alias);
+					$this->_find_by_keyword($keyword, $column->get_referenced_table(), $tables, $foreign_table_alias);
 				}
 			}
-			else if ($column->key != 'PRI')
+			else if ( ! $column->is_primary_key())
 			{
-				$this->_codeigniter->db->or_like($table_alias . '.' . $column->field, $keyword);
+				$this->_codeigniter->db->or_like($table_alias . '.' . $column->get_field(), $keyword);
 			}
 		}
 	}

@@ -32,7 +32,7 @@ require BASEPATH . 'helpers/inflector_helper.php';
 use Symfony\Component\Console\Application;
 use Symfony\Component\Console\Helper\HelperSet;
 
-$application = new Application('Combustor', '1.2.0');
+$application = new Application('Combustor', '1.1.2');
 
 $application->add(new Rougin\Combustor\CreateLayoutCommand());
 $application->add(new Rougin\Combustor\Doctrine\InstallCommand());

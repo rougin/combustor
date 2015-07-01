@@ -143,7 +143,7 @@ class CreateModelCommand
 
 			if ( ! $row->isAutoIncrement()) {
 				$class         = '\\' . ucfirst($name);
-				$classVariable = ($row->isForeignKey()) ? '\\' . ucfirst(Tools::stripTableSchema($row->getReferencedTable())) . ' ' : NULL;
+				$classVariable = ($row->isForeignKey()) ? '\\' . ucfirst(singular(Tools::stripTableSchema($row->getReferencedTable()))) . ' ' : NULL;
 				
 				$methodName = 'set_' . $row->getField();
 				$methodName = ($this->_input->getOption('camel')) ? camelize($methodName) : underscore($methodName);

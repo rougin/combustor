@@ -117,7 +117,7 @@ class CreateControllerCommand
 			}
 
 			if ($row->isForeignKey()) {
-				$referencedTable = Tools::stripTableSchema($row->getReferencedTable());
+				$referencedTable = singular(Tools::stripTableSchema($row->getReferencedTable()));
 
 				if (strpos($models, ",\n" . '			\'' . $referencedTable . '\'') === FALSE) {
 					$models .= ",\n" . '			\'' . $referencedTable . '\'';
@@ -133,7 +133,7 @@ class CreateControllerCommand
 						}
 					}
 
-					$fieldDescription = in_array($foreignRow->field, $selectColumns) ? $foreignRow->field : $fieldDescription;
+					$fieldDescription = in_array($foreignRow->getField(), $selectColumns) ? $foreignRow->getField() : $fieldDescription;
 				}
 
 				$dropdownColumn = '$data[\'' . plural(Tools::stripTableSchema($row->getReferencedTable())) . '\'] = $this->wildfire->get_all(\'' . $row->getReferencedTable() . '\')->as_dropdown(\'' . $fieldDescription . '\');';

@@ -62,24 +62,6 @@ class InstallCommand extends Command
 		file_put_contents(APPPATH . 'libraries/Wildfire.php', $wildfire);
 		fclose($file);
 
-		$combustor = file_get_contents(VENDOR . 'rougin/combustor/bin/combustor.php');
-
-		$search = array(
-			'// $application->add(new Rougin\Combustor\Wildfire\RemoveCommand());',
-			'$application->add(new Rougin\Combustor\Wildfire\InstallCommand());',
-		);
-		$replace = array(
-			'$application->add(new Rougin\Combustor\Wildfire\RemoveCommand());',
-			'// $application->add(new Rougin\Combustor\Wildfire\InstallCommand());'
-		);
-
-		$combustor = str_replace($search, $replace, $combustor);
-
-		$file = fopen(VENDOR . 'rougin/combustor/bin/combustor.php', 'wb');
-
-		file_put_contents(VENDOR . 'rougin/combustor/bin/combustor.php', $combustor);
-		fclose($file);
-
 		Tools::ignite();
 		$output->writeln('<info>Wildfire is now installed successfully!</info>');
 	}

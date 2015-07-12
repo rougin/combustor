@@ -92,24 +92,6 @@ class RemoveCommand extends Command
 
 		system('composer update');
 
-		$combustor = file_get_contents(VENDOR . 'rougin/combustor/bin/combustor.php');
-
-		$search = array(
-			'$application->add(new Rougin\Combustor\Doctrine\RemoveCommand());',
-			'// $application->add(new Rougin\Combustor\Doctrine\InstallCommand());'
-		);
-		$replace = array(
-			'// $application->add(new Rougin\Combustor\Doctrine\RemoveCommand());',
-			'$application->add(new Rougin\Combustor\Doctrine\InstallCommand());'
-		);
-
-		$combustor = str_replace($search, $replace, $combustor);
-
-		$file = fopen(VENDOR . 'rougin/combustor/bin/combustor.php', 'wb');
-
-		file_put_contents(VENDOR . 'rougin/combustor/bin/combustor.php', $combustor);
-		fclose($file);
-
 		if (unlink(APPPATH . 'libraries/Doctrine.php')) {
 			$output->writeln('<info>The Doctrine ORM is now successfully removed!</info>');
 		} else {

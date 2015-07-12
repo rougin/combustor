@@ -34,11 +34,21 @@ use Symfony\Component\Console\Helper\HelperSet;
 
 $application = new Application('Combustor', '1.1.2');
 
-$application->add(new Rougin\Combustor\CreateLayoutCommand());
-$application->add(new Rougin\Combustor\Doctrine\InstallCommand());
-// $application->add(new Rougin\Combustor\Doctrine\RemoveCommand());
-$application->add(new Rougin\Combustor\Wildfire\InstallCommand());
-// $application->add(new Rougin\Combustor\Wildfire\RemoveCommand());
+if (file_exists(APPPATH . 'views/layout/header.php') && file_exists(APPPATH . 'views/layout/footer.php')) {
+	$application->add(new Rougin\Combustor\CreateLayoutCommand());
+}
+
+if (file_exists(APPPATH . 'libraries/Wildfire.php')) {
+	$application->add(new Rougin\Combustor\Doctrine\RemoveCommand());
+} else {
+	$application->add(new Rougin\Combustor\Doctrine\InstallCommand());
+}
+
+if (file_exists(APPPATH . 'libraries/Doctrine.php')) {
+	$application->add(new Rougin\Combustor\Wildfire\RemoveCommand());
+} else {
+	$application->add(new Rougin\Combustor\Wildfire\InstallCommand());
+}
 
 if (class_exists('Rougin\Refinery\MigrateCommand')) {
 	$application->add(new Rougin\Refinery\MigrateCommand($codeigniter));

@@ -128,24 +128,6 @@ class InstallCommand extends Command
 
 		file_put_contents(VENDOR . 'doctrine/orm/lib/Doctrine/ORM/Tools/Console/Command/SchemaTool/AbstractCommand.php', $contents);
 
-		$combustor = file_get_contents(VENDOR . 'rougin/combustor/bin/combustor.php');
-
-		$search = array(
-			'// $application->add(new Rougin\Combustor\Doctrine\RemoveCommand());',
-			'$application->add(new Rougin\Combustor\Doctrine\InstallCommand());'
-		);
-		$replace = array(
-			'$application->add(new Rougin\Combustor\Doctrine\RemoveCommand());',
-			'// $application->add(new Rougin\Combustor\Doctrine\InstallCommand());'
-		);
-
-		$combustor = str_replace($search, $replace, $combustor);
-
-		$file = fopen(VENDOR . 'rougin/combustor/bin/combustor.php', 'wb');
-
-		file_put_contents(VENDOR . 'rougin/combustor/bin/combustor.php', $combustor);
-		fclose($file);
-
 		Tools::ignite();
 		$output->writeln('<info>The Doctrine ORM is now installed successfully!</info>');
 	}

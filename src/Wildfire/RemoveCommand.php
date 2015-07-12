@@ -59,24 +59,6 @@ class RemoveCommand extends Command
 			fclose($file);
 		}
 
-		$combustor = file_get_contents(VENDOR . 'rougin/combustor/bin/combustor.php');
-
-		$search = array(
-			'$application->add(new Rougin\Combustor\Wildfire\RemoveCommand());',
-			'// $application->add(new Rougin\Combustor\Wildfire\InstallCommand());'
-		);
-		$replace = array(
-			'// $application->add(new Rougin\Combustor\Wildfire\RemoveCommand());',
-			'$application->add(new Rougin\Combustor\Wildfire\InstallCommand());'
-		);
-
-		$combustor = str_replace($search, $replace, $combustor);
-
-		$file = fopen(VENDOR . 'rougin/combustor/bin/combustor.php', 'wb');
-
-		file_put_contents(VENDOR . 'rougin/combustor/bin/combustor.php', $combustor);
-		fclose($file);
-
 		if (unlink(APPPATH . 'libraries/Wildfire.php')) {
 			$output->writeln('<info>Wildfire is now successfully removed!</info>');
 		} else {

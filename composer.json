@@ -1,28 +1,28 @@
 {
-  "name": "rougin/combustor",
-  "description": "A tool for speeding up web development in CodeIgniter",
-  "keywords": ["codeigniter", "combustor", "php", "code", "generator"],
-  "require": {
-    "php": ">=5.3.0",
-    "symfony/console": "*",
-    "rougin/describe": "*",
-    "rougin/spark-plug": "*"
-  },
-  "license": "MIT",
-  "authors": [
-    {
-      "name": "Rougin Gutib",
-      "email": "rougingutib@gmail.com"
+    "name": "rougin/combustor",
+    "description": "A tool for speeding up web development in CodeIgniter",
+    "keywords": ["codeigniter", "combustor", "php", "code", "generator"],
+    "require": {
+        "php": ">=5.3.0",
+        "symfony/console": "*",
+        "rougin/describe": "*",
+        "rougin/spark-plug": "*"
+    },
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Rougin Gutib",
+            "email": "rougingutib@gmail.com"
+        }
+    ],
+    "bin": ["bin/combustor", "bin/combustor.php"],
+    "autoload": {
+        "psr-4": {
+            "Rougin\\Combustor\\": "src/"
+        }
+    },
+    "suggest": {
+        "rougin/codeigniter": "Yet another way to install CodeIgniter via Composer",
+        "rougin/refinery": "A command line interface for Migrations Class in CodeIgniter"
     }
-  ],
-  "bin": ["bin/combustor", "bin/combustor.php"],
-  "autoload": {
-    "psr-4": {
-      "Rougin\\Combustor\\": "src/"
-    }
-  },
-  "suggest": {
-    "rougin/codeigniter": "Yet another way to install CodeIgniter via Composer",
-    "rougin/refinery": "A command line interface for Migrations Class in CodeIgniter"
-  }
 }

@@ -40,15 +40,15 @@ class CreateLayoutCommand extends Command
 		$footer = file_get_contents(__DIR__ . '/Templates/Views/Layout/Footer.txt');
 
 		$bootstrapContainer = NULL;
-		$styleSheets = '<link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/font-awesome/4.2.0/css/font-awesome.min.css">';
+		$styleSheets = '<link rel="stylesheet" type="text/css" href="//maxcdn.bootstrapcdn.com/font-awesome/4.2.0/css/font-awesome.min.css">';
 		$scripts = '</div>';
 
 		if ($input->getOption('bootstrap')) {
 			$bootstrapContainer = 'container';
-			$styleSheets .= "\n\t" . '<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap.min.css">';
+			$styleSheets .= "\n\t" . '<link rel="stylesheet" type="text/css" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap.min.css">';
 
-			$scripts .= "\n\t" . '<script src="https://code.jquery.com/jquery-2.1.1.min.js"></script>';
-			$scripts .= "\n\t" . '<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.2.0/js/bootstrap.min.js"></script>';
+			$scripts .= "\n\t" . '<script type="text/javascript" src="https://code.jquery.com/jquery-2.1.1.min.js"></script>';
+			$scripts .= "\n\t" . '<script type="text/javascript" src="https://maxcdn.bootstrapcdn.com/bootstrap/3.2.0/js/bootstrap.min.js"></script>';
 		}
 
 		$search = array(

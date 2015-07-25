@@ -1,17 +1,17 @@
 <?php $this->load->view('layout/header'); ?>
 	<h1>
-		<i class="fa fa-lg fa-fw fa-plus"></i> 
+		<i class="fa fa-lg fa-plus"></i> 
 		Create New [singularEntity]
 	</h1>
-	<br>
 	<?php echo form_open('[plural]/create', 'class="[bootstrapFormOpen]"'); ?>
-		[fieldsOnCreate]
-		<div class="[bootstrapFormGroupButtons]">
-			<div class="[bootstrapLabel]"></div>
-			<div class="[bootstrapFormColumn]">
-				<a class="[bootstrapButtonBack]" href="<?php echo base_url('[plural]'); ?>">Back</a>
-				<?php echo form_submit('', 'Submit', 'class="[bootstrapButtonSubmit]"'); ?>
-			</div>
+		<div class="[bootstrapTextRight]">
+			<button type="submit" class="[bootstrapButtonSubmit]">
+				Submit
+			</button>
+			<a class="[bootstrapButtonCancel]" href="<?php echo base_url('[plural]'); ?>">
+				Cancel
+			</a>
 		</div>
+		[fieldsOnCreate]
 	<?php echo form_close(); ?>
 <?php $this->load->view('layout/footer'); ?>

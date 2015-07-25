@@ -3,12 +3,11 @@
 		<i class="fa fa-lg fa-fw fa-list"></i> 
 		[entity]
 	</h1>
-	<br>
-	<a class="[bootstrapButton]" href="<?php echo base_url('[plural]/create'); ?>">
-		Create A New [singularEntity]
-	</a>
-	<br>
-	<br>
+	<div class="[bootstrapTextRight]">
+		<a class="[bootstrapButton]" href="<?php echo base_url('[plural]/create'); ?>">
+			Create A New [singularEntity]
+		</a>
+	</div>
 	<?php if ($[plural]): ?>
 		<table class="[bootstrapTable]">
 			<thead>
@@ -21,8 +20,12 @@
 					<tr>
 						[rows]
 						<td>
-							<a class="fa fa-edit fa-2x" href="<?php echo base_url('[plural]/edit/' . $[singular]->[primaryKey]()); ?>"></a>
-							<a class="fa fa-trash fa-2x" href="<?php echo base_url('[plural]/delete/' . $[singular]->[primaryKey]()); ?>"></a>
+							<a href="<?php echo base_url('[plural]/edit/' . $[singular]->[primaryKey]()); ?>">
+								<i class="fa fa-edit fa-2x"></i>
+							</a>
+							<a href="<?php echo base_url('[plural]/delete/' . $[singular]->[primaryKey]()); ?>">
+								<i class="fa fa-trash fa-2x"></i>
+							</a>
 						</td>
 					</tr>
 				<?php endforeach; ?>

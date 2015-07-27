@@ -4,9 +4,8 @@
  * Pagination configuration
  */
 
-$config['num_links']            = 5;
 $config['page_query_string']    = TRUE;
-$config['per_page']             = 10;
+$config['per_page']             = 5;
 $config['query_string_segment'] = 'page';
 $config['use_page_numbers']     = TRUE;
 

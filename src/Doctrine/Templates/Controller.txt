@@ -104,22 +104,23 @@ class [controller] extends CI_Controller {
 	 */
 	public function index()
 	{
-		$this->load->config('pagination');
 		$this->load->library('pagination');
+
+		include APPPATH . 'config/pagination.php';
 
 		$delimiters = array();
 		$delimiters['keyword'] = $this->input->get('keyword');
 
 		$config['base_url']   = base_url('[plural]');
 		$config['suffix']     = '&keyword=' . $delimiters['keyword'];
-		$config['total_rows'] = $this->doctrine->get_all('[singular]', $delimiters)->total_rows();
+		$config['total_rows'] = $this->wildfire->get_all('[singular]', $delimiters)->total_rows();
 
-		$delimiters['page']     = $this->input->get($this->config->item('query_string_segment'));
-		$delimiters['per_page'] = $this->config->item('per_page');
+		$delimiters['page']     = $this->input->get($config['query_string_segment']);
+		$delimiters['per_page'] = $config['per_page'];
 
 		$this->pagination->initialize($config);
 
-		$data['[plural]'] = $this->doctrine->get_all('[singular]', $delimiters)->result();
+		$data['[plural]'] = $this->wildfire->get_all('[singular]', $delimiters)->result();
 		$data['links'] = $this->pagination->create_links();
 
 		$this->load->view('[plural]/index', $data);

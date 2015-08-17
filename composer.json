@@ -4,9 +4,9 @@
     "keywords": ["codeigniter", "combustor", "php", "code", "generator"],
     "require": {
         "php": ">=5.3.0",
-        "symfony/console": "*",
         "rougin/describe": "*",
-        "rougin/spark-plug": "*"
+        "rougin/spark-plug": "*",
+        "symfony/console": "*"
     },
     "license": "MIT",
     "authors": [

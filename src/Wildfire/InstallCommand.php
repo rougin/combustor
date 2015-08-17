@@ -1,4 +1,6 @@
-<?php namespace Rougin\Combustor\Wildfire;
+<?php
+
+namespace Rougin\Combustor\Wildfire;
 
 use Rougin\Combustor\Tools;
 use Symfony\Component\Console\Command\Command;
@@ -9,61 +11,59 @@ use Symfony\Component\Console\Output\OutputInterface;
 
 class InstallCommand extends Command
 {
+    /**
+     * Set the configurations of the specified command
+     */
+    protected function configure()
+    {
+        $this->setName('install:wildfire')
+            ->setDescription('Install Wildfire');
+    }
 
-	/**
-	 * Set the configurations of the specified command
-	 */
-	protected function configure()
-	{
-		$this->setName('install:wildfire')
-			->setDescription('Install Wildfire');
-	}
+    /**
+     * Execute the command
+     * 
+     * @param  InputInterface  $input
+     * @param  OutputInterface $output
+     */
+    protected function execute(InputInterface $input, OutputInterface $output)
+    {
+        /**
+         * ---------------------------------------------------------------------------------------------
+         * Adding Wildfire.php to the "libraries" directory
+         * ---------------------------------------------------------------------------------------------
+         */
 
-	/**
-	 * Execute the command
-	 * 
-	 * @param  InputInterface  $input
-	 * @param  OutputInterface $output
-	 */
-	protected function execute(InputInterface $input, OutputInterface $output)
-	{
-		/**
-		 * ---------------------------------------------------------------------------------------------
-		 * Adding Wildfire.php to the "libraries" directory
-		 * ---------------------------------------------------------------------------------------------
-		 */
+        $autoload = file_get_contents(APPPATH . 'config/autoload.php');
 
-		$autoload = file_get_contents(APPPATH . 'config/autoload.php');
+        preg_match_all('/\$autoload\[\'libraries\'\] = array\((.*?)\)/', $autoload, $match);
 
-		preg_match_all('/\$autoload\[\'libraries\'\] = array\((.*?)\)/', $autoload, $match);
+        $libraries = explode(', ', end($match[1]));
 
-		$libraries = explode(', ', end($match[1]));
+        if ( ! in_array('\'wildfire\'', $libraries)) {
+            array_push($libraries, '\'wildfire\'');
 
-		if ( ! in_array('\'wildfire\'', $libraries)) {
-			array_push($libraries, '\'wildfire\'');
+            $libraries = array_filter($libraries);
 
-			$libraries = array_filter($libraries);
+            $autoload = preg_replace(
+                '/\$autoload\[\'libraries\'\] = array\([^)]*\);/',
+                '$autoload[\'libraries\'] = array(' . implode(', ', $libraries) . ');',
+                $autoload
+            );
 
-			$autoload = preg_replace(
-				'/\$autoload\[\'libraries\'\] = array\([^)]*\);/',
-				'$autoload[\'libraries\'] = array(' . implode(', ', $libraries) . ');',
-				$autoload
-			);
+            $file = fopen(APPPATH . 'config/autoload.php', 'wb');
 
-			$file = fopen(APPPATH . 'config/autoload.php', 'wb');
+            file_put_contents(APPPATH . 'config/autoload.php', $autoload);
+            fclose($file);
+        }
 
-			file_put_contents(APPPATH . 'config/autoload.php', $autoload);
-			fclose($file);
-		}
+        $file     = fopen(APPPATH . 'libraries/Wildfire.php', 'wb');
+        $wildfire = file_get_contents(__DIR__ . '/Templates/Library.txt');
 
-		$file     = fopen(APPPATH . 'libraries/Wildfire.php', 'wb');
-		$wildfire = file_get_contents(__DIR__ . '/Templates/Library.txt');
+        file_put_contents(APPPATH . 'libraries/Wildfire.php', $wildfire);
+        fclose($file);
 
-		file_put_contents(APPPATH . 'libraries/Wildfire.php', $wildfire);
-		fclose($file);
-
-		Tools::ignite();
-		$output->writeln('<info>Wildfire is now installed successfully!</info>');
-	}
-
+        Tools::ignite();
+        $output->writeln('<info>Wildfire is now installed successfully!</info>');
+    }
 }

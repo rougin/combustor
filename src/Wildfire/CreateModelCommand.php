@@ -1,4 +1,6 @@
-<?php namespace Rougin\Combustor\Wildfire;
+<?php
+
+namespace Rougin\Combustor\Wildfire;
 
 use Rougin\Combustor\Tools;
 use Rougin\Describe\Describe;
@@ -9,9 +11,8 @@ use Symfony\Component\Console\Output\OutputInterface;
 
 class CreateModelCommand
 {
-
-	private $_input  = NULL;
-	private $_output = NULL;
+	protected $input  = NULL;
+	protected $output = NULL;
 
 	/**
 	 * Integrate InputInterface and OutputInterface to the specified command
@@ -21,8 +22,8 @@ class CreateModelCommand
 	 */
 	public function __construct(InputInterface $input, OutputInterface $output)
 	{
-		$this->_input  = $input;
-		$this->_output = $output;
+		$this->input  = $input;
+		$this->output = $output;
 	}
 
 	/**
@@ -43,7 +44,7 @@ class CreateModelCommand
 		$keywordsCounter = NULL;
 		$mutators        = NULL;
 		$mutatorsCounter = 0;
-		$name            = singular(Tools::stripTableSchema($this->_input->getArgument('name')));
+		$name            = singular(Tools::stripTableSchema($this->input->getArgument('name')));
 		$primaryKey      = NULL;
 
 		$foreignKeys        = NULL;
@@ -65,11 +66,11 @@ class CreateModelCommand
 		unset($db['default']['dbdriver']);
 
 		$describe = new Describe($db['default']);
-		$tableInformation = $describe->getInformationFromTable($this->_input->getArgument('name'));
+		$tableInformation = $describe->getInformationFromTable($this->input->getArgument('name'));
 
 		if (empty($tableInformation)) {
-			$message = 'The table "' . $this->_input->getArgument('name') . '" does not exists in the database!';
-			$this->_output->writeln('<error>' . $message . '</error>');
+			$message = 'The table "' . $this->input->getArgument('name') . '" does not exists in the database!';
+			$this->output->writeln('<error>' . $message . '</error>');
 
 			return;
 		}
@@ -219,12 +220,12 @@ class CreateModelCommand
 			rtrim($accessors),
 			rtrim($mutators),
 			$primaryKey,
-			plural($this->_input->getArgument('name')),
-			$this->_input->getArgument('name'),
-			substr($this->_input->getArgument('name'), 0, 1),
+			plural($this->input->getArgument('name')),
+			$this->input->getArgument('name'),
+			substr($this->input->getArgument('name'), 0, 1),
 			ucfirst($name),
 			ucwords(str_replace('_', ' ', $name)),
-			$this->_input->getArgument('name')
+			$this->input->getArgument('name')
 		);
 
 		$model = str_replace($search, $replace, $model);
@@ -233,17 +234,16 @@ class CreateModelCommand
 		 * Create a new file and insert the generated template
 		 */
 
-		$modelFile = ($this->_input->getOption('lowercase')) ? strtolower($name) : ucfirst($name);
+		$modelFile = ($this->input->getOption('lowercase')) ? strtolower($name) : ucfirst($name);
 		$filename = APPPATH . 'models/' . $modelFile . '.php';
 
 		if (file_exists($filename)) {
-			$this->_output->writeln('<error>The "' . $name . '" model already exists!</error>');
+			$this->output->writeln('<error>The "' . $name . '" model already exists!</error>');
 		} else {
 			$file = fopen($filename, 'wb');
 			file_put_contents($filename, $model);
 			
-			$this->_output->writeln('<info>The model "' . $name . '" has been created successfully!</info>');
+			$this->output->writeln('<info>The model "' . $name . '" has been created successfully!</info>');
 		}
 	}
-
 }

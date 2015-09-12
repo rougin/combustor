@@ -1,67 +1,32 @@
 <?php
 
-/**
- * Define the VENDOR path
- */
+// Define the VENDOR path
+$vendor = realpath('vendor');
 
-define('VENDOR', realpath('vendor') . '/');
+// Include the Composer Autoloader
+require $vendor . '/autoload.php';
 
-/**
- * Include the Composer Autoloader
- */
+$filePath = realpath(__DIR__ . '/../combustor.yml');
+$directory = str_replace('/combustor.yml', '', $filePath);
 
-require VENDOR . 'autoload.php';
+define('BLUEPRINT_FILENAME', $filePath);
+define('BLUEPRINT_DIRECTORY', $directory);
 
-/**
- * Load the CodeIgniter instance
- */
-
+// Load the CodeIgniter instance
 $instance = new Rougin\SparkPlug\Instance();
 
-/**
- * Include the Inflector Helper Class from CodeIgniter
- */
-
+// Include the Inflector helper from CodeIgniter
 require BASEPATH . 'helpers/inflector_helper.php';
 
-/**
- * Load Describe
- */
+// Load the Blueprint library
+$blueprint = include($vendor . '/rougin/blueprint/bin/blueprint.php');
 
-require APPPATH . 'config/database.php';
-
-$db['default']['driver'] = $db['default']['dbdriver'];
-unset($db['default']['dbdriver']);
-
-$describe = new Describe($db['default']);
-
-/**
- * Import the Symfony Components
- */
-
-$application = new Symfony\Component\Console\Application('Combustor', '1.1.2');
-
-if (file_exists(APPPATH . 'views/layout/header.php') && file_exists(APPPATH . 'views/layout/footer.php')) {
-    $application->add(new Rougin\Combustor\CreateLayoutCommand());
+if ($blueprint->hasError) {
+    exit($blueprint->showError());
 }
 
-if (file_exists(APPPATH . 'libraries/Wildfire.php')) {
-    $application->add(new Rougin\Combustor\Doctrine\RemoveCommand());
-} else {
-    $application->add(new Rougin\Combustor\Doctrine\InstallCommand());
-}
+$blueprint->console->setName('Combustor');
+$blueprint->console->setVersion('1.1.3');
 
-if (file_exists(APPPATH . 'libraries/Doctrine.php')) {
-    $application->add(new Rougin\Combustor\Wildfire\RemoveCommand());
-} else {
-    $application->add(new Rougin\Combustor\Wildfire\InstallCommand());
-}
-
-if ($application->has('remove:wildfire') || $application->has('remove:doctrine')) {
-    $application->add(new Rougin\Combustor\CreateControllerCommand());
-    $application->add(new Rougin\Combustor\CreateModelCommand());
-    $application->add(new Rougin\Combustor\CreateScaffoldCommand());
-    $application->add(new Rougin\Combustor\CreateViewCommand());
-}
-
-$application->run();
+// Run the Combustor console application
+$blueprint->console->run();

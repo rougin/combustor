@@ -1,9 +1,0 @@
-/**
-	 * Get [field]
-	 *
-	 * @return [type]
-	 */
-	public function [method]()
-	{
-		return $this->_[field];
-	}

@@ -1,8 +1,0 @@
-	[scripts]
-	<?php if ($this->session->flashdata('notification')): ?>
-		<script type="text/javascript">
-			alert('<?php echo $this->session->flashdata("notification"); ?>')
-		</script>
-	<?php endif; ?>
-</body>
-</html>

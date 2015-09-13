@@ -5,7 +5,8 @@
     "require": {
         "php": ">=5.3.0",
         "rougin/blueprint": "*",
-        "rougin/describe": "*"
+        "rougin/describe": "*",
+        "rougin/spark-plug": "*"
     },
     "license": "MIT",
     "authors": [

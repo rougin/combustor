@@ -57,39 +57,9 @@ class InstallDoctrineCommand extends AbstractCommand
      */
     protected function execute(InputInterface $input, OutputInterface $output)
     {
-        $composer = str_replace(
-            array(' ', "\n", "\r"),
-            array('', '', ''),
-            file_get_contents('composer.json')
-        );
+        system('composer require doctrine/orm');
 
-        preg_match_all('/"require": \{(.*?)\}/', $composer, $match);
-        $requiredLibraries = explode(',', end($match[1]));
-
-        preg_match_all('/"require-dev": \{(.*?)\}/', $composer, $match);
-        $requiredDevLibraries = explode(',', end($match[1]));
-
-        if ( ! in_array('"doctrine/orm": "2.4.*"', $requiredLibraries)) {
-            array_push($requiredLibraries, '"doctrine/orm": "2.4.*"');
-
-            $composer =
-'{
-    "description" : "The CodeIgniter framework",
-    "name" : "codeigniter/framework",
-    "license": "MIT",
-    "require": {' . "\n    " . implode(',' . "\n    ", $requiredLibraries) . "\n    " . '},
-    "require-dev": {' . "\n    " . implode(',' . "\n    ", $requiredDevLibraries) . "\n    " . '}
-}';
-
-            $file = fopen('composer.json', 'wb');
-
-            file_put_contents('composer.json', $composer);
-            fclose($file);
-        }
-
-        system('composer update');
-
-        $cli = file_get_contents(__DIR__ . '/Templates/Cli.txt');
+        $cli = $this->renderer->render('DoctrineCLI.php');
         $library = $this->renderer->render('Libraries/Doctrine.php');
 
         /**

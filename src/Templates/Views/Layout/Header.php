@@ -8,7 +8,7 @@
     <meta name="author" content="">
     <title>Document <?php echo ($this->uri->segment(1)) ? ' - ' . ucwords(str_replace('_', ' ', $this->uri->segment(1))) : NULL; ?></title>
 {% for styleSheet in styleSheets %}
-    <link rel="stylesheet" type="text/css" href="{{ styleSheet }}">
+    <link rel="stylesheet" type="text/css" href="{{ styleSheet | raw }}">
 {% endfor %}
 </head>
 <body>

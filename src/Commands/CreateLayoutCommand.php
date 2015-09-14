@@ -73,25 +73,49 @@ class CreateLayoutCommand extends AbstractCommand
                 '4.2.0/css/font-awesome.min.css'
         ];
 
+        $fontAwesome = ! is_dir('bower_components/font-awesome')
+            ? system('bower install font-awesome')
+            : TRUE;
+
+        if ($fontAwesome) {
+            $data['styleSheets'][0] = '<?php echo base_url(\'' .
+                'bower_components/font-awesome/css/' .
+                'font-awesome.min.css'
+                . '\'); ?>';
+        }
+
         if ($input->getOption('bootstrap')) {
             $data['bootstrapContainer'] = 'container';
+
+            $bootstrapCss = 'https://maxcdn.bootstrapcdn.com/bootstrap/' .
+                '3.2.0/css/bootstrap.min.css';
+
+            $bootstrapJs = 'https://maxcdn.bootstrapcdn.com/bootstrap/' .
+                '3.2.0/css/bootstrap.min.js';
+
+            $jquery = 'https://code.jquery.com/jquery-2.1.1.min.js';
+
+            $bower = ! is_dir('bower_components/bootstrap')
+                ? system('bower install bootstrap')
+                : TRUE;
+
+            if ($bower) {
+                $bootstrapCss = '<?php echo base_url(\'' .
+                    'bower_components/bootstrap/dist/css/bootstrap.min.css'
+                    . '\'); ?>';
+
+                $bootstrapJs = '<?php echo base_url(\'' .
+                    'bower_components/bootstrap/dist/js/bootstrap.min.js'
+                    . '\'); ?>';
+
+                $jquery = '<?php echo base_url(\'' .
+                    'bower_components/jquery/dist/jquery.min.js'
+                    . '\'); ?>';
+            }
  
-            array_push(
-                $data['styleSheets'],
-                'https://maxcdn.bootstrapcdn.com/bootstrap/' .
-                    '3.2.0/css/bootstrap.min.css'
-            );
-
-            array_push(
-                $data['scripts'],
-                'https://code.jquery.com/jquery-2.1.1.min.js'
-            );
-
-            array_push(
-                $data['scripts'],
-                'https://maxcdn.bootstrapcdn.com/bootstrap/' .
-                    '3.2.0/css/bootstrap.min.js'
-            );
+            array_push($data['styleSheets'], $bootstrapCss);
+            array_push($data['scripts'], $jquery);
+            array_push($data['scripts'], $bootstrapJs);
         }
 
         if ( ! @mkdir($filePath, 0777, TRUE)) {

@@ -51,7 +51,7 @@ class CreateControllerCommand extends AbstractCommand
     {
         $this
             ->setName('create:controller')
-            ->setDescription('Create a new controller')
+            ->setDescription('Creates a new controller')
             ->addArgument(
                 'name',
                 InputArgument::REQUIRED,
@@ -60,12 +60,12 @@ class CreateControllerCommand extends AbstractCommand
                 'camel',
                 NULL,
                 InputOption::VALUE_NONE,
-                'Use the camel case naming convention'
+                'Uses the camel case naming convention'
             )->addOption(
                 'doctrine',
                 NULL,
                 InputOption::VALUE_NONE,
-                'Generate a controller based on Doctrine'
+                'Generates a controller based on Doctrine'
             )->addOption(
                 'keep',
                 NULL,
@@ -75,12 +75,12 @@ class CreateControllerCommand extends AbstractCommand
                 'lowercase',
                 NULL,
                 InputOption::VALUE_NONE,
-                'Keep the first character of the name to lowercase'
+                'Keeps the first character of the name to lowercase'
             )->addOption(
                 'wildfire',
                 NULL,
                 InputOption::VALUE_NONE,
-                'Generate a controller based on Wildfire'
+                'Generates a controller based on Wildfire'
             );
     }
 

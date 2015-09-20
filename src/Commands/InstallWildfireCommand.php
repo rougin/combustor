@@ -45,7 +45,7 @@ class InstallWildfireCommand extends AbstractCommand
     {
         $this
             ->setName('install:wildfire')
-            ->setDescription('Install Wildfire');
+            ->setDescription('Installs Wildfire');
     }
 
     /**
@@ -63,7 +63,11 @@ class InstallWildfireCommand extends AbstractCommand
 
         $autoload = file_get_contents(APPPATH . 'config/autoload.php');
 
-        preg_match_all('/\$autoload\[\'libraries\'\] = array\((.*?)\)/', $autoload, $match);
+        preg_match_all(
+            '/\$autoload\[\'libraries\'\] = array\((.*?)\)/',
+            $autoload,
+            $match
+        );
 
         $libraries = explode(', ', end($match[1]));
 
@@ -91,6 +95,9 @@ class InstallWildfireCommand extends AbstractCommand
         fclose($file);
 
         Tools::ignite();
-        $output->writeln('<info>Wildfire is now installed successfully!</info>');
+
+        $message = 'Wildfire is now installed successfully!';
+
+        return $output->writeln('<info>' . $message . '</info>');
     }
 }

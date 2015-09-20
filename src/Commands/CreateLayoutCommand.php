@@ -46,12 +46,12 @@ class CreateLayoutCommand extends AbstractCommand
     protected function configure()
     {
         $this->setName('create:layout')
-            ->setDescription('Create a new header and footer file')
+            ->setDescription('Creates a new header and footer file')
             ->addOption(
                 'bootstrap',
                 NULL,
                 InputOption::VALUE_NONE,
-                'Include the Bootstrap CSS/JS Framework tags'
+                'Includes the Bootstrap CSS/JS Framework tags'
             );
     }
 

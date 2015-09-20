@@ -45,7 +45,7 @@ class InstallDoctrineCommand extends AbstractCommand
     {
         $this
             ->setName('install:doctrine')
-            ->setDescription('Install the Doctrine ORM');
+            ->setDescription('Installs the Doctrine ORM');
     }
 
     /**
@@ -130,9 +130,11 @@ class InstallDoctrineCommand extends AbstractCommand
         $replace = $search . "\n" . 'include BASEPATH . \'core/Model.php\';';
 
         $contents = $abstractCommand;
+        $schemaTool = 'use Doctrine\ORM\Tools\SchemaTool;';
+        $coreModel = 'include BASEPATH . \'core/Model.php\';';
 
-        if (strpos($abstractCommand, 'use Doctrine\ORM\Tools\SchemaTool;') !== FALSE) {
-            if (strpos($abstractCommand, 'include BASEPATH . \'core/Model.php\';') === FALSE) {
+        if (strpos($abstractCommand, $schemaTool) !== FALSE) {
+            if (strpos($abstractCommand, $coreModel) === FALSE) {
                 $contents = str_replace($search, $replace, $abstractCommand);
             }
         }
@@ -146,6 +148,9 @@ class InstallDoctrineCommand extends AbstractCommand
         );
 
         Tools::ignite();
-        $output->writeln('<info>The Doctrine ORM is now installed successfully!</info>');
+
+        $message = 'Doctrine ORM is now installed successfully!';
+
+        return $output->writeln('<info>' . $message . '</info>');
     }
 }

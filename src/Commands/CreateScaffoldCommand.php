@@ -48,7 +48,7 @@ class CreateScaffoldCommand extends AbstractCommand
     protected function configure()
     {
         $this->setName('create:scaffold')
-            ->setDescription('Create a new controller, model and view')
+            ->setDescription('Creates a new controller, model and view')
             ->addArgument(
                 'name',
                 InputArgument::REQUIRED,
@@ -57,17 +57,17 @@ class CreateScaffoldCommand extends AbstractCommand
                 'bootstrap',
                 NULL,
                 InputOption::VALUE_NONE,
-                'Include the Bootstrap CSS/JS Framework tags'
+                'Includes the Bootstrap CSS/JS Framework tags'
             )->addOption(
                 'camel',
                 NULL,
                 InputOption::VALUE_NONE,
-                'Use the camel case naming convention'
+                'Uses the camel case naming convention'
             )->addOption(
                 'doctrine',
                 NULL,
                 InputOption::VALUE_NONE,
-                'Use the Doctrine\'s specifications'
+                'Uses the Doctrine\'s specifications'
             )->addOption(
                 'keep',
                 null,
@@ -77,12 +77,12 @@ class CreateScaffoldCommand extends AbstractCommand
                 'lowercase',
                 null,
                 InputOption::VALUE_NONE,
-                'Keep the first character of the name to lowercase'
+                'Keeps the first character of the name to lowercase'
             )->addOption(
                 'wildfire',
                 NULL,
                 InputOption::VALUE_NONE,
-                'Use the Wildfire\'s specifications'
+                'Uses the Wildfire\'s specifications'
             );
     }
 

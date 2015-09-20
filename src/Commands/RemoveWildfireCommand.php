@@ -44,7 +44,7 @@ class RemoveWildfireCommand extends AbstractCommand
     {
         $this
             ->setName('remove:wildfire')
-            ->setDescription('Remove Wildfire');
+            ->setDescription('Removes Wildfire');
     }
 
     /**
@@ -56,17 +56,13 @@ class RemoveWildfireCommand extends AbstractCommand
      */
     protected function execute(InputInterface $input, OutputInterface $output)
     {
-        /**
-         * Adding Wildfire.php to the "libraries" directory
-         */
-
-        if ( ! file_exists(APPPATH . 'libraries/Wildfire.php')) {
-            exit($output->writeln('<error>Wildfire is not installed!</error>'));
-        }
-
         $autoload = file_get_contents(APPPATH . 'config/autoload.php');
 
-        preg_match_all('/\$autoload\[\'libraries\'\] = array\((.*?)\)/', $autoload, $match);
+        preg_match_all(
+            '/\$autoload\[\'libraries\'\] = array\((.*?)\)/',
+            $autoload,
+            $match
+        );
 
         $libraries = explode(', ', end($match[1]));
 
@@ -79,7 +75,8 @@ class RemoveWildfireCommand extends AbstractCommand
 
             $autoload = preg_replace(
                 '/\$autoload\[\'libraries\'\] = array\([^)]*\);/',
-                '$autoload[\'libraries\'] = array(' . implode(', ', $libraries) . ');',
+                '$autoload[\'libraries\'] = array(' .
+                    implode(', ', $libraries) . ');',
                 $autoload
             );
 
@@ -89,10 +86,15 @@ class RemoveWildfireCommand extends AbstractCommand
             fclose($file);
         }
 
-        if (unlink(APPPATH . 'libraries/Wildfire.php')) {
-            $output->writeln('<info>Wildfire is now successfully removed!</info>');
-        } else {
-            $output->writeln('<error>There\'s something wrong while removing. Please try again later.</error>');
+        if ( ! unlink(APPPATH . 'libraries/Wildfire.php')) {
+            $message = 'There\'s something wrong while removing. ' .
+                'Please try again later.';
+
+            return $output->writeln('<error>' . $message . '</error>');
         }
+
+        $message = 'Wildfire is now successfully removed!';
+
+        return $output->writeln('<info>' . $message . '</info>');
     }
 }

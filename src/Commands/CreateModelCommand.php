@@ -51,7 +51,7 @@ class CreateModelCommand extends AbstractCommand
     {
         $this
             ->setName('create:model')
-            ->setDescription('Create a new model')
+            ->setDescription('Creates a new model')
             ->addArgument(
                 'name',
                 InputArgument::REQUIRED,
@@ -60,22 +60,22 @@ class CreateModelCommand extends AbstractCommand
                 'camel',
                 NULL,
                 InputOption::VALUE_NONE,
-                'Use the camel case naming convention'
+                'Uses the camel case naming convention'
             )->addOption(
                 'doctrine',
                 NULL,
                 InputOption::VALUE_NONE,
-                'Generate a model based on Doctrine'
+                'Generates a model based on Doctrine'
             )->addOption(
                 'lowercase',
                 NULL,
                 InputOption::VALUE_NONE,
-                'Keep the first character of the name to lowercase'
+                'Keeps the first character of the name to lowercase'
             )->addOption(
                 'wildfire',
                 NULL,
                 InputOption::VALUE_NONE,
-                'Generate a model based on Wildfire'
+                'Generates a model based on Wildfire'
             );
     }
 

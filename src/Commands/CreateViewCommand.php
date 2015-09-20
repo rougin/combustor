@@ -60,12 +60,12 @@ class CreateViewCommand extends AbstractCommand
                 'bootstrap',
                 NULL,
                 InputOption::VALUE_NONE,
-                'Include the Bootstrap CSS/JS Framework tags'
+                'Includes the Bootstrap CSS/JS Framework tags'
             )->addOption(
                 'camel',
                 NULL,
                 InputOption::VALUE_NONE,
-                'Use the camel case naming convention'
+                'Uses the camel case naming convention'
             )->addOption(
                 'keep',
                 NULL,

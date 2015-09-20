@@ -44,7 +44,7 @@ class RemoveDoctrineCommand extends AbstractCommand
     {
         $this
             ->setName('remove:doctrine')
-            ->setDescription('Remove the Doctrine ORM');
+            ->setDescription('Removes Doctrine ORM');
     }
 
     /**
@@ -56,19 +56,13 @@ class RemoveDoctrineCommand extends AbstractCommand
      */
     protected function execute(InputInterface $input, OutputInterface $output)
     {
-        /**
-         * ---------------------------------------------------------------------------------------------
-         * Adding the Doctrine.php to the "libraries" directory
-         * ---------------------------------------------------------------------------------------------
-         */
-
-        if ( ! file_exists(APPPATH . 'libraries/Doctrine.php')) {
-            exit($output->writeln('<error>The Doctrine ORM is not installed!</error>'));
-        }
-
         $autoload = file_get_contents(APPPATH . 'config/autoload.php');
 
-        preg_match_all('/\$autoload\[\'libraries\'\] = array\((.*?)\)/', $autoload, $match);
+        preg_match_all(
+            '/\$autoload\[\'libraries\'\] = array\((.*?)\)/',
+            $autoload,
+            $match
+        );
 
         $libraries = explode(', ', end($match[1]));
 
@@ -81,7 +75,8 @@ class RemoveDoctrineCommand extends AbstractCommand
 
             $autoload = preg_replace(
                 '/\$autoload\[\'libraries\'\] = array\([^)]*\);/',
-                '$autoload[\'libraries\'] = array(' . implode(', ', $libraries) . ');',
+                '$autoload[\'libraries\'] = array(' .
+                    implode(', ', $libraries) . ');',
                 $autoload
             );
 
@@ -91,41 +86,17 @@ class RemoveDoctrineCommand extends AbstractCommand
             fclose($file);
         }
 
-        $composer = file_get_contents('composer.json');
-        $composer = str_replace(array(' ', "\n", "\r") , array('', '', ''), $composer);
+        system('composer remove doctrine/orm');
 
-        preg_match_all('/"require": \{(.*?)\}/', $composer, $match);
-        $requiredLibraries = explode(',', end($match[1]));
+        if ( ! unlink(APPPATH . 'libraries/Doctrine.php')) {
+            $message = 'There\'s something wrong while removing. ' .
+                'Please try again later.';
 
-        preg_match_all('/"require-dev": \{(.*?)\}/', $composer, $match);
-        $requiredDevLibraries = explode(',', end($match[1]));
-
-        if (in_array('"doctrine/orm": "2.4.*"', $requiredLibraries)) {
-            $position = array_search('"doctrine/orm": "2.4.*"', $requiredLibraries);
-
-            unset($requiredLibraries[$position]);
-
-            $composer =
-'{
-    "description" : "The CodeIgniter framework",
-    "name" : "codeigniter/framework",
-    "license": "MIT",
-    "require": {' . "\n    " . implode(',' . "\n    ", $requiredLibraries) . "\n  " . '},
-    "require-dev": {' . "\n    " . implode(',' . "\n    ", $requiredDevLibraries) . "\n  " . '}
-}';
-
-            $file = fopen('composer.json', 'wb');
-
-            file_put_contents('composer.json', $composer);
-            fclose($file);
+            return $output->writeln('<error>' . $message . '</error>');
         }
 
-        system('composer update');
+        $message = 'Doctrine ORM is now successfully removed!';
 
-        if (unlink(APPPATH . 'libraries/Doctrine.php')) {
-            $output->writeln('<info>The Doctrine ORM is now successfully removed!</info>');
-        } else {
-            $output->writeln('<error>There\'s something wrong while removing. Please try again later.</error>');
-        }
+        return $output->writeln('<info>' . $message . '</info>');
     }
 }

@@ -57,13 +57,13 @@ class CreateLayoutCommand extends AbstractCommand
      */
     protected function execute(InputInterface $input, OutputInterface $output)
     {
-        $filePath = APPPATH . 'views/layout';
+        $filePath = APPPATH.'views/layout';
 
         $data = [];
         $data['bootstrapContainer'] = '';
         $data['scripts'] = [];
         $data['styleSheets'] = [
-            '//maxcdn.bootstrapcdn.com/font-awesome/' .
+            '//maxcdn.bootstrapcdn.com/font-awesome/'.
                 '4.2.0/css/font-awesome.min.css'
         ];
 
@@ -72,8 +72,8 @@ class CreateLayoutCommand extends AbstractCommand
             : TRUE;
 
         if ($fontAwesome) {
-            $data['styleSheets'][0] = '<?php echo base_url(\'' .
-                'bower_components/font-awesome/css/' .
+            $data['styleSheets'][0] = '<?php echo base_url(\''.
+                'bower_components/font-awesome/css/'.
                 'font-awesome.min.css'
                 . '\'); ?>';
         }
@@ -81,10 +81,10 @@ class CreateLayoutCommand extends AbstractCommand
         if ($input->getOption('bootstrap')) {
             $data['bootstrapContainer'] = 'container';
 
-            $bootstrapCss = 'https://maxcdn.bootstrapcdn.com/bootstrap/' .
+            $bootstrapCss = 'https://maxcdn.bootstrapcdn.com/bootstrap/'.
                 '3.2.0/css/bootstrap.min.css';
 
-            $bootstrapJs = 'https://maxcdn.bootstrapcdn.com/bootstrap/' .
+            $bootstrapJs = 'https://maxcdn.bootstrapcdn.com/bootstrap/'.
                 '3.2.0/css/bootstrap.min.js';
 
             $jquery = 'https://code.jquery.com/jquery-2.1.1.min.js';
@@ -94,15 +94,15 @@ class CreateLayoutCommand extends AbstractCommand
                 : TRUE;
 
             if ($bower) {
-                $bootstrapCss = '<?php echo base_url(\'' .
+                $bootstrapCss = '<?php echo base_url(\''.
                     'bower_components/bootstrap/dist/css/bootstrap.min.css'
                     . '\'); ?>';
 
-                $bootstrapJs = '<?php echo base_url(\'' .
+                $bootstrapJs = '<?php echo base_url(\''.
                     'bower_components/bootstrap/dist/js/bootstrap.min.js'
                     . '\'); ?>';
 
-                $jquery = '<?php echo base_url(\'' .
+                $jquery = '<?php echo base_url(\''.
                     'bower_components/jquery/dist/jquery.min.js'
                     . '\'); ?>';
             }
@@ -115,23 +115,23 @@ class CreateLayoutCommand extends AbstractCommand
         if ( ! @mkdir($filePath, 0777, TRUE)) {
             $message = 'The layout directory already exists!';
 
-            return $output->writeln('<error>' . $message . '</error>');
+            return $output->writeln('<error>'.$message.'</error>');
         }
 
         $header = $this->renderer->render('Views/Layout/Header.template', $data);
         $footer = $this->renderer->render('Views/Layout/Footer.template', $data);
 
-        $headerFile = fopen($filePath . '/header.template', 'wb');
-        $footerFile = fopen($filePath . '/footer.template', 'wb');
+        $headerFile = fopen($filePath.'/header.template', 'wb');
+        $footerFile = fopen($filePath.'/footer.template', 'wb');
 
-        file_put_contents($filePath . '/header.template', $header);
-        file_put_contents($filePath . '/footer.template', $footer);
+        file_put_contents($filePath.'/header.template', $header);
+        file_put_contents($filePath.'/footer.template', $footer);
 
         fclose($headerFile);
         fclose($footerFile);
 
         $message = 'The layout folder has been created successfully!';
 
-        return $output->writeln('<info>' . $message . '</info>');
+        return $output->writeln('<info>'.$message.'</info>');
     }
 }

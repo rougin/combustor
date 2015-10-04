@@ -94,8 +94,8 @@ class CreateControllerCommand extends AbstractCommand
         $fileInformation = [
             'name' => $fileName,
             'type' => 'controller',
-            'path' => APPPATH . 'controllers' . DIRECTORY_SEPARATOR .
-                $fileName . '.php'
+            'path' => APPPATH.'controllers'.DIRECTORY_SEPARATOR.
+                $fileName.'.php'
         ];
 
         $validator = new Validator(
@@ -108,7 +108,7 @@ class CreateControllerCommand extends AbstractCommand
         if ($validator->fails()) {
             $message = $validator->getMessage();
 
-            return $output->writeln('<error>' . $message . '</error>');
+            return $output->writeln('<error>'.$message.'</error>');
         }
 
         $data = [
@@ -124,18 +124,18 @@ class CreateControllerCommand extends AbstractCommand
 
         $controller = $this->renderer->render('Controller.template', $result);
 
-        $message = 'The controller "' . $fileInformation['name'] .
+        $message = 'The controller "'.$fileInformation['name'].
             '" has been created successfully!';
 
         $file = new File($fileInformation['path'], 'wb');
 
         if ( ! $file->putContents($controller)) {
-            $message = 'Oops! There\'s something wrong in creating the ' .
-                'controller ' . $fileInformation['name'] . '.';
+            $message = 'Oops! There\'s something wrong in creating the '.
+                'controller '.$fileInformation['name'].'.';
         }
 
         $file->close();
 
-        return $output->writeln('<info>' . $message . '</info>');
+        return $output->writeln('<info>'.$message.'</info>');
     }
 }

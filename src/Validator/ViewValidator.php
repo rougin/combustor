@@ -30,10 +30,10 @@ class ViewValidator implements ValidatorInterface
      */
     public function fails()
     {
-        $filePath = APPPATH . 'views/' . $this->name;
+        $filePath = APPPATH.'views/'.$this->name;
 
-        if (! @mkdir($filePath, 0775, TRUE)) {
-            $this->message = 'The "' . $this->name .
+        if ( ! @mkdir($filePath, 0775, TRUE)) {
+            $this->message = 'The "'.$this->name.
                 '" views folder already exists!';
 
             return TRUE;

@@ -22,7 +22,7 @@ class ViewGenerator implements GeneratorInterface
                 'button' => 'btn btn-default',
                 'buttonPrimary' => 'btn btn-primary',
                 'formControl' => 'form-control',
-                'formGroup' => 'form-group col-lg-12 col-md-12 ' .
+                'formGroup' => 'form-group col-lg-12 col-md-12 '.
                     'col-sm-12 col-xs-12',
                 'label' => 'control-label',
                 'table' => 'table table table-striped table-hover',
@@ -38,7 +38,7 @@ class ViewGenerator implements GeneratorInterface
         $data['plural'] = plural($data['name']);
         $data['singular'] = singular($data['name']);
 
-        $data['primaryKey'] = 'get_' . $this->describe->getPrimaryKey(
+        $data['primaryKey'] = 'get_'.$this->describe->getPrimaryKey(
             $data['name']
         );
 
@@ -57,8 +57,8 @@ class ViewGenerator implements GeneratorInterface
 
         foreach ($this->data['columns'] as $column) {
             $field = strtolower($column->getField());
-            $accessor = 'get_' . $field;
-            $mutator = 'set_' . $field;
+            $accessor = 'get_'.$field;
+            $mutator = 'set_'.$field;
 
             if ($this->data['isCamel']) {
                 $this->data['camel'][$field] = array(
@@ -83,13 +83,13 @@ class ViewGenerator implements GeneratorInterface
                     $referencedTable
                 );
 
-                $singular = $field . '_singular';
+                $singular = $field.'_singular';
 
                 $this->data['foreignKeys'][$singular] = singular(
                     $referencedTable
                 );
 
-                $this->data['primaryKeys'][$field] = 'get_' .
+                $this->data['primaryKeys'][$field] = 'get_'.
                     $this->describe->getPrimaryKey($referencedTable);
 
                 if ($this->data['isCamel']) {

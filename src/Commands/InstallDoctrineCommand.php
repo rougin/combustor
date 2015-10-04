@@ -29,7 +29,7 @@ class InstallDoctrineCommand extends AbstractCommand
      */
     public function isEnabled()
     {
-        if (file_exists(APPPATH . 'libraries/Doctrine.php')) {
+        if (file_exists(APPPATH.'libraries/Doctrine.php')) {
             return FALSE;
         }
 
@@ -68,14 +68,14 @@ class InstallDoctrineCommand extends AbstractCommand
          * directory for lazy loading
          */
 
-        file_put_contents(VENDOR . 'bin/doctrine.php', $cli);
-        file_put_contents(VENDOR . 'doctrine/orm/bin/doctrine.php', $cli);
+        file_put_contents(VENDOR.'bin/doctrine.php', $cli);
+        file_put_contents(VENDOR.'doctrine/orm/bin/doctrine.php', $cli);
 
-        $file = fopen(APPPATH . 'libraries/Doctrine.php', 'wb');
-        file_put_contents(APPPATH . 'libraries/Doctrine.php', $library);
+        $file = fopen(APPPATH.'libraries/Doctrine.php', 'wb');
+        file_put_contents(APPPATH.'libraries/Doctrine.php', $library);
         fclose($file);
 
-        $autoload = file_get_contents(APPPATH . 'config/autoload.php');
+        $autoload = file_get_contents(APPPATH.'config/autoload.php');
 
         preg_match_all(
             '/\$autoload\[\'libraries\'\] = array\((.*?)\)/',
@@ -98,21 +98,21 @@ class InstallDoctrineCommand extends AbstractCommand
 
             $autoload = preg_replace(
                 '/\$autoload\[\'libraries\'\] = array\([^)]*\);/',
-                '$autoload[\'libraries\'] = array(' .
-                    implode(', ', $libraries) .
+                '$autoload[\'libraries\'] = array('.
+                    implode(', ', $libraries).
                     ');',
                 $autoload
             );
 
-            $file = fopen(APPPATH . 'config/autoload.php', 'wb');
+            $file = fopen(APPPATH.'config/autoload.php', 'wb');
 
-            file_put_contents(APPPATH . 'config/autoload.php', $autoload);
+            file_put_contents(APPPATH.'config/autoload.php', $autoload);
             fclose($file);
         }
 
-        if ( ! is_dir(APPPATH . 'models/proxies')) {
-            mkdir(APPPATH . 'models/proxies');
-            chmod(APPPATH . 'models/proxies', 0777);
+        if ( ! is_dir(APPPATH.'models/proxies')) {
+            mkdir(APPPATH.'models/proxies');
+            chmod(APPPATH.'models/proxies', 0777);
         }
 
         /*
@@ -120,14 +120,14 @@ class InstallDoctrineCommand extends AbstractCommand
          */
 
         $abstractCommand = file_get_contents(
-            VENDOR .
-            'doctrine/orm/lib/Doctrine/' .
-            'ORM/Tools/Console/Command/' .
+            VENDOR.
+            'doctrine/orm/lib/Doctrine/'.
+            'ORM/Tools/Console/Command/'.
             'SchemaTool/AbstractCommand.php'
         );
 
         $search  = 'use Doctrine\ORM\Tools\SchemaTool;';
-        $replace = $search . "\n" . 'include BASEPATH . \'core/Model.php\';';
+        $replace = $search."\n".'include BASEPATH . \'core/Model.php\';';
 
         $contents = $abstractCommand;
         $schemaTool = 'use Doctrine\ORM\Tools\SchemaTool;';
@@ -140,9 +140,9 @@ class InstallDoctrineCommand extends AbstractCommand
         }
 
         file_put_contents(
-            VENDOR .
-            'doctrine/orm/lib/Doctrine/' .
-            'ORM/Tools/Console/Command/' .
+            VENDOR.
+            'doctrine/orm/lib/Doctrine/'.
+            'ORM/Tools/Console/Command/'.
             'SchemaTool/AbstractCommand.php',
             $contents
         );
@@ -151,6 +151,6 @@ class InstallDoctrineCommand extends AbstractCommand
 
         $message = 'Doctrine ORM is now installed successfully!';
 
-        return $output->writeln('<info>' . $message . '</info>');
+        return $output->writeln('<info>'.$message.'</info>');
     }
 }

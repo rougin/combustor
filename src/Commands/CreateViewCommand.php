@@ -5,7 +5,6 @@ namespace Rougin\Combustor\Commands;
 use Rougin\Combustor\AbstractCommand;
 use Rougin\Combustor\Tools;
 use Rougin\Combustor\Validator\ViewValidator;
-use Rougin\Describe\Describe;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
@@ -33,10 +32,10 @@ class CreateViewCommand extends AbstractCommand
     public function isEnabled()
     {
         if (
-            (file_exists(APPPATH . 'libraries/Wildfire.php') ||
-            file_exists(APPPATH . 'libraries/Doctrine.php')) &&
-            (file_exists(APPPATH . 'views/layout/header.php') &&
-            file_exists(APPPATH . 'views/layout/footer.php'))
+            (file_exists(APPPATH.'libraries/Wildfire.php') ||
+            file_exists(APPPATH.'libraries/Doctrine.php')) &&
+            (file_exists(APPPATH.'views/layout/header.php') &&
+            file_exists(APPPATH.'views/layout/footer.php'))
         ) {
             return TRUE;
         }
@@ -93,7 +92,7 @@ class CreateViewCommand extends AbstractCommand
         if ($validator->fails()) {
             $message = $validator->getMessage();
 
-            return $output->writeln('<error>' . $message . '</error>');
+            return $output->writeln('<error>'.$message.'</error>');
         }
 
         $data = [
@@ -116,10 +115,10 @@ class CreateViewCommand extends AbstractCommand
         $files = new FileCollection;
 
         $files
-            ->add(new File($filePath . '/create.php', 'wb'), 'create')
-            ->add(new File($filePath . '/edit.php', 'wb'), 'edit')
-            ->add(new File($filePath . '/index.php', 'wb'), 'index')
-            ->add(new File($filePath . '/show.php', 'wb'), 'show');
+            ->add(new File($filePath.'/create.php', 'wb'), 'create')
+            ->add(new File($filePath.'/edit.php', 'wb'), 'edit')
+            ->add(new File($filePath.'/index.php', 'wb'), 'index')
+            ->add(new File($filePath.'/show.php', 'wb'), 'show');
 
         foreach ($results as $key => $value) {
             $files->get($key)->putContents($value);
@@ -127,9 +126,9 @@ class CreateViewCommand extends AbstractCommand
 
         $files->close();
 
-        $message = 'The views folder "' .  $name .
+        $message = 'The views folder "'.$name.
             '" has been created successfully!';
 
-        return $output->writeln('<info>' . $message . '</info>');
+        return $output->writeln('<info>'.$message.'</info>');
     }
 }

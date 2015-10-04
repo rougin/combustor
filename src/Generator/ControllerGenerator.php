@@ -43,7 +43,7 @@ class ControllerGenerator implements GeneratorInterface
             }
 
             $field = strtolower($column->getField());
-            $method = 'set_' . $field;
+            $method = 'set_'.$field;
 
             $this->data['camel'][$field] = lcfirst(camelize($method));
             $this->data['underscore'][$field] = underscore($method);

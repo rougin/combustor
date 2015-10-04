@@ -52,7 +52,7 @@ class RemoveDoctrineCommand extends AbstractCommand
      */
     protected function execute(InputInterface $input, OutputInterface $output)
     {
-        $autoload = file_get_contents(APPPATH . 'config/autoload.php');
+        $autoload = file_get_contents(APPPATH.'config/autoload.php');
 
         preg_match_all(
             '/\$autoload\[\'libraries\'\] = array\((.*?)\)/',
@@ -71,28 +71,28 @@ class RemoveDoctrineCommand extends AbstractCommand
 
             $autoload = preg_replace(
                 '/\$autoload\[\'libraries\'\] = array\([^)]*\);/',
-                '$autoload[\'libraries\'] = array(' .
-                    implode(', ', $libraries) . ');',
+                '$autoload[\'libraries\'] = array('.
+                    implode(', ', $libraries).');',
                 $autoload
             );
 
-            $file = fopen(APPPATH . 'config/autoload.php', 'wb');
+            $file = fopen(APPPATH.'config/autoload.php', 'wb');
 
-            file_put_contents(APPPATH . 'config/autoload.php', $autoload);
+            file_put_contents(APPPATH.'config/autoload.php', $autoload);
             fclose($file);
         }
 
         system('composer remove doctrine/orm');
 
-        if ( ! unlink(APPPATH . 'libraries/Doctrine.php')) {
-            $message = 'There\'s something wrong while removing. ' .
+        if ( ! unlink(APPPATH.'libraries/Doctrine.php')) {
+            $message = 'There\'s something wrong while removing. '.
                 'Please try again later.';
 
-            return $output->writeln('<error>' . $message . '</error>');
+            return $output->writeln('<error>'.$message.'</error>');
         }
 
         $message = 'Doctrine ORM is now successfully removed!';
 
-        return $output->writeln('<info>' . $message . '</info>');
+        return $output->writeln('<info>'.$message.'</info>');
     }
 }

@@ -29,7 +29,7 @@ class InstallWildfireCommand extends AbstractCommand
      */
     public function isEnabled()
     {
-        if (file_exists(APPPATH . 'libraries/Wildfire.php')) {
+        if (file_exists(APPPATH.'libraries/Wildfire.php')) {
             return FALSE;
         }
 
@@ -61,7 +61,7 @@ class InstallWildfireCommand extends AbstractCommand
          * Add Wildfire.php to the "libraries" directory
          */
 
-        $autoload = file_get_contents(APPPATH . 'config/autoload.php');
+        $autoload = file_get_contents(APPPATH.'config/autoload.php');
 
         preg_match_all(
             '/\$autoload\[\'libraries\'\] = array\((.*?)\)/',
@@ -78,26 +78,26 @@ class InstallWildfireCommand extends AbstractCommand
 
             $autoload = preg_replace(
                 '/\$autoload\[\'libraries\'\] = array\([^)]*\);/',
-                '$autoload[\'libraries\'] = array(' . implode(', ', $libraries) . ');',
+                '$autoload[\'libraries\'] = array('.implode(', ', $libraries).');',
                 $autoload
             );
 
-            $file = fopen(APPPATH . 'config/autoload.php', 'wb');
+            $file = fopen(APPPATH.'config/autoload.php', 'wb');
 
-            file_put_contents(APPPATH . 'config/autoload.php', $autoload);
+            file_put_contents(APPPATH.'config/autoload.php', $autoload);
             fclose($file);
         }
 
-        $file = fopen(APPPATH . 'libraries/Wildfire.php', 'wb');
+        $file = fopen(APPPATH.'libraries/Wildfire.php', 'wb');
         $wildfire = $this->renderer->render('Libraries/Wildfire.template');
 
-        file_put_contents(APPPATH . 'libraries/Wildfire.php', $wildfire);
+        file_put_contents(APPPATH.'libraries/Wildfire.php', $wildfire);
         fclose($file);
 
         Tools::ignite();
 
         $message = 'Wildfire is now installed successfully!';
 
-        return $output->writeln('<info>' . $message . '</info>');
+        return $output->writeln('<info>'.$message.'</info>');
     }
 }

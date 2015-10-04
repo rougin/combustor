@@ -34,7 +34,7 @@ class Tools
         fclose($file);
 
         // Get the autoload.php from application/config directory
-        $autoload = file_get_contents(APPPATH . 'config/autoload.php');
+        $autoload = file_get_contents(APPPATH.'config/autoload.php');
 
         // Get currently included libraries
         preg_match_all(
@@ -55,7 +55,7 @@ class Tools
         // Include the added libraries all back to autoload.php
         $autoload = preg_replace(
             '/\$autoload\[\'libraries\'\] = array\([^)]*\);/',
-            '$autoload[\'libraries\'] = array(' . implode(', ', $libraries) . ');',
+            '$autoload[\'libraries\'] = array('.implode(', ', $libraries).');',
             $autoload
         );
 
@@ -88,14 +88,14 @@ class Tools
         // Include the added helpers all back to autoload.php
         $autoload = preg_replace(
             '/\$autoload\[\'helper\'\] = array\([^)]*\);/',
-            '$autoload[\'helper\'] = array(' . implode(', ', $helpers) . ');',
+            '$autoload[\'helper\'] = array('.implode(', ', $helpers).');',
             $autoload
         );
 
         // Updates autoload.php
-        $file = fopen(APPPATH . 'config/autoload.php', 'wb');
+        $file = fopen(APPPATH.'config/autoload.php', 'wb');
 
-        file_put_contents(APPPATH . 'config/autoload.php', $autoload);
+        file_put_contents(APPPATH.'config/autoload.php', $autoload);
         fclose($file);
 
         // Creates a .htaccess file if it does not exists
@@ -108,7 +108,7 @@ class Tools
         }
 
         // Gets the content of config.php
-        $config = file_get_contents(APPPATH . 'config/config.php');
+        $config = file_get_contents(APPPATH.'config/config.php');
 
         $search = array();
         $replace = array();
@@ -122,22 +122,22 @@ class Tools
         // Adds an encryption key from the configuration
         if (strpos($config, '$config[\'encryption_key\'] = \'\';') !== FALSE) {
             $search[] = '$config[\'encryption_key\'] = \'\';';
-            $replace[] = '$config[\'encryption_key\'] = \'' . md5('rougin') . '\';';
+            $replace[] = '$config[\'encryption_key\'] = \''.md5('rougin').'\';';
         }
 
         // Updates the config.php
         $config = str_replace($search, $replace, $config);
-        file_put_contents(APPPATH . 'config/config.php', $config);
+        file_put_contents(APPPATH.'config/config.php', $config);
 
         // Add an autoload for the Pagination library in applications/config/pagination.php
-        if ( ! file_exists(APPPATH . 'config/pagination.php')) {
-            $pagination = fopen(APPPATH . 'config/pagination.php', 'wb');
-            chmod(APPPATH . 'config/pagination.php', 0664);
+        if ( ! file_exists(APPPATH.'config/pagination.php')) {
+            $pagination = fopen(APPPATH.'config/pagination.php', 'wb');
+            chmod(APPPATH.'config/pagination.php', 0664);
 
             file_put_contents(
-                APPPATH . 'config/pagination.php',
+                APPPATH.'config/pagination.php',
                 file_get_contents(
-                    __DIR__ . '/Templates/Pagination.php'
+                    __DIR__.'/Templates/Pagination.php'
                 )
             );
 
@@ -155,8 +155,8 @@ class Tools
     public static function isCommandEnabled()
     {
         if (
-            file_exists(APPPATH . 'libraries/Wildfire.php') ||
-            file_exists(APPPATH . 'libraries/Doctrine.php')
+            file_exists(APPPATH.'libraries/Wildfire.php') ||
+            file_exists(APPPATH.'libraries/Doctrine.php')
         ) {
             return TRUE;
         }
@@ -171,7 +171,7 @@ class Tools
      */
     public static function isDoctrineEnabled()
     {
-        if (file_exists(APPPATH . 'libraries/Doctrine.php')) {
+        if (file_exists(APPPATH.'libraries/Doctrine.php')) {
             return TRUE;
         }
 
@@ -186,8 +186,8 @@ class Tools
     public static function hasLayout()
     {
         if (
-            file_exists(APPPATH . 'views/layout/header.php') &&
-            file_exists(APPPATH . 'views/layout/footer.php')
+            file_exists(APPPATH.'views/layout/header.php') &&
+            file_exists(APPPATH.'views/layout/footer.php')
         ) {
             return FALSE;
         }
@@ -202,7 +202,7 @@ class Tools
      */
     public static function isWildfireEnabled()
     {
-        if (file_exists(APPPATH . 'libraries/Wildfire.php')) {
+        if (file_exists(APPPATH.'libraries/Wildfire.php')) {
             return TRUE;
         }
 

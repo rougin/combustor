@@ -33,8 +33,8 @@ class ModelGenerator implements GeneratorInterface
 
         foreach ($this->data['columns'] as $column) {
             $field = strtolower($column->getField());
-            $accessor = 'get_' . $field;
-            $mutator = 'set_' . $field;
+            $accessor = 'get_'.$field;
+            $mutator = 'set_'.$field;
 
             if ($this->data['isCamel']) {
                 $this->data['camel'][$field] = array(
@@ -55,7 +55,7 @@ class ModelGenerator implements GeneratorInterface
 
                 array_push($this->data['indexes'], $field);
 
-                $this->data['primaryKeys'][$field] = 'get_' . 
+                $this->data['primaryKeys'][$field] = 'get_'. 
                     $this->describe->getPrimaryKey(
                         $column->getReferencedTable()
                     );

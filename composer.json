@@ -1,24 +1,52 @@
 {
     "name": "rougin/combustor",
-    "description": "A tool for speeding up web development in CodeIgniter",
-    "keywords": ["codeigniter", "combustor", "php", "code", "generator"],
-    "require": {
-        "php": ">=5.3.0",
-        "rougin/blueprint": "*",
-        "rougin/describe": "*",
-        "rougin/spark-plug": "*"
-    },
+    "description": "A tool for speeding up workflow in CodeIgniter",
+    "keywords": [
+        "codeigniter",
+        "combustor",
+        "generator",
+        "php"
+    ],
+    "homepage": "https://github.com/rougin/combustor",
     "license": "MIT",
     "authors": [
         {
-            "name": "Rougin Gutib",
-            "email": "rougingutib@gmail.com"
+            "name": "Rougin Royce Gutib",
+            "email": "rougingutib@gmail.com",
+            "homepage": "http://rougin.github.io",
+            "role": "Developer"
         }
     ],
-    "bin": ["bin/combustor", "bin/combustor.php"],
+    "require": {
+        "php" : ">=5.3.0",
+        "rougin/blueprint": "0.1.*",
+        "rougin/describe": "1.2.*",
+        "rougin/spark-plug": "0.2.*"
+    },
+    "require-dev": {
+        "phpunit/phpunit" : "4.*",
+        "scrutinizer/ocular": "~1.1"
+    },
+    "bin": [
+        "bin/combustor",
+        "bin/combustor.php"
+    ],
     "autoload": {
         "psr-4": {
-            "Rougin\\Combustor\\": "src/"
+            "Rougin\\Combustor\\": "src"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "Rougin\\Combustor\\Test\\": "tests"
+        }
+    },
+    "scripts": {
+        "test": "phpunit"
+    },
+    "extra": {
+        "branch-alias": {
+            "dev-master": "0.3-dev"
         }
     },
     "suggest": {

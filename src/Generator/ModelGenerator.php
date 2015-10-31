@@ -62,7 +62,7 @@ class ModelGenerator implements GeneratorInterface
 
                 if ($this->data['isCamel']) {
                     $this->data['primaryKeys'][$field] = camelize(
-                        $data['primaryKeys'][$field]
+                        $this->data['primaryKeys'][$field]
                     );
                 }
             }

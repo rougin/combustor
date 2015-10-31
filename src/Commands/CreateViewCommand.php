@@ -113,6 +113,7 @@ class CreateViewCommand extends AbstractCommand
         ];
 
         $files = new FileCollection;
+        $filePath = APPPATH . 'views/' . $name;
 
         $files
             ->add(new File($filePath.'/create.php', 'wb'), 'create')

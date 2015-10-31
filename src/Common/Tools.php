@@ -100,11 +100,11 @@ class Tools
 
         // Creates a .htaccess file if it does not exists
         if ( ! file_exists('.htaccess')) {
-            $htaccessFile = fopen('.htaccess', 'wb');
+            $htaccess = fopen('.htaccess', 'wb');
             chmod('.htaccess', 0777);
 
             file_put_contents('.htaccess', $htaccess);
-            fclose($htaccessFile);
+            fclose($htaccess);
         }
 
         // Gets the content of config.php
@@ -171,11 +171,11 @@ class Tools
      */
     public static function isDoctrineEnabled()
     {
-        if (file_exists(APPPATH.'libraries/Doctrine.php')) {
-            return TRUE;
+        if ( ! file_exists(APPPATH.'libraries/Doctrine.php')) {
+            return FALSE;
         }
 
-        return FALSE;
+        return TRUE;
     }
 
     /**
@@ -202,11 +202,11 @@ class Tools
      */
     public static function isWildfireEnabled()
     {
-        if (file_exists(APPPATH.'libraries/Wildfire.php')) {
-            return TRUE;
+        if ( ! file_exists(APPPATH.'libraries/Wildfire.php')) {
+            return FALSE;
         }
 
-        return FALSE;
+        return TRUE;
     }
 
     /**

@@ -16,6 +16,7 @@ use Twig_Environment;
  */
 abstract class AbstractCommand extends Command
 {
+    protected $describe;
     protected $renderer;
 
     /**

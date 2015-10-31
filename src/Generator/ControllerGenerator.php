@@ -35,7 +35,7 @@ class ControllerGenerator implements GeneratorInterface
 
         $columnFields = ['name', 'description', 'label'];
 
-        $table = $this->describe->getTable($data['name']);
+        $table = $this->describe->getTable($this->data['name']);
 
         foreach ($table as $column) {
             if ($column->isAutoIncrement()) {
@@ -66,7 +66,7 @@ class ControllerGenerator implements GeneratorInterface
                 ];
 
                 if ( ! in_array($field, $columnFields)) {
-                    $dropdown['field'] = $describe->getPrimaryKey(
+                    $dropdown['field'] = $this->describe->getPrimaryKey(
                         $referencedTable
                     );
                 }

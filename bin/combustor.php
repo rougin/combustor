@@ -1,32 +1,30 @@
 <?php
 
-// Define the VENDOR path
-$vendor = realpath('vendor');
-
-// Include the Composer Autoloader
-require $vendor . '/autoload.php';
-
-$filePath = realpath(__DIR__ . '/../combustor.yml');
-$directory = str_replace('/combustor.yml', '', $filePath);
-
-define('BLUEPRINT_FILENAME', $filePath);
-define('BLUEPRINT_DIRECTORY', $directory);
-
-// Load the CodeIgniter instance
-$instance = new Rougin\SparkPlug\Instance();
-
-// Include the Inflector helper from CodeIgniter
-require BASEPATH . 'helpers/inflector_helper.php';
-
 // Load the Blueprint library
-$blueprint = include($vendor . '/rougin/blueprint/bin/blueprint.php');
+$combustor = new Rougin\Blueprint\Blueprint(
+    new Symfony\Component\Console\Application,
+    new Auryn\Injector
+);
 
-if ($blueprint->hasError) {
-    exit($blueprint->showError());
-}
+$combustor
+    ->setTemplatePath(__DIR__ . '/../src/Templates')
+    ->setCommandPath(__DIR__ . '/../src/Commands')
+    ->setCommandNamespace('Rougin\Combustor\Commands');
 
-$blueprint->console->setName('Combustor');
-$blueprint->console->setVersion('1.1.3');
+$combustor->console->setName('Combustor');
+$combustor->console->setVersion('1.1.4');
+
+$combustor->injector->delegate('CI_Controller', function () {
+    $sparkPlug = new Rougin\SparkPlug\SparkPlug($GLOBALS, $_SERVER);
+
+    return $sparkPlug->getCodeIgniter();
+});
+
+$combustor->injector->delegate('Rougin\Describe\Describe', function () use ($db) {
+    return new Rougin\Describe\Describe(
+        new Rougin\Describe\Driver\CodeIgniterDriver($db)
+    );
+});
 
 // Run the Combustor console application
-$blueprint->console->run();
+$combustor->run();

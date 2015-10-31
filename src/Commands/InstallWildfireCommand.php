@@ -89,7 +89,7 @@ class InstallWildfireCommand extends AbstractCommand
         }
 
         $file = fopen(APPPATH . 'libraries/Wildfire.php', 'wb');
-        $wildfire = $this->renderer->render('Libraries/Wildfire.php');
+        $wildfire = $this->renderer->render('Libraries/Wildfire.template');
 
         file_put_contents(APPPATH . 'libraries/Wildfire.php', $wildfire);
         fclose($file);

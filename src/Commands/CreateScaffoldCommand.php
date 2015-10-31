@@ -2,7 +2,7 @@
 
 namespace Rougin\Combustor\Commands;
 
-use Rougin\Blueprint\AbstractCommand;
+use Rougin\Combustor\AbstractCommand;
 use Symfony\Component\Console\Input\ArrayInput;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
@@ -30,14 +30,7 @@ class CreateScaffoldCommand extends AbstractCommand
      */
     public function isEnabled()
     {
-        if (
-            file_exists(APPPATH . 'libraries/Wildfire.php') ||
-            file_exists(APPPATH . 'libraries/Doctrine.php')
-        ) {
-            return TRUE;
-        }
-
-        return FALSE;
+        return Tools::isCommandEnabled();
     }
 
     /**
@@ -159,7 +152,8 @@ class CreateScaffoldCommand extends AbstractCommand
 
             $input = new ArrayInput($arguments);
             $application = $this->getApplication()->find($command);
-            $result = $application->run($input, $output);
+
+            return $application->run($input, $output);
         }
     }
 }

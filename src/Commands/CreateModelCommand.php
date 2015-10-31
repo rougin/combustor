@@ -2,15 +2,16 @@
 
 namespace Rougin\Combustor\Commands;
 
-use Rougin\Blueprint\AbstractCommand;
-use Rougin\Combustor\Tools;
-use Rougin\Combustor\Validator;
+use Rougin\Combustor\AbstractCommand;
+use Rougin\Combustor\Common\File;
+use Rougin\Combustor\Common\Tools;
+use Rougin\Combustor\Common\Validator;
+use Rougin\Combustor\Generator\ModelGenerator;
 use Rougin\Describe\Describe;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
-use Twig_Environment;
 
 /**
  * Create Model Command
@@ -32,14 +33,7 @@ class CreateModelCommand extends AbstractCommand
      */
     public function isEnabled()
     {
-        if (
-            file_exists(APPPATH . 'libraries/Wildfire.php') ||
-            file_exists(APPPATH . 'libraries/Doctrine.php')
-        ) {
-            return TRUE;
-        }
-
-        return FALSE;
+        return Tools::isCommandEnabled();
     }
 
     /**
@@ -88,112 +82,52 @@ class CreateModelCommand extends AbstractCommand
      */
     protected function execute(InputInterface $input, OutputInterface $output)
     {
-        require APPPATH . '/config/database.php';
+        $fileName = ucfirst($input->getOption('name'));
 
-        $db['default']['driver'] = $db['default']['dbdriver'];
-        unset($db['default']['dbdriver']);
-
-        $describe = new Describe($db['default']);
-
-        $doesExists = [
-            'camel' => $input->getOption('camel') ? TRUE : FALSE,
-            'doctrine' => $input->getOption('doctrine') ? TRUE : FALSE,
-            'wildfire' => $input->getOption('wildfire') ? TRUE : FALSE
+        $fileInformation = [
+            'name' => $fileName,
+            'type' => 'model',
+            'path' => APPPATH . 'models' . DIRECTORY_SEPARATOR .
+                $fileName . '.php'
         ];
 
-        $validator = new Validator($describe, $doesExists);
-        $type = $validator->getType();
+        $validator = new Validator(
+            $input->getOption('doctrine'),
+            $input->getOption('wildfire'),
+            $input->getOption('camel'),
+            $fileInformation
+        );
 
-        if ($validator->hasError()) {
+        if ($validator->fails()) {
             $message = $validator->getMessage();
 
             return $output->writeln('<error>' . $message . '</error>');
         }
 
-        return $this->generate($type, $describe, $input, $output);
-    }
+        $data = [
+            'file' => $fileInformation,
+            'isCamel' => $input->getOption('camel'),
+            'name' => $input->getArgument('name'),
+            'type' => $validator->getLibrary()
+        ];
 
-    /**
-     * Generates a Wildfire-based or Doctrine-based model.
-     * 
-     * @param  string           $type
-     * @param  Describe         $describe
-     * @param  InputInterface   $input
-     * @param  OutputInterface  $output
-     * @return object|OutputInterface
-     */
-    protected function generate($type, $describe, $input, $output)
-    {
-        $data['camel'] = [];
-        $data['columns'] = [];
-        $data['indexes'] = [];
-        $data['isCamel'] = ($input->getOption('camel')) ? TRUE : FALSE;
-        $data['name'] = $input->getArgument('name');
-        $data['primaryKeys'] = [];
-        $data['type'] = $type;
-        $data['underscore'] = [];
+        $generator = new ModelGenerator($this->describe, $data);
 
-        $fileName = ucfirst($data['name']) . '.php';
-        $path = APPPATH . 'models' . DIRECTORY_SEPARATOR . $fileName;
+        $result = $generator->generate();
 
-        $data['columns'] = $describe->getInformationFromTable($data['name']);
-        $data['primaryKey'] = $describe->getPrimaryKey($data['name']);
+        $model = $this->renderer->render('Model.template', $result);
 
-        if (file_exists($path)) {
-            $message = 'The "' . $data['name'] . '" controller already exists!';
-
-            return $output->writeln('<error>' . $message . '</error>');
-        }
-
-        foreach ($data['columns'] as $column) {
-            $field = strtolower($column->getField());
-            $accessor = 'get_' . $field;
-            $mutator = 'set_' . $field;
-
-            if ($input->getOption('camel')) {
-                $data['camel'][$field] = array(
-                    'field' => lcfirst(camelize($field)),
-                    'accessor' => lcfirst(camelize($accessor)),
-                    'mutator' => lcfirst(camelize($mutator))
-                );
-            } else {
-                $data['underscore'][$field] = array(
-                    'field' => lcfirst(underscore($field)),
-                    'accessor' => lcfirst(underscore($accessor)),
-                    'mutator' => lcfirst(underscore($mutator))
-                );
-            }
-
-            if ($column->isForeignKey()) {
-                $field = $column->getField();
-
-                array_push($data['indexes'], $field);
-
-                $data['primaryKeys'][$field] = 'get_' . $describe->getPrimaryKey(
-                    $column->getReferencedTable()
-                );
-
-                if ($input->getOption('camel')) {
-                    $data['primaryKeys'][$field] = camelize(
-                        $data['primaryKeys'][$field]
-                    );
-                }
-            }
-
-            $column->setReferencedTable(
-                Tools::stripTableSchema($column->getReferencedTable())
-            );
-        }
-
-        $model = $this->renderer->render('Model.php', $data);
-
-        $file = fopen($path, 'wb');
-        file_put_contents($path, $model);
-
-        fclose($file);
-
-        $message = 'The model "' . $data['name'] .
+        $message = 'The model "' . $fileInformation['name'] .
             '" has been created successfully!';
+
+        $file = new File($fileInformation['path'], 'wb');
+
+        if ( ! $file->putContents($model)) {
+            $message = 'Oops! There\'s something wrong in creating the ' .
+                'model ' . $fileInformation['name'] . '.';
+        }
+
+        $file->close();
 
         return $output->writeln('<info>' . $message . '</info>');
     }

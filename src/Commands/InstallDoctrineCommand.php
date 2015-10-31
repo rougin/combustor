@@ -59,8 +59,8 @@ class InstallDoctrineCommand extends AbstractCommand
     {
         system('composer require doctrine/orm');
 
-        $cli = $this->renderer->render('DoctrineCLI.php');
-        $library = $this->renderer->render('Libraries/Doctrine.php');
+        $cli = $this->renderer->render('DoctrineCLI.template');
+        $library = $this->renderer->render('Libraries/Doctrine.template');
 
         /**
          * Modify the contents of vendor/bin/doctrine.php,

@@ -2,8 +2,9 @@
 
 namespace Rougin\Combustor\Commands;
 
-use Rougin\Blueprint\AbstractCommand;
+use Rougin\Combustor\AbstractCommand;
 use Rougin\Combustor\Tools;
+use Rougin\Combustor\Validator\ViewValidator;
 use Rougin\Describe\Describe;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputArgument;
@@ -83,138 +84,50 @@ class CreateViewCommand extends AbstractCommand
      */
     protected function execute(InputInterface $input, OutputInterface $output)
     {
-        $viewDirectory = ( ! $input->getOption('keep'))
-            ? plural($input->getArgument('name'))
-            : $input->getArgument('name');
+        $name = ( ! $input->getOption('keep'))
+            ? Tools::stripTableSchema(plural($input->getArgument('name')))
+            : Tools::stripTableSchema($input->getArgument('name'));
 
-        $viewDirectory = Tools::stripTableSchema($viewDirectory);
-        $filePath = APPPATH . 'views/' . $viewDirectory;
-        $folderExists = ! @mkdir($filePath, 0775, TRUE);
+        $validator = new ViewValidator($name);
 
-        if ($folderExists) {
-            $message = 'The "' . $input->getArgument('name') . '" views folder already exists!';
+        if ($validator->fails()) {
+            $message = $validator->getMessage();
 
             return $output->writeln('<error>' . $message . '</error>');
         }
 
-        require APPPATH . 'config/database.php';
+        $data = [
+            'isBootstrap' => $input->getOption('bootstrap'),
+            'isCamel' => $input->getOption('camel'),
+            'name' => $name
+        ];
 
-        $db['default']['driver'] = $db['default']['dbdriver'];
-        unset($db['default']['dbdriver']);
+        $generator = new ViewGenerator($this->describe, $data);
 
-        $describe = new Describe($db['default']);
+        $result = $generator->generate();
 
-        /**
-         * Integrate Bootstrap if enabled
-         */
+        $results = [
+            'create' => $this->renderer->render('Views/create.template', $result),
+            'edit' => $this->renderer->render('Views/edit.template', $result),
+            'index' => $this->renderer->render('Views/index.template', $result),
+            'show' => $this->renderer->render('Views/show.template', $result)
+        ];
 
-        if ($input->getOption('bootstrap')) {
-            $data['isBootstrap'] = TRUE;
+        $files = new FileCollection;
 
-            $data['bootstrap'] = [
-                'button' => 'btn btn-default',
-                'buttonPrimary' => 'btn btn-primary',
-                'formControl' => 'form-control',
-                'formGroup' => 'form-group col-lg-12 col-md-12 ' .
-                    'col-sm-12 col-xs-12',
-                'label' => 'control-label',
-                'table' => 'table table table-striped table-hover',
-                'textRight' => 'text-right'
-            ];
+        $files
+            ->add(new File($filePath . '/create.php', 'wb'), 'create')
+            ->add(new File($filePath . '/edit.php', 'wb'), 'edit')
+            ->add(new File($filePath . '/index.php', 'wb'), 'index')
+            ->add(new File($filePath . '/show.php', 'wb'), 'show');
+
+        foreach ($results as $key => $value) {
+            $files->get($key)->putContents($value);
         }
 
-        $data['camel'] = [];
-        $data['underscore'] = [];
-        $data['foreignKeys'] = [];
-        $data['primaryKeys'] = [];
+        $files->close();
 
-        $data['name'] = $input->getArgument('name');
-        $data['plural'] = plural($data['name']);
-        $data['singular'] = singular($data['name']);
-
-        $data['primaryKey'] = 'get_' . $describe->getPrimaryKey(
-            $input->getArgument('name')
-        );
-
-        if ($input->getOption('camel')) {
-            $data['primaryKey'] = camelize($data['primaryKey']);
-        }
-
-        /**
-         * Get the columns from the specified name
-         */
-
-        $data['columns'] = $describe->getInformationFromTable(
-            $input->getArgument('name')
-        );
-
-        foreach ($data['columns'] as $column) {
-            $field = strtolower($column->getField());
-            $accessor = 'get_' . $field;
-            $mutator = 'set_' . $field;
-
-            if ($input->getOption('camel')) {
-                $data['camel'][$field] = array(
-                    'field' => lcfirst(camelize($field)),
-                    'accessor' => lcfirst(camelize($accessor)),
-                    'mutator' => lcfirst(camelize($mutator))
-                );
-            } else {
-                $data['underscore'][$field] = array(
-                    'field' => lcfirst(underscore($field)),
-                    'accessor' => lcfirst(underscore($accessor)),
-                    'mutator' => lcfirst(underscore($mutator))
-                );
-            }
-
-            if ($column->isForeignKey()) {
-                $referencedTable = Tools::stripTableSchema(
-                    $column->getReferencedTable()
-                );
-
-                $data['foreignKeys'][$field] = plural(
-                    $referencedTable
-                );
-
-                $singular = $field . '_singular';
-
-                $data['foreignKeys'][$singular] = singular(
-                    $referencedTable
-                );
-
-                $data['primaryKeys'][$field] = 'get_' . $describe->getPrimaryKey(
-                    $referencedTable
-                );
-
-                if ($input->getOption('camel')) {
-                    $data['primaryKeys'][$field] = camelize(
-                        $data['primaryKeys'][$field]
-                    );
-                }
-            }
-        }
-
-        /**
-         * Create the files
-         */
-
-        $create = $this->renderer->render('Views/Create.php', $data);
-        $edit = $this->renderer->render('Views/Edit.php', $data);
-        $index = $this->renderer->render('Views/Index.php', $data);
-        $show = $this->renderer->render('Views/Show.php', $data);
-
-        $createFile = fopen($filePath . '/create.php', 'wb');
-        $editFile = fopen($filePath . '/edit.php', 'wb');
-        $indexFile = fopen($filePath . '/index.php', 'wb');
-        $showFile = fopen($filePath . '/show.php', 'wb');
-
-        file_put_contents($filePath . '/create.php', $create);
-        file_put_contents($filePath . '/edit.php', $edit);
-        file_put_contents($filePath . '/index.php', $index);
-        file_put_contents($filePath . '/show.php', $show);
-
-        $message = 'The views folder "' . 
-            plural($input->getArgument('name')) .
+        $message = 'The views folder "' .  $name .
             '" has been created successfully!';
 
         return $output->writeln('<info>' . $message . '</info>');

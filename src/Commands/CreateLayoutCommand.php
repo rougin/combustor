@@ -28,14 +28,7 @@ class CreateLayoutCommand extends AbstractCommand
      */
     public function isEnabled()
     {
-        if (
-            file_exists(APPPATH . 'views/layout/header.php') &&
-            file_exists(APPPATH . 'views/layout/footer.php')
-        ) {
-            return FALSE;
-        }
-
-        return TRUE;
+        return Tools::hasLayout();
     }
 
     /**
@@ -66,6 +59,7 @@ class CreateLayoutCommand extends AbstractCommand
     {
         $filePath = APPPATH . 'views/layout';
 
+        $data = [];
         $data['bootstrapContainer'] = '';
         $data['scripts'] = [];
         $data['styleSheets'] = [
@@ -124,14 +118,14 @@ class CreateLayoutCommand extends AbstractCommand
             return $output->writeln('<error>' . $message . '</error>');
         }
 
-        $header = $this->renderer->render('Views/Layout/Header.php', $data);
-        $footer = $this->renderer->render('Views/Layout/Footer.php', $data);
+        $header = $this->renderer->render('Views/Layout/Header.template', $data);
+        $footer = $this->renderer->render('Views/Layout/Footer.template', $data);
 
-        $headerFile = fopen($filePath . '/header.php', 'wb');
-        $footerFile = fopen($filePath . '/footer.php', 'wb');
+        $headerFile = fopen($filePath . '/header.template', 'wb');
+        $footerFile = fopen($filePath . '/footer.template', 'wb');
 
-        file_put_contents($filePath . '/header.php', $header);
-        file_put_contents($filePath . '/footer.php', $footer);
+        file_put_contents($filePath . '/header.template', $header);
+        file_put_contents($filePath . '/footer.template', $footer);
 
         fclose($headerFile);
         fclose($footerFile);

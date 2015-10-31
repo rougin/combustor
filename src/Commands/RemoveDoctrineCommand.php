@@ -28,11 +28,7 @@ class RemoveDoctrineCommand extends AbstractCommand
      */
     public function isEnabled()
     {
-        if (file_exists(APPPATH . 'libraries/Doctrine.php')) {
-            return TRUE;
-        }
-
-        return FALSE;
+        return Tools::isDoctrineEnabled();
     }
 
     /**

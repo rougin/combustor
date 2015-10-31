@@ -28,11 +28,7 @@ class RemoveWildfireCommand extends AbstractCommand
      */
     public function isEnabled()
     {
-        if (file_exists(APPPATH . 'libraries/Wildfire.php')) {
-            return TRUE;
-        }
-
-        return FALSE;
+        return Tools::isWildfireEnabled();
     }
 
     /**

@@ -1,6 +1,6 @@
 <?php
 
-namespace Rougin\Combustor;
+namespace Rougin\Combustor\Common;
 
 /**
  * Tools
@@ -145,6 +145,68 @@ class Tools
         }
 
         return;
+    }
+
+    /**
+     * Checks whether the command is enabled or not in the current environment.
+     *
+     * @return bool
+     */
+    public static function isCommandEnabled()
+    {
+        if (
+            file_exists(APPPATH . 'libraries/Wildfire.php') ||
+            file_exists(APPPATH . 'libraries/Doctrine.php')
+        ) {
+            return TRUE;
+        }
+
+        return FALSE;
+    }
+
+    /**
+     * Checks if Doctrine exists.
+     *
+     * @return bool
+     */
+    public static function isDoctrineEnabled()
+    {
+        if (file_exists(APPPATH . 'libraries/Doctrine.php')) {
+            return TRUE;
+        }
+
+        return FALSE;
+    }
+
+    /**
+     * Checks whether the header and footer file exists.
+     *
+     * @return bool
+     */
+    public static function hasLayout()
+    {
+        if (
+            file_exists(APPPATH . 'views/layout/header.php') &&
+            file_exists(APPPATH . 'views/layout/footer.php')
+        ) {
+            return FALSE;
+        }
+
+        return TRUE;
+    }
+
+    /**
+     * Checks if Wildfire exists.
+     *
+     * @return bool
+     */
+    public static function isWildfireEnabled()
+    {
+        if (file_exists(APPPATH . 'libraries/Wildfire.php')) {
+            return TRUE;
+        }
+
+        return FALSE;
     }
 
     /**

@@ -2,6 +2,7 @@
 
 namespace Rougin\Combustor\Generator;
 
+use Rougin\Combustor\Common\Tools;
 use Rougin\Combustor\Generator\GeneratorInterface;
 use Rougin\Describe\Describe;
 
@@ -23,7 +24,6 @@ class ControllerGenerator implements GeneratorInterface
         $data['dropdowns'] = [];
         $data['foreignKeys'] = [];
         $data['models'] = [$data['name']];
-        $data['name'] = $data['name'];
         $data['plural'] = plural($data['name']);
         $data['singular'] = singular($data['name']);
         $data['underscore'] = [];

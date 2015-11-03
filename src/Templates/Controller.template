@@ -1,14 +1,13 @@
 <?php
-
 defined('BASEPATH') OR exit('No direct script access allowed');
 
 /**
- * {{ name | title | replace({'_': ' '}) }} Controller
+ * {{ title | title | replace({'_': ' '}) }} Controller
  *
  * @package  CodeIgniter
  * @category Controller
  */
-class {{ name | capitalize }} extends CI_Controller {
+class {{ title | capitalize }} extends CI_Controller {
 
     public function __construct()
     {
@@ -28,6 +27,7 @@ class {{ name | capitalize }} extends CI_Controller {
      */
     public function create()
     {
+        $data = array();
         $this->_set_form_validation();
 
         if ($this->form_validation->run())

@@ -137,7 +137,7 @@ class Tools
             file_put_contents(
                 APPPATH.'config/pagination.php',
                 file_get_contents(
-                    __DIR__.'/Templates/Pagination.php'
+                    __DIR__.'/../Templates/Pagination.template'
                 )
             );
 
@@ -154,14 +154,11 @@ class Tools
      */
     public static function isCommandEnabled()
     {
-        if (
-            file_exists(APPPATH.'libraries/Wildfire.php') ||
-            file_exists(APPPATH.'libraries/Doctrine.php')
-        ) {
-            return TRUE;
+        if ( ! self::isWildfireEnabled() && ! self::isDoctrineEnabled()) {
+            return FALSE;
         }
 
-        return FALSE;
+        return TRUE;
     }
 
     /**
@@ -186,8 +183,8 @@ class Tools
     public static function hasLayout()
     {
         if (
-            file_exists(APPPATH.'views/layout/header.php') &&
-            file_exists(APPPATH.'views/layout/footer.php')
+            ! file_exists(APPPATH.'views/layout/header.php') ||
+            ! file_exists(APPPATH.'views/layout/footer.php')
         ) {
             return FALSE;
         }

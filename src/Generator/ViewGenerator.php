@@ -2,6 +2,8 @@
 
 namespace Rougin\Combustor\Generator;
 
+use Rougin\Describe\Describe;
+use Rougin\Combustor\Common\Tools;
 use Rougin\Combustor\Generator\GeneratorInterface;
 
 class ViewGenerator implements GeneratorInterface
@@ -42,6 +44,13 @@ class ViewGenerator implements GeneratorInterface
             $data['name']
         );
 
+        // workaround
+        if ($data['primaryKey'] == 'get_') {
+            $data['primaryKey'] = 'get_'.$this->describe->getPrimaryKey(
+                singular($data['name'])
+            );
+        }
+
         if ($this->data['isCamel']) {
             $data['primaryKey'] = camelize($data['primaryKey']);
         }
@@ -49,6 +58,13 @@ class ViewGenerator implements GeneratorInterface
         $data['columns'] = $this->describe->getTable(
             $data['name']
         );
+
+        // workaround
+        if (empty($data['columns'])) {
+            $data['columns'] = $this->describe->getTable(
+                singular($data['name'])
+            );
+        }
     }
 
     public function generate()

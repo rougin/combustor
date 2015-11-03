@@ -2,8 +2,8 @@
 
 namespace Rougin\Combustor\Commands;
 
-use Rougin\Blueprint\AbstractCommand;
-use Rougin\Combustor\Tools;
+use Rougin\Combustor\Common\AbstractCommand;
+use Rougin\Combustor\Common\Tools;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;

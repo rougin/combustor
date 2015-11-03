@@ -2,8 +2,12 @@
 
 namespace Rougin\Combustor\Commands;
 
-use Rougin\Combustor\AbstractCommand;
-use Rougin\Combustor\Tools;
+use Rougin\Combustor\Common\AbstractCommand;
+use Rougin\Combustor\Common\FileCollection;
+use Rougin\Combustor\Common\File;
+use Rougin\Combustor\Common\Tools;
+use Rougin\Describe\Describe;
+use Rougin\Combustor\Generator\ViewGenerator;
 use Rougin\Combustor\Validator\ViewValidator;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputArgument;
@@ -31,16 +35,11 @@ class CreateViewCommand extends AbstractCommand
      */
     public function isEnabled()
     {
-        if (
-            (file_exists(APPPATH.'libraries/Wildfire.php') ||
-            file_exists(APPPATH.'libraries/Doctrine.php')) &&
-            (file_exists(APPPATH.'views/layout/header.php') &&
-            file_exists(APPPATH.'views/layout/footer.php'))
-        ) {
-            return TRUE;
+        if ( ! Tools::isCommandEnabled() && ! Tools::hasLayout()) {
+            return FALSE;
         }
 
-        return FALSE;
+        return TRUE;
     }
 
     /**
@@ -113,7 +112,7 @@ class CreateViewCommand extends AbstractCommand
         ];
 
         $files = new FileCollection;
-        $filePath = APPPATH . 'views/' . $name;
+        $filePath = APPPATH.'views/'.$name;
 
         $files
             ->add(new File($filePath.'/create.php', 'wb'), 'create')

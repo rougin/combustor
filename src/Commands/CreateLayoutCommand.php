@@ -2,7 +2,8 @@
 
 namespace Rougin\Combustor\Commands;
 
-use Rougin\Blueprint\AbstractCommand;
+use Rougin\Combustor\Common\AbstractCommand;
+use Rougin\Combustor\Common\Tools;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
@@ -28,7 +29,7 @@ class CreateLayoutCommand extends AbstractCommand
      */
     public function isEnabled()
     {
-        return Tools::hasLayout();
+        return ! Tools::hasLayout();
     }
 
     /**
@@ -118,14 +119,14 @@ class CreateLayoutCommand extends AbstractCommand
             return $output->writeln('<error>'.$message.'</error>');
         }
 
-        $header = $this->renderer->render('Views/Layout/Header.template', $data);
-        $footer = $this->renderer->render('Views/Layout/Footer.template', $data);
+        $header = $this->renderer->render('Views/Layout/header.template', $data);
+        $footer = $this->renderer->render('Views/Layout/footer.template', $data);
 
-        $headerFile = fopen($filePath.'/header.template', 'wb');
-        $footerFile = fopen($filePath.'/footer.template', 'wb');
+        $headerFile = fopen($filePath.'/header.php', 'wb');
+        $footerFile = fopen($filePath.'/footer.php', 'wb');
 
-        file_put_contents($filePath.'/header.template', $header);
-        file_put_contents($filePath.'/footer.template', $footer);
+        file_put_contents($filePath.'/header.php', $header);
+        file_put_contents($filePath.'/footer.php', $footer);
 
         fclose($headerFile);
         fclose($footerFile);

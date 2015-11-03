@@ -2,7 +2,8 @@
 defined('BASEPATH') OR exit('No direct script access allowed');
 
 use Rougin\Describe\Describe;
-use Rougin\Combustor\Tools;
+use Rougin\Describe\Driver\CodeIgniterDriver;
+use Rougin\Combustor\Common\Tools;
 
 /**
  * Wildfire Class
@@ -12,7 +13,7 @@ use Rougin\Combustor\Tools;
  */
 class Wildfire {
 
-    private $_codeigniter;
+    private $_ci;
     private $_describe;
     private $_query;
     private $_rows = array();
@@ -25,16 +26,13 @@ class Wildfire {
      */
     public function __construct()
     {
-        $this->_codeigniter =& get_instance();
-        $this->_codeigniter->load->database();
-        $this->_codeigniter->load->helper('inflector');
+        $this->_ci =& get_instance();
+        $this->_ci->load->database();
+        $this->_ci->load->helper('inflector');
 
         require APPPATH . 'config/database.php';
 
-        $db['default']['driver'] = $db['default']['dbdriver'];
-        unset($db['default']['dbdriver']);
-
-        $this->_describe = new Describe($db['default']);
+        $this->_describe = new Describe(new CodeIgniterDriver($db));
     }
 
     /**
@@ -45,7 +43,7 @@ class Wildfire {
      */
     public function as_dropdown($description = 'description')
     {
-        $table_information = $this->_describe->get_information_from_table($this->_table);
+        $table_information = $this->_describe->get_table($this->_table);
 
         $data        = array();
         $description = 'get_' . $description;
@@ -77,8 +75,8 @@ class Wildfire {
             $delimiters = array($primary_key => $id);
         }
 
-        $this->_codeigniter->db->where($delimiters);
-        return ($this->_codeigniter->db->delete($table)) ? TRUE : FALSE;
+        $this->_ci->db->where($delimiters);
+        return ($this->_ci->db->delete($table)) ? TRUE : FALSE;
     }
 
     /**
@@ -98,8 +96,8 @@ class Wildfire {
             $delimiters = array($primary_key => $id);
         }
 
-        $this->_codeigniter->db->where($delimiters);
-        $query = $this->_codeigniter->db->get($table);
+        $this->_ci->db->where($delimiters);
+        $query = $this->_ci->db->get($table);
 
         if ($query->num_rows() > 0)
         {
@@ -134,10 +132,10 @@ class Wildfire {
                 $page = $delimiters['per_page'] * $page - $delimiters['per_page'];
             }
 
-            $this->_codeigniter->db->limit($delimiters['per_page'], $page);
+            $this->_ci->db->limit($delimiters['per_page'], $page);
         }
 
-        $this->_query = $this->_codeigniter->db->get($table);
+        $this->_query = $this->_ci->db->get($table);
 
         return $this;
     }
@@ -199,7 +197,7 @@ class Wildfire {
 
         if ( ! array_key_exists($table, $this->_tables))
         {
-            $main_table_information = $this->_describe->get_information_from_table($table);
+            $main_table_information = $this->_describe->get_table($table);
             $this->_tables[$table] = $main_table_information;
         }
         else
@@ -285,7 +283,7 @@ class Wildfire {
 
         if ( ! array_key_exists($table, $this->_tables))
         {
-            $table_information = $this->_describe->get_information_from_table($table);
+            $table_information = $this->_describe->get_table($table);
             $this->_tables[$table] = $table_information;
         }
         else
@@ -305,7 +303,7 @@ class Wildfire {
                     $foreign_table_alias = rand(0, 100) . '_' . Tools::strip_table_schema($table) . '_' . Tools::strip_table_schema($column->get_referenced_table());
                     $condition = $foreign_table_alias . '.' . $foreign_primary_key . ' = ' . $table_alias . '.' . $column->get_field();
 
-                    $this->_codeigniter->db->join($column->get_referenced_table() . ' as ' . $foreign_table_alias, $condition, 'left');
+                    $this->_ci->db->join($column->get_referenced_table() . ' as ' . $foreign_table_alias, $condition, 'left');
 
                     array_push($tables, $column->get_referenced_table());
                     $tables = array_unique($tables);
@@ -314,7 +312,7 @@ class Wildfire {
             }
             else if ( ! $column->is_primary_key())
             {
-                $this->_codeigniter->db->or_like($table_alias . '.' . $column->get_field(), $keyword);
+                $this->_ci->db->or_like($table_alias . '.' . $column->get_field(), $keyword);
             }
         }
     }

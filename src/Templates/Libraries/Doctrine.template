@@ -9,6 +9,7 @@ use Doctrine\ORM\Tools\Console\ConsoleRunner;
 use Doctrine\ORM\Tools\Console\Helper\EntityManagerHelper;
 use Doctrine\ORM\Tools\Setup;
 use Rougin\Describe\Describe;
+use Rougin\Describe\Driver\CodeIgniterDriver;
 use Symfony\Component\Console\Helper\HelperSet;
 
 /**
@@ -104,10 +105,7 @@ class Doctrine {
          * Load Describe
          */
 
-        $db['default']['driver'] = $db['default']['dbdriver'];
-        unset($db['default']['dbdriver']);
-
-        $this->_describe = new Describe($db['default']);
+        $this->_describe = new Describe(new CodeIgniterDriver($db));
     }
 
     /**

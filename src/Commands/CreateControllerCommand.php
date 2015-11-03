@@ -2,11 +2,11 @@
 
 namespace Rougin\Combustor\Commands;
 
-use Rougin\Combustor\AbstractCommand;
+use Rougin\Combustor\Common\AbstractCommand;
 use Rougin\Combustor\Common\File;
 use Rougin\Combustor\Common\Tools;
-use Rougin\Combustor\Common\Validator;
 use Rougin\Combustor\Generator\ControllerGenerator;
+use Rougin\Combustor\Validator\Validator;
 use Rougin\Describe\Describe;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
@@ -88,8 +88,8 @@ class CreateControllerCommand extends AbstractCommand
     protected function execute(InputInterface $input, OutputInterface $output)
     {
         $fileName = $input->getOption('keep')
-            ? ucfirst(plural($input->getOption('name')))
-            : ucfirst($input->getOption('name'));
+            ? ucfirst($input->getArgument('name'))
+            : ucfirst(plural($input->getArgument('name')));
 
         $fileInformation = [
             'name' => $fileName,
@@ -115,6 +115,7 @@ class CreateControllerCommand extends AbstractCommand
             'file' => $fileInformation,
             'isCamel' => $input->getOption('camel'),
             'name' => $input->getArgument('name'),
+            'title' => strtolower($fileName),
             'type' => $validator->getLibrary()
         ];
 
@@ -129,11 +130,7 @@ class CreateControllerCommand extends AbstractCommand
 
         $file = new File($fileInformation['path'], 'wb');
 
-        if ( ! $file->putContents($controller)) {
-            $message = 'Oops! There\'s something wrong in creating the '.
-                'controller '.$fileInformation['name'].'.';
-        }
-
+        $file->putContents($controller);
         $file->close();
 
         return $output->writeln('<info>'.$message.'</info>');

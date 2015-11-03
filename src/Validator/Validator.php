@@ -43,8 +43,8 @@ class Validator implements ValidatorInterface
      */
     public function fails()
     {
-        $hasDoctrine = file_exists(APPPATH.'/libraries/Doctrine.php');
-        $hasWildfire = file_exists(APPPATH.'/libraries/Wildfire.php');
+        $hasDoctrine = file_exists(APPPATH.'libraries/Doctrine.php');
+        $hasWildfire = file_exists(APPPATH.'libraries/Wildfire.php');
 
         if ( ! $hasWildfire && ! $hasDoctrine) {
             $this->message = 'Please install Wildfire or Doctrine!';
@@ -58,17 +58,17 @@ class Validator implements ValidatorInterface
             return TRUE;
         }
 
-        if ($this->isDoctrine && $hasDoctrine) {
+        if ($this->isDoctrine || $hasDoctrine) {
             $this->library = 'doctrine';
 
             return FALSE;
         }
 
-        if ($this->isWildfire && $hasWildfire) {
+        if ($this->isWildfire || $hasWildfire) {
             if ($this->isCamel) {
                 $this->message = 'Wildfire does not support camel casing!';
 
-                return FALSE;
+                return TRUE;
             }
 
             $this->library = 'wildfire';
@@ -80,10 +80,10 @@ class Validator implements ValidatorInterface
             $this->message = 'The "'.$this->file['name'].'" '.
                 $this->file['type'].' already exists!';
 
-            return FALSE;
+            return TRUE;
         }
 
-        return TRUE;
+        return FALSE;
     }
 
     /**

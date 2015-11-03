@@ -2,10 +2,10 @@
 
 namespace Rougin\Combustor\Commands;
 
-use Rougin\Combustor\AbstractCommand;
+use Rougin\Combustor\Common\AbstractCommand;
 use Rougin\Combustor\Common\File;
 use Rougin\Combustor\Common\Tools;
-use Rougin\Combustor\Common\Validator;
+use Rougin\Combustor\Validator\Validator;
 use Rougin\Combustor\Generator\ModelGenerator;
 use Rougin\Describe\Describe;
 use Symfony\Component\Console\Input\InputArgument;
@@ -82,7 +82,7 @@ class CreateModelCommand extends AbstractCommand
      */
     protected function execute(InputInterface $input, OutputInterface $output)
     {
-        $fileName = ucfirst($input->getOption('name'));
+        $fileName = ucfirst($input->getArgument('name'));
 
         $fileInformation = [
             'name' => $fileName,
@@ -122,12 +122,9 @@ class CreateModelCommand extends AbstractCommand
 
         $file = new File($fileInformation['path'], 'wb');
 
-        if ( ! $file->putContents($model)) {
-            $message = 'Oops! There\'s something wrong in creating the '.
-                'model '.$fileInformation['name'].'.';
-        }
-
+        $file->putContents($model);
         $file->close();
+
 
         return $output->writeln('<info>'.$message.'</info>');
     }

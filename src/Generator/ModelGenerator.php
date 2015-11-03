@@ -3,6 +3,7 @@
 namespace Rougin\Combustor\Generator;
 
 use Rougin\Combustor\Generator\GeneratorInterface;
+use Rougin\Combustor\Common\Tools;
 use Rougin\Describe\Describe;
 
 class ModelGenerator implements GeneratorInterface

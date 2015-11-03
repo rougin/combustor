@@ -2,7 +2,8 @@
 
 namespace Rougin\Combustor\Commands;
 
-use Rougin\Combustor\AbstractCommand;
+use Rougin\Combustor\Common\AbstractCommand;
+use Rougin\Combustor\Common\Tools;
 use Symfony\Component\Console\Input\ArrayInput;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
@@ -153,7 +154,7 @@ class CreateScaffoldCommand extends AbstractCommand
             $input = new ArrayInput($arguments);
             $application = $this->getApplication()->find($command);
 
-            return $application->run($input, $output);
+            $application->run($input, $output);
         }
     }
 }

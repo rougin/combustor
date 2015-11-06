@@ -13,15 +13,13 @@ class {{ title | capitalize }} extends CI_Controller {
     {
         parent::__construct();
 
-        $this->load->model(array(
 {% for model in models %}
-            '{{ model }}'{{ loop.index < loop.length ? ',' : '' }}
+        $this->load->model('{{ model }}');
 {% endfor %}
-        ));
     }
 
     /**
-     * Show the form for creating a new {{ singular | lower | replace({'_': ' '}) }}
+     * Shows the form for creating a new {{ singular | lower | replace({'_': ' '}) }}.
      *
      * @return void
      */
@@ -82,7 +80,7 @@ class {{ title | capitalize }} extends CI_Controller {
     }
 
     /**
-     * Delete the specified {{ singular | lower | replace({'_': ' '}) }} from storage
+     * Deletes the specified {{ singular | lower | replace({'_': ' '}) }} from storage.
      * 
      * @param  int $id
      * @return void
@@ -110,7 +108,7 @@ class {{ title | capitalize }} extends CI_Controller {
     }
 
     /**
-     * Show the form for editing the specified {{ singular | lower | replace({'_': ' '}) }}
+     * Shows the form for editing the specified {{ singular | lower | replace({'_': ' '}) }}.
      * 
      * @param  int $id
      * @return void
@@ -175,7 +173,7 @@ class {{ title | capitalize }} extends CI_Controller {
     }
 
     /**
-     * Display a listing of {{ plural | lower | replace({'_': ' '}) }}
+     * Displays a listing of {{ plural | lower | replace({'_': ' '}) }}.
      *
      * @return void
      */
@@ -204,7 +202,7 @@ class {{ title | capitalize }} extends CI_Controller {
     }
 
     /**
-     * Display the specified {{ singular | lower | replace({'_': ' '}) }}
+     * Displays the specified {{ singular | lower | replace({'_': ' '}) }}.
      * 
      * @param  int $id
      * @return void
@@ -222,7 +220,7 @@ class {{ title | capitalize }} extends CI_Controller {
     }
 
     /**
-     * Validate the input retrieved from the view
+     * Validates the input retrieved from the view.
      * 
      * @return void
      */

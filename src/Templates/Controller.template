@@ -9,6 +9,11 @@ defined('BASEPATH') OR exit('No direct script access allowed');
  */
 class {{ title | capitalize }} extends CI_Controller {
 
+    /**
+{% for model in models %}
+     * @param {{ model | capitalize }}
+{% endfor %}
+     */
     public function __construct()
     {
         parent::__construct();

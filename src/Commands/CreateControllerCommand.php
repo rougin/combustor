@@ -2,15 +2,15 @@
 
 namespace Rougin\Combustor\Commands;
 
-use Rougin\Combustor\Common\AbstractCommand;
+use Rougin\Describe\Describe;
 use Rougin\Combustor\Common\File;
 use Rougin\Combustor\Common\Tools;
-use Rougin\Combustor\Generator\ControllerGenerator;
 use Rougin\Combustor\Validator\Validator;
-use Rougin\Describe\Describe;
+use Rougin\Combustor\Common\AbstractCommand;
+use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
-use Symfony\Component\Console\Input\InputOption;
+use Rougin\Combustor\Generator\ControllerGenerator;
 use Symfony\Component\Console\Output\OutputInterface;
 
 /**

@@ -87,7 +87,7 @@ class Validator implements ValidatorInterface
     }
 
     /**
-     * Gets the rendered message
+     * Gets the rendered message.
      * 
      * @return string
      */
@@ -97,7 +97,7 @@ class Validator implements ValidatorInterface
     }
 
     /**
-     * Gets the selected library
+     * Gets the selected library.
      * 
      * @return string
      */

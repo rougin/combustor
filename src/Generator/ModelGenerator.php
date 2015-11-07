@@ -2,21 +2,39 @@
 
 namespace Rougin\Combustor\Generator;
 
-use Rougin\Combustor\Generator\GeneratorInterface;
-use Rougin\Combustor\Common\Tools;
 use Rougin\Describe\Describe;
+use Rougin\Combustor\Common\Tools;
+use Rougin\Combustor\Generator\GeneratorInterface;
 
+/**
+ * Model Generator
+ *
+ * Generates CodeIgniter-based models.
+ * 
+ * @package Combustor
+ * @author  Rougin Royce Gutib <rougingutib@gmail.com>
+ */
 class ModelGenerator implements GeneratorInterface
 {
     protected $describe;
     protected $data;
 
+    /**
+     * @param Describe $describe
+     * @param array    $data
+     */
     public function __construct(Describe $describe, array $data)
     {
         $this->describe = $describe;
         $this->data = $data;
     }
 
+    /**
+     * Prepares the data before generation.
+     * 
+     * @param  array &$data
+     * @return void
+     */
     public function prepareData(array &$data)
     {
         $data['camel'] = [];
@@ -28,6 +46,11 @@ class ModelGenerator implements GeneratorInterface
         $data['primaryKey'] = $this->describe->getPrimaryKey($data['name']);
     }
 
+    /**
+     * Generates set of code based on data.
+     * 
+     * @return array
+     */
     public function generate()
     {
         $this->prepareData($this->data);

@@ -41,7 +41,7 @@ class ViewValidator implements ValidatorInterface
     }
 
     /**
-     * Gets the rendered message
+     * Gets the rendered message.
      * 
      * @return string
      */

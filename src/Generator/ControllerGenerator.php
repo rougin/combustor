@@ -2,21 +2,39 @@
 
 namespace Rougin\Combustor\Generator;
 
+use Rougin\Describe\Describe;
 use Rougin\Combustor\Common\Tools;
 use Rougin\Combustor\Generator\GeneratorInterface;
-use Rougin\Describe\Describe;
 
+/**
+ * Controller Generator
+ *
+ * Generates CodeIgniter-based controllers.
+ * 
+ * @package Combustor
+ * @author  Rougin Royce Gutib <rougingutib@gmail.com>
+ */
 class ControllerGenerator implements GeneratorInterface
 {
     protected $describe;
     protected $data;
 
+    /**
+     * @param Describe $describe
+     * @param array    $data
+     */
     public function __construct(Describe $describe, array $data)
     {
         $this->describe = $describe;
         $this->data = $data;
     }
 
+    /**
+     * Prepares the data before generation.
+     * 
+     * @param  array &$data
+     * @return void
+     */
     public function prepareData(array &$data)
     {
         $data['camel'] = [];
@@ -29,6 +47,11 @@ class ControllerGenerator implements GeneratorInterface
         $data['underscore'] = [];
     }
 
+    /**
+     * Generates set of code based on data.
+     * 
+     * @return array
+     */
     public function generate()
     {
         $this->prepareData($this->data);

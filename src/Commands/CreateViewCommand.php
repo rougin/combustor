@@ -2,17 +2,17 @@
 
 namespace Rougin\Combustor\Commands;
 
-use Rougin\Combustor\Common\AbstractCommand;
-use Rougin\Combustor\Common\FileCollection;
+use Rougin\Describe\Describe;
 use Rougin\Combustor\Common\File;
 use Rougin\Combustor\Common\Tools;
-use Rougin\Describe\Describe;
+use Rougin\Combustor\Common\FileCollection;
+use Rougin\Combustor\Common\AbstractCommand;
 use Rougin\Combustor\Generator\ViewGenerator;
 use Rougin\Combustor\Validator\ViewValidator;
 use Symfony\Component\Console\Command\Command;
+use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
-use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 
 /**

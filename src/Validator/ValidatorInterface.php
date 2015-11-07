@@ -20,7 +20,7 @@ interface ValidatorInterface
     public function fails();
 
     /**
-     * Gets the rendered message
+     * Gets the rendered message.
      * 
      * @return string
      */

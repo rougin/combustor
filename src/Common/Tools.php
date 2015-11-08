@@ -5,7 +5,7 @@ namespace Rougin\Combustor\Common;
 /**
  * Tools
  *
- * Provides multi-purpose functions for Combustor
+ * Provides a list of multi-purpose functions for Combustor.
  * 
  * @package Combustor
  * @author  Rougin Royce Gutib <rougingutib@gmail.com>
@@ -13,7 +13,7 @@ namespace Rougin\Combustor\Common;
 class Tools
 {
     /**
-     * Run the post installation process
+     * "Ignites" the post installation process.
      * 
      * @return void
      */
@@ -129,7 +129,7 @@ class Tools
         $config = str_replace($search, $replace, $config);
         file_put_contents(APPPATH.'config/config.php', $config);
 
-        // Add an autoload for the Pagination library in applications/config/pagination.php
+        // Add an autoload for the Pagination library in pagination.php
         if ( ! file_exists(APPPATH.'config/pagination.php')) {
             $pagination = fopen(APPPATH.'config/pagination.php', 'wb');
             chmod(APPPATH.'config/pagination.php', 0664);
@@ -207,7 +207,7 @@ class Tools
     }
 
     /**
-     * Strip the table schema from the table name
+     * Strips the table schema from the table name.
      * 
      * @param  string $table
      * @return string
@@ -222,7 +222,7 @@ class Tools
     }
 
     /**
-     * Strip the table schema from the table name
+     * Strips the table schema from the table name.
      * 
      * @param  string $table
      * @return string
@@ -230,5 +230,56 @@ class Tools
     public static function strip_table_schema($table)
     {
         return self::stripTableSchema($table);
+    }
+
+    /**
+     * Removes the specified library in the application.
+     * 
+     * @param  string $type
+     * @return string
+     */
+    public function removeLibrary($type)
+    {
+        $autoload = file_get_contents(APPPATH.'config/autoload.php');
+
+        preg_match_all(
+            '/\$autoload\[\'libraries\'\] = array\((.*?)\)/',
+            $autoload,
+            $match
+        );
+
+        $libraries = explode(', ', end($match[1]));
+
+        if (in_array('\'' . $type . '\'', $libraries)) {
+            $position = array_search('\'' . $type . '\'', $libraries);
+
+            unset($libraries[$position]);
+
+            $libraries = array_filter($libraries);
+
+            $autoload = preg_replace(
+                '/\$autoload\[\'libraries\'\] = array\([^)]*\);/',
+                '$autoload[\'libraries\'] = array('.
+                    implode(', ', $libraries).');',
+                $autoload
+            );
+
+            $file = fopen(APPPATH.'config/autoload.php', 'wb');
+
+            file_put_contents(APPPATH.'config/autoload.php', $autoload);
+            fclose($file);
+        }
+
+        if ($type == 'doctrine') {
+            system('composer remove doctrine/orm');
+        }
+
+        if ( ! unlink(APPPATH.'libraries/'.ucfirst($type).'.php')) {
+            return 'There\'s something wrong while removing the library.';
+        }
+
+        return ($type == 'wildfire')
+            ? 'Wildfire is now successfully removed!'
+            : 'Doctrine ORM is now successfully removed!';
     }
 }

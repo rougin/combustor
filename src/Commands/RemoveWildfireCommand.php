@@ -49,48 +49,11 @@ class RemoveWildfireCommand extends AbstractCommand
      * 
      * @param  InputInterface  $input
      * @param  OutputInterface $output
-     * @return object|OutputInterface
+     * @return OutputInterface
      */
     protected function execute(InputInterface $input, OutputInterface $output)
     {
-        $autoload = file_get_contents(APPPATH.'config/autoload.php');
-
-        preg_match_all(
-            '/\$autoload\[\'libraries\'\] = array\((.*?)\)/',
-            $autoload,
-            $match
-        );
-
-        $libraries = explode(', ', end($match[1]));
-
-        if (in_array('\'wildfire\'', $libraries)) {
-            $position = array_search('\'wildfire\'', $libraries);
-
-            unset($libraries[$position]);
-
-            $libraries = array_filter($libraries);
-
-            $autoload = preg_replace(
-                '/\$autoload\[\'libraries\'\] = array\([^)]*\);/',
-                '$autoload[\'libraries\'] = array('.
-                    implode(', ', $libraries).');',
-                $autoload
-            );
-
-            $file = fopen(APPPATH.'config/autoload.php', 'wb');
-
-            file_put_contents(APPPATH.'config/autoload.php', $autoload);
-            fclose($file);
-        }
-
-        if ( ! unlink(APPPATH.'libraries/Wildfire.php')) {
-            $message = 'There\'s something wrong while removing. '.
-                'Please try again later.';
-
-            return $output->writeln('<error>'.$message.'</error>');
-        }
-
-        $message = 'Wildfire is now successfully removed!';
+        $message = Tools::removeLibrary('wildfire');
 
         return $output->writeln('<info>'.$message.'</info>');
     }

@@ -42,7 +42,7 @@ class CreateScaffoldCommand extends AbstractCommand
     protected function configure()
     {
         $this->setName('create:scaffold')
-            ->setDescription('Creates a new controller, model and view')
+            ->setDescription('Createss a new controller, model and view')
             ->addArgument(
                 'name',
                 InputArgument::REQUIRED,
@@ -89,18 +89,6 @@ class CreateScaffoldCommand extends AbstractCommand
      */
     protected function execute(InputInterface $input, OutputInterface $output)
     {
-        $bootstrap = $input->getOption('bootstrap');
-        $camel = $input->getOption('camel');
-        $doctrine = $input->getOption('doctrine');
-        $keep = $input->getOption('keep');
-        $lowercase = $input->getOption('lowercase');
-        $wildfire = $input->getOption('wildfire');
-
-        $arguments = [
-            'command' => NULL,
-            'name' => $input->getArgument('name')
-        ];
-
         $commands = [
             'create:controller',
             'create:model',
@@ -108,53 +96,38 @@ class CreateScaffoldCommand extends AbstractCommand
         ];
 
         foreach ($commands as $command) {
-            $arguments['command'] = $command;
-            
-            if (isset($arguments['--bootstrap'])) {
-                unset($arguments['--bootstrap']);
-            }
+            $arguments = [
+                'command' => $command,
+                'name' => $input->getArgument('name')
+            ];
 
-            if (isset($arguments['--camel'])) {
-                unset($arguments['--camel']);
-            }
+            switch ($command) {
+                case 'create:controller':
+                    $arguments['--camel'] = $input->getOption('camel');
+                    $arguments['--doctrine'] = $input->getOption('doctrine');
+                    $arguments['--keep'] = $input->getOption('keep');
+                    $arguments['--lowercase'] = $input->getOption('lowercase');
+                    $arguments['--wildfire'] = $input->getOption('wildfire');
 
-            if (isset($arguments['--doctrine'])) {
-                unset($arguments['--doctrine']);
-            }
+                    break;
+                case 'create:model':
+                    $arguments['--camel'] = $input->getOption('camel');
+                    $arguments['--doctrine'] = $input->getOption('doctrine');
+                    $arguments['--lowercase'] = $input->getOption('lowercase');
+                    $arguments['--wildfire'] = $input->getOption('wildfire');
 
-            if (isset($arguments['--keep'])) {
-                unset($arguments['--keep']);
-            }
+                    break;
+                case 'create:view':
+                    $arguments['--bootstrap'] = $input->getOption('bootstrap');
+                    $arguments['--camel'] = $input->getOption('camel');
+                    $arguments['--keep'] = $input->getOption('keep');
 
-            if (isset($arguments['--lowercase'])) {
-                unset($arguments['--lowercase']);
-            }
-
-            if (isset($arguments['--wildfire'])) {
-                unset($arguments['--wildfire']);
-            }
-
-            if ($command == 'create:controller') {
-                $arguments['--camel']     = $camel;
-                $arguments['--doctrine']  = $doctrine;
-                $arguments['--keep']      = $keep;
-                $arguments['--lowercase'] = $lowercase;
-                $arguments['--wildfire']  = $wildfire;
-            } else if ($command == 'create:model') {
-                $arguments['--camel']     = $camel;
-                $arguments['--doctrine']  = $doctrine;
-                $arguments['--lowercase'] = $lowercase;
-                $arguments['--wildfire']  = $wildfire;
-            } else if ($command == 'create:view') {
-                $arguments['--bootstrap'] = $bootstrap;
-                $arguments['--camel']     = $camel;
-                $arguments['--keep']      = $keep;
+                    break;
             }
 
             $input = new ArrayInput($arguments);
             $application = $this->getApplication()->find($command);
-
-            $application->run($input, $output);
+            $result = $application->run($input, $output);
         }
     }
 }

@@ -2,6 +2,8 @@
 
 namespace Rougin\Combustor\Common;
 
+use Rougin\Combustor\Common\File;
+
 /**
  * Tools
  *
@@ -19,44 +21,61 @@ class Tools
      */
     public static function ignite()
     {
-        // Get the config.php from application/config directory
-        $config = file_get_contents('application/config/config.php');
+        // Gets the config.php from application/config directory.
+        $config = new File(APPPATH.'config/config.php', 'wb');
 
-        // Enable the Composer autoload for CodeIgniter
-        $search  = '$config[\'composer_autoload\'] = FALSE;';
-        $replace = '$config[\'composer_autoload\'] = realpath(\'vendor\') . \'/autoload.php\';';
-        $config = str_replace($search, $replace, $config);
+        $search = [
+            '$config[\'composer_autoload\'] = FALSE;'
+        ];
 
-        // Updates config.php
-        $file = fopen('application/config/config.php', 'wb');
+        $replace = [
+            '$config[\'composer_autoload\'] = realpath(\'vendor\') . \'/autoload.php\';'
+        ];
 
-        file_put_contents('application/config/config.php', $config);
-        fclose($file);
+        // Removes the index.php from $config['index_page'].
+        if (strpos($config->getContents(), '$config[\'index_page\'] = \'index.php\';') !== FALSE) {
+            array_push($search, '$config[\'index_page\'] = \'index.php\';');
+            array_push($replace, '$config[\'index_page\'] = \'\';');
+        }
 
-        // Get the autoload.php from application/config directory
-        $autoload = file_get_contents(APPPATH.'config/autoload.php');
+        // Adds an encryption key from the configuration.
+        if (strpos($config->getContents(), '$config[\'encryption_key\'] = \'\';') !== FALSE) {
+            array_push($search, '$config[\'encryption_key\'] = \'\';');
+            array_push($replace, '$config[\'encryption_key\'] = \''.md5('rougin').'\';');
+        }
 
-        // Get currently included libraries
+        $config->putContents(
+            str_replace($search, $replace, $config->getContents())
+        );
+
+        $config->close();
+
+        // Gets the autoload.php from application/config directory.
+        $autoload = new File(APPPATH.'config/autoload.php', 'wb');
+
+        // Gets currently included libraries.
         preg_match_all(
             '/\$autoload\[\'libraries\'\] = array\((.*?)\)/',
-            $autoload,
+            $autoload->getContents(),
             $match
         );
 
         $libraries = explode(', ', end($match[1]));
 
-        // Include "session" library
+        // Includes "session" library.
         if ( ! in_array('\'session\'', $libraries)) {
             array_push($libraries, '\'session\'');
         }
 
         $libraries = array_filter($libraries);
 
-        // Include the added libraries all back to autoload.php
-        $autoload = preg_replace(
-            '/\$autoload\[\'libraries\'\] = array\([^)]*\);/',
-            '$autoload[\'libraries\'] = array('.implode(', ', $libraries).');',
-            $autoload
+        // Includes the added libraries all back to autoload.php.
+        $autoload->putContents(
+            preg_replace(
+                '/\$autoload\[\'libraries\'\] = array\([^)]*\);/',
+                '$autoload[\'libraries\'] = array('.implode(', ', $libraries).');',
+                $autoload
+            )
         );
 
         // Get currently included helpers
@@ -86,62 +105,38 @@ class Tools
         $helpers = array_filter($helpers);
 
         // Include the added helpers all back to autoload.php
-        $autoload = preg_replace(
-            '/\$autoload\[\'helper\'\] = array\([^)]*\);/',
-            '$autoload[\'helper\'] = array('.implode(', ', $helpers).');',
-            $autoload
+        $autoload->putContents(
+            preg_replace(
+                '/\$autoload\[\'helper\'\] = array\([^)]*\);/',
+                '$autoload[\'helper\'] = array('.implode(', ', $helpers).');',
+                $autoload->getContents()
+            )
         );
 
-        // Updates autoload.php
-        $file = fopen(APPPATH.'config/autoload.php', 'wb');
+        $autoload->close();
 
-        file_put_contents(APPPATH.'config/autoload.php', $autoload);
-        fclose($file);
-
-        // Creates a .htaccess file if it does not exists
+        // Creates a new .htaccess file if it does not exists.
         if ( ! file_exists('.htaccess')) {
-            $htaccess = fopen('.htaccess', 'wb');
-            chmod('.htaccess', 0777);
+            $htaccess = new File('.htaccess', 'wb');
 
-            file_put_contents('.htaccess', $htaccess);
-            fclose($htaccess);
-        }
-
-        // Gets the content of config.php
-        $config = file_get_contents(APPPATH.'config/config.php');
-
-        $search = array();
-        $replace = array();
-
-        // Removes the index.php from $config['index_page']
-        if (strpos($config, '$config[\'index_page\'] = \'index.php\';') !== FALSE) {
-            $search[] = '$config[\'index_page\'] = \'index.php\';';
-            $replace[] = '$config[\'index_page\'] = \'\';';
-        }
-
-        // Adds an encryption key from the configuration
-        if (strpos($config, '$config[\'encryption_key\'] = \'\';') !== FALSE) {
-            $search[] = '$config[\'encryption_key\'] = \'\';';
-            $replace[] = '$config[\'encryption_key\'] = \''.md5('rougin').'\';';
-        }
-
-        // Updates the config.php
-        $config = str_replace($search, $replace, $config);
-        file_put_contents(APPPATH.'config/config.php', $config);
-
-        // Add an autoload for the Pagination library in pagination.php
-        if ( ! file_exists(APPPATH.'config/pagination.php')) {
-            $pagination = fopen(APPPATH.'config/pagination.php', 'wb');
-            chmod(APPPATH.'config/pagination.php', 0664);
-
-            file_put_contents(
-                APPPATH.'config/pagination.php',
-                file_get_contents(
-                    __DIR__.'/../Templates/Pagination.template'
-                )
+            $htaccess->putContents(
+                file_get_contents(__DIR__.'/../Templates/Htaccess.template')
             );
 
-            fclose($pagination);
+            $htaccess->chmod(0777);
+            $htaccess->close();
+        }
+
+        // Creates a configuration for the Pagination library.
+        if ( ! file_exists(APPPATH.'config/pagination.php')) {
+            $pagination = new File(APPPATH.'config/pagination.php', 'wb');
+
+            $pagination->putContents(
+                file_get_contents(__DIR__.'/../Templates/Pagination.template')
+            );
+
+            $pagination->chmod(0664);
+            $pagination->close();
         }
 
         return;

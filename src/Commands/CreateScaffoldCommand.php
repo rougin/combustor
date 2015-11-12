@@ -127,7 +127,7 @@ class CreateScaffoldCommand extends AbstractCommand
 
             $input = new ArrayInput($arguments);
             $application = $this->getApplication()->find($command);
-            $result = $application->run($input, $output);
+            $application->run($input, $output);
         }
     }
 }

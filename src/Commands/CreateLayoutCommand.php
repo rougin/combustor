@@ -60,19 +60,16 @@ class CreateLayoutCommand extends AbstractCommand
     {
         $filePath = APPPATH.'views/layout';
 
-        $data = [];
-        $data['bootstrapContainer'] = '';
-        $data['scripts'] = [];
-        $data['styleSheets'] = [
-            '//maxcdn.bootstrapcdn.com/font-awesome/'.
-                '4.2.0/css/font-awesome.min.css'
+        $data = [
+            'bootstrapContainer' => '',
+            'scripts' => [],
+            'styleSheets' => [
+                '//maxcdn.bootstrapcdn.com/font-awesome/'.
+                    '4.2.0/css/font-awesome.min.css'
+            ]
         ];
 
-        $fontAwesome = ! is_dir('bower_components/font-awesome')
-            ? system('bower install font-awesome')
-            : TRUE;
-
-        if ($fontAwesome) {
+        if ( ! is_dir('bower_components/font-awesome') && system('bower install font-awesome')) {
             $data['styleSheets'][0] = '<?php echo base_url(\''.
                 'bower_components/font-awesome/css/'.
                 'font-awesome.min.css'
@@ -90,11 +87,7 @@ class CreateLayoutCommand extends AbstractCommand
 
             $jquery = 'https://code.jquery.com/jquery-2.1.1.min.js';
 
-            $bower = ! is_dir('bower_components/bootstrap')
-                ? system('bower install bootstrap')
-                : TRUE;
-
-            if ($bower) {
+            if ( ! is_dir('bower_components/bootstrap') && system('bower install bootstrap')) {
                 $bootstrapCss = '<?php echo base_url(\''.
                     'bower_components/bootstrap/dist/css/bootstrap.min.css'
                     . '\'); ?>';

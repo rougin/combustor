@@ -62,7 +62,7 @@ class ViewGenerator implements GeneratorInterface
             $data['name']
         );
 
-        // workaround
+        // Workaround...
         if ($data['primaryKey'] == 'get_') {
             $data['primaryKey'] = 'get_'.$this->describe->getPrimaryKey(
                 singular($data['name'])
@@ -77,7 +77,7 @@ class ViewGenerator implements GeneratorInterface
             $data['name']
         );
 
-        // workaround
+        // Workaround...
         if (empty($data['columns'])) {
             $data['columns'] = $this->describe->getTable(
                 singular($data['name'])

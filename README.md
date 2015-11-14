@@ -17,6 +17,8 @@ Via Composer
 $ composer require rougin/combustor
 ```
 
+If you want the latest updates, use ```rougin/combustor:dev-master```.
+
 ## Usage
 
 The documentation for Combustor can be found [here](http://rougin.github.io/combustor/commands.html)

@@ -2,6 +2,12 @@
 
 All Notable changes to `Combustor` will be documented in this file
 
+## [1.1.4](https://github.com/rougin/combustor/compare/v1.1.3...v1.1.4) - 2015-11-14 (WIP)
+
+### Changed
+- Whole code structure from scratch
+- Conformed to SOLID design approach
+
 ## [1.1.3](https://github.com/rougin/combustor/compare/v1.1.2...v1.1.3) - 2015-10-15
 
 ### Added

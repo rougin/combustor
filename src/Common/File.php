@@ -59,7 +59,7 @@ class File
     /**
      * Changes the file mode of the file.
      * 
-     * @param  int $mode
+     * @param  integer $mode
      * @return boolean
      */
     public function chmod(int $mode)

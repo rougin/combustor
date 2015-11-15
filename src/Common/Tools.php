@@ -74,7 +74,7 @@ class Tools
             preg_replace(
                 '/\$autoload\[\'libraries\'\] = array\([^)]*\);/',
                 '$autoload[\'libraries\'] = array('.implode(', ', $libraries).');',
-                $autoload
+                $autoload->getContents()
             )
         );
 

@@ -99,19 +99,17 @@ class ViewGenerator implements GeneratorInterface
             $accessor = 'get_'.$field;
             $mutator = 'set_'.$field;
 
-            if ($this->data['isCamel']) {
-                $this->data['camel'][$field] = array(
-                    'field' => lcfirst(camelize($field)),
-                    'accessor' => lcfirst(camelize($accessor)),
-                    'mutator' => lcfirst(camelize($mutator))
-                );
-            } else {
-                $this->data['underscore'][$field] = array(
-                    'field' => lcfirst(underscore($field)),
-                    'accessor' => lcfirst(underscore($accessor)),
-                    'mutator' => lcfirst(underscore($mutator))
-                );
-            }
+            $this->data['camel'][$field] = [
+                'field' => lcfirst(camelize($field)),
+                'accessor' => lcfirst(camelize($accessor)),
+                'mutator' => lcfirst(camelize($mutator))
+            ];
+
+            $this->data['underscore'][$field] = [
+                'field' => lcfirst(underscore($field)),
+                'accessor' => lcfirst(underscore($accessor)),
+                'mutator' => lcfirst(underscore($mutator))
+            ];
 
             if ($column->isForeignKey()) {
                 $referencedTable = Tools::stripTableSchema(

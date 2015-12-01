@@ -62,7 +62,7 @@ class File
      * @param  integer $mode
      * @return boolean
      */
-    public function chmod(int $mode)
+    public function chmod($mode)
     {
         return chmod($this->path, $mode);
     }

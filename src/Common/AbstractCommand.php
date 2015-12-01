@@ -2,9 +2,9 @@
 
 namespace Rougin\Combustor\Common;
 
+use Twig_Environment;
 use Rougin\Describe\Describe;
 use Symfony\Component\Console\Command\Command;
-use Twig_Environment;
 
 /**
  * Abstract Command

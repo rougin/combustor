@@ -6,7 +6,6 @@ use Rougin\Describe\Describe;
 use Rougin\Combustor\Common\File;
 use Rougin\Combustor\Common\Tools;
 use Rougin\Combustor\Common\FileCollection;
-use Rougin\Combustor\Common\AbstractCommand;
 use Rougin\Combustor\Generator\ViewGenerator;
 use Rougin\Combustor\Validator\ViewValidator;
 use Symfony\Component\Console\Command\Command;
@@ -36,10 +35,10 @@ class CreateViewCommand extends AbstractCommand
     public function isEnabled()
     {
         if ( ! Tools::isCommandEnabled() && ! Tools::hasLayout()) {
-            return FALSE;
+            return false;
         }
 
-        return TRUE;
+        return true;
     }
 
     /**

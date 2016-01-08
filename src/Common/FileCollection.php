@@ -14,7 +14,10 @@ use Rougin\Combustor\Common\File;
  */
 class FileCollection
 {
-    protected $files;
+    /**
+     * @var array
+     */
+    protected $files = [];
 
     /**
      * Adds a File object to the listing of files.
@@ -38,11 +41,11 @@ class FileCollection
     {
         foreach ($this->files as $file) {
             if ( ! $file->close()) {
-                return FALSE;
+                return false;
             }
         }
 
-        return TRUE;
+        return true;
     }
 
     /**

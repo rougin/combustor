@@ -2,7 +2,6 @@
 
 namespace Rougin\Combustor\Commands;
 
-use Rougin\Combustor\Common\AbstractCommand;
 use Rougin\Combustor\Common\Tools;
 use Symfony\Component\Console\Input\ArrayInput;
 use Symfony\Component\Console\Input\InputArgument;

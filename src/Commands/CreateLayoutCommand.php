@@ -3,7 +3,6 @@
 namespace Rougin\Combustor\Commands;
 
 use Rougin\Combustor\Common\Tools;
-use Rougin\Combustor\Common\AbstractCommand;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
@@ -106,7 +105,7 @@ class CreateLayoutCommand extends AbstractCommand
             array_push($data['scripts'], $bootstrapJs);
         }
 
-        if ( ! @mkdir($filePath, 0777, TRUE)) {
+        if ( ! @mkdir($filePath, 0777, true)) {
             $message = 'The layout directory already exists!';
 
             return $output->writeln('<error>'.$message.'</error>');

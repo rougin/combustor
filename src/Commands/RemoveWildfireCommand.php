@@ -3,7 +3,6 @@
 namespace Rougin\Combustor\Commands;
 
 use Rougin\Combustor\Common\Tools;
-use Rougin\Combustor\Common\AbstractCommand;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;

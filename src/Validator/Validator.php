@@ -15,12 +15,35 @@ use Rougin\Combustor\Validator\ValidatorInterface;
  */
 class Validator implements ValidatorInterface
 {
-    protected $file;
-    protected $isCamel;
-    protected $isDoctrine;
-    protected $isWildfire;
-    protected $library;
-    protected $message;
+    /**
+     * @var array
+     */
+    protected $file = [];
+
+    /**
+     * @var boolean
+     */
+    protected $isCamel = false;
+
+    /**
+     * @var boolean
+     */
+    protected $isDoctrine = false;
+
+    /**
+     * @var boolean
+     */
+    protected $isWildfire = false;
+
+    /**
+     * @var string
+     */
+    protected $library = '';
+
+    /**
+     * @var string
+     */
+    protected $message = '';
 
     /**
      * @param string $isDoctrine
@@ -30,10 +53,10 @@ class Validator implements ValidatorInterface
      */
     public function __construct($isDoctrine, $isWildfire, $isCamel, $file)
     {
+        $this->file = $file;
+        $this->isCamel = $isCamel;
         $this->isWildfire = $isWildfire;
         $this->isDoctrine = $isDoctrine;
-        $this->isCamel = $isCamel;
-        $this->file = $file;
     }
 
     /**
@@ -49,41 +72,41 @@ class Validator implements ValidatorInterface
         if ( ! $hasWildfire && ! $hasDoctrine) {
             $this->message = 'Please install Wildfire or Doctrine!';
 
-            return TRUE;
+            return true;
         }
 
         if ($hasWildfire && $hasDoctrine) {
             $this->message = 'Please select "--wildfire" or "--doctrine"!';
 
-            return TRUE;
+            return true;
         }
 
         if ($this->isDoctrine || $hasDoctrine) {
             $this->library = 'doctrine';
 
-            return FALSE;
+            return false;
         }
 
         if ($this->isWildfire || $hasWildfire) {
             if ($this->isCamel) {
                 $this->message = 'Wildfire does not support camel casing!';
 
-                return TRUE;
+                return true;
             }
 
             $this->library = 'wildfire';
 
-            return FALSE;
+            return false;
         }
 
         if (file_exists($this->file['path'])) {
             $this->message = 'The "'.$this->file['name'].'" '.
                 $this->file['type'].' already exists!';
 
-            return TRUE;
+            return true;
         }
 
-        return FALSE;
+        return false;
     }
 
     /**

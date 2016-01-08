@@ -16,12 +16,19 @@ use Symfony\Component\Console\Command\Command;
  */
 abstract class AbstractCommand extends Command
 {
+    /**
+     * @var \Rougin\Describe\Describe
+     */
     protected $describe;
+
+    /**
+     * @var \Twig_Environment
+     */
     protected $renderer;
 
     /**
-     * @param Twig_Environment $renderer
-     * @param Describe         $describe
+     * @param \Twig_Environment         $renderer
+     * @param \Rougin\Describe\Describe $describe
      */
     public function __construct(Describe $describe, Twig_Environment $renderer)
     {

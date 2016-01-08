@@ -3,7 +3,6 @@
 namespace Rougin\Combustor\Commands;
 
 use Rougin\Combustor\Common\Tools;
-use Rougin\Combustor\Common\AbstractCommand;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
@@ -30,10 +29,10 @@ class InstallDoctrineCommand extends AbstractCommand
     public function isEnabled()
     {
         if (file_exists(APPPATH.'libraries/Doctrine.php')) {
-            return FALSE;
+            return false;
         }
 
-        return TRUE;
+        return true;
     }
 
     /**
@@ -133,8 +132,8 @@ class InstallDoctrineCommand extends AbstractCommand
         $schemaTool = 'use Doctrine\ORM\Tools\SchemaTool;';
         $coreModel = 'include BASEPATH . \'core/Model.php\';';
 
-        if (strpos($abstractCommand, $schemaTool) !== FALSE) {
-            if (strpos($abstractCommand, $coreModel) === FALSE) {
+        if (strpos($abstractCommand, $schemaTool) !== false) {
+            if (strpos($abstractCommand, $coreModel) === false) {
                 $contents = str_replace($search, $replace, $abstractCommand);
             }
         }

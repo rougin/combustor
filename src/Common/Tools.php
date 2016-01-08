@@ -25,7 +25,7 @@ class Tools
         $config = new File(APPPATH.'config/config.php', 'wb');
 
         $search = [
-            '$config[\'composer_autoload\'] = FALSE;'
+            '$config[\'composer_autoload\'] = false;'
         ];
 
         $replace = [
@@ -33,13 +33,13 @@ class Tools
         ];
 
         // Removes the index.php from $config['index_page'].
-        if (strpos($config->getContents(), '$config[\'index_page\'] = \'index.php\';') !== FALSE) {
+        if (strpos($config->getContents(), '$config[\'index_page\'] = \'index.php\';') !== false) {
             array_push($search, '$config[\'index_page\'] = \'index.php\';');
             array_push($replace, '$config[\'index_page\'] = \'\';');
         }
 
         // Adds an encryption key from the configuration.
-        if (strpos($config->getContents(), '$config[\'encryption_key\'] = \'\';') !== FALSE) {
+        if (strpos($config->getContents(), '$config[\'encryption_key\'] = \'\';') !== false) {
             array_push($search, '$config[\'encryption_key\'] = \'\';');
             array_push($replace, '$config[\'encryption_key\'] = \''.md5('rougin').'\';');
         }
@@ -149,11 +149,7 @@ class Tools
      */
     public static function isCommandEnabled()
     {
-        if ( ! self::isWildfireEnabled() && ! self::isDoctrineEnabled()) {
-            return FALSE;
-        }
-
-        return TRUE;
+        return self::isWildfireEnabled() || self::isDoctrineEnabled();
     }
 
     /**
@@ -163,11 +159,7 @@ class Tools
      */
     public static function isDoctrineEnabled()
     {
-        if ( ! file_exists(APPPATH.'libraries/Doctrine.php')) {
-            return FALSE;
-        }
-
-        return TRUE;
+        return file_exists(APPPATH.'libraries/Doctrine.php');
     }
 
     /**
@@ -177,14 +169,8 @@ class Tools
      */
     public static function hasLayout()
     {
-        if (
-            ! file_exists(APPPATH.'views/layout/header.php') ||
-            ! file_exists(APPPATH.'views/layout/footer.php')
-        ) {
-            return FALSE;
-        }
-
-        return TRUE;
+        return file_exists(APPPATH.'views/layout/header.php')
+            && file_exists(APPPATH.'views/layout/footer.php');
     }
 
     /**
@@ -194,11 +180,7 @@ class Tools
      */
     public static function isWildfireEnabled()
     {
-        if ( ! file_exists(APPPATH.'libraries/Wildfire.php')) {
-            return FALSE;
-        }
-
-        return TRUE;
+        return file_exists(APPPATH.'libraries/Wildfire.php');
     }
 
     /**
@@ -209,11 +191,9 @@ class Tools
      */
     public static function stripTableSchema($table)
     {
-        if (strpos($table, '.') !== FALSE) {
-            return substr($table, strpos($table, '.') + 1);
-        }
-
-        return $table;
+        return (strpos($table, '.') !== false)
+            ? substr($table, strpos($table, '.') + 1)
+            : $table;
     }
 
     /**

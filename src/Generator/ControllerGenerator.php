@@ -16,12 +16,19 @@ use Rougin\Combustor\Generator\GeneratorInterface;
  */
 class ControllerGenerator implements GeneratorInterface
 {
+    /**
+     * @var \Rougin\Describe\Describe
+     */
     protected $describe;
-    protected $data;
 
     /**
-     * @param Describe $describe
-     * @param array    $data
+     * @var array
+     */
+    protected $data = [];
+
+    /**
+     * @param \Rougin\Describe\Describe $describe
+     * @param array $data
      */
     public function __construct(Describe $describe, array $data)
     {

@@ -6,7 +6,6 @@ use Rougin\Describe\Describe;
 use Rougin\Combustor\Common\File;
 use Rougin\Combustor\Common\Tools;
 use Rougin\Combustor\Validator\Validator;
-use Rougin\Combustor\Common\AbstractCommand;
 use Rougin\Combustor\Generator\ModelGenerator;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Input\InputArgument;

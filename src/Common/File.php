@@ -12,7 +12,14 @@ namespace Rougin\Combustor\Common;
  */
 class File
 {
+    /**
+     * @var File pointer
+     */
     protected $file;
+
+    /**
+     * @var string
+     */
     protected $path;
 
     /**

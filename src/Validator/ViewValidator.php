@@ -15,8 +15,15 @@ use Rougin\Combustor\Validator\ValidatorInterface;
  */
 class ViewValidator implements ValidatorInterface
 {
-    protected $name;
-    protected $message;
+    /**
+     * @var string
+     */
+    protected $name = '';
+
+    /**
+     * @var string
+     */
+    protected $message = '';
 
     public function __construct($name)
     {
@@ -32,12 +39,14 @@ class ViewValidator implements ValidatorInterface
     {
         $filePath = APPPATH.'views/'.$this->name;
 
-        if ( ! @mkdir($filePath, 0775, TRUE)) {
+        if ( ! @mkdir($filePath, 0775, true)) {
             $this->message = 'The "'.$this->name.
                 '" views folder already exists!';
 
-            return TRUE;
+            return true;
         }
+
+        return false;
     }
 
     /**

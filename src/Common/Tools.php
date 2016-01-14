@@ -15,6 +15,17 @@ use Rougin\Combustor\Common\File;
 class Tools
 {
     /**
+     * Checks whether the header and footer file exists.
+     *
+     * @return bool
+     */
+    public static function hasLayout()
+    {
+        return file_exists(APPPATH.'views/layout/header.php')
+            && file_exists(APPPATH.'views/layout/footer.php');
+    }
+
+    /**
      * "Ignites" the post installation process.
      * 
      * @return void
@@ -163,17 +174,6 @@ class Tools
     }
 
     /**
-     * Checks whether the header and footer file exists.
-     *
-     * @return bool
-     */
-    public static function hasLayout()
-    {
-        return file_exists(APPPATH.'views/layout/header.php')
-            && file_exists(APPPATH.'views/layout/footer.php');
-    }
-
-    /**
      * Checks if Wildfire exists.
      *
      * @return bool
@@ -194,17 +194,6 @@ class Tools
         return (strpos($table, '.') !== false)
             ? substr($table, strpos($table, '.') + 1)
             : $table;
-    }
-
-    /**
-     * Strips the table schema from the table name.
-     * 
-     * @param  string $table
-     * @return string
-     */
-    public static function strip_table_schema($table)
-    {
-        return self::stripTableSchema($table);
     }
 
     /**
@@ -256,5 +245,16 @@ class Tools
         return ($type == 'wildfire')
             ? 'Wildfire is now successfully removed!'
             : 'Doctrine ORM is now successfully removed!';
+    }
+
+    /**
+     * Strips the table schema from the table name.
+     * 
+     * @param  string $table
+     * @return string
+     */
+    public static function strip_table_schema($table)
+    {
+        return self::stripTableSchema($table);
     }
 }

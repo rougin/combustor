@@ -46,10 +46,10 @@ class Validator implements ValidatorInterface
     protected $message = '';
 
     /**
-     * @param string $isDoctrine
-     * @param string $isWildfire
-     * @param string $isCamel
-     * @param array  $file
+     * @param boolean $isDoctrine
+     * @param boolean $isWildfire
+     * @param boolean $isCamel
+     * @param array   $file
      */
     public function __construct($isDoctrine, $isWildfire, $isCamel, $file)
     {

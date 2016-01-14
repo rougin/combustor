@@ -38,8 +38,7 @@ class RemoveWildfireCommand extends AbstractCommand
      */
     protected function configure()
     {
-        $this
-            ->setName('remove:wildfire')
+        $this->setName('remove:wildfire')
             ->setDescription('Removes Wildfire');
     }
 

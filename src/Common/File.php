@@ -13,7 +13,7 @@ namespace Rougin\Combustor\Common;
 class File
 {
     /**
-     * @var File pointer
+     * @var resource
      */
     protected $file;
 

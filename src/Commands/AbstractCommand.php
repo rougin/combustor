@@ -1,6 +1,6 @@
 <?php
 
-namespace Rougin\Combustor\Common;
+namespace Rougin\Combustor\Commands;
 
 use Twig_Environment;
 use Rougin\Describe\Describe;

@@ -224,7 +224,7 @@ class Wildfire {
                     $data = $this->find($table_column->get_referenced_table(), $delimiters);
                 }
 
-                if ($data)
+                if ($data && method_exists($model, $mutator))
                 {
                     $model->$mutator($data);
                 }
@@ -252,7 +252,7 @@ class Wildfire {
                 $data = $this->find($table_column->get_referenced_table(), $delimiters);
             }
 
-            if ($data)
+            if ($data && method_exists($model, $mutator))
             {
                 $model->$mutator($data);
             }

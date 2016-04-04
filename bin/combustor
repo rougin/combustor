@@ -1,17 +1,5 @@
 #!/usr/bin/env php
 <?php
 
-// Include the Composer Autoloader
-require realpath('vendor') . '/autoload.php';
-
-// Load the defined constants from CodeIgniter
-require realpath('vendor') . '/rougin/spark-plug/bin/codeigniter.php';
-
-// Include the Inflector helper
-require BASEPATH . 'helpers/inflector_helper.php';
-
-// Include the database connections
-require APPPATH . 'config/database.php';
-
 // Load and run the Combustor application
 require 'combustor.php';

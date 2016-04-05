@@ -2,20 +2,20 @@
 
 namespace Rougin\Combustor\Commands;
 
-use Rougin\Describe\Describe;
-use Rougin\Combustor\Common\File;
-use Rougin\Combustor\Common\Tools;
-use Rougin\Combustor\Validator\Validator;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
-use Rougin\Combustor\Generator\ControllerGenerator;
 use Symfony\Component\Console\Output\OutputInterface;
+
+use Rougin\Combustor\Common\Tools;
+use Rougin\Combustor\Common\Inflector;
+use Rougin\Combustor\Validator\ControllerValidator;
+use Rougin\Combustor\Generator\ControllerGenerator;
 
 /**
  * Create Controller Command
  *
- * Generates a Wildfire or Doctrine-based controller for CodeIgniter
+ * Generates a Wildfire or Doctrine-based controller for CodeIgniter.
  * 
  * @package Combustor
  * @author  Rougin Royce Gutib <rougingutib@gmail.com>
@@ -80,24 +80,27 @@ class CreateControllerCommand extends AbstractCommand
     /**
      * Executes the command.
      * 
-     * @param  InputInterface  $input
-     * @param  OutputInterface $output
-     * @return object|OutputInterface
+     * @param \Symfony\Component\Console\Input\InputInterface   $input
+     * @param \Symfony\Component\Console\Output\OutputInterface $output
+     * @return object|\Symfony\Component\Console\Output\OutputInterface
      */
     protected function execute(InputInterface $input, OutputInterface $output)
     {
-        $fileName = $input->getOption('keep')
-            ? ucfirst($input->getArgument('name'))
-            : ucfirst(plural($input->getArgument('name')));
+        $fileName = ucfirst($input->getArgument('name'));
+
+        if ($input->getOption('keep')) {
+            $fileName = ucfirst(Inflector::plural($input->getArgument('name')));
+        }
+
+        $path = APPPATH . 'controllers' . DIRECTORY_SEPARATOR . $fileName . '.php';
 
         $fileInformation = [
             'name' => $fileName,
             'type' => 'controller',
-            'path' => APPPATH.'controllers'.DIRECTORY_SEPARATOR.
-                $fileName.'.php'
+            'path' => $path
         ];
 
-        $validator = new Validator(
+        $validator = new ControllerValidator(
             $input->getOption('doctrine'),
             $input->getOption('wildfire'),
             $input->getOption('camel'),
@@ -107,7 +110,7 @@ class CreateControllerCommand extends AbstractCommand
         if ($validator->fails()) {
             $message = $validator->getMessage();
 
-            return $output->writeln('<error>'.$message.'</error>');
+            return $output->writeln('<error>' . $message . '</error>');
         }
 
         $data = [
@@ -121,17 +124,13 @@ class CreateControllerCommand extends AbstractCommand
         $generator = new ControllerGenerator($this->describe, $data);
 
         $result = $generator->generate();
-
         $controller = $this->renderer->render('Controller.template', $result);
+        $message = 'The controller "' . $fileName . '" has been created successfully!';
 
-        $message = 'The controller "'.$fileInformation['name'].
-            '" has been created successfully!';
+        $file = fopen($path, 'wb');
+        file_put_contents($path, $controller);
+        fclose($file);
 
-        $file = new File($fileInformation['path'], 'wb');
-
-        $file->putContents($controller);
-        $file->close();
-
-        return $output->writeln('<info>'.$message.'</info>');
+        return $output->writeln('<info>' . $message . '</info>');
     }
 }

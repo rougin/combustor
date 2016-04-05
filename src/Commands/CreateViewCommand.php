@@ -2,17 +2,15 @@
 
 namespace Rougin\Combustor\Commands;
 
-use Rougin\Describe\Describe;
-use Rougin\Combustor\Common\File;
-use Rougin\Combustor\Common\Tools;
-use Rougin\Combustor\Common\FileCollection;
-use Rougin\Combustor\Generator\ViewGenerator;
-use Rougin\Combustor\Validator\ViewValidator;
-use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
+
+use Rougin\Combustor\Common\Tools;
+use Rougin\Combustor\Common\Inflector;
+use Rougin\Combustor\Generator\ViewGenerator;
+use Rougin\Combustor\Validator\ViewValidator;
 
 /**
  * Create View Command
@@ -34,11 +32,7 @@ class CreateViewCommand extends AbstractCommand
      */
     public function isEnabled()
     {
-        if ( ! Tools::isCommandEnabled() && ! Tools::hasLayout()) {
-            return false;
-        }
-
-        return true;
+        return Tools::isCommandEnabled() && Tools::hasLayout();
     }
 
     /**
@@ -75,22 +69,24 @@ class CreateViewCommand extends AbstractCommand
     /**
      * Executes the command.
      * 
-     * @param  InputInterface  $input
-     * @param  OutputInterface $output
-     * @return object|OutputInterface
+     * @param \Symfony\Component\Console\Input\InputInterface   $input
+     * @param \Symfony\Component\Console\Output\OutputInterface $output
+     * @return object|\Symfony\Component\Console\Output\OutputInterface
      */
     protected function execute(InputInterface $input, OutputInterface $output)
     {
-        $name = ( ! $input->getOption('keep'))
-            ? Tools::stripTableSchema(plural($input->getArgument('name')))
-            : Tools::stripTableSchema($input->getArgument('name'));
+        $name = Tools::stripTableSchema($input->getArgument('name'));
+
+        if ( ! $input->getOption('keep')) {
+            $name = Tools::stripTableSchema(Inflector::plural($input->getArgument('name')));
+        }
 
         $validator = new ViewValidator($name);
 
         if ($validator->fails()) {
             $message = $validator->getMessage();
 
-            return $output->writeln('<error>'.$message.'</error>');
+            return $output->writeln('<error>' . $message . '</error>');
         }
 
         $data = [
@@ -110,24 +106,26 @@ class CreateViewCommand extends AbstractCommand
             'show' => $this->renderer->render('Views/show.template', $result)
         ];
 
-        $files = new FileCollection;
-        $filePath = APPPATH.'views/'.$name;
+        $filePath = APPPATH . 'views/' . $name;
 
-        $files
-            ->add(new File($filePath.'/create.php', 'wb'), 'create')
-            ->add(new File($filePath.'/edit.php', 'wb'), 'edit')
-            ->add(new File($filePath.'/index.php', 'wb'), 'index')
-            ->add(new File($filePath.'/show.php', 'wb'), 'show');
+        $file = fopen($filePath . '/create.php', 'wb');
+        file_put_contents($filePath . '/create.php', $results['create']);
+        fclose($file);
 
-        foreach ($results as $key => $value) {
-            $files->get($key)->putContents($value);
-        }
+        $file = fopen($filePath . '/edit.php', 'wb');
+        file_put_contents($filePath . '/edit.php', $results['edit']);
+        fclose($file);
 
-        $files->close();
+        $file = fopen($filePath . '/index.php', 'wb');
+        file_put_contents($filePath . '/index.php', $results['index']);
+        fclose($file);
 
-        $message = 'The views folder "'.$name.
-            '" has been created successfully!';
+        $file = fopen($filePath . '/show.php', 'wb');
+        file_put_contents($filePath . '/show.php', $results['show']);
+        fclose($file);
 
-        return $output->writeln('<info>'.$message.'</info>');
+        $message = 'The views folder "' . $name . '" has been created successfully!';
+
+        return $output->writeln('<info>' . $message . '</info>');
     }
 }

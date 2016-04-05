@@ -4,7 +4,7 @@ namespace Rougin\Combustor\Generator;
 
 use Rougin\Describe\Describe;
 use Rougin\Combustor\Common\Tools;
-use Rougin\Combustor\Generator\GeneratorInterface;
+use Rougin\Combustor\Common\Inflector;
 
 /**
  * Model Generator
@@ -68,15 +68,15 @@ class ModelGenerator implements GeneratorInterface
             $mutator = 'set_'.$field;
 
             $this->data['camel'][$field] = [
-                'field' => lcfirst(camelize($field)),
-                'accessor' => lcfirst(camelize($accessor)),
-                'mutator' => lcfirst(camelize($mutator))
+                'field' => lcfirst(Inflector::camelize($field)),
+                'accessor' => lcfirst(Inflector::camelize($accessor)),
+                'mutator' => lcfirst(Inflector::camelize($mutator))
             ];
 
             $this->data['underscore'][$field] = [
-                'field' => lcfirst(underscore($field)),
-                'accessor' => lcfirst(underscore($accessor)),
-                'mutator' => lcfirst(underscore($mutator))
+                'field' => lcfirst(Inflector::underscore($field)),
+                'accessor' => lcfirst(Inflector::underscore($accessor)),
+                'mutator' => lcfirst(Inflector::underscore($mutator))
             ];
 
             if ($column->isForeignKey()) {
@@ -90,7 +90,7 @@ class ModelGenerator implements GeneratorInterface
                     );
 
                 if ($this->data['isCamel']) {
-                    $this->data['primaryKeys'][$field] = camelize(
+                    $this->data['primaryKeys'][$field] = Inflector::camelize(
                         $this->data['primaryKeys'][$field]
                     );
                 }

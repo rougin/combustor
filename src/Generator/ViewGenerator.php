@@ -4,7 +4,7 @@ namespace Rougin\Combustor\Generator;
 
 use Rougin\Describe\Describe;
 use Rougin\Combustor\Common\Tools;
-use Rougin\Combustor\Generator\GeneratorInterface;
+use Rougin\Combustor\Common\Inflector;
 
 /**
  * View Generator
@@ -39,22 +39,23 @@ class ViewGenerator implements GeneratorInterface
     /**
      * Prepares the data before generation.
      * 
-     * @param  array &$data
+     * @param  array $data
      * @return void
      */
     public function prepareData(array &$data)
     {
+        $bootstrap = [
+            'button' => 'btn btn-default',
+            'buttonPrimary' => 'btn btn-primary',
+            'formControl' => 'form-control',
+            'formGroup' => 'form-group col-lg-12 col-md-12 col-sm-12 col-xs-12',
+            'label' => 'control-label',
+            'table' => 'table table table-striped table-hover',
+            'textRight' => 'text-right'
+        ];
+
         if ($data['isBootstrap']) {
-            $data['bootstrap'] = [
-                'button' => 'btn btn-default',
-                'buttonPrimary' => 'btn btn-primary',
-                'formControl' => 'form-control',
-                'formGroup' => 'form-group col-lg-12 col-md-12 '.
-                    'col-sm-12 col-xs-12',
-                'label' => 'control-label',
-                'table' => 'table table table-striped table-hover',
-                'textRight' => 'text-right'
-            ];
+            $data['bootstrap'] = $bootstrap;
         }
 
         $data['camel'] = [];
@@ -62,8 +63,8 @@ class ViewGenerator implements GeneratorInterface
         $data['foreignKeys'] = [];
         $data['primaryKeys'] = [];
 
-        $data['plural'] = plural($data['name']);
-        $data['singular'] = singular($data['name']);
+        $data['plural'] = Inflector::plural($data['name']);
+        $data['singular'] = Inflector::singular($data['name']);
 
         $data['primaryKey'] = 'get_'.$this->describe->getPrimaryKey(
             $data['name']
@@ -72,12 +73,12 @@ class ViewGenerator implements GeneratorInterface
         // Workaround...
         if ($data['primaryKey'] == 'get_') {
             $data['primaryKey'] = 'get_'.$this->describe->getPrimaryKey(
-                singular($data['name'])
+                Inflector::singular($data['name'])
             );
         }
 
         if ($this->data['isCamel']) {
-            $data['primaryKey'] = camelize($data['primaryKey']);
+            $data['primaryKey'] = Inflector::camelize($data['primaryKey']);
         }
 
         $data['columns'] = $this->describe->getTable(
@@ -87,7 +88,7 @@ class ViewGenerator implements GeneratorInterface
         // Workaround...
         if (empty($data['columns'])) {
             $data['columns'] = $this->describe->getTable(
-                singular($data['name'])
+                Inflector::singular($data['name'])
             );
         }
     }
@@ -107,15 +108,15 @@ class ViewGenerator implements GeneratorInterface
             $mutator = 'set_'.$field;
 
             $this->data['camel'][$field] = [
-                'field' => lcfirst(camelize($field)),
-                'accessor' => lcfirst(camelize($accessor)),
-                'mutator' => lcfirst(camelize($mutator))
+                'field' => lcfirst(Inflector::camelize($field)),
+                'accessor' => lcfirst(Inflector::camelize($accessor)),
+                'mutator' => lcfirst(Inflector::camelize($mutator))
             ];
 
             $this->data['underscore'][$field] = [
-                'field' => lcfirst(underscore($field)),
-                'accessor' => lcfirst(underscore($accessor)),
-                'mutator' => lcfirst(underscore($mutator))
+                'field' => lcfirst(Inflector::underscore($field)),
+                'accessor' => lcfirst(Inflector::underscore($accessor)),
+                'mutator' => lcfirst(Inflector::underscore($mutator))
             ];
 
             if ($column->isForeignKey()) {
@@ -123,13 +124,13 @@ class ViewGenerator implements GeneratorInterface
                     $column->getReferencedTable()
                 );
 
-                $this->data['foreignKeys'][$field] = plural(
+                $this->data['foreignKeys'][$field] = Inflector::plural(
                     $referencedTable
                 );
 
                 $singular = $field.'_singular';
 
-                $this->data['foreignKeys'][$singular] = singular(
+                $this->data['foreignKeys'][$singular] = Inflector::singular(
                     $referencedTable
                 );
 
@@ -137,7 +138,7 @@ class ViewGenerator implements GeneratorInterface
                     $this->describe->getPrimaryKey($referencedTable);
 
                 if ($this->data['isCamel']) {
-                    $this->data['primaryKeys'][$field] = camelize(
+                    $this->data['primaryKeys'][$field] = Inflector::camelize(
                         $this->data['primaryKeys'][$field]
                     );
                 }

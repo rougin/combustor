@@ -2,11 +2,12 @@
 
 namespace Rougin\Combustor\Commands;
 
-use Rougin\Combustor\Common\Tools;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
+
+use Rougin\Combustor\Common\Tools;
 
 /**
  * Create Layout Command
@@ -51,74 +52,60 @@ class CreateLayoutCommand extends AbstractCommand
     /**
      * Executes the command.
      * 
-     * @param  InputInterface  $input
-     * @param  OutputInterface $output
-     * @return object|OutputInterface
+     * @param \Symfony\Component\Console\Input\InputInterface   $input
+     * @param \Symfony\Component\Console\Output\OutputInterface $output
+     * @return object|\Symfony\Component\Console\Output\OutputInterface
      */
     protected function execute(InputInterface $input, OutputInterface $output)
     {
-        $filePath = APPPATH.'views/layout';
+        $layoutPath = APPPATH . 'views/layout';
 
-        $data = [
-            'bootstrapContainer' => '',
-            'scripts' => [],
-            'styleSheets' => [
-                '//maxcdn.bootstrapcdn.com/font-awesome/'.
-                    '4.2.0/css/font-awesome.min.css'
-            ]
-        ];
+        $data = [];
+
+        $data['bootstrapContainer'] = '';
+        $data['scripts'] = [];
+        $data['styleSheets'] = [];
+
+        $css = '//maxcdn.bootstrapcdn.com/font-awesome/4.2.0/css/font-awesome.min.css';
 
         if ( ! is_dir('bower_components/font-awesome') && system('bower install font-awesome')) {
-            $data['styleSheets'][0] = '<?php echo base_url(\''.
-                'bower_components/font-awesome/css/'.
-                'font-awesome.min.css'
-                . '\'); ?>';
+            $css = '<?php echo base_url(\'bower_components/font-awesome/css/font-awesome.min.css\'); ?>';
         }
+
+        $data['styleSheets'][0] = $css;
 
         if ($input->getOption('bootstrap')) {
             $data['bootstrapContainer'] = 'container';
 
-            $bootstrapCss = 'https://maxcdn.bootstrapcdn.com/bootstrap/'.
-                '3.2.0/css/bootstrap.min.css';
-
-            $bootstrapJs = 'https://maxcdn.bootstrapcdn.com/bootstrap/'.
-                '3.2.0/css/bootstrap.min.js';
-
+            $css = 'https://maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap.min.css';
+            $js = 'https://maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap.min.js';
             $jquery = 'https://code.jquery.com/jquery-2.1.1.min.js';
 
             if ( ! is_dir('bower_components/bootstrap') && system('bower install bootstrap')) {
-                $bootstrapCss = '<?php echo base_url(\''.
-                    'bower_components/bootstrap/dist/css/bootstrap.min.css'
-                    . '\'); ?>';
-
-                $bootstrapJs = '<?php echo base_url(\''.
-                    'bower_components/bootstrap/dist/js/bootstrap.min.js'
-                    . '\'); ?>';
-
-                $jquery = '<?php echo base_url(\''.
-                    'bower_components/jquery/dist/jquery.min.js'
-                    . '\'); ?>';
+                $css = '<?php echo base_url(\'bower_components/bootstrap/dist/css/bootstrap.min.css\'); ?>';
+                $js = '<?php echo base_url(\'bower_components/bootstrap/dist/js/bootstrap.min.js\'); ?>';
+                $jquery = '<?php echo base_url(\'bower_components/jquery/dist/jquery.min.js\'); ?>';
             }
  
-            array_push($data['styleSheets'], $bootstrapCss);
+            array_push($data['styleSheets'], $css);
             array_push($data['scripts'], $jquery);
-            array_push($data['scripts'], $bootstrapJs);
+            array_push($data['scripts'], $js);
         }
 
-        if ( ! @mkdir($filePath, 0777, true)) {
+        if ( ! @mkdir($layoutPath, 0777, true)) {
             $message = 'The layout directory already exists!';
 
-            return $output->writeln('<error>'.$message.'</error>');
+            return $output->writeln('<error>' . $message . '</error>');
         }
 
         $header = $this->renderer->render('Views/Layout/header.template', $data);
         $footer = $this->renderer->render('Views/Layout/footer.template', $data);
 
-        $headerFile = fopen($filePath.'/header.php', 'wb');
-        $footerFile = fopen($filePath.'/footer.php', 'wb');
+        $headerFile = fopen($layoutPath . '/header.php', 'wb');
+        $footerFile = fopen($layoutPath . '/footer.php', 'wb');
 
-        file_put_contents($filePath.'/header.php', $header);
-        file_put_contents($filePath.'/footer.php', $footer);
+        file_put_contents($layoutPath . '/header.php', $header);
+        file_put_contents($layoutPath . '/footer.php', $footer);
 
         fclose($headerFile);
         fclose($footerFile);

@@ -2,18 +2,15 @@
 
 namespace Rougin\Combustor\Validator;
 
-use Rougin\Describe\Describe;
-use Rougin\Combustor\Validator\ValidatorInterface;
-
 /**
- * Validator
+ * Base Validator
  *
  * Checks if Wildfire or Doctrine is available
  * 
  * @package Combustor
  * @author  Rougin Royce Gutib <rougingutib@gmail.com>
  */
-class Validator implements ValidatorInterface
+class BaseValidator implements ValidatorInterface
 {
     /**
      * @var array
@@ -66,8 +63,8 @@ class Validator implements ValidatorInterface
      */
     public function fails()
     {
-        $hasDoctrine = file_exists(APPPATH.'libraries/Doctrine.php');
-        $hasWildfire = file_exists(APPPATH.'libraries/Wildfire.php');
+        $hasDoctrine = file_exists(APPPATH . 'libraries/Doctrine.php');
+        $hasWildfire = file_exists(APPPATH . 'libraries/Wildfire.php');
 
         if ( ! $hasWildfire && ! $hasDoctrine) {
             $this->message = 'Please install Wildfire or Doctrine!';
@@ -81,29 +78,28 @@ class Validator implements ValidatorInterface
             return true;
         }
 
+        if (file_exists($this->file['path'])) {
+            $name = $this->file['name'];
+            $type = $this->file['type'];
+
+            $this->message = 'The "' . $name . '" ' . $type . ' already exists!';
+
+            return true;
+        }
+
+        if (($this->isWildfire || $hasWildfire) && $this->isCamel) {
+            $this->message = 'Wildfire does not support camel casing!';
+
+            return true;
+        }
+
         if ($this->isDoctrine || $hasDoctrine) {
             $this->library = 'doctrine';
-
-            return false;
         }
 
         if ($this->isWildfire || $hasWildfire) {
-            if ($this->isCamel) {
-                $this->message = 'Wildfire does not support camel casing!';
-
-                return true;
-            }
 
             $this->library = 'wildfire';
-
-            return false;
-        }
-
-        if (file_exists($this->file['path'])) {
-            $this->message = 'The "'.$this->file['name'].'" '.
-                $this->file['type'].' already exists!';
-
-            return true;
         }
 
         return false;

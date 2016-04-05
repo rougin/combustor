@@ -82,9 +82,9 @@ class CreateScaffoldCommand extends AbstractCommand
     /**
      * Executes the command.
      * 
-     * @param  InputInterface  $input
-     * @param  OutputInterface $output
-     * @return object|OutputInterface
+     * @param \Symfony\Component\Console\Input\InputInterface   $input
+     * @param \Symfony\Component\Console\Output\OutputInterface $output
+     * @return object|\Symfony\Component\Console\Output\OutputInterface
      */
     protected function execute(InputInterface $input, OutputInterface $output)
     {

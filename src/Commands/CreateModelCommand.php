@@ -2,15 +2,16 @@
 
 namespace Rougin\Combustor\Commands;
 
-use Rougin\Describe\Describe;
-use Rougin\Combustor\Common\File;
-use Rougin\Combustor\Common\Tools;
-use Rougin\Combustor\Validator\Validator;
-use Rougin\Combustor\Generator\ModelGenerator;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
+
+use Rougin\Describe\Describe;
+use Rougin\Combustor\Common\File;
+use Rougin\Combustor\Common\Tools;
+use Rougin\Combustor\Validator\ModelValidator;
+use Rougin\Combustor\Generator\ModelGenerator;
 
 /**
  * Create Model Command
@@ -75,22 +76,23 @@ class CreateModelCommand extends AbstractCommand
     /**
      * Executes the command.
      * 
-     * @param  InputInterface  $input
-     * @param  OutputInterface $output
-     * @return object|OutputInterface
+     * @param \Symfony\Component\Console\Input\InputInterface   $input
+     * @param \Symfony\Component\Console\Output\OutputInterface $output
+     * @return object|\Symfony\Component\Console\Output\OutputInterface
      */
     protected function execute(InputInterface $input, OutputInterface $output)
     {
         $fileName = ucfirst($input->getArgument('name'));
 
+        $path = APPPATH . 'models' . DIRECTORY_SEPARATOR . $fileName . '.php';
+
         $fileInformation = [
             'name' => $fileName,
             'type' => 'model',
-            'path' => APPPATH.'models'.DIRECTORY_SEPARATOR.
-                $fileName.'.php'
+            'path' => $path
         ];
 
-        $validator = new Validator(
+        $validator = new ModelValidator(
             $input->getOption('doctrine'),
             $input->getOption('wildfire'),
             $input->getOption('camel'),
@@ -100,7 +102,7 @@ class CreateModelCommand extends AbstractCommand
         if ($validator->fails()) {
             $message = $validator->getMessage();
 
-            return $output->writeln('<error>'.$message.'</error>');
+            return $output->writeln('<error>' . $message . '</error>');
         }
 
         $data = [
@@ -113,18 +115,13 @@ class CreateModelCommand extends AbstractCommand
         $generator = new ModelGenerator($this->describe, $data);
 
         $result = $generator->generate();
-
         $model = $this->renderer->render('Model.template', $result);
+        $message = 'The model "' . $fileName . '" has been created successfully!';
 
-        $message = 'The model "'.$fileInformation['name'].
-            '" has been created successfully!';
+        $file = fopen($path, 'wb');
+        file_put_contents($path, $model);
+        fclose($file);
 
-        $file = new File($fileInformation['path'], 'wb');
-
-        $file->putContents($model);
-        $file->close();
-
-
-        return $output->writeln('<info>'.$message.'</info>');
+        return $output->writeln('<info>' . $message . '</info>');
     }
 }

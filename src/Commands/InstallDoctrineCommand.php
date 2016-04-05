@@ -2,11 +2,11 @@
 
 namespace Rougin\Combustor\Commands;
 
-use Rougin\Combustor\Common\Tools;
-use Symfony\Component\Console\Input\InputOption;
-use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
+
+use Rougin\Combustor\Common\Tools;
+use Rougin\Combustor\Common\Commands\InstallCommand;
 
 /**
  * Install Doctrine Command
@@ -16,43 +16,19 @@ use Symfony\Component\Console\Output\OutputInterface;
  * @package Combustor
  * @author  Rougin Royce Gutib <rougingutib@gmail.com>
  */
-class InstallDoctrineCommand extends AbstractCommand
+class InstallDoctrineCommand extends InstallCommand
 {
     /**
-     * Checks whether the command is enabled or not in the current environment.
-     *
-     * Override this to check for x or y and return false if the command can not
-     * run properly under the current conditions.
-     *
-     * @return bool
+     * @var string
      */
-    public function isEnabled()
-    {
-        if (file_exists(APPPATH.'libraries/Doctrine.php')) {
-            return false;
-        }
-
-        return true;
-    }
-
-    /**
-     * Sets the configurations of the specified command.
-     *
-     * @return void
-     */
-    protected function configure()
-    {
-        $this
-            ->setName('install:doctrine')
-            ->setDescription('Installs the Doctrine ORM');
-    }
+    protected $library = 'doctrine';
 
     /**
      * Executes the command.
      * 
-     * @param  InputInterface  $input
-     * @param  OutputInterface $output
-     * @return object|OutputInterface
+     * @param \Symfony\Component\Console\Input\InputInterface   $input
+     * @param \Symfony\Component\Console\Output\OutputInterface $output
+     * @return object|\Symfony\Component\Console\Output\OutputInterface
      */
     protected function execute(InputInterface $input, OutputInterface $output)
     {
@@ -62,56 +38,42 @@ class InstallDoctrineCommand extends AbstractCommand
         $library = $this->renderer->render('Libraries/Doctrine.template');
 
         /**
-         * Modify the contents of vendor/bin/doctrine.php,
-         * create the Doctrine library and create a "proxies"
-         * directory for lazy loading
+         * Modifies the contents of vendor/bin/doctrine.php, creates the Doctrine
+         * library and creates a "proxies" directory for lazy loading.
          */
 
-        file_put_contents(VENDOR.'bin/doctrine.php', $cli);
-        file_put_contents(VENDOR.'doctrine/orm/bin/doctrine.php', $cli);
+        file_put_contents(realpath('vendor') . '/bin/doctrine.php', $cli);
+        file_put_contents(realpath('vendor') . '/doctrine/orm/bin/doctrine.php', $cli);
 
-        $file = fopen(APPPATH.'libraries/Doctrine.php', 'wb');
-        file_put_contents(APPPATH.'libraries/Doctrine.php', $library);
+        $file = fopen(APPPATH . 'libraries/Doctrine.php', 'wb');
+        file_put_contents(APPPATH . 'libraries/Doctrine.php', $library);
         fclose($file);
 
-        $autoload = file_get_contents(APPPATH.'config/autoload.php');
+        $autoload = file_get_contents(APPPATH . 'config/autoload.php');
+        $lines = explode(PHP_EOL, $autoload);
 
-        preg_match_all(
-            '/\$autoload\[\'libraries\'\] = array\((.*?)\)/',
-            $autoload,
-            $match
-        );
+        $pattern = '/\$autoload\[\'libraries\'\] = array\((.*?)\)/';
+
+        preg_match_all($pattern, $lines[60], $match);
 
         $libraries = explode(', ', end($match[1]));
 
         if ( ! in_array('\'doctrine\'', $libraries)) {
             array_push($libraries, '\'doctrine\'');
 
-            if (in_array('\'database\'', $libraries)) {
-                $position = array_search('\'database\'', $libraries);
-
-                unset($libraries[$position]);
-            }
-
             $libraries = array_filter($libraries);
 
-            $autoload = preg_replace(
-                '/\$autoload\[\'libraries\'\] = array\([^)]*\);/',
-                '$autoload[\'libraries\'] = array('.
-                    implode(', ', $libraries).
-                    ');',
-                $autoload
-            );
+            $pattern = '/\$autoload\[\'libraries\'\] = array\([^)]*\);/';
+            $replacement = '$autoload[\'libraries\'] = array(' . implode(', ', $libraries) . ');';
 
-            $file = fopen(APPPATH.'config/autoload.php', 'wb');
+            $lines[60] = preg_replace($pattern, $replacement, $lines[60]);
 
-            file_put_contents(APPPATH.'config/autoload.php', $autoload);
-            fclose($file);
+            file_put_contents(APPPATH . 'config/autoload.php', implode(PHP_EOL, $lines));
         }
 
-        if ( ! is_dir(APPPATH.'models/proxies')) {
-            mkdir(APPPATH.'models/proxies');
-            chmod(APPPATH.'models/proxies', 0777);
+        if ( ! is_dir(APPPATH . 'models/proxies')) {
+            mkdir(APPPATH . 'models/proxies');
+            chmod(APPPATH . 'models/proxies', 0777);
         }
 
         /*
@@ -119,7 +81,7 @@ class InstallDoctrineCommand extends AbstractCommand
          */
 
         $abstractCommand = file_get_contents(
-            VENDOR.
+            realpath('vendor') . '/' .
             'doctrine/orm/lib/Doctrine/'.
             'ORM/Tools/Console/Command/'.
             'SchemaTool/AbstractCommand.php'
@@ -139,7 +101,7 @@ class InstallDoctrineCommand extends AbstractCommand
         }
 
         file_put_contents(
-            VENDOR.
+            realpath('vendor') . '/' .
             'doctrine/orm/lib/Doctrine/'.
             'ORM/Tools/Console/Command/'.
             'SchemaTool/AbstractCommand.php',
@@ -150,6 +112,6 @@ class InstallDoctrineCommand extends AbstractCommand
 
         $message = 'Doctrine ORM is now installed successfully!';
 
-        return $output->writeln('<info>'.$message.'</info>');
+        return $output->writeln('<info>' . $message . '</info>');
     }
 }

@@ -2,11 +2,11 @@
 
 namespace Rougin\Combustor\Commands;
 
-use Rougin\Combustor\Common\Tools;
-use Symfony\Component\Console\Input\InputOption;
-use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
+
+use Rougin\Combustor\Common\Tools;
+use Rougin\Combustor\Common\Commands\InstallCommand;
 
 /**
  * Install Wildfire Command
@@ -16,57 +16,29 @@ use Symfony\Component\Console\Output\OutputInterface;
  * @package Combustor
  * @author  Rougin Royce Gutib <rougingutib@gmail.com>
  */
-class InstallWildfireCommand extends AbstractCommand
+class InstallWildfireCommand extends InstallCommand
 {
     /**
-     * Checks whether the command is enabled or not in the current environment.
-     *
-     * Override this to check for x or y and return false if the command can not
-     * run properly under the current conditions.
-     *
-     * @return bool
+     * @var string
      */
-    public function isEnabled()
-    {
-        if (file_exists(APPPATH.'libraries/Wildfire.php')) {
-            return false;
-        }
-
-        return true;
-    }
-
-    /**
-     * Sets the configurations of the specified command.
-     *
-     * @return void
-     */
-    protected function configure()
-    {
-        $this
-            ->setName('install:wildfire')
-            ->setDescription('Installs Wildfire');
-    }
+    protected $library = 'wildfire';
 
     /**
      * Executes the command.
      * 
-     * @param  InputInterface  $input
-     * @param  OutputInterface $output
-     * @return object|OutputInterface
+     * @param \Symfony\Component\Console\Input\InputInterface   $input
+     * @param \Symfony\Component\Console\Output\OutputInterface $output
+     * @return object|\Symfony\Component\Console\Output\OutputInterface
      */
     protected function execute(InputInterface $input, OutputInterface $output)
     {
-        /**
-         * Add Wildfire.php to the "libraries" directory
-         */
+        // Adds Wildfire.php to the "libraries" directory
+        $autoload = file_get_contents(APPPATH . 'config/autoload.php');
+        $lines = explode(PHP_EOL, $autoload);
 
-        $autoload = file_get_contents(APPPATH.'config/autoload.php');
+        $pattern = '/\$autoload\[\'libraries\'\] = array\((.*?)\)/';
 
-        preg_match_all(
-            '/\$autoload\[\'libraries\'\] = array\((.*?)\)/',
-            $autoload,
-            $match
-        );
+        preg_match_all($pattern, $lines[60], $match);
 
         $libraries = explode(', ', end($match[1]));
 
@@ -75,22 +47,18 @@ class InstallWildfireCommand extends AbstractCommand
 
             $libraries = array_filter($libraries);
 
-            $autoload = preg_replace(
-                '/\$autoload\[\'libraries\'\] = array\([^)]*\);/',
-                '$autoload[\'libraries\'] = array('.implode(', ', $libraries).');',
-                $autoload
-            );
+            $pattern = '/\$autoload\[\'libraries\'\] = array\([^)]*\);/';
+            $replacement = '$autoload[\'libraries\'] = array(' . implode(', ', $libraries) . ');';
 
-            $file = fopen(APPPATH.'config/autoload.php', 'wb');
+            $lines[60] = preg_replace($pattern, $replacement, $lines[60]);
 
-            file_put_contents(APPPATH.'config/autoload.php', $autoload);
-            fclose($file);
+            file_put_contents(APPPATH . 'config/autoload.php', implode(PHP_EOL, $lines));
         }
 
-        $file = fopen(APPPATH.'libraries/Wildfire.php', 'wb');
+        $file = fopen(APPPATH . 'libraries/Wildfire.php', 'wb');
         $wildfire = $this->renderer->render('Libraries/Wildfire.template');
 
-        file_put_contents(APPPATH.'libraries/Wildfire.php', $wildfire);
+        file_put_contents(APPPATH . 'libraries/Wildfire.php', $wildfire);
         fclose($file);
 
         Tools::ignite();

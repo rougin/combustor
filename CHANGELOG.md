@@ -2,6 +2,14 @@
 
 All Notable changes to `Combustor` will be documented in this file
 
+## [Unreleased](https://github.com/rougin/combustor/compare/v1.1.4...HEAD)
+
+### Added
+- Tests
+
+### Changed
+- Commands to be testable
+
 ## [1.1.4](https://github.com/rougin/combustor/compare/v1.1.3...v1.1.4) - 2015-11-14
 
 ### Changed

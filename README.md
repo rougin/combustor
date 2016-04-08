@@ -7,21 +7,21 @@
 [![Quality Score][ico-code-quality]][link-code-quality]
 [![Total Downloads][ico-downloads]][link-downloads]
 
-A tool for speeding up workflow in [CodeIgniter](https://codeigniter.com/).
+A tool for speeding up workflow in [CodeIgniter](https://codeigniter.com).
 
 ## Install
 
 Via Composer
 
 ``` bash
-$ composer require rougin/combustor
+$ composer require rougin/combustor --dev
 ```
 
-If you want the latest updates, use ```rougin/combustor:dev-master```.
+If you want the latest updates, use ```rougin/combustor:dev-master --dev```.
 
 ## Usage
 
-The documentation for Combustor can be found [here](http://rougin.github.io/combustor/commands.html)
+The documentation for Combustor can be found [here](http://rougin.github.io/combustor/commands.html).
 
 ## Change Log
 

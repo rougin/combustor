@@ -28,6 +28,8 @@ $ci = $app->injector->make('CI_Controller');
 $app->injector->delegate('Rougin\Describe\Describe', function () use ($ci) {
     $ci->load->database();
 
+    $config = [];
+
     $config['default'] = [
         'dbdriver' => $ci->db->dbdriver,
         'hostname' => $ci->db->hostname,

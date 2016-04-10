@@ -41,7 +41,7 @@ class CreateScaffoldCommand extends AbstractCommand
     protected function configure()
     {
         $this->setName('create:scaffold')
-            ->setDescription('Createss a new controller, model and view')
+            ->setDescription('Creates a new controller, model and view')
             ->addArgument(
                 'name',
                 InputArgument::REQUIRED,
@@ -94,6 +94,14 @@ class CreateScaffoldCommand extends AbstractCommand
             'create:view'
         ];
 
+        $bootstrap = $input->getOption('bootstrap');
+        $camel = $input->getOption('camel');
+        $doctrine = $input->getOption('doctrine');
+        $keep = $input->getOption('keep');
+        $lowercase = $input->getOption('lowercase');
+        $lowercase = $input->getOption('lowercase');
+        $wildfire = $input->getOption('wildfire');
+
         foreach ($commands as $command) {
             $arguments = [
                 'command' => $command,
@@ -102,24 +110,24 @@ class CreateScaffoldCommand extends AbstractCommand
 
             switch ($command) {
                 case 'create:controller':
-                    $arguments['--camel'] = $input->getOption('camel');
-                    $arguments['--doctrine'] = $input->getOption('doctrine');
-                    $arguments['--keep'] = $input->getOption('keep');
-                    $arguments['--lowercase'] = $input->getOption('lowercase');
-                    $arguments['--wildfire'] = $input->getOption('wildfire');
+                    $arguments['--camel'] = $camel;
+                    $arguments['--doctrine'] = $doctrine;
+                    $arguments['--keep'] = $keep;
+                    $arguments['--lowercase'] = $lowercase;
+                    $arguments['--wildfire'] = $wildfire;
 
                     break;
                 case 'create:model':
-                    $arguments['--camel'] = $input->getOption('camel');
-                    $arguments['--doctrine'] = $input->getOption('doctrine');
-                    $arguments['--lowercase'] = $input->getOption('lowercase');
-                    $arguments['--wildfire'] = $input->getOption('wildfire');
+                    $arguments['--camel'] = $camel;
+                    $arguments['--doctrine'] = $doctrine;
+                    $arguments['--lowercase'] = $lowercase;
+                    $arguments['--wildfire'] = $wildfire;
 
                     break;
                 case 'create:view':
-                    $arguments['--bootstrap'] = $input->getOption('bootstrap');
-                    $arguments['--camel'] = $input->getOption('camel');
-                    $arguments['--keep'] = $input->getOption('keep');
+                    $arguments['--bootstrap'] = $bootstrap;
+                    $arguments['--camel'] = $camel;
+                    $arguments['--keep'] = $keep;
 
                     break;
             }

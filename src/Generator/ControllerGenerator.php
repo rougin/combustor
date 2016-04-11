@@ -2,7 +2,6 @@
 
 namespace Rougin\Combustor\Generator;
 
-use Rougin\Describe\Describe;
 use Rougin\Combustor\Common\Tools;
 use Rougin\Combustor\Common\Inflector;
 
@@ -14,28 +13,8 @@ use Rougin\Combustor\Common\Inflector;
  * @package Combustor
  * @author  Rougin Royce Gutib <rougingutib@gmail.com>
  */
-class ControllerGenerator implements GeneratorInterface
+class ControllerGenerator extends BaseGenerator implements GeneratorInterface
 {
-    /**
-     * @var \Rougin\Describe\Describe
-     */
-    protected $describe;
-
-    /**
-     * @var array
-     */
-    protected $data = [];
-
-    /**
-     * @param \Rougin\Describe\Describe $describe
-     * @param array $data
-     */
-    public function __construct(Describe $describe, array $data)
-    {
-        $this->describe = $describe;
-        $this->data = $data;
-    }
-
     /**
      * Prepares the data before generation.
      * 

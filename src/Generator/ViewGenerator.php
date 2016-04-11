@@ -2,7 +2,6 @@
 
 namespace Rougin\Combustor\Generator;
 
-use Rougin\Describe\Describe;
 use Rougin\Combustor\Common\Tools;
 use Rougin\Combustor\Common\Inflector;
 
@@ -14,28 +13,8 @@ use Rougin\Combustor\Common\Inflector;
  * @package Combustor
  * @author  Rougin Royce Gutib <rougingutib@gmail.com>
  */
-class ViewGenerator implements GeneratorInterface
+class ViewGenerator extends BaseGenerator implements GeneratorInterface
 {
-    /**
-     * @var \Rougin\Describe\Describe
-     */
-    protected $describe;
-
-    /**
-     * @var array
-     */
-    protected $data = [];
-
-    /**
-     * @param \Rougin\Describe\Describe $describe
-     * @param array $data
-     */
-    public function __construct(Describe $describe, array $data)
-    {
-        $this->describe = $describe;
-        $this->data = $data;
-    }
-
     /**
      * Prepares the data before generation.
      * 
@@ -104,20 +83,16 @@ class ViewGenerator implements GeneratorInterface
 
         foreach ($this->data['columns'] as $column) {
             $field = strtolower($column->getField());
-            $accessor = 'get_'.$field;
-            $mutator = 'set_'.$field;
 
-            $this->data['camel'][$field] = [
-                'field' => lcfirst(Inflector::camelize($field)),
-                'accessor' => lcfirst(Inflector::camelize($accessor)),
-                'mutator' => lcfirst(Inflector::camelize($mutator))
-            ];
+            $this->data['camel'][$field] = $this->transformField(
+                $field,
+                'camelize'
+            );
 
-            $this->data['underscore'][$field] = [
-                'field' => lcfirst(Inflector::underscore($field)),
-                'accessor' => lcfirst(Inflector::underscore($accessor)),
-                'mutator' => lcfirst(Inflector::underscore($mutator))
-            ];
+            $this->data['underscore'][$field] = $this->transformField(
+                $field,
+                'underscore'
+            );
 
             if ($column->isForeignKey()) {
                 $referencedTable = Tools::stripTableSchema(
@@ -128,13 +103,13 @@ class ViewGenerator implements GeneratorInterface
                     $referencedTable
                 );
 
-                $singular = $field.'_singular';
+                $singular = $field . '_singular';
 
                 $this->data['foreignKeys'][$singular] = Inflector::singular(
                     $referencedTable
                 );
 
-                $this->data['primaryKeys'][$field] = 'get_'.
+                $this->data['primaryKeys'][$field] = 'get_' .
                     $this->describe->getPrimaryKey($referencedTable);
 
                 if ($this->data['isCamel']) {

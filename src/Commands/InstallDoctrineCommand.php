@@ -49,27 +49,7 @@ class InstallDoctrineCommand extends InstallCommand
         file_put_contents(APPPATH . 'libraries/Doctrine.php', $library);
         fclose($file);
 
-        $autoload = file_get_contents(APPPATH . 'config/autoload.php');
-        $lines = explode(PHP_EOL, $autoload);
-
-        $pattern = '/\$autoload\[\'libraries\'\] = array\((.*?)\)/';
-
-        preg_match_all($pattern, $lines[60], $match);
-
-        $libraries = explode(', ', end($match[1]));
-
-        if ( ! in_array('\'doctrine\'', $libraries)) {
-            array_push($libraries, '\'doctrine\'');
-
-            $libraries = array_filter($libraries);
-
-            $pattern = '/\$autoload\[\'libraries\'\] = array\([^)]*\);/';
-            $replacement = '$autoload[\'libraries\'] = array(' . implode(', ', $libraries) . ');';
-
-            $lines[60] = preg_replace($pattern, $replacement, $lines[60]);
-
-            file_put_contents(APPPATH . 'config/autoload.php', implode(PHP_EOL, $lines));
-        }
+        $this->addLibrary('doctrine');
 
         if ( ! is_dir(APPPATH . 'models/proxies')) {
             mkdir(APPPATH . 'models/proxies');

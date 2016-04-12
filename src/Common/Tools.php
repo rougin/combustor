@@ -112,6 +112,7 @@ class Tools
 
             file_put_contents('.htaccess', $contents);
             chmod('.htaccess', 0777);
+            fclose($file);
         }
 
         // Creates a configuration for the Pagination library.
@@ -124,6 +125,7 @@ class Tools
 
             file_put_contents($pagination, $contents);
             chmod($pagination, 0664);
+            fclose($file);
         }
     }
 

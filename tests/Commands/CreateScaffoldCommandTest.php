@@ -10,7 +10,7 @@ use Rougin\Combustor\Fixture\CodeIgniterHelper;
 
 use PHPUnit_Framework_TestCase;
 
-class CombustorTest extends PHPUnit_Framework_TestCase
+class CreateScaffoldCommandTest extends PHPUnit_Framework_TestCase
 {
     /**
      * @var string
@@ -39,7 +39,7 @@ class CombustorTest extends PHPUnit_Framework_TestCase
      */
     public function setUp()
     {
-        $this->appPath = __DIR__ . '/TestApp/application';
+        $this->appPath = __DIR__ . '/../TestApp/application';
     }
 
     /**
@@ -51,11 +51,46 @@ class CombustorTest extends PHPUnit_Framework_TestCase
     {
         CodeIgniterHelper::setDefaults($this->appPath);
 
+        copy(
+            __DIR__ . '/../../src/Templates/Libraries/Wildfire.template',
+            $this->appPath . '/libraries/Wildfire.php'
+        );
+
+        mkdir($this->appPath . '/views/layout');
+
+        copy(
+            __DIR__ . '/../../src/Templates/Views/Layout/header.template',
+            $this->appPath . '/views/layout/header.php'
+        );
+
+        copy(
+            __DIR__ . '/../../src/Templates/Views/Layout/footer.template',
+            $this->appPath . '/views/layout/footer.php'
+        );
+
         $application = $this->getApplication();
 
-        $this->assertTrue($application->has('create:layout'));
-        $this->assertTrue($application->has('install:doctrine'));
-        $this->assertTrue($application->has('install:wildfire'));
+        $command = $application->find('create:scaffold');
+        $commandTester = new CommandTester($command);
+        $commandTester->execute([
+            'name' => 'users',
+            '--bootstrap' => true
+        ]);
+
+        $this->assertFileExists($this->appPath . '/controllers/Users.php');
+        $this->assertFileExists($this->appPath . '/models/Users.php');
+
+        $create = $file = $this->appPath . '/views/users/create.php';
+        $edit = $file = $this->appPath . '/views/users/edit.php';
+        $index = $file = $this->appPath . '/views/users/index.php';
+        $show = $file = $this->appPath . '/views/users/show.php';
+
+        $this->assertFileExists($create);
+        $this->assertFileExists($edit);
+        $this->assertFileExists($index);
+        $this->assertFileExists($show);
+
+        CodeIgniterHelper::setDefaults($this->appPath);
     }
 
     /**

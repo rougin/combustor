@@ -5,8 +5,8 @@ require 'vendor/autoload.php';
 
 // Load the Blueprint library
 $injector = new Auryn\Injector;
-$consoleApp = new Symfony\Component\Console\Application;
-$app = new Rougin\Blueprint\Blueprint($consoleApp, $injector);
+$console = new Symfony\Component\Console\Application;
+$app = new Rougin\Blueprint\Blueprint($console, $injector);
 
 // Application details
 $app->console->setName('Combustor');
@@ -27,6 +27,7 @@ $ci = $app->injector->make('CI_Controller');
 
 $app->injector->delegate('Rougin\Describe\Describe', function () use ($ci) {
     $ci->load->database();
+    $ci->load->helper('inflector');
 
     $config = [];
 

@@ -56,6 +56,7 @@ class CommandBuilder
             $ci = $injector->make('CI_Controller');
 
             $ci->load->database();
+            $ci->load->helper('inflector');
 
             $config['default'] = [
                 'dbdriver' => $ci->db->dbdriver,

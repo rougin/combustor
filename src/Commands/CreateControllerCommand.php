@@ -8,7 +8,6 @@ use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 
 use Rougin\Combustor\Common\Tools;
-use Rougin\Combustor\Common\Inflector;
 use Rougin\Combustor\Validator\ControllerValidator;
 use Rougin\Combustor\Generator\ControllerGenerator;
 
@@ -89,7 +88,7 @@ class CreateControllerCommand extends AbstractCommand
         $fileName = ucfirst($input->getArgument('name'));
 
         if ($input->getOption('keep')) {
-            $fileName = ucfirst(Inflector::plural($input->getArgument('name')));
+            $fileName = ucfirst(plural($input->getArgument('name')));
         }
 
         $path = APPPATH . 'controllers' . DIRECTORY_SEPARATOR . $fileName . '.php';

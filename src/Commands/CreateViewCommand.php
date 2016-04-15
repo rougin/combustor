@@ -8,7 +8,6 @@ use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 
 use Rougin\Combustor\Common\Tools;
-use Rougin\Combustor\Common\Inflector;
 use Rougin\Combustor\Generator\ViewGenerator;
 use Rougin\Combustor\Validator\ViewValidator;
 
@@ -78,7 +77,7 @@ class CreateViewCommand extends AbstractCommand
         $name = Tools::stripTableSchema($input->getArgument('name'));
 
         if ( ! $input->getOption('keep')) {
-            $name = Tools::stripTableSchema(Inflector::plural($input->getArgument('name')));
+            $name = Tools::stripTableSchema(plural($input->getArgument('name')));
         }
 
         $validator = new ViewValidator($name);

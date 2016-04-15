@@ -3,7 +3,6 @@
 namespace Rougin\Combustor\Generator;
 
 use Rougin\Combustor\Common\Tools;
-use Rougin\Combustor\Common\Inflector;
 
 /**
  * Model Generator
@@ -65,7 +64,7 @@ class ModelGenerator extends BaseGenerator implements GeneratorInterface
                     );
 
                 if ($this->data['isCamel']) {
-                    $this->data['primaryKeys'][$field] = Inflector::camelize(
+                    $this->data['primaryKeys'][$field] = camelize(
                         $this->data['primaryKeys'][$field]
                     );
                 }

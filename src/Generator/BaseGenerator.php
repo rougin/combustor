@@ -3,7 +3,6 @@
 namespace Rougin\Combustor\Generator;
 
 use Rougin\Describe\Describe;
-use Rougin\Combustor\Common\Inflector;
 
 /**
  * Base Generator
@@ -44,16 +43,16 @@ class BaseGenerator
     {
         if ($type == 'camelize') {
             return [
-                'field' => lcfirst(Inflector::camelize($field)),
-                'accessor' => lcfirst(Inflector::camelize('set_' . $field)),
-                'mutator' => lcfirst(Inflector::camelize('get_' . $field))
+                'field' => lcfirst(camelize($field)),
+                'accessor' => lcfirst(camelize('set_' . $field)),
+                'mutator' => lcfirst(camelize('get_' . $field))
             ];
         }
 
         return [
-            'field' => lcfirst(Inflector::underscore($field)),
-            'accessor' => lcfirst(Inflector::underscore('set_' . $field)),
-            'mutator' => lcfirst(Inflector::underscore('get_' . $field))
+            'field' => lcfirst(underscore($field)),
+            'accessor' => lcfirst(underscore('set_' . $field)),
+            'mutator' => lcfirst(underscore('get_' . $field))
         ];
     }
 }

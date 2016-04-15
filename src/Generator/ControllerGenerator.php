@@ -3,7 +3,6 @@
 namespace Rougin\Combustor\Generator;
 
 use Rougin\Combustor\Common\Tools;
-use Rougin\Combustor\Common\Inflector;
 
 /**
  * Controller Generator
@@ -28,8 +27,8 @@ class ControllerGenerator extends BaseGenerator implements GeneratorInterface
         $data['dropdowns'] = [];
         $data['foreignKeys'] = [];
         $data['models'] = [$data['name']];
-        $data['plural'] = Inflector::plural($data['name']);
-        $data['singular'] = Inflector::singular($data['name']);
+        $data['plural'] = plural($data['name']);
+        $data['singular'] = singular($data['name']);
         $data['underscore'] = [];
     }
 
@@ -54,8 +53,8 @@ class ControllerGenerator extends BaseGenerator implements GeneratorInterface
             $field = strtolower($column->getField());
             $method = 'set_'.$field;
 
-            $this->data['camel'][$field] = lcfirst(Inflector::camelize($method));
-            $this->data['underscore'][$field] = Inflector::underscore($method);
+            $this->data['camel'][$field] = lcfirst(camelize($method));
+            $this->data['underscore'][$field] = underscore($method);
 
             array_push($this->data['columns'], $field);
 

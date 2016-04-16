@@ -112,6 +112,6 @@ class CreateLayoutCommand extends AbstractCommand
 
         $message = 'The layout folder has been created successfully!';
 
-        return $output->writeln('<info>'.$message.'</info>');
+        return $output->writeln('<info>' . $message . '</info>');
     }
 }

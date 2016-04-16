@@ -22,14 +22,9 @@ class CreateScaffoldCommandTest extends PHPUnit_Framework_TestCase
      */
     protected $commands = [
         'Rougin\Combustor\Commands\CreateControllerCommand',
-        'Rougin\Combustor\Commands\CreateLayoutCommand',
         'Rougin\Combustor\Commands\CreateModelCommand',
         'Rougin\Combustor\Commands\CreateScaffoldCommand',
         'Rougin\Combustor\Commands\CreateViewCommand',
-        'Rougin\Combustor\Commands\InstallDoctrineCommand',
-        'Rougin\Combustor\Commands\InstallWildfireCommand',
-        'Rougin\Combustor\Commands\RemoveDoctrineCommand',
-        'Rougin\Combustor\Commands\RemoveWildfireCommand',
     ];
 
     /**
@@ -51,22 +46,20 @@ class CreateScaffoldCommandTest extends PHPUnit_Framework_TestCase
     {
         CodeIgniterHelper::setDefaults($this->appPath);
 
-        copy(
-            __DIR__ . '/../../src/Templates/Libraries/Wildfire.template',
-            $this->appPath . '/libraries/Wildfire.php'
-        );
-
         mkdir($this->appPath . '/views/layout');
 
-        copy(
-            __DIR__ . '/../../src/Templates/Views/Layout/header.template',
-            $this->appPath . '/views/layout/header.php'
-        );
-
-        copy(
-            __DIR__ . '/../../src/Templates/Views/Layout/footer.template',
+        $files = [
+            __DIR__ . '/../../src/Templates/Libraries/Wildfire.template' =>
+            $this->appPath . '/libraries/Wildfire.php',
+            __DIR__ . '/../../src/Templates/Views/Layout/header.template' =>
+            $this->appPath . '/views/layout/header.php',
+            __DIR__ . '/../../src/Templates/Views/Layout/footer.template' =>
             $this->appPath . '/views/layout/footer.php'
-        );
+        ];
+
+        foreach ($files as $source => $destination) {
+            copy($source, $destination);
+        }
 
         $application = $this->getApplication();
 

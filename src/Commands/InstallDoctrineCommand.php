@@ -68,7 +68,7 @@ class InstallDoctrineCommand extends InstallCommand
         );
 
         $search  = 'use Doctrine\ORM\Tools\SchemaTool;';
-        $replace = $search."\n".'include BASEPATH . \'core/Model.php\';';
+        $replace = $search . "\n" . 'include BASEPATH . \'core/Model.php\';';
 
         $contents = $abstractCommand;
         $schemaTool = 'use Doctrine\ORM\Tools\SchemaTool;';

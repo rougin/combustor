@@ -99,7 +99,6 @@ class CreateScaffoldCommand extends AbstractCommand
         $doctrine = $input->getOption('doctrine');
         $keep = $input->getOption('keep');
         $lowercase = $input->getOption('lowercase');
-        $lowercase = $input->getOption('lowercase');
         $wildfire = $input->getOption('wildfire');
 
         foreach ($commands as $command) {
@@ -110,13 +109,6 @@ class CreateScaffoldCommand extends AbstractCommand
 
             switch ($command) {
                 case 'create:controller':
-                    $arguments['--camel'] = $camel;
-                    $arguments['--doctrine'] = $doctrine;
-                    $arguments['--keep'] = $keep;
-                    $arguments['--lowercase'] = $lowercase;
-                    $arguments['--wildfire'] = $wildfire;
-
-                    break;
                 case 'create:model':
                     $arguments['--camel'] = $camel;
                     $arguments['--doctrine'] = $doctrine;
@@ -132,7 +124,12 @@ class CreateScaffoldCommand extends AbstractCommand
                     break;
             }
 
+            if ($command == 'create:controller') {
+                $arguments['--keep'] = $keep;
+            }
+
             $input = new ArrayInput($arguments);
+
             $application = $this->getApplication()->find($command);
             $application->run($input, $output);
         }

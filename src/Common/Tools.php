@@ -49,7 +49,7 @@ class Tools
         // Adds an encryption key from the configuration.
         if (strpos($config, '$config[\'encryption_key\'] = \'\';') !== false) {
             array_push($search, '$config[\'encryption_key\'] = \'\';');
-            array_push($replace, '$config[\'encryption_key\'] = \''.md5('rougin').'\';');
+            array_push($replace, '$config[\'encryption_key\'] = \'md5(\'rougin\')\';');
         }
 
         $config = str_replace($search, $replace, $config);
@@ -75,7 +75,7 @@ class Tools
 
         // Includes the added libraries all back to autoload.php.
         $pattern = '/\$autoload\[\'libraries\'\] = array\([^)]*\);/';
-        $replacement = '$autoload[\'libraries\'] = array('.implode(', ', $libraries).');';
+        $replacement = '$autoload[\'libraries\'] = array('.implode(', ', $libraries) . ');';
 
         $lines[60] = preg_replace($pattern, $replacement, $lines[60]);
 
@@ -97,7 +97,7 @@ class Tools
 
         // Include the added helpers all back to autoload.php
         $pattern = '/\$autoload\[\'helpers\'\] = array\([^)]*\);/';
-        $replacement = '$autoload[\'helpers\'] = array('.implode(', ', $helpers).');';
+        $replacement = '$autoload[\'helpers\'] = array('.implode(', ', $helpers) . ');';
 
         preg_replace($pattern, $replacement, $lines[60]);
 

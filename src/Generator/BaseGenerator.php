@@ -33,6 +33,29 @@ class BaseGenerator
     }
 
     /**
+     * Gets the primary keys based on specified field.
+     * 
+     * @param  array  $data
+     * @param  string $field
+     * @param  string $referencedTable
+     * @return array
+     */
+    protected function getPrimaryKey(array $data, $field, $referencedTable)
+    {
+        $accessor = 'get_' . $this->describe->getPrimaryKey($referencedTable);
+
+        $data['primaryKeys'][$field] = $accessor;
+
+        if ($data['isCamel']) {
+            $camelized = camelize($data['primaryKeys'][$field]);
+
+            $data['primaryKeys'][$field] = $camelized;
+        }
+
+        return $data;
+    }
+
+    /**
      * Transforms the field into the template.
      * 
      * @param  string $field

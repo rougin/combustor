@@ -40,16 +40,23 @@ class Tools
         $search = ['$config[\'composer_autoload\'] = FALSE;'];
         $replace = ['$config[\'composer_autoload\'] = realpath(\'vendor\') . \'/autoload.php\';'];
 
-        // Removes the index.php from $config['index_page'].
-        if (strpos($config, '$config[\'index_page\'] = \'index.php\';') !== false) {
-            array_push($search, '$config[\'index_page\'] = \'index.php\';');
-            array_push($replace, '$config[\'index_page\'] = \'\';');
-        }
+        // Replaces configuration found in config.php
+        $configs = [
+            [
+                'search' => '$config[\'index_page\'] = \'index.php\';',
+                'replacement' => '$config[\'index_page\'] = \'\';'
+            ],
+            [
+                'search' => '$config[\'encryption_key\'] = \'\';',
+                'replacement' => '$config[\'encryption_key\'] = \'md5(\'rougin\')\';'
+            ]
+        ];
 
-        // Adds an encryption key from the configuration.
-        if (strpos($config, '$config[\'encryption_key\'] = \'\';') !== false) {
-            array_push($search, '$config[\'encryption_key\'] = \'\';');
-            array_push($replace, '$config[\'encryption_key\'] = \'md5(\'rougin\')\';');
+        foreach ($configs as $row) {
+            if (strpos($config, $row['search']) !== false) {
+                array_push($search, $row['search']);
+                array_push($replace, $row['replacement']);
+            }
         }
 
         $config = str_replace($search, $replace, $config);
@@ -75,7 +82,7 @@ class Tools
 
         // Includes the added libraries all back to autoload.php.
         $pattern = '/\$autoload\[\'libraries\'\] = array\([^)]*\);/';
-        $replacement = '$autoload[\'libraries\'] = array('.implode(', ', $libraries) . ');';
+        $replacement = '$autoload[\'libraries\'] = array(' . implode(', ', $libraries) . ');';
 
         $lines[60] = preg_replace($pattern, $replacement, $lines[60]);
 
@@ -90,14 +97,14 @@ class Tools
         foreach ($defaultHelpers as $helper) {
             if ( ! in_array($helper, $helpers)) {
                 array_push($helpers, $helper);
-            }    
+            }
         }
 
         $helpers = array_filter($helpers);
 
         // Include the added helpers all back to autoload.php
         $pattern = '/\$autoload\[\'helpers\'\] = array\([^)]*\);/';
-        $replacement = '$autoload[\'helpers\'] = array('.implode(', ', $helpers) . ');';
+        $replacement = '$autoload[\'helpers\'] = array(' . implode(', ', $helpers) . ');';
 
         preg_replace($pattern, $replacement, $lines[60]);
 

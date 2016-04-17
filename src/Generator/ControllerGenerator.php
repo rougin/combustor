@@ -51,7 +51,7 @@ class ControllerGenerator extends BaseGenerator implements GeneratorInterface
             }
 
             $field = strtolower($column->getField());
-            $method = 'set_'.$field;
+            $method = 'set_' . $field;
 
             $this->data['camel'][$field] = lcfirst(camelize($method));
             $this->data['underscore'][$field] = underscore($method);
@@ -74,9 +74,9 @@ class ControllerGenerator extends BaseGenerator implements GeneratorInterface
                 ];
 
                 if ( ! in_array($field, $columnFields)) {
-                    $dropdown['field'] = $this->describe->getPrimaryKey(
-                        $referencedTable
-                    );
+                    $field = $this->describe->getPrimaryKey($referencedTable);
+
+                    $dropdown['field'] = $field;
                 }
 
                 array_push($this->data['dropdowns'], $dropdown);

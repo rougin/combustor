@@ -44,7 +44,7 @@ class ViewGenerator extends BaseGenerator implements GeneratorInterface
         $data['plural'] = plural($data['name']);
         $data['singular'] = singular($data['name']);
 
-        $data['primaryKey'] = 'get_'.$this->describe->getPrimaryKey(
+        $data['primaryKey'] = 'get_' . $this->describe->getPrimaryKey(
             $data['name']
         );
 
@@ -98,9 +98,7 @@ class ViewGenerator extends BaseGenerator implements GeneratorInterface
                     $column->getReferencedTable()
                 );
 
-                $this->data['foreignKeys'][$field] = plural(
-                    $referencedTable
-                );
+                $this->data['foreignKeys'][$field] = plural($referencedTable);
 
                 $singular = $field . '_singular';
 
@@ -108,14 +106,11 @@ class ViewGenerator extends BaseGenerator implements GeneratorInterface
                     $referencedTable
                 );
 
-                $this->data['primaryKeys'][$field] = 'get_' .
-                    $this->describe->getPrimaryKey($referencedTable);
-
-                if ($this->data['isCamel']) {
-                    $this->data['primaryKeys'][$field] = camelize(
-                        $this->data['primaryKeys'][$field]
-                    );
-                }
+                $this->data = $this->getPrimaryKey(
+                    $this->data,
+                    $field,
+                    $referencedTable
+                );
             }
         }
 

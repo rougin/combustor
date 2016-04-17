@@ -55,19 +55,15 @@ class ModelGenerator extends BaseGenerator implements GeneratorInterface
 
             if ($column->isForeignKey()) {
                 $field = $column->getField();
+                $referencedTable = $column->getReferencedTable();
 
                 array_push($this->data['indexes'], $field);
 
-                $this->data['primaryKeys'][$field] = 'get_' . 
-                    $this->describe->getPrimaryKey(
-                        $column->getReferencedTable()
-                    );
-
-                if ($this->data['isCamel']) {
-                    $this->data['primaryKeys'][$field] = camelize(
-                        $this->data['primaryKeys'][$field]
-                    );
-                }
+                $this->data = $this->getPrimaryKey(
+                    $this->data,
+                    $field,
+                    $referencedTable
+                );
             }
 
             $column->setReferencedTable(

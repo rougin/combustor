@@ -1,6 +1,6 @@
 <?php
 
-namespace Rougin\Combustor;
+namespace Rougin\Combustor\Commands;
 
 use Symfony\Component\Console\Tester\CommandTester;
 
@@ -20,6 +20,11 @@ class CreateViewCommandTest extends PHPUnit_Framework_TestCase
      * @var string
      */
     protected $appPath;
+
+    /**
+     * @var string
+     */
+    protected $table = 'post';
 
     /**
      * Sets up the command and the application path.
@@ -46,21 +51,52 @@ class CreateViewCommandTest extends PHPUnit_Framework_TestCase
 
         $createCommand = new CommandTester($this->createCommand);
         $createCommand->execute([
-            'name' => 'users',
+            'name' => $this->table,
             '--camel' => true,
             '--bootstrap' => true,
             '--keep' => false
         ]);
 
-        $create = $file = $this->appPath . '/views/users/create.php';
-        $edit = $file = $this->appPath . '/views/users/edit.php';
-        $index = $file = $this->appPath . '/views/users/index.php';
-        $show = $file = $this->appPath . '/views/users/show.php';
+        $plural = plural($this->table);
+
+        $create = $this->appPath . '/views/' . $plural . '/create.php';
+        $edit = $this->appPath . '/views/' . $plural . '/edit.php';
+        $index = $this->appPath . '/views/' . $plural . '/index.php';
+        $show = $this->appPath . '/views/' . $plural . '/show.php';
 
         $this->assertFileExists($create);
         $this->assertFileExists($edit);
         $this->assertFileExists($index);
         $this->assertFileExists($show);
+
+        CodeIgniterHelper::setDefaults($this->appPath);
+    }
+
+    /**
+     * Tests if the command prompts an error if the folder already exists.
+     * 
+     * @return void
+     */
+    public function testFolderAlreadyExists()
+    {
+        CodeIgniterHelper::setDefaults($this->appPath);
+
+        $options = [
+            'name' => $this->table,
+            '--camel' => true,
+            '--bootstrap' => true,
+            '--keep' => false
+        ];
+
+        $createCommand = new CommandTester($this->createCommand);
+        $createCommand->execute($options);
+
+        $createCommand = new CommandTester($this->createCommand);
+        $createCommand->execute($options);
+
+        $expected = 'The "' . plural($this->table) . '" views folder already exists!' . PHP_EOL;
+
+        $this->assertEquals($expected, $createCommand->getDisplay());
 
         CodeIgniterHelper::setDefaults($this->appPath);
     }

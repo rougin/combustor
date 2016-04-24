@@ -1,6 +1,6 @@
 <?php
 
-namespace Rougin\Combustor;
+namespace Rougin\Combustor\Commands;
 
 use Symfony\Component\Console\Tester\CommandTester;
 
@@ -20,6 +20,11 @@ class CreateControllerCommandTest extends PHPUnit_Framework_TestCase
      * @var string
      */
     protected $appPath;
+
+    /**
+     * @var string
+     */
+    protected $table = 'post';
 
     /**
      * Sets up the command and the application path.
@@ -52,12 +57,12 @@ class CreateControllerCommandTest extends PHPUnit_Framework_TestCase
 
         $createCommand = new CommandTester($this->createCommand);
         $createCommand->execute([
-            'name' => 'users',
+            'name' => $this->table,
             '--camel' => false,
-            '--keep' => true
+            '--keep' => false
         ]);
 
-        $file = $this->appPath . '/controllers/Users.php';
+        $file = $this->appPath . '/controllers/' . ucfirst(plural($this->table)) . '.php';
 
         $this->assertFileExists($file);
 
@@ -81,12 +86,12 @@ class CreateControllerCommandTest extends PHPUnit_Framework_TestCase
 
         $createCommand = new CommandTester($this->createCommand);
         $createCommand->execute([
-            'name' => 'users',
+            'name' => $this->table,
             '--camel' => false,
             '--keep' => true
         ]);
 
-        $file = $this->appPath . '/controllers/Users.php';
+        $file = $this->appPath . '/controllers/' . ucfirst($this->table) . '.php';
 
         $this->assertFileExists($file);
 

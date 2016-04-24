@@ -2,8 +2,6 @@
 
 namespace Rougin\Combustor\Common;
 
-use Rougin\Combustor\Common\File;
-
 /**
  * Tools
  *

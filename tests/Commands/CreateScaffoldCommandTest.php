@@ -1,6 +1,6 @@
 <?php
 
-namespace Rougin\Combustor;
+namespace Rougin\Combustor\Commands;
 
 use Symfony\Component\Console\Application;
 use Symfony\Component\Console\Tester\CommandTester;
@@ -26,6 +26,11 @@ class CreateScaffoldCommandTest extends PHPUnit_Framework_TestCase
         'Rougin\Combustor\Commands\CreateScaffoldCommand',
         'Rougin\Combustor\Commands\CreateViewCommand',
     ];
+
+    /**
+     * @var string
+     */
+    protected $table = 'post';
 
     /**
      * Sets up the command and the application path.
@@ -66,17 +71,20 @@ class CreateScaffoldCommandTest extends PHPUnit_Framework_TestCase
         $command = $application->find('create:scaffold');
         $commandTester = new CommandTester($command);
         $commandTester->execute([
-            'name' => 'users',
+            'name' => $this->table,
             '--bootstrap' => true
         ]);
 
-        $this->assertFileExists($this->appPath . '/controllers/Users.php');
-        $this->assertFileExists($this->appPath . '/models/Users.php');
+        $controller = $this->appPath . '/controllers/' . ucfirst(plural($this->table)) . '.php';
+        $model = $this->appPath . '/models/' . ucfirst(singular($this->table)) . '.php';
 
-        $create = $file = $this->appPath . '/views/users/create.php';
-        $edit = $file = $this->appPath . '/views/users/edit.php';
-        $index = $file = $this->appPath . '/views/users/index.php';
-        $show = $file = $this->appPath . '/views/users/show.php';
+        $this->assertFileExists($controller);
+        $this->assertFileExists($model);
+
+        $create = $this->appPath . '/views/' . plural($this->table) . '/create.php';
+        $edit = $this->appPath . '/views/' . plural($this->table) . '/edit.php';
+        $index = $this->appPath . '/views/' . plural($this->table) . '/index.php';
+        $show = $this->appPath . '/views/' . plural($this->table) . '/show.php';
 
         $this->assertFileExists($create);
         $this->assertFileExists($edit);

@@ -22,6 +22,11 @@ class CreateModelCommandTest extends PHPUnit_Framework_TestCase
     protected $appPath;
 
     /**
+     * @var string
+     */
+    protected $table = 'post';
+
+    /**
      * Sets up the command and the application path.
      *
      * @return void
@@ -52,11 +57,11 @@ class CreateModelCommandTest extends PHPUnit_Framework_TestCase
 
         $createCommand = new CommandTester($this->createCommand);
         $createCommand->execute([
-            'name' => 'users',
+            'name' => $this->table,
             '--camel' => false
         ]);
 
-        $file = $this->appPath . '/models/Users.php';
+        $file = $this->appPath . '/models/' . ucfirst(singular($this->table)) . '.php';
 
         $this->assertFileExists($file);
 
@@ -80,11 +85,11 @@ class CreateModelCommandTest extends PHPUnit_Framework_TestCase
 
         $createCommand = new CommandTester($this->createCommand);
         $createCommand->execute([
-            'name' => 'users',
+            'name' => $this->table,
             '--camel' => false
         ]);
 
-        $file = $this->appPath . '/models/Users.php';
+        $file = $this->appPath . '/models/' . ucfirst(singular($this->table)) . '.php';
 
         $this->assertFileExists($file);
 

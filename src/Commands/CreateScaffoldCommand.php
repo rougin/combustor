@@ -45,7 +45,7 @@ class CreateScaffoldCommand extends AbstractCommand
             ->addArgument(
                 'name',
                 InputArgument::REQUIRED,
-                'Name of the controller, model and view'
+                'Name of the table'
             )->addOption(
                 'bootstrap',
                 NULL,

@@ -39,8 +39,6 @@ class {{ name | capitalize }} extends CI_Model {
      * @Column(name="{{ column.field }}", type="{{ column.dataType }}"{{ column.length ? ', length=10,' : ','}} nullable={{ column.isNull ? 'TRUE' : 'FALSE' }}, unique={{ column.isUnique ? 'TRUE' : 'FALSE' }})
 {% endif %}
 {% else %}
-     * {{ column.field | title | replace({'_': ' '}) }}
-     *
      * @var {{ column.dataType }}
 {% endif %}
      */
@@ -119,22 +117,16 @@ class {{ name | capitalize }} extends CI_Model {
                     return TRUE;
                 }
             }
-            else
+            else if ($this->db->insert('{{ name }}', $data))
             {
-                if ($this->db->insert('{{ name }}', $data))
-                {   
-                    return TRUE;
-                }
-            }
-        }
-        else
-        {
-            if ($this->db->insert('{{ name }}', $data))
-            {
-                $this->_{{ primaryKey }} = $this->db->insert_id();
-                
                 return TRUE;
             }
+        }
+        else if ($this->db->insert('{{ name }}', $data))
+        {
+            $this->_{{ primaryKey }} = $this->db->insert_id();
+            
+            return TRUE;
         }
 
         return FALSE;

@@ -46,7 +46,7 @@ class CreateViewCommand extends AbstractCommand
             ->addArgument(
                 'name',
                 InputArgument::REQUIRED,
-                'Name of the view folder'
+                'Name of the table'
             )->addOption(
                 'bootstrap',
                 NULL,
@@ -74,10 +74,10 @@ class CreateViewCommand extends AbstractCommand
      */
     protected function execute(InputInterface $input, OutputInterface $output)
     {
-        $name = Tools::stripTableSchema($input->getArgument('name'));
+        $name = Tools::stripTableSchema(plural($input->getArgument('name')));
 
-        if ( ! $input->getOption('keep')) {
-            $name = Tools::stripTableSchema(plural($input->getArgument('name')));
+        if ($input->getOption('keep')) {
+            $name = Tools::stripTableSchema($input->getArgument('name'));
         }
 
         $validator = new ViewValidator($name);
@@ -91,7 +91,7 @@ class CreateViewCommand extends AbstractCommand
         $data = [
             'isBootstrap' => $input->getOption('bootstrap'),
             'isCamel' => $input->getOption('camel'),
-            'name' => $name
+            'name' => $input->getArgument('name')
         ];
 
         $generator = new ViewGenerator($this->describe, $data);

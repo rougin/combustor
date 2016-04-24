@@ -1,6 +1,6 @@
 <?php
 
-namespace Rougin\Combustor;
+namespace Rougin\Combustor\Commands;
 
 use Symfony\Component\Console\Tester\CommandTester;
 

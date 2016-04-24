@@ -44,15 +44,15 @@ class ViewGenerator extends BaseGenerator implements GeneratorInterface
         $data['plural'] = plural($data['name']);
         $data['singular'] = singular($data['name']);
 
-        $data['primaryKey'] = 'get_' . $this->describe->getPrimaryKey(
-            $data['name']
-        );
+        $primaryKey = 'get_' . $this->describe->getPrimaryKey($data['name']);
+        $data['primaryKey'] = $primaryKey;
 
         // Workaround...
         if ($data['primaryKey'] == 'get_') {
-            $data['primaryKey'] = 'get_' . $this->describe->getPrimaryKey(
-                singular($data['name'])
-            );
+            $singular = singular($data['name']);
+            $primaryKey = 'get_' . $this->describe->getPrimaryKey($singular);
+
+            $data['primaryKey'] = $primaryKey;
         }
 
         if ($this->data['isCamel']) {
@@ -65,9 +65,10 @@ class ViewGenerator extends BaseGenerator implements GeneratorInterface
 
         // Workaround...
         if (empty($data['columns'])) {
-            $data['columns'] = $this->describe->getTable(
-                singular($data['name'])
-            );
+            $singular = singular($data['name']);
+
+            $data['columns'] = $primaryKey;
+            $data['columns'] = $this->describe->getTable($singular);
         }
     }
 

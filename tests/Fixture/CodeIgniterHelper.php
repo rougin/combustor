@@ -38,12 +38,14 @@ class CodeIgniterHelper
             file_put_contents($file['destination'], $contents);
         }
 
+        self::emptyDirectory($appPath . '/controllers');
+        self::emptyDirectory($appPath . '/models');
+        self::emptyDirectory($appPath . '/views');
+
         $files = [
             $appPath . '/config/pagination.php',
-            $appPath . '/controllers/Users.php',
             $appPath . '/libraries/Doctrine.php',
             $appPath . '/libraries/Wildfire.php',
-            $appPath . '/models/Users.php',
             $appPath . '/views/layout/header.php',
             $appPath . '/views/layout/footer.php',
             '.htaccess',
@@ -57,38 +59,43 @@ class CodeIgniterHelper
 
         $directories = [
             $appPath . '/views/layout',
-            $appPath . '/views/users',
-            $appPath . '/views/users',
             $appPath . '/models/proxies',
             'bower_components'
         ];
 
         foreach ($directories as $directory) {
             if (is_dir($directory)) {
-                self::deleteDirectory($directory);
+                self::emptyDirectory($directory, true);
             }
         }
     }
 
     /**
-     * Deletes a specified directory with its files.
+     * Deletes files in the specified directory.
      * 
-     * @param  string $directory
+     * @param  string  $directory
+     * @param  boolean $delete
      * @return void
      */
-    public static function deleteDirectory($directory)
+    protected static function emptyDirectory($directory, $delete = false)
     {
         $it = new RecursiveDirectoryIterator($directory, RecursiveDirectoryIterator::SKIP_DOTS);
         $files = new RecursiveIteratorIterator($it, RecursiveIteratorIterator::CHILD_FIRST);
 
         foreach ($files as $file) {
             if ($file->isDir()) {
-                rmdir($file->getRealPath());
+                if (strpos($file->getRealPath(), 'errors') === false) {
+                    rmdir($file->getRealPath());
+                }
             } else {
-                unlink($file->getRealPath());
+                if (strpos($file->getRealPath(), 'index.html') === false) {
+                    unlink($file->getRealPath());
+                }
             }
         }
 
-        rmdir($directory);
+        if ($delete) {
+            rmdir($directory);
+        }
     }
 }

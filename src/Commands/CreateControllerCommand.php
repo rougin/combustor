@@ -47,7 +47,7 @@ class CreateControllerCommand extends AbstractCommand
             ->addArgument(
                 'name',
                 InputArgument::REQUIRED,
-                'Name of the controller'
+                'Name of the table'
             )->addOption(
                 'camel',
                 NULL,
@@ -85,10 +85,10 @@ class CreateControllerCommand extends AbstractCommand
      */
     protected function execute(InputInterface $input, OutputInterface $output)
     {
-        $fileName = ucfirst($input->getArgument('name'));
+        $fileName = ucfirst(plural($input->getArgument('name')));
 
         if ($input->getOption('keep')) {
-            $fileName = ucfirst(plural($input->getArgument('name')));
+            $fileName = ucfirst($input->getArgument('name'));
         }
 
         $path = APPPATH . 'controllers' . DIRECTORY_SEPARATOR . $fileName . '.php';

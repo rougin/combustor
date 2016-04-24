@@ -7,8 +7,6 @@ use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 
-use Rougin\Describe\Describe;
-use Rougin\Combustor\Common\File;
 use Rougin\Combustor\Common\Tools;
 use Rougin\Combustor\Validator\ModelValidator;
 use Rougin\Combustor\Generator\ModelGenerator;
@@ -49,7 +47,7 @@ class CreateModelCommand extends AbstractCommand
             ->addArgument(
                 'name',
                 InputArgument::REQUIRED,
-                'Name of the model'
+                'Name of the table'
             )->addOption(
                 'camel',
                 NULL,
@@ -82,7 +80,7 @@ class CreateModelCommand extends AbstractCommand
      */
     protected function execute(InputInterface $input, OutputInterface $output)
     {
-        $fileName = ucfirst($input->getArgument('name'));
+        $fileName = ucfirst(singular($input->getArgument('name')));
 
         $path = APPPATH . 'models' . DIRECTORY_SEPARATOR . $fileName . '.php';
 

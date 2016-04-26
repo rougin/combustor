@@ -47,14 +47,6 @@ class ViewGenerator extends BaseGenerator implements GeneratorInterface
         $primaryKey = 'get_' . $this->describe->getPrimaryKey($data['name']);
         $data['primaryKey'] = $primaryKey;
 
-        // Workaround...
-        if ($data['primaryKey'] == 'get_') {
-            $singular = singular($data['name']);
-            $primaryKey = 'get_' . $this->describe->getPrimaryKey($singular);
-
-            $data['primaryKey'] = $primaryKey;
-        }
-
         if ($this->data['isCamel']) {
             $data['primaryKey'] = camelize($data['primaryKey']);
         }
@@ -62,14 +54,6 @@ class ViewGenerator extends BaseGenerator implements GeneratorInterface
         $data['columns'] = $this->describe->getTable(
             $data['name']
         );
-
-        // Workaround...
-        if (empty($data['columns'])) {
-            $singular = singular($data['name']);
-
-            $data['columns'] = $primaryKey;
-            $data['columns'] = $this->describe->getTable($singular);
-        }
     }
 
     /**

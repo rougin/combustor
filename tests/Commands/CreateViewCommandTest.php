@@ -54,15 +54,13 @@ class CreateViewCommandTest extends PHPUnit_Framework_TestCase
             'name' => $this->table,
             '--camel' => true,
             '--bootstrap' => true,
-            '--keep' => false
+            '--keep' => true
         ]);
 
-        $plural = plural($this->table);
-
-        $create = $this->appPath . '/views/' . $plural . '/create.php';
-        $edit = $this->appPath . '/views/' . $plural . '/edit.php';
-        $index = $this->appPath . '/views/' . $plural . '/index.php';
-        $show = $this->appPath . '/views/' . $plural . '/show.php';
+        $create = $this->appPath . '/views/' . $this->table . '/create.php';
+        $edit = $this->appPath . '/views/' . $this->table . '/edit.php';
+        $index = $this->appPath . '/views/' . $this->table . '/index.php';
+        $show = $this->appPath . '/views/' . $this->table . '/show.php';
 
         $this->assertFileExists($create);
         $this->assertFileExists($edit);

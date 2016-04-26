@@ -83,14 +83,17 @@ class CodeIgniterHelper
         $files = new RecursiveIteratorIterator($it, RecursiveIteratorIterator::CHILD_FIRST);
 
         foreach ($files as $file) {
+            $isErrorDirectory = strpos($file->getRealPath(), 'errors');
+            $isIndexHtml = strpos($file->getRealPath(), 'index.html');
+
+            if ($isErrorDirectory !== false || $isIndexHtml !== false) {
+                continue;
+            }
+
             if ($file->isDir()) {
-                if (strpos($file->getRealPath(), 'errors') === false) {
-                    rmdir($file->getRealPath());
-                }
+                rmdir($file->getRealPath());
             } else {
-                if (strpos($file->getRealPath(), 'index.html') === false) {
-                    unlink($file->getRealPath());
-                }
+                unlink($file->getRealPath());
             }
         }
 

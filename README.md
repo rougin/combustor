@@ -7,7 +7,7 @@
 [![Quality Score][ico-code-quality]][link-code-quality]
 [![Total Downloads][ico-downloads]][link-downloads]
 
-A tool for speeding up workflow in [CodeIgniter](https://codeigniter.com).
+Lets you generate controllers, models, and views from database tables for [CodeIgniter](https://codeigniter.com).
 
 ## Install
 
@@ -21,7 +21,7 @@ If you want the latest updates, use ```rougin/combustor:dev-master --dev```.
 
 ## Usage
 
-The documentation for Combustor can be found [here](http://rougin.github.io/combustor/commands.html).
+The documentation for the commands can be found [here](http://rougin.github.io/combustor/commands.html).
 
 ## Change Log
 

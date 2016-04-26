@@ -95,4 +95,26 @@ class CreateModelCommandTest extends PHPUnit_Framework_TestCase
 
         CodeIgniterHelper::setDefaults($this->appPath);
     }
+
+    /**
+     * Tests if command prompts an error if there is no library installed.
+     * 
+     * @return void
+     */
+    public function testNoLibraryInstalled()
+    {
+        CodeIgniterHelper::setDefaults($this->appPath);
+
+        $createCommand = new CommandTester($this->createCommand);
+        $createCommand->execute([
+            'name' => $this->table,
+            '--camel' => false
+        ]);
+
+        $expected = 'Please install Wildfire or Doctrine!' . PHP_EOL;
+
+        $this->assertEquals($expected, $createCommand->getDisplay());
+
+        CodeIgniterHelper::setDefaults($this->appPath);
+    }
 }

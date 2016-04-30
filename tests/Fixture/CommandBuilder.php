@@ -7,7 +7,7 @@ use Twig_Environment;
 use Twig_Loader_Filesystem;
 
 use Rougin\Describe\Describe;
-use Rougin\SparkPlug\SparkPlug;
+use Rougin\SparkPlug\Instance;
 use Rougin\Describe\Driver\CodeIgniterDriver;
 
 /**
@@ -44,16 +44,8 @@ class CommandBuilder
             return new Twig_Environment($loader);
         });
 
-        $injector->delegate('CI_Controller', function () use ($app) {
-            $sparkPlug = new SparkPlug($GLOBALS, $_SERVER, $app);
-
-            return $sparkPlug->getCodeIgniter();
-        });
-
-        $describe = 'Rougin\Describe\Describe';
-
-        $injector->delegate($describe, function () use ($injector) {
-            $ci = $injector->make('CI_Controller');
+        $injector->delegate('Rougin\Describe\Describe', function () use ($app) {
+            $ci = Instance::create($app);
 
             $ci->load->database();
             $ci->load->helper('inflector');

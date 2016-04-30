@@ -17,15 +17,9 @@ $app
     ->setCommandPath(__DIR__ . '/../src/Commands')
     ->setCommandNamespace('Rougin\Combustor\Commands');
 
-$app->injector->delegate('CI_Controller', function () {
-    $sparkPlug = new Rougin\SparkPlug\SparkPlug($GLOBALS, $_SERVER);
+$app->injector->delegate('Rougin\Describe\Describe', function () {
+    $ci = Rougin\SparkPlug\Instance::create();
 
-    return $sparkPlug->getCodeIgniter();
-});
-
-$ci = $app->injector->make('CI_Controller');
-
-$app->injector->delegate('Rougin\Describe\Describe', function () use ($ci) {
     $ci->load->database();
     $ci->load->helper('inflector');
 

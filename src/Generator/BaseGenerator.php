@@ -67,15 +67,15 @@ class BaseGenerator
         if ($type == 'camelize') {
             return [
                 'field' => lcfirst(camelize($field)),
-                'accessor' => lcfirst(camelize('set_' . $field)),
-                'mutator' => lcfirst(camelize('get_' . $field))
+                'accessor' => lcfirst(camelize('get_' . $field)),
+                'mutator' => lcfirst(camelize('set_' . $field))
             ];
         }
 
         return [
             'field' => lcfirst(underscore($field)),
-            'accessor' => lcfirst(underscore('set_' . $field)),
-            'mutator' => lcfirst(underscore('get_' . $field))
+            'accessor' => lcfirst(underscore('get_' . $field)),
+            'mutator' => lcfirst(underscore('set_' . $field))
         ];
     }
 }

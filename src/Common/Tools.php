@@ -46,7 +46,7 @@ class Tools
             ],
             [
                 'search' => '$config[\'encryption_key\'] = \'\';',
-                'replacement' => '$config[\'encryption_key\'] = \'md5(\'rougin\')\';'
+                'replacement' => '$config[\'encryption_key\'] = md5(\'rougin\');'
             ]
         ];
 
@@ -101,8 +101,8 @@ class Tools
         $helpers = array_filter($helpers);
 
         // Include the added helpers all back to autoload.php
-        $pattern = '/\$autoload\[\'helpers\'\] = array\([^)]*\);/';
-        $replacement = '$autoload[\'helpers\'] = array(' . implode(', ', $helpers) . ');';
+        $pattern = '/\$autoload\[\'helper\'\] = array\([^)]*\);/';
+        $replacement = '$autoload[\'helper\'] = array(' . implode(', ', $helpers) . ');';
 
         preg_replace($pattern, $replacement, $lines[60]);
 

@@ -20,9 +20,9 @@
     ],
     "require": {
         "php" : ">=5.4.0",
-        "rougin/blueprint": "^0.1.5",
-        "rougin/describe": "^1.4",
-        "rougin/spark-plug": "0.3.0"
+        "rougin/blueprint": "^0.1.0",
+        "rougin/describe": "^1.4.0",
+        "rougin/spark-plug": "^0.4.0"
     },
     "require-dev": {
         "phpunit/phpunit" : "4.*",
@@ -53,6 +53,6 @@
     },
     "suggest": {
         "rougin/codeigniter": "Yet another way to install CodeIgniter via Composer",
-        "rougin/refinery": "'Ready-to-eat' migrations for Codeigniter"
+        "rougin/refinery": "\"Ready-to-eat\" migrations for Codeigniter"
     }
 }

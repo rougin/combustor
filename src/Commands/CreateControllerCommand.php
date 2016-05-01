@@ -7,6 +7,7 @@ use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 
+use Rougin\Combustor\Common\File;
 use Rougin\Combustor\Common\Tools;
 use Rougin\Combustor\Validator\ControllerValidator;
 use Rougin\Combustor\Generator\ControllerGenerator;
@@ -126,9 +127,10 @@ class CreateControllerCommand extends AbstractCommand
         $controller = $this->renderer->render('Controller.template', $result);
         $message = 'The controller "' . $fileName . '" has been created successfully!';
 
-        $file = fopen($path, 'wb');
-        file_put_contents($path, $controller);
-        fclose($file);
+        $file = new File($path);
+
+        $file->putContents($controller);
+        $file->close();
 
         return $output->writeln('<info>' . $message . '</info>');
     }

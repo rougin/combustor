@@ -7,6 +7,7 @@ use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 
+use Rougin\Combustor\Common\File;
 use Rougin\Combustor\Common\Tools;
 use Rougin\Combustor\Validator\ModelValidator;
 use Rougin\Combustor\Generator\ModelGenerator;
@@ -116,9 +117,10 @@ class CreateModelCommand extends AbstractCommand
         $model = $this->renderer->render('Model.template', $result);
         $message = 'The model "' . $fileName . '" has been created successfully!';
 
-        $file = fopen($path, 'wb');
-        file_put_contents($path, $model);
-        fclose($file);
+        $file = new File($path);
+
+        $file->putContents($model);
+        $file->close();
 
         return $output->writeln('<info>' . $message . '</info>');
     }

@@ -5,6 +5,7 @@ namespace Rougin\Combustor\Commands;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 
+use Rougin\Combustor\Common\File;
 use Rougin\Combustor\Common\Tools;
 use Rougin\Combustor\Common\Commands\InstallCommand;
 
@@ -34,11 +35,11 @@ class InstallWildfireCommand extends InstallCommand
     {
         $this->addLibrary('wildfire');
 
-        $file = fopen(APPPATH . 'libraries/Wildfire.php', 'wb');
-        $wildfire = $this->renderer->render('Libraries/Wildfire.template');
+        $template = $this->renderer->render('Libraries/Wildfire.template');
+        $wildfire = new File(APPPATH . 'libraries/Wildfire.php');
 
-        file_put_contents(APPPATH . 'libraries/Wildfire.php', $wildfire);
-        fclose($file);
+        $wildfire->putContents($template);
+        $wildfire->close();
 
         Tools::ignite();
 

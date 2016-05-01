@@ -5,6 +5,7 @@ namespace Rougin\Combustor\Commands;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 
+use Rougin\Combustor\Common\File;
 use Rougin\Combustor\Common\Tools;
 use Rougin\Combustor\Common\Commands\InstallCommand;
 
@@ -35,19 +36,17 @@ class InstallDoctrineCommand extends InstallCommand
         system('composer require doctrine/orm');
 
         $cli = $this->renderer->render('DoctrineCLI.template');
-        $library = $this->renderer->render('Libraries/Doctrine.template');
+        $doctrine = new File(APPPATH . 'libraries/Doctrine.php');
+        $template = $this->renderer->render('Libraries/Doctrine.template');
+        $vendor = realpath('vendor');
 
-        /**
-         * Modifies the contents of vendor/bin/doctrine.php, creates the Doctrine
-         * library and creates a "proxies" directory for lazy loading.
-         */
+        // Modifies the contents of vendor/bin/doctrine.php, creates the
+        // Doctrine library and creates a "proxies" directory for lazy loading.
+        file_put_contents($vendor . '/bin/doctrine.php', $cli);
+        file_put_contents($vendor . '/doctrine/orm/bin/doctrine.php', $cli);
 
-        file_put_contents(realpath('vendor') . '/bin/doctrine.php', $cli);
-        file_put_contents(realpath('vendor') . '/doctrine/orm/bin/doctrine.php', $cli);
-
-        $file = fopen(APPPATH . 'libraries/Doctrine.php', 'wb');
-        file_put_contents(APPPATH . 'libraries/Doctrine.php', $library);
-        fclose($file);
+        $doctrine->putContents($template);
+        $doctrine->close();
 
         $this->addLibrary('doctrine');
 
@@ -56,18 +55,13 @@ class InstallDoctrineCommand extends InstallCommand
             chmod(APPPATH . 'models/proxies', 0777);
         }
 
-        /*
-         * Include the Base Model class in Doctrine CLI
-         */
+        $abstractCommandPath = $vendor . '/doctrine/orm/lib/Doctrine/ORM/' .
+            'Tools/Console/Command/SchemaTool/AbstractCommand.php';
 
-        $abstractCommand = file_get_contents(
-            realpath('vendor') . '/' .
-            'doctrine/orm/lib/Doctrine/'.
-            'ORM/Tools/Console/Command/'.
-            'SchemaTool/AbstractCommand.php'
-        );
+        // Includes the Base Model class in Doctrine CLI
+        $abstractCommand = file_get_contents($abstractCommandPath);
 
-        $search  = 'use Doctrine\ORM\Tools\SchemaTool;';
+        $search = 'use Doctrine\ORM\Tools\SchemaTool;';
         $replace = $search . "\n" . 'include BASEPATH . \'core/Model.php\';';
 
         $contents = $abstractCommand;
@@ -80,13 +74,7 @@ class InstallDoctrineCommand extends InstallCommand
             }
         }
 
-        file_put_contents(
-            realpath('vendor') . '/' .
-            'doctrine/orm/lib/Doctrine/'.
-            'ORM/Tools/Console/Command/'.
-            'SchemaTool/AbstractCommand.php',
-            $contents
-        );
+        file_put_contents($abstractCommandPath, $contents);
 
         Tools::ignite();
 

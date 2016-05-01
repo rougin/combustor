@@ -6,6 +6,7 @@ use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 
 use Rougin\Combustor\Common\Tools;
+use Rougin\Combustor\Common\Config;
 use Rougin\Combustor\Commands\AbstractCommand;
 
 /**
@@ -61,7 +62,26 @@ class RemoveCommand extends AbstractCommand
      */
     protected function execute(InputInterface $input, OutputInterface $output)
     {
-        $message = Tools::removeLibrary($this->library);
+        $autoload = new Config('autoload', APPPATH . 'config');
+
+        $libraries = $autoload->get('libraries', 60, 'array');
+
+        if (in_array($this->library, $libraries)) {
+            $position = array_search($this->library, $libraries);
+
+            unset($libraries[$position]);
+
+            $autoload->set('libraries', 60, $libraries, 'array');
+            $autoload->save();
+        }
+
+        if ($this->library == 'doctrine') {
+            system('composer remove doctrine/orm');
+        }
+
+        unlink(APPPATH . 'libraries/' . ucfirst($this->library) . '.php');
+
+        $message = ucfirst($this->library) . ' is now successfully removed!';
 
         return $output->writeln('<info>' . $message . '</info>');
     }

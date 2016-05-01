@@ -32,65 +32,32 @@ class Tools
      */
     public static function ignite()
     {
+        $autoloadPath = 'realpath(\'vendor\') . \'/autoload.php\'';
+        $configPath = APPPATH . 'config';
+
         // Gets data from application/config/config.php
-        $config = file_get_contents(APPPATH . 'config/config.php');
+        $config = new Config('config', $configPath);
 
-        $search = ['$config[\'composer_autoload\'] = FALSE;'];
-        $replace = ['$config[\'composer_autoload\'] = realpath(\'vendor\') . \'/autoload.php\';'];
+        $config->set('composer_autoload', 132, $autoloadPath, 'string', true);
+        $config->set('index_page', 31, '', 'string');
+        $config->set('encryption_key', 310, md5('rougin'), 'string');
 
-        // Replaces configuration found in config.php
-        $configs = [
-            [
-                'search' => '$config[\'index_page\'] = \'index.php\';',
-                'replacement' => '$config[\'index_page\'] = \'\';'
-            ],
-            [
-                'search' => '$config[\'encryption_key\'] = \'\';',
-                'replacement' => '$config[\'encryption_key\'] = md5(\'rougin\');'
-            ]
-        ];
-
-        foreach ($configs as $row) {
-            if (strpos($config, $row['search']) !== false) {
-                array_push($search, $row['search']);
-                array_push($replace, $row['replacement']);
-            }
-        }
-
-        $config = str_replace($search, $replace, $config);
-        file_put_contents(APPPATH . 'config/config.php', $config);
+        $config->save();
 
         // Gets data from application/config/autoload.php
-        $autoload = file_get_contents(APPPATH . 'config/autoload.php');
-        $lines = explode(PHP_EOL, $autoload);
+        $autoload = new Config('autoload', $configPath);
 
-        // Gets the currently included libraries.
-        $pattern = '/\$autoload\[\'libraries\'\] = array\((.*?)\)/';
+        // Gets the currently included drivers.
+        $drivers = $autoload->get('drivers', 75, 'array');
 
-        preg_match_all($pattern, $lines[60], $match);
-
-        $libraries = explode(', ', end($match[1]));
-
-        // Includes "session" library.
-        if ( ! in_array('\'session\'', $libraries)) {
-            array_push($libraries, '\'session\'');
+        // Includes "session" driver.
+        if ( ! in_array('session', $drivers)) {
+            array_push($drivers, 'session');
         }
 
-        $libraries = array_filter($libraries);
-
-        // Includes the added libraries all back to autoload.php.
-        $pattern = '/\$autoload\[\'libraries\'\] = array\([^)]*\);/';
-        $replacement = '$autoload[\'libraries\'] = array(' . implode(', ', $libraries) . ');';
-
-        $lines[60] = preg_replace($pattern, $replacement, $lines[60]);
-
         // Gets the currently included helpers
-        $pattern = '/\$autoload\[\'helper\'\] = array\((.*?)\)/';
-
-        preg_match_all($pattern, $lines[85], $match);
-
-        $defaultHelpers = [ '\'form\'', '\'url\'', ];
-        $helpers = explode(', ', end($match[1]));
+        $defaultHelpers = [ 'form', 'url' ];
+        $helpers = $autoload->get('helpers', 85, 'array');
 
         foreach ($defaultHelpers as $helper) {
             if ( ! in_array($helper, $helpers)) {
@@ -98,39 +65,34 @@ class Tools
             }
         }
 
-        $helpers = array_filter($helpers);
+        $autoload->set('drivers', 75, $drivers, 'array');
+        $autoload->set('helper', 85, $helpers, 'array');
 
-        // Include the added helpers all back to autoload.php
-        $pattern = '/\$autoload\[\'helper\'\] = array\([^)]*\);/';
-        $replacement = '$autoload[\'helper\'] = array(' . implode(', ', $helpers) . ');';
-
-        preg_replace($pattern, $replacement, $lines[60]);
-
-        file_put_contents(APPPATH . 'config/autoload.php', implode(PHP_EOL, $lines));
+        $autoload->save();
 
         // Creates a new .htaccess file if it does not exists.
         if ( ! file_exists('.htaccess')) {
-            $template = __DIR__ . '/../Templates/Htaccess.template';
+            $htaccess = new File('.htaccess');
+            $template = new File(__DIR__ . '/../Templates/Htaccess.template');
 
-            $file = fopen('.htaccess', 'wb');
-            $contents = file_get_contents($template);
+            $htaccess->putContents($template->getContents());
+            $htaccess->chmod(0777);
 
-            file_put_contents('.htaccess', $contents);
-            chmod('.htaccess', 0777);
-            fclose($file);
+            $htaccess->close();
+            $template->close();
         }
 
+        $paginationPath = APPPATH . 'config/pagination.php';
+
         // Creates a configuration for the Pagination library.
-        if ( ! file_exists(APPPATH . 'config/pagination.php')) {
-            $pagination = APPPATH . 'config/pagination.php';
-            $template = __DIR__ . '/../Templates/Pagination.template';
+        if ( ! file_exists($paginationPath)) {
+            $pagination = new File($paginationPath);
+            $template = new File(__DIR__ . '/../Templates/Pagination.template');
 
-            $file = fopen($pagination, 'wb');
-            $contents = file_get_contents($template);
+            $pagination->putContents($template->getContents());
 
-            file_put_contents($pagination, $contents);
-            chmod($pagination, 0664);
-            fclose($file);
+            $pagination->close();
+            $template->close();
         }
     }
 
@@ -175,47 +137,6 @@ class Tools
         return (strpos($table, '.') !== false)
             ? substr($table, strpos($table, '.') + 1)
             : $table;
-    }
-
-    /**
-     * Removes the specified library in the application.
-     * 
-     * @param  string $type
-     * @return string
-     */
-    public static function removeLibrary($type)
-    {
-        $autoload = file_get_contents(APPPATH . 'config/autoload.php');
-
-        $lines = explode(PHP_EOL, $autoload);
-        $pattern = '/\$autoload\[\'libraries\'\] = array\((.*?)\)/';
-
-        preg_match_all($pattern, $lines[60], $match);
-
-        $libraries = explode(', ', end($match[1]));
-
-        if (in_array('\'' . $type . '\'', $libraries)) {
-            $position = array_search('\'' . $type . '\'', $libraries);
-
-            unset($libraries[$position]);
-
-            $libraries = array_filter($libraries);
-
-            $pattern = '/\$autoload\[\'libraries\'\] = array\([^)]*\);/';
-            $replacement = '$autoload[\'libraries\'] = array(' . implode(', ', $libraries) . ');';
-
-            $lines[60] = preg_replace($pattern, $replacement, $lines[60]);
-
-            file_put_contents(APPPATH . 'config/autoload.php', implode(PHP_EOL, $lines));
-        }
-
-        if ($type == 'doctrine') {
-            system('composer remove doctrine/orm');
-        }
-
-        unlink(APPPATH . 'libraries/' . ucfirst($type) . '.php');
-
-        return ucfirst($type) . ' is now successfully removed!';
     }
 
     /**

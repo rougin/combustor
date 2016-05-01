@@ -7,6 +7,7 @@ use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 
+use Rougin\Combustor\Common\File;
 use Rougin\Combustor\Common\Tools;
 use Rougin\Combustor\Generator\ViewGenerator;
 use Rougin\Combustor\Validator\ViewValidator;
@@ -107,21 +108,20 @@ class CreateViewCommand extends AbstractCommand
 
         $filePath = APPPATH . 'views/' . $name;
 
-        $file = fopen($filePath . '/create.php', 'wb');
-        file_put_contents($filePath . '/create.php', $results['create']);
-        fclose($file);
+        $create = new File($filePath . '/create.php');
+        $edit = new File($filePath . '/edit.php');
+        $index = new File($filePath . '/index.php');
+        $show = new File($filePath . '/show.php');
 
-        $file = fopen($filePath . '/edit.php', 'wb');
-        file_put_contents($filePath . '/edit.php', $results['edit']);
-        fclose($file);
+        $create->putContents($results['create']);
+        $edit->putContents($results['edit']);
+        $index->putContents($results['index']);
+        $show->putContents($results['show']);
 
-        $file = fopen($filePath . '/index.php', 'wb');
-        file_put_contents($filePath . '/index.php', $results['index']);
-        fclose($file);
-
-        $file = fopen($filePath . '/show.php', 'wb');
-        file_put_contents($filePath . '/show.php', $results['show']);
-        fclose($file);
+        $create->close();
+        $edit->close();
+        $index->close();
+        $show->close();
 
         $message = 'The views folder "' . $name . '" has been created successfully!';
 

@@ -7,6 +7,7 @@ use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 
+use Rougin\Combustor\Common\File;
 use Rougin\Combustor\Common\Tools;
 
 /**
@@ -101,14 +102,14 @@ class CreateLayoutCommand extends AbstractCommand
         $header = $this->renderer->render('Views/Layout/header.template', $data);
         $footer = $this->renderer->render('Views/Layout/footer.template', $data);
 
-        $headerFile = fopen($layoutPath . '/header.php', 'wb');
-        $footerFile = fopen($layoutPath . '/footer.php', 'wb');
+        $headerFile = new File($layoutPath . '/header.php');
+        $footerFile = new File($layoutPath . '/footer.php');
 
-        file_put_contents($layoutPath . '/header.php', $header);
-        file_put_contents($layoutPath . '/footer.php', $footer);
+        $headerFile->putContents($header);
+        $footerFile->putContents($footer);
 
-        fclose($headerFile);
-        fclose($footerFile);
+        $headerFile->close();
+        $footerFile->close();
 
         $message = 'The layout folder has been created successfully!';
 

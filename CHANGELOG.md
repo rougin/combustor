@@ -10,6 +10,7 @@ All Notable changes to `Combustor` will be documented in this file.
 
 ### Changed
 - Commands to be testable
+- Can now only install `Wildfire` or `Doctrine`
 
 ## [1.1.4](https://github.com/rougin/combustor/compare/v1.1.3...v1.1.4) - 2015-11-14
 

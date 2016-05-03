@@ -25,21 +25,6 @@ class InstallCommand extends AbstractCommand
     protected $library = '';
 
     /**
-     * Checks whether the command is enabled or not in the current environment.
-     *
-     * Override this to check for x or y and return false if the command can not
-     * run properly under the current conditions.
-     *
-     * @return boolean
-     */
-    public function isEnabled()
-    {
-        $library = ucfirst($this->library);
-
-        return ! file_exists(APPPATH . 'libraries/' . $library . '.php');
-    }
-
-    /**
      * Sets the configurations of the specified command.
      *
      * @return void

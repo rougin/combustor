@@ -43,7 +43,7 @@ class {{ title | capitalize }} extends CI_Controller {
 {% else %}
 {% if column in foreignKeys|keys %}
 
-            ${{ foreignKeys[column] }} = $this->{{ type }}{{ type == 'doctrine' ? '->entity_manager' : ''}}->find('{{ foreignKeys[column] }}', $this->input->post('{{ column }}'));
+            ${{ foreignKeys[column] }} = $this->{{ type }}->find('{{ foreignKeys[column] }}', $this->input->post('{{ column }}'));
             $this->{{ singular }}->{{ isCamel ? camel[column] : underscore[column] }}(${{ foreignKeys[column] }});{{ columns[loop.index0 + 1] in foreignKeys|keys ? '' : "\n"}}
 {% else %}
             $this->{{ singular }}->{{ isCamel ? camel[column] : underscore[column] }}($this->input->post('{{ column }}'));
@@ -129,7 +129,7 @@ class {{ title | capitalize }} extends CI_Controller {
 
         if ($this->form_validation->run())
         {
-            ${{ singular }} = $this->{{ type }}{{ type == 'doctrine' ? '->entity_manager' : ''}}->find('{{ singular }}', $id);
+            ${{ singular }} = $this->{{ type }}->find('{{ singular }}', $id);
 
 {% for column in columns if column != 'datetime_updated' %}
 {% if column == 'datetime_created' %}
@@ -137,7 +137,7 @@ class {{ title | capitalize }} extends CI_Controller {
 {% else %}
 {% if column in foreignKeys|keys %}
 
-            ${{ foreignKeys[column] }} = $this->{{ type }}{{ type == 'doctrine' ? '->entity_manager' : ''}}->find('{{ foreignKeys[column] }}', $this->input->post('{{ column }}'));
+            ${{ foreignKeys[column] }} = $this->{{ type }}->find('{{ foreignKeys[column] }}', $this->input->post('{{ column }}'));
             ${{ singular }}->{{ isCamel ? camel[column] : underscore[column] }}(${{ foreignKeys[column] }});{{ columns[loop.index0 + 1] in foreignKeys|keys ? '' : "\n"}}
 {% else %}
             ${{ singular }}->{{ isCamel ? camel[column] : underscore[column] }}($this->input->post('{{ column }}'));
@@ -219,7 +219,7 @@ class {{ title | capitalize }} extends CI_Controller {
             show_404();
         }
 
-        $data['{{ singular }}'] = $this->{{ type }}{{ type == 'doctrine' ? '->entity_manager' : ''}}->find('{{ singular }}', $id);
+        $data['{{ singular }}'] = $this->{{ type }}->find('{{ singular }}', $id);
 
         $this->load->view('{{ plural }}/show', $data);
     }

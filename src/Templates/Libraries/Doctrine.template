@@ -64,9 +64,6 @@ class Doctrine {
             'host'          => $db['default']['hostname'],
             'dbname'        => $db['default']['database'],
             'charset'       => $db['default']['char_set'],
-            'driverOptions' => array(
-                'charset'   => $db['default']['char_set'],
-            ),
         );
 
         if ($driver == 'pdo_sqlite')
@@ -116,7 +113,7 @@ class Doctrine {
      */
     public function as_dropdown($description = 'description')
     {
-        $table_information = $this->_describe->get_information_from_table($this->_table);
+        $table_information = $this->_describe->get_table($this->_table);
 
         $data        = array('');
         $description = 'get_' . $description;
@@ -249,7 +246,7 @@ class Doctrine {
 
         if ( ! array_key_exists($table, $this->_tables))
         {
-            $table_information = $this->_describe->get_information_from_table($table);
+            $table_information = $this->_describe->get_table($table);
             $this->_tables[$table] = $table_information;
         }
         else

@@ -1,5 +1,4 @@
 <?php
-
 defined('BASEPATH') OR exit('No direct script access allowed');
 
 /**
@@ -10,18 +9,7 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 {% if type == 'doctrine' %}
  * 
  * @Entity
- * @Table(
- *      name="{{ name }}"{{ indexes | length > 0 ? ',' : ''}}
-{% if indexes | length == 1 %}
- *      indexes={"{{ indexes[0] }}"}
-{% elseif indexes | length > 1 %}
- *      indexes={
-{% for index in indexes %}
- *          @Index(name="{{ index }}", columns={"{{ index }}"}){{ loop.index < loop.length ? ',' : '' }}
-{% endfor %}
- *      }
-{% endif %}
- * )
+ * @Table(name="{{ name }}")
 {% endif %}
  */
 class {{ name | capitalize }} extends CI_Model {

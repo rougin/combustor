@@ -23,16 +23,6 @@ class BaseValidator implements ValidatorInterface
     protected $isCamel = false;
 
     /**
-     * @var boolean
-     */
-    protected $isDoctrine = false;
-
-    /**
-     * @var boolean
-     */
-    protected $isWildfire = false;
-
-    /**
      * @var string
      */
     protected $library = '';
@@ -43,17 +33,13 @@ class BaseValidator implements ValidatorInterface
     protected $message = '';
 
     /**
-     * @param boolean $isDoctrine
-     * @param boolean $isWildfire
      * @param boolean $isCamel
      * @param array   $file
      */
-    public function __construct($isDoctrine, $isWildfire, $isCamel, $file)
+    public function __construct($isCamel, $file)
     {
         $this->file = $file;
         $this->isCamel = $isCamel;
-        $this->isWildfire = $isWildfire;
-        $this->isDoctrine = $isDoctrine;
     }
 
     /**
@@ -73,7 +59,13 @@ class BaseValidator implements ValidatorInterface
         }
 
         if ($hasWildfire && $hasDoctrine) {
-            $this->message = 'Please select "--wildfire" or "--doctrine"!';
+            $this->message = 'Both Wildfire and Doctrine exists! Choose only one.';
+
+            return true;
+        }
+
+        if ($hasWildfire && $this->isCamel) {
+            $this->message = 'Wildfire does not support camel casing!';
 
             return true;
         }
@@ -87,18 +79,9 @@ class BaseValidator implements ValidatorInterface
             return true;
         }
 
-        if (($this->isWildfire || $hasWildfire) && $this->isCamel) {
-            $this->message = 'Wildfire does not support camel casing!';
-
-            return true;
-        }
-
-        if ($this->isDoctrine || $hasDoctrine) {
+        if ($hasDoctrine) {
             $this->library = 'doctrine';
-        }
-
-        if ($this->isWildfire || $hasWildfire) {
-
+        } else {
             $this->library = 'wildfire';
         }
 

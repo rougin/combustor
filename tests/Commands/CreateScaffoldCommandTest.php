@@ -54,11 +54,11 @@ class CreateScaffoldCommandTest extends PHPUnit_Framework_TestCase
         mkdir($this->appPath . '/views/layout');
 
         $files = [
-            __DIR__ . '/../../src/Templates/Libraries/Wildfire.template' =>
+            __DIR__ . '/../../src/Templates/Libraries/Wildfire.tpl' =>
             $this->appPath . '/libraries/Wildfire.php',
-            __DIR__ . '/../../src/Templates/Views/Layout/header.template' =>
+            __DIR__ . '/../../src/Templates/Views/Layout/header.tpl' =>
             $this->appPath . '/views/layout/header.php',
-            __DIR__ . '/../../src/Templates/Views/Layout/footer.template' =>
+            __DIR__ . '/../../src/Templates/Views/Layout/footer.tpl' =>
             $this->appPath . '/views/layout/footer.php'
         ];
 

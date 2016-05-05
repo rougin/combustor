@@ -75,9 +75,9 @@ class ValidatorTest extends PHPUnit_Framework_TestCase
         $templatesPath = __DIR__ . '/../src/Templates';
 
         $files = [
-            $templatesPath . '/Libraries/Wildfire.template' =>
+            $templatesPath . '/Libraries/Wildfire.tpl' =>
             $this->appPath . '/libraries/Wildfire.php',
-            $templatesPath . '/Libraries/Doctrine.template' =>
+            $templatesPath . '/Libraries/Doctrine.tpl' =>
             $this->appPath . '/libraries/Doctrine.php',
         ];
 

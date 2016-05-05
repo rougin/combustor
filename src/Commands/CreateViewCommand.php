@@ -97,10 +97,10 @@ class CreateViewCommand extends AbstractCommand
         $result = $generator->generate();
 
         $results = [
-            'create' => $this->renderer->render('Views/create.template', $result),
-            'edit' => $this->renderer->render('Views/edit.template', $result),
-            'index' => $this->renderer->render('Views/index.template', $result),
-            'show' => $this->renderer->render('Views/show.template', $result)
+            'create' => $this->renderer->render('Views/create.tpl', $result),
+            'edit' => $this->renderer->render('Views/edit.tpl', $result),
+            'index' => $this->renderer->render('Views/index.tpl', $result),
+            'show' => $this->renderer->render('Views/show.tpl', $result)
         ];
 
         $filePath = APPPATH . 'views/' . $name;

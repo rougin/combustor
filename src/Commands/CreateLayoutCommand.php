@@ -96,8 +96,8 @@ class CreateLayoutCommand extends AbstractCommand
             return $output->writeln('<error>' . $message . '</error>');
         }
 
-        $header = $this->renderer->render('Views/Layout/header.template', $data);
-        $footer = $this->renderer->render('Views/Layout/footer.template', $data);
+        $header = $this->renderer->render('Views/Layout/header.tpl', $data);
+        $footer = $this->renderer->render('Views/Layout/footer.tpl', $data);
 
         $headerFile = new File($layoutPath . '/header.php');
         $footerFile = new File($layoutPath . '/footer.php');

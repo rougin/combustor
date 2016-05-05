@@ -106,7 +106,7 @@ class CreateControllerCommand extends AbstractCommand
         $generator = new ControllerGenerator($this->describe, $data);
 
         $result = $generator->generate();
-        $controller = $this->renderer->render('Controller.template', $result);
+        $controller = $this->renderer->render('Controller.tpl', $result);
         $message = 'The controller "' . $fileName . '" has been created successfully!';
 
         $file = new File($path);

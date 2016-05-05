@@ -96,7 +96,7 @@ class CreateModelCommand extends AbstractCommand
         $generator = new ModelGenerator($this->describe, $data);
 
         $result = $generator->generate();
-        $model = $this->renderer->render('Model.template', $result);
+        $model = $this->renderer->render('Model.tpl', $result);
         $message = 'The model "' . $fileName . '" has been created successfully!';
 
         $file = new File($path);

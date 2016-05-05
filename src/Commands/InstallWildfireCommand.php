@@ -45,7 +45,7 @@ class InstallWildfireCommand extends InstallCommand
     {
         $this->addLibrary('wildfire');
 
-        $template = $this->renderer->render('Libraries/Wildfire.template');
+        $template = $this->renderer->render('Libraries/Wildfire.tpl');
         $wildfire = new File(APPPATH . 'libraries/Wildfire.php');
 
         $wildfire->putContents($template);

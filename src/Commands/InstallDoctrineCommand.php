@@ -45,9 +45,9 @@ class InstallDoctrineCommand extends InstallCommand
     {
         system('composer require doctrine/orm');
 
-        $cli = $this->renderer->render('DoctrineCLI.template');
+        $cli = $this->renderer->render('DoctrineCLI.tpl');
         $doctrine = new File(APPPATH . 'libraries/Doctrine.php');
-        $template = $this->renderer->render('Libraries/Doctrine.template');
+        $template = $this->renderer->render('Libraries/Doctrine.tpl');
         $vendor = realpath('vendor');
 
         // Modifies the contents of vendor/bin/doctrine.php, creates the

@@ -86,7 +86,7 @@ class Tools
             if ( ! file_exists($template['file'])) {
                 $file = new File($template['file']);
 
-                $path = $templatePath . '/' . $template['name'] . '.template';
+                $path = $templatePath . '/' . $template['name'] . '.tpl';
                 $contents = file_get_contents($path);
 
                 $file->putContents($contents);

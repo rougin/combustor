@@ -25,9 +25,6 @@ class CreateModelCommand extends AbstractCommand
     /**
      * Checks whether the command is enabled or not in the current environment.
      *
-     * Override this to check for x or y and return false if the command can not
-     * run properly under the current conditions.
-     *
      * @return bool
      */
     public function isEnabled()
@@ -55,20 +52,10 @@ class CreateModelCommand extends AbstractCommand
                 InputOption::VALUE_NONE,
                 'Uses the camel case naming convention'
             )->addOption(
-                'doctrine',
-                NULL,
-                InputOption::VALUE_NONE,
-                'Generates a model based on Doctrine'
-            )->addOption(
                 'lowercase',
                 NULL,
                 InputOption::VALUE_NONE,
                 'Keeps the first character of the name to lowercase'
-            )->addOption(
-                'wildfire',
-                NULL,
-                InputOption::VALUE_NONE,
-                'Generates a model based on Wildfire'
             );
     }
 
@@ -85,18 +72,13 @@ class CreateModelCommand extends AbstractCommand
 
         $path = APPPATH . 'models' . DIRECTORY_SEPARATOR . $fileName . '.php';
 
-        $fileInformation = [
+        $info = [
             'name' => $fileName,
             'type' => 'model',
             'path' => $path
         ];
 
-        $validator = new ModelValidator(
-            $input->getOption('doctrine'),
-            $input->getOption('wildfire'),
-            $input->getOption('camel'),
-            $fileInformation
-        );
+        $validator = new ModelValidator($input->getOption('camel'), $info);
 
         if ($validator->fails()) {
             $message = $validator->getMessage();
@@ -105,7 +87,7 @@ class CreateModelCommand extends AbstractCommand
         }
 
         $data = [
-            'file' => $fileInformation,
+            'file' => $info,
             'isCamel' => $input->getOption('camel'),
             'name' => $input->getArgument('name'),
             'type' => $validator->getLibrary()

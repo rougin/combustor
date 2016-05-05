@@ -34,13 +34,14 @@ class Tools
     {
         $autoloadPath = 'realpath(\'vendor\') . \'/autoload.php\'';
         $configPath = APPPATH . 'config';
+        $templatePath = __DIR__ . '/../Templates';
 
         // Gets data from application/config/config.php
         $config = new Config('config', $configPath);
 
-        $config->set('composer_autoload', 132, $autoloadPath, 'string', true);
-        $config->set('index_page', 31, '', 'string');
-        $config->set('encryption_key', 310, md5('rougin'), 'string');
+        $config->set('composer_autoload', 138, $autoloadPath, 'string', true);
+        $config->set('index_page', 37, '', 'string');
+        $config->set('encryption_key', 316, md5('rougin'), 'string');
 
         $config->save();
 
@@ -48,7 +49,7 @@ class Tools
         $autoload = new Config('autoload', $configPath);
 
         // Gets the currently included drivers.
-        $drivers = $autoload->get('drivers', 75, 'array');
+        $drivers = $autoload->get('drivers', 81, 'array');
 
         // Includes "session" driver.
         if ( ! in_array('session', $drivers)) {
@@ -57,7 +58,7 @@ class Tools
 
         // Gets the currently included helpers
         $defaultHelpers = [ 'form', 'url' ];
-        $helpers = $autoload->get('helpers', 85, 'array');
+        $helpers = $autoload->get('helper', 91, 'array');
 
         foreach ($defaultHelpers as $helper) {
             if ( ! in_array($helper, $helpers)) {
@@ -65,34 +66,32 @@ class Tools
             }
         }
 
-        $autoload->set('drivers', 75, $drivers, 'array');
-        $autoload->set('helper', 85, $helpers, 'array');
+        $autoload->set('drivers', 81, $drivers, 'array');
+        $autoload->set('helper', 91, $helpers, 'array');
 
         $autoload->save();
 
-        // Creates a new .htaccess file if it does not exists.
-        if ( ! file_exists('.htaccess')) {
-            $htaccess = new File('.htaccess');
-            $template = new File(__DIR__ . '/../Templates/Htaccess.template');
+        $templates = [
+            [
+                'file' => '.htaccess',
+                'name' => 'Htaccess'
+            ],
+            [
+                'file' => APPPATH . 'config/pagination.php',
+                'name' => 'Pagination'
+            ]
+        ];
 
-            $htaccess->putContents($template->getContents());
-            $htaccess->chmod(0777);
+        foreach ($templates as $template) {
+            if ( ! file_exists($template['file'])) {
+                $file = new File($template['file']);
 
-            $htaccess->close();
-            $template->close();
-        }
+                $path = $templatePath . '/' . $template['name'] . '.template';
+                $contents = file_get_contents($path);
 
-        $paginationPath = APPPATH . 'config/pagination.php';
-
-        // Creates a configuration for the Pagination library.
-        if ( ! file_exists($paginationPath)) {
-            $pagination = new File($paginationPath);
-            $template = new File(__DIR__ . '/../Templates/Pagination.template');
-
-            $pagination->putContents($template->getContents());
-
-            $pagination->close();
-            $template->close();
+                $file->putContents($contents);
+                $file->close();
+            }
         }
     }
 

@@ -72,10 +72,12 @@ class ValidatorTest extends PHPUnit_Framework_TestCase
     {
         CodeIgniterHelper::setDefaults($this->appPath);
 
+        $templatesPath = __DIR__ . '/../src/Templates';
+
         $files = [
-            __DIR__ . '/../src/Templates/Libraries/Wildfire.template' =>
+            $templatesPath . '/Libraries/Wildfire.template' =>
             $this->appPath . '/libraries/Wildfire.php',
-            __DIR__ . '/../src/Templates/Libraries/Doctrine.template' =>
+            $templatesPath . '/Libraries/Doctrine.template' =>
             $this->appPath . '/libraries/Doctrine.php',
         ];
 
@@ -90,7 +92,7 @@ class ValidatorTest extends PHPUnit_Framework_TestCase
             '--keep' => false
         ]);
 
-        $expected = 'Please select "--wildfire" or "--doctrine"!' . PHP_EOL;
+        $expected = 'Both Wildfire and Doctrine exists! Choose only one.' . PHP_EOL;
 
         $this->assertEquals($expected, $createCommand->getDisplay());
 

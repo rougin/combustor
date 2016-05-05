@@ -23,9 +23,6 @@ class CreateScaffoldCommand extends AbstractCommand
     /**
      * Checks whether the command is enabled or not in the current environment.
      *
-     * Override this to check for x or y and return false if the command can not
-     * run properly under the current conditions.
-     *
      * @return bool
      */
     public function isEnabled()
@@ -57,11 +54,6 @@ class CreateScaffoldCommand extends AbstractCommand
                 InputOption::VALUE_NONE,
                 'Uses the camel case naming convention'
             )->addOption(
-                'doctrine',
-                NULL,
-                InputOption::VALUE_NONE,
-                'Uses the Doctrine\'s specifications'
-            )->addOption(
                 'keep',
                 null,
                 InputOption::VALUE_NONE,
@@ -71,11 +63,6 @@ class CreateScaffoldCommand extends AbstractCommand
                 null,
                 InputOption::VALUE_NONE,
                 'Keeps the first character of the name to lowercase'
-            )->addOption(
-                'wildfire',
-                NULL,
-                InputOption::VALUE_NONE,
-                'Uses the Wildfire\'s specifications'
             );
     }
 
@@ -96,10 +83,8 @@ class CreateScaffoldCommand extends AbstractCommand
 
         $bootstrap = $input->getOption('bootstrap');
         $camel = $input->getOption('camel');
-        $doctrine = $input->getOption('doctrine');
         $keep = $input->getOption('keep');
         $lowercase = $input->getOption('lowercase');
-        $wildfire = $input->getOption('wildfire');
 
         foreach ($commands as $command) {
             $arguments = [
@@ -111,9 +96,7 @@ class CreateScaffoldCommand extends AbstractCommand
                 case 'create:controller':
                 case 'create:model':
                     $arguments['--camel'] = $camel;
-                    $arguments['--doctrine'] = $doctrine;
                     $arguments['--lowercase'] = $lowercase;
-                    $arguments['--wildfire'] = $wildfire;
 
                     break;
                 case 'create:view':

@@ -56,14 +56,14 @@ class InstallWildfireCommandTest extends PHPUnit_Framework_TestCase
         $drivers = [ 'session' ];
         $helpers = [ 'form', 'url' ];
 
-        $this->assertEquals($drivers, $autoload->get('drivers', 75, 'array'));
-        $this->assertEquals($helpers, $autoload->get('helper', 85, 'array'));
+        $this->assertEquals($drivers, $autoload->get('drivers', 81, 'array'));
+        $this->assertEquals($helpers, $autoload->get('helper', 91, 'array'));
 
         $config = new Config('config', $this->appPath . '/config');
 
         $composerAutoload = 'realpath(\'vendor\') . \'/autoload.php\'';
 
-        $this->assertEquals($composerAutoload, $config->get('composer_autoload', 132, 'string'));
+        $this->assertEquals($composerAutoload, $config->get('composer_autoload', 138, 'string'));
         $this->assertEmpty($config->get('index_page', 31, 'string'));
         $this->assertEquals(md5('rougin'), $config->get('encryption_key', 310, 'string'));
 

@@ -23,7 +23,7 @@ class Config
     public $fileName;
 
     /**
-     * @var string
+     * @var array
      */
     protected $lines;
 
@@ -83,8 +83,9 @@ class Config
                 }
 
                 $result = array_filter(explode(',', $data));
+                $length = count($result);
 
-                for ($i = 0; $i < count($result); $i++) {
+                for ($i = 0; $i < $length; $i++) {
                     $result[$i] = str_replace(['\'', '"'], '', trim($result[$i]));
                 }
 
@@ -126,7 +127,9 @@ class Config
 
         switch ($dataType) {
             case 'array':
-                for ($i = 0; $i < count($value); $i++) {
+                $length = count($value);
+
+                for ($i = 0; $i < $length; $i++) {
                     $value[$i] = '\'' . $value[$i] . '\'';
                 }
 

@@ -25,9 +25,6 @@ class CreateViewCommand extends AbstractCommand
     /**
      * Checks whether the command is enabled or not in the current environment.
      *
-     * Override this to check for x or y and return false if the command can not
-     * run properly under the current conditions.
-     *
      * @return bool
      */
     public function isEnabled()

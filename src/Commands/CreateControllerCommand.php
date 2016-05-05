@@ -25,9 +25,6 @@ class CreateControllerCommand extends AbstractCommand
     /**
      * Checks whether the command is enabled or not in the current environment.
      *
-     * Override this to check for x or y and return false if the command can not
-     * run properly under the current conditions.
-     *
      * @return bool
      */
     public function isEnabled()
@@ -55,11 +52,6 @@ class CreateControllerCommand extends AbstractCommand
                 InputOption::VALUE_NONE,
                 'Uses the camel case naming convention'
             )->addOption(
-                'doctrine',
-                NULL,
-                InputOption::VALUE_NONE,
-                'Generates a controller based on Doctrine'
-            )->addOption(
                 'keep',
                 NULL,
                 InputOption::VALUE_NONE,
@@ -69,11 +61,6 @@ class CreateControllerCommand extends AbstractCommand
                 NULL,
                 InputOption::VALUE_NONE,
                 'Keeps the first character of the name to lowercase'
-            )->addOption(
-                'wildfire',
-                NULL,
-                InputOption::VALUE_NONE,
-                'Generates a controller based on Wildfire'
             );
     }
 
@@ -94,18 +81,13 @@ class CreateControllerCommand extends AbstractCommand
 
         $path = APPPATH . 'controllers' . DIRECTORY_SEPARATOR . $fileName . '.php';
 
-        $fileInformation = [
+        $info = [
             'name' => $fileName,
             'type' => 'controller',
             'path' => $path
         ];
 
-        $validator = new ControllerValidator(
-            $input->getOption('doctrine'),
-            $input->getOption('wildfire'),
-            $input->getOption('camel'),
-            $fileInformation
-        );
+        $validator = new ControllerValidator($input->getOption('camel'), $info);
 
         if ($validator->fails()) {
             $message = $validator->getMessage();
@@ -114,7 +96,7 @@ class CreateControllerCommand extends AbstractCommand
         }
 
         $data = [
-            'file' => $fileInformation,
+            'file' => $info,
             'isCamel' => $input->getOption('camel'),
             'name' => $input->getArgument('name'),
             'title' => strtolower($fileName),

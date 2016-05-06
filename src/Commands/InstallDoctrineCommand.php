@@ -25,16 +25,6 @@ class InstallDoctrineCommand extends InstallCommand
     protected $library = 'doctrine';
 
     /**
-     * Checks whether the command is enabled or not in the current environment.
-     *
-     * @return boolean
-     */
-    public function isEnabled()
-    {
-        return ! file_exists(APPPATH . 'libraries/Wildfire.php');
-    }
-
-    /**
      * Executes the command.
      * 
      * @param \Symfony\Component\Console\Input\InputInterface   $input

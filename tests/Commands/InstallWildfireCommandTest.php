@@ -4,6 +4,7 @@ namespace Rougin\Combustor\Commands;
 
 use Symfony\Component\Console\Tester\CommandTester;
 
+use Rougin\Combustor\Common\File;
 use Rougin\Combustor\Common\Config;
 use Rougin\Combustor\Fixture\CommandBuilder;
 use Rougin\Combustor\Fixture\CodeIgniterHelper;
@@ -64,8 +65,8 @@ class InstallWildfireCommandTest extends PHPUnit_Framework_TestCase
         $composerAutoload = 'realpath(\'vendor\') . \'/autoload.php\'';
 
         $this->assertEquals($composerAutoload, $config->get('composer_autoload', 138, 'string'));
-        $this->assertEmpty($config->get('index_page', 31, 'string'));
-        $this->assertEquals(md5('rougin'), $config->get('encryption_key', 310, 'string'));
+        $this->assertEmpty($config->get('index_page', 37, 'string'));
+        $this->assertEquals(md5('rougin'), $config->get('encryption_key', 316, 'string'));
 
         CodeIgniterHelper::setDefaults($this->appPath);
     }

@@ -34,11 +34,9 @@ class RemoveCommand extends AbstractCommand
      */
     public function isEnabled()
     {
-        if ($this->library == 'doctrine') {
-            return Tools::isDoctrineEnabled();
-        }
-
-        return Tools::isWildfireEnabled();
+        $file = APPPATH . 'libraries/' . $this->library . '.php';
+        
+        return file_exists($file);
     }
 
     /**

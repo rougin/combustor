@@ -60,7 +60,8 @@ class CodeIgniterHelper
         $directories = [
             $appPath . '/views/layout',
             $appPath . '/models/proxies',
-            'bower_components'
+            'bower_components',
+            'vendor/doctrine/orm'
         ];
 
         foreach ($directories as $directory) {

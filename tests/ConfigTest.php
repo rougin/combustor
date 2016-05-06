@@ -39,9 +39,9 @@ class ConfigTest extends PHPUnit_Framework_TestCase
 
         $config = new Config('config', $this->configPath);
 
-        $this->assertFalse($config->get('enable_hooks', 96, 'boolean'));
-        $this->assertEquals('index.php', $config->get('index_page', 31, 'string'));
-        $this->assertEmpty($config->get('csrf_exclude_uris', 436, 'array'));
+        $this->assertFalse($config->get('enable_hooks', 102, 'boolean'));
+        $this->assertEquals('index.php', $config->get('index_page', 37, 'string'));
+        $this->assertEmpty($config->get('csrf_exclude_uris', 445, 'array'));
 
         CodeIgniterHelper::setDefaults($this->appPath);
     }
@@ -63,15 +63,15 @@ class ConfigTest extends PHPUnit_Framework_TestCase
 
         $config = new Config('config', $this->configPath);
 
-        $config->set('base_url', 19, $expected[0], 'string');
-        $config->set('csrf_protection', 431, $expected[1], 'boolean');
-        $config->set('csrf_exclude_uris', 436, $expected[2], 'array');
+        $config->set('base_url', 25, $expected[0], 'string');
+        $config->set('csrf_protection', 440, $expected[1], 'boolean');
+        $config->set('csrf_exclude_uris', 445, $expected[2], 'array');
 
         $config->save();
 
-        $this->assertEquals($expected[0], $config->get('base_url', 19, 'string'));
-        $this->assertEquals($expected[1], $config->get('csrf_protection', 431, 'boolean'));
-        $this->assertEquals($expected[2], $config->get('csrf_exclude_uris', 436, 'array'));
+        $this->assertEquals($expected[0], $config->get('base_url', 25, 'string'));
+        $this->assertEquals($expected[1], $config->get('csrf_protection', 440, 'boolean'));
+        $this->assertEquals($expected[2], $config->get('csrf_exclude_uris', 445, 'array'));
 
         CodeIgniterHelper::setDefaults($this->appPath);
     }

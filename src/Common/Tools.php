@@ -83,15 +83,15 @@ class Tools
         ];
 
         foreach ($templates as $template) {
-            if ( ! file_exists($template['file'])) {
-                $file = new File($template['file']);
+            $file = new File($template['file']);
+            $path = $templatePath . '/' . $template['name'] . '.tpl';
 
-                $path = $templatePath . '/' . $template['name'] . '.tpl';
-                $contents = file_get_contents($path);
-
-                $file->putContents($contents);
-                $file->close();
+            if ($template['file'] == '.htaccess') {
+                $file->chmod(0777);
             }
+
+            $file->putContents(file_get_contents($path));
+            $file->close();
         }
     }
 
@@ -102,27 +102,10 @@ class Tools
      */
     public static function isCommandEnabled()
     {
-        return self::isWildfireEnabled() || self::isDoctrineEnabled();
-    }
+        $doctrine = APPPATH . 'libraries/Doctrine.php';
+        $wildfire = APPPATH . 'libraries/Wildfire.php';
 
-    /**
-     * Checks if Doctrine exists.
-     *
-     * @return bool
-     */
-    public static function isDoctrineEnabled()
-    {
-        return file_exists(APPPATH . 'libraries/Doctrine.php');
-    }
-
-    /**
-     * Checks if Wildfire exists.
-     *
-     * @return bool
-     */
-    public static function isWildfireEnabled()
-    {
-        return file_exists(APPPATH . 'libraries/Wildfire.php');
+        return file_exists($doctrine) || file_exists($wildfire);
     }
 
     /**

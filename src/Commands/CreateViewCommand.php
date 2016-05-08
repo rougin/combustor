@@ -2,8 +2,6 @@
 
 namespace Rougin\Combustor\Commands;
 
-use Symfony\Component\Console\Input\InputOption;
-use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 
@@ -23,45 +21,9 @@ use Rougin\Combustor\Validator\ViewValidator;
 class CreateViewCommand extends AbstractCommand
 {
     /**
-     * Checks whether the command is enabled or not in the current environment.
-     *
-     * @return bool
+     * @var string
      */
-    public function isEnabled()
-    {
-        return Tools::isCommandEnabled() && Tools::hasLayout();
-    }
-
-    /**
-     * Set the configurations of the specified command
-     *
-     * @return void
-     */
-    protected function configure()
-    {
-        $this->setName('create:view')
-            ->setDescription('Create a new view')
-            ->addArgument(
-                'name',
-                InputArgument::REQUIRED,
-                'Name of the table'
-            )->addOption(
-                'bootstrap',
-                NULL,
-                InputOption::VALUE_NONE,
-                'Includes the Bootstrap CSS/JS Framework tags'
-            )->addOption(
-                'camel',
-                NULL,
-                InputOption::VALUE_NONE,
-                'Uses the camel case naming convention'
-            )->addOption(
-                'keep',
-                NULL,
-                InputOption::VALUE_NONE,
-                'Keeps the name to be used'
-            );
-    }
+    protected $command = 'view';
 
     /**
      * Executes the command.

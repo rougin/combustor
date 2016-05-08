@@ -2,8 +2,6 @@
 
 namespace Rougin\Combustor\Commands;
 
-use Symfony\Component\Console\Input\InputOption;
-use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 
@@ -23,46 +21,9 @@ use Rougin\Combustor\Generator\ControllerGenerator;
 class CreateControllerCommand extends AbstractCommand
 {
     /**
-     * Checks whether the command is enabled or not in the current environment.
-     *
-     * @return bool
+     * @var string
      */
-    public function isEnabled()
-    {
-        return Tools::isCommandEnabled();
-    }
-
-    /**
-     * Sets the configurations of the specified command.
-     *
-     * @return void
-     */
-    protected function configure()
-    {
-        $this
-            ->setName('create:controller')
-            ->setDescription('Creates a new controller')
-            ->addArgument(
-                'name',
-                InputArgument::REQUIRED,
-                'Name of the table'
-            )->addOption(
-                'camel',
-                NULL,
-                InputOption::VALUE_NONE,
-                'Uses the camel case naming convention'
-            )->addOption(
-                'keep',
-                NULL,
-                InputOption::VALUE_NONE,
-                'Keeps the name to be used'
-            )->addOption(
-                'lowercase',
-                NULL,
-                InputOption::VALUE_NONE,
-                'Keeps the first character of the name to lowercase'
-            );
-    }
+    protected $command = 'controller';
 
     /**
      * Executes the command.

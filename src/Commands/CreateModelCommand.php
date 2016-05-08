@@ -23,14 +23,9 @@ use Rougin\Combustor\Generator\ModelGenerator;
 class CreateModelCommand extends AbstractCommand
 {
     /**
-     * Checks whether the command is enabled or not in the current environment.
-     *
-     * @return bool
+     * @var string
      */
-    public function isEnabled()
-    {
-        return Tools::isCommandEnabled();
-    }
+    protected $command = 'model';
 
     /**
      * Sets the configurations of the specified command.

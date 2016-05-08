@@ -4,8 +4,11 @@ namespace Rougin\Combustor\Commands;
 
 use Twig_Environment;
 use Symfony\Component\Console\Command\Command;
+use Symfony\Component\Console\Input\InputOption;
+use Symfony\Component\Console\Input\InputArgument;
 
 use Rougin\Describe\Describe;
+use Rougin\Combustor\Common\Tools;
 
 /**
  * Abstract Command
@@ -17,6 +20,11 @@ use Rougin\Describe\Describe;
  */
 abstract class AbstractCommand extends Command
 {
+    /**
+     * @var string
+     */
+    protected $command = '';
+
     /**
      * @var \Rougin\Describe\Describe
      */
@@ -37,5 +45,55 @@ abstract class AbstractCommand extends Command
 
         $this->describe = $describe;
         $this->renderer = $renderer;
+    }
+
+    /**
+     * Set the configurations of the specified command
+     *
+     * @return void
+     */
+    protected function configure()
+    {
+        $this->setName('create:' . $this->command)
+            ->setDescription('Create a new ' . $this->command)
+            ->addArgument(
+                'name',
+                InputArgument::REQUIRED,
+                'Name of the table'
+            )->addOption(
+                'bootstrap',
+                NULL,
+                InputOption::VALUE_NONE,
+                'Includes the Bootstrap CSS/JS Framework tags'
+            )->addOption(
+                'camel',
+                NULL,
+                InputOption::VALUE_NONE,
+                'Uses the camel case naming convention'
+            )->addOption(
+                'keep',
+                NULL,
+                InputOption::VALUE_NONE,
+                'Keeps the name to be used'
+            );
+
+        if ($this->command == 'controller') {
+            $this->addOption(
+                'lowercase',
+                null,
+                InputOption::VALUE_NONE,
+                'Keeps the first character of the name to lowercase'
+            );
+        }
+    }
+
+    /**
+     * Checks whether the command is enabled or not in the current environment.
+     *
+     * @return bool
+     */
+    public function isEnabled()
+    {
+        return Tools::isCommandEnabled();
     }
 }

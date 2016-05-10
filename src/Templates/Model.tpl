@@ -24,7 +24,7 @@ class {{ name | capitalize }} extends CI_Model {
      * @ManyToOne(targetEntity="{{ column.referencedTable | capitalize }}", cascade={"persist"})
      * @JoinColumn(name="{{ column.field }}", referencedColumnName="{{ column.referencedField }}", nullable={{ column.isNull ? 'TRUE' : 'FALSE' }}, unique={{ column.isUnique ? 'TRUE' : 'FALSE' }}, onDelete="cascade")
 {% else %}
-     * @Column(name="{{ column.field }}", type="{{ column.dataType }}"{{ column.length ? ', length=10,' : ','}} nullable={{ column.isNull ? 'TRUE' : 'FALSE' }}, unique={{ column.isUnique ? 'TRUE' : 'FALSE' }})
+     * @Column(name="{{ column.field }}", type="{{ column.dataType }}"{{ column.length ? ', length=' ~ column.length ~ ',' : ','}} nullable={{ column.isNull ? 'TRUE' : 'FALSE' }}, unique={{ column.isUnique ? 'TRUE' : 'FALSE' }})
 {% endif %}
 {% else %}
      * @var {{ column.dataType }}

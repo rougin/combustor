@@ -2,15 +2,21 @@
 
 All Notable changes to `Combustor` will be documented in this file.
 
-## [Unreleased](https://github.com/rougin/combustor/compare/v1.1.4...HEAD)
+## [1.2.0](https://github.com/rougin/combustor/compare/v1.1.4...v1.2.0) - 2016-05-11
 
 ### Added
-- Tests
+- Unit tests for other commands
 - Contributor Code of Conduct
+- `Config` class for handling configurations
 
 ### Changed
-- Commands to be testable
 - Can now only install `Wildfire` or `Doctrine`
+- Moved redundant functions to base classes (e.g. `BaseValidator`, `InstallCommand`, `RemoveCommand`)
+
+### Fixed
+- Issues in generating code in `Doctrine`
+- Functionalities in `Doctrine.php`
+- Issue in changing values in `config` directory
 
 ## [1.1.4](https://github.com/rougin/combustor/compare/v1.1.3...v1.1.4) - 2015-11-14
 

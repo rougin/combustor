@@ -22,12 +22,12 @@
         "php" : ">=5.4.0",
         "rougin/blueprint": "^0.1.0",
         "rougin/describe": "^1.4.0",
-        "rougin/spark-plug": "^0.4.1"
+        "rougin/spark-plug": "^0.4.2"
     },
     "require-dev": {
         "phpunit/phpunit" : "4.*",
         "scrutinizer/ocular": "~1.1",
-        "rougin/codeigniter": "^0.1.2"
+        "rougin/codeigniter": "^3.0.0"
     },
     "bin": [
         "bin/combustor",

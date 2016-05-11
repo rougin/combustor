@@ -1,6 +1,11 @@
 # Changelog
 
-All Notable changes to `Combustor` will be documented in this file.
+All notable changes to `Combustor` will be documented in this file.
+
+## [1.2.1](https://github.com/rougin/combustor/compare/v1.2.0...v1.2.1) - 2016-05-12
+
+### Changed
+- Version of `rougin/codeigniter` to `^3.0.0`
 
 ## [1.2.0](https://github.com/rougin/combustor/compare/v1.1.4...v1.2.0) - 2016-05-11
 

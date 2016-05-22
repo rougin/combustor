@@ -195,14 +195,14 @@ class Wildfire {
         $new_table = singular(Tools::strip_table_schema($table));
         $model = new $new_table();
 
-        if ( ! array_key_exists($table, $this->_tables))
+        if ( ! array_key_exists($new_table, $this->_tables))
         {
-            $main_table_information = $this->_describe->get_table($table);
-            $this->_tables[$table] = $main_table_information;
+            $main_table_information = $this->_describe->get_table($new_table);
+            $this->_tables[$new_table] = $main_table_information;
         }
         else
         {
-            $main_table_information = $this->_tables[$table];
+            $main_table_information = $this->_tables[$new_table];
         }
 
         foreach ($row as $column => $value)

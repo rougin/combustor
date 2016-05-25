@@ -2,6 +2,11 @@
 
 All notable changes to `Combustor` will be documented in this file.
 
+## [Unreleased](https://github.com/rougin/combustor/compare/v1.2.1...HEAD)
+
+### Fixed
+- Updating configuration files on Windows platform
+
 ## [1.2.1](https://github.com/rougin/combustor/compare/v1.2.0...v1.2.1) - 2016-05-12
 
 ### Changed

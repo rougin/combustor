@@ -38,7 +38,7 @@ class Config
 
         $content = file_get_contents($this->fileName);
 
-        $this->lines = explode(PHP_EOL, $content);
+        $this->lines = preg_split("/\\r\\n|\\r|\\n/", $content);
     }
 
     /**

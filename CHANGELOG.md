@@ -2,7 +2,10 @@
 
 All notable changes to `Combustor` will be documented in this file.
 
-## [Unreleased](https://github.com/rougin/combustor/compare/v1.2.1...HEAD)
+## [1.2.2](https://github.com/rougin/combustor/compare/v1.2.1...v1.2.2) - 2016-09-04
+
+### Changed
+- From `$table` to `$new_table` in `Wildfire.tpl`
 
 ### Fixed
 - Updating configuration files on Windows platform

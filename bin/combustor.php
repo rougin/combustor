@@ -10,7 +10,7 @@ $app = new Rougin\Blueprint\Blueprint($console, $injector);
 
 // Application details
 $app->console->setName('Combustor');
-$app->console->setVersion('1.2.0');
+$app->console->setVersion('1.2.2');
 
 $app
     ->setTemplatePath(__DIR__ . '/../src/Templates')

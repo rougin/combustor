@@ -9,7 +9,7 @@ use Rougin\Combustor\Validator\ValidatorInterface;
  * View Validator
  *
  * Checks if it is valid to generate view files.
- * 
+ *
  * @package Combustor
  * @author  Rougin Royce Gutib <rougingutib@gmail.com>
  */
@@ -32,14 +32,14 @@ class ViewValidator implements ValidatorInterface
 
     /**
      * Checks if the validator fails.
-     * 
+     *
      * @return boolean
      */
     public function fails()
     {
         $filePath = APPPATH . 'views/' . $this->name;
 
-        if ( ! @mkdir($filePath, 0775, true)) {
+        if (! @mkdir($filePath, 0775, true)) {
             $this->message = 'The "' . $this->name . '" views folder already exists!';
 
             return true;
@@ -50,7 +50,7 @@ class ViewValidator implements ValidatorInterface
 
     /**
      * Gets the rendered message.
-     * 
+     *
      * @return string
      */
     public function getMessage()

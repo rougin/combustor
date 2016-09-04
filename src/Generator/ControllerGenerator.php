@@ -8,7 +8,7 @@ use Rougin\Combustor\Common\Tools;
  * Controller Generator
  *
  * Generates CodeIgniter-based controllers.
- * 
+ *
  * @package Combustor
  * @author  Rougin Royce Gutib <rougingutib@gmail.com>
  */
@@ -16,7 +16,7 @@ class ControllerGenerator extends BaseGenerator implements GeneratorInterface
 {
     /**
      * Prepares the data before generation.
-     * 
+     *
      * @param  array &$data
      * @return void
      */
@@ -34,7 +34,7 @@ class ControllerGenerator extends BaseGenerator implements GeneratorInterface
 
     /**
      * Generates set of code based on data.
-     * 
+     *
      * @return array
      */
     public function generate()
@@ -73,7 +73,7 @@ class ControllerGenerator extends BaseGenerator implements GeneratorInterface
                     'field' => $field
                 ];
 
-                if ( ! in_array($field, $columnFields)) {
+                if (! in_array($field, $columnFields)) {
                     $field = $this->describe->getPrimaryKey($referencedTable);
 
                     $dropdown['field'] = $field;

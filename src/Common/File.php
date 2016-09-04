@@ -6,7 +6,7 @@ namespace Rougin\Combustor\Common;
  * File
  *
  * A simple object-oriented interface for handling files.
- * 
+ *
  * @package Combustor
  * @author  Rougin Royce Gutib <rougingutib@gmail.com>
  */
@@ -34,7 +34,7 @@ class File
 
     /**
      * Closes an open file pointer.
-     * 
+     *
      * @return boolean
      */
     public function close()
@@ -44,7 +44,7 @@ class File
 
     /**
      * Reads entire file into a string.
-     * 
+     *
      * @return string
      */
     public function getContents()
@@ -54,7 +54,7 @@ class File
 
     /**
      * Writes a string to a file.
-     * 
+     *
      * @param  string $content
      * @return integer|boolean
      */
@@ -65,7 +65,7 @@ class File
 
     /**
      * Changes the file mode of the file.
-     * 
+     *
      * @param  integer $mode
      * @return boolean
      */

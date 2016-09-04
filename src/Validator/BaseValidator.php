@@ -6,7 +6,7 @@ namespace Rougin\Combustor\Validator;
  * Base Validator
  *
  * Checks if Wildfire or Doctrine is available
- * 
+ *
  * @package Combustor
  * @author  Rougin Royce Gutib <rougingutib@gmail.com>
  */
@@ -44,7 +44,7 @@ class BaseValidator implements ValidatorInterface
 
     /**
      * Checks if the validator fails.
-     * 
+     *
      * @return boolean
      */
     public function fails()
@@ -52,7 +52,7 @@ class BaseValidator implements ValidatorInterface
         $hasDoctrine = file_exists(APPPATH . 'libraries/Doctrine.php');
         $hasWildfire = file_exists(APPPATH . 'libraries/Wildfire.php');
 
-        if ( ! $hasWildfire && ! $hasDoctrine) {
+        if (! $hasWildfire && ! $hasDoctrine) {
             $this->message = 'Please install Wildfire or Doctrine!';
 
             return true;
@@ -90,7 +90,7 @@ class BaseValidator implements ValidatorInterface
 
     /**
      * Gets the rendered message.
-     * 
+     *
      * @return string
      */
     public function getMessage()
@@ -100,7 +100,7 @@ class BaseValidator implements ValidatorInterface
 
     /**
      * Gets the selected library.
-     * 
+     *
      * @return string
      */
     public function getLibrary()

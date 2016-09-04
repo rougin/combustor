@@ -13,7 +13,7 @@ use Rougin\Combustor\Commands\AbstractCommand;
  * Install Command
  *
  * Installs Doctrine/Wildfire library for CodeIgniter.
- * 
+ *
  * @package Combustor
  * @author  Rougin Royce Gutib <rougingutib@gmail.com>
  */
@@ -50,7 +50,7 @@ class InstallCommand extends AbstractCommand
 
     /**
      * Adds the specified library in the autoload.php.
-     * 
+     *
      * @param  string $library
      * @return void
      */
@@ -60,7 +60,7 @@ class InstallCommand extends AbstractCommand
 
         $libraries = $autoload->get('libraries', 60, 'array');
 
-        if ( ! in_array($library, $libraries)) {
+        if (! in_array($library, $libraries)) {
             array_push($libraries, $library);
 
             $autoload->set('libraries', 60, $libraries, 'array');

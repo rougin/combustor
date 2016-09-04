@@ -6,7 +6,7 @@ use Rougin\Describe\Describe;
 
 /**
  * Base Generator
- * 
+ *
  * @package Combustor
  * @author  Rougin Royce Gutib <rougingutib@gmail.com>
  */
@@ -34,7 +34,7 @@ class BaseGenerator
 
     /**
      * Gets the primary keys based on specified field.
-     * 
+     *
      * @param  array  $data
      * @param  string $field
      * @param  string $referencedTable
@@ -57,7 +57,7 @@ class BaseGenerator
 
     /**
      * Transforms the field into the template.
-     * 
+     *
      * @param  string $field
      * @param  string $type
      * @return array

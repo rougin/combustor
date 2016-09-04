@@ -13,7 +13,7 @@ use Rougin\Combustor\Commands\AbstractCommand;
  * Remove Command
  *
  * Removes Doctrine/Wildfire library from CodeIgniter.
- * 
+ *
  * @package Combustor
  * @author  Rougin Royce Gutib <rougingutib@gmail.com>
  */
@@ -53,7 +53,7 @@ class RemoveCommand extends AbstractCommand
 
     /**
      * Executes the command.
-     * 
+     *
      * @param \Symfony\Component\Console\Input\InputInterface   $input
      * @param \Symfony\Component\Console\Output\OutputInterface $output
      * @return OutputInterface

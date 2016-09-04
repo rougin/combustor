@@ -8,7 +8,7 @@ use Rougin\Combustor\Common\Commands\RemoveCommand;
  * Remove Wildfire Command
  *
  * Removes Wildfire from CodeIgniter
- * 
+ *
  * @package Combustor
  * @author  Rougin Royce Gutib <rougingutib@gmail.com>
  */

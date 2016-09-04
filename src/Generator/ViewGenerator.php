@@ -8,7 +8,7 @@ use Rougin\Combustor\Common\Tools;
  * View Generator
  *
  * Generates CodeIgniter-based views.
- * 
+ *
  * @package Combustor
  * @author  Rougin Royce Gutib <rougingutib@gmail.com>
  */
@@ -16,7 +16,7 @@ class ViewGenerator extends BaseGenerator implements GeneratorInterface
 {
     /**
      * Prepares the data before generation.
-     * 
+     *
      * @param  array $data
      * @return void
      */
@@ -58,7 +58,7 @@ class ViewGenerator extends BaseGenerator implements GeneratorInterface
 
     /**
      * Generates set of code based on data.
-     * 
+     *
      * @return array
      */
     public function generate()

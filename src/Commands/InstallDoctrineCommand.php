@@ -13,7 +13,7 @@ use Rougin\Combustor\Common\Commands\InstallCommand;
  * Install Doctrine Command
  *
  * Installs Doctrine for CodeIgniter
- * 
+ *
  * @package Combustor
  * @author  Rougin Royce Gutib <rougingutib@gmail.com>
  */
@@ -26,7 +26,7 @@ class InstallDoctrineCommand extends InstallCommand
 
     /**
      * Executes the command.
-     * 
+     *
      * @param \Symfony\Component\Console\Input\InputInterface   $input
      * @param \Symfony\Component\Console\Output\OutputInterface $output
      * @return object|\Symfony\Component\Console\Output\OutputInterface
@@ -50,7 +50,7 @@ class InstallDoctrineCommand extends InstallCommand
 
         $this->addLibrary('doctrine');
 
-        if ( ! is_dir(APPPATH . 'models/proxies')) {
+        if (! is_dir(APPPATH . 'models/proxies')) {
             mkdir(APPPATH . 'models/proxies');
             chmod(APPPATH . 'models/proxies', 0777);
         }

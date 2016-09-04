@@ -14,7 +14,7 @@ use Rougin\Combustor\Validator\ViewValidator;
  * Create View Command
  *
  * Creates a list of views for CodeIgniter
- * 
+ *
  * @package Combustor
  * @author  Rougin Royce Gutib <rougingutib@gmail.com>
  */
@@ -27,7 +27,7 @@ class CreateViewCommand extends AbstractCommand
 
     /**
      * Executes the command.
-     * 
+     *
      * @param \Symfony\Component\Console\Input\InputInterface   $input
      * @param \Symfony\Component\Console\Output\OutputInterface $output
      * @return object|\Symfony\Component\Console\Output\OutputInterface

@@ -6,7 +6,7 @@ namespace Rougin\Combustor\Common;
  * Config
  *
  * A simple object-oriented interface for handling CodeIgniter's configurations.
- * 
+ *
  * @package Combustor
  * @author  Rougin Royce Gutib <rougingutib@gmail.com>
  */
@@ -43,7 +43,7 @@ class Config
 
     /**
      * Returns the specified value from the config item.
-     * 
+     *
      * @param  string       $item
      * @param  integer      $line
      * @param  string  $dataType
@@ -113,7 +113,7 @@ class Config
 
     /**
      * Sets an value to an item in the config.
-     * 
+     *
      * @param string  $item
      * @param integer $line
      * @param mixed   $value
@@ -163,7 +163,7 @@ class Config
 
     /**
      * Saves the current config.
-     * 
+     *
      * @return void
      */
     public function save()
@@ -173,7 +173,7 @@ class Config
 
     /**
      * Returns the whole class into a string.
-     * 
+     *
      * @return string
      */
     public function __toString()

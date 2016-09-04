@@ -8,7 +8,7 @@ use Rougin\Combustor\Common\Tools;
  * Model Generator
  *
  * Generates CodeIgniter-based models.
- * 
+ *
  * @package Combustor
  * @author  Rougin Royce Gutib <rougingutib@gmail.com>
  */
@@ -16,7 +16,7 @@ class ModelGenerator extends BaseGenerator implements GeneratorInterface
 {
     /**
      * Prepares the data before generation.
-     * 
+     *
      * @param  array &$data
      * @return void
      */
@@ -33,7 +33,7 @@ class ModelGenerator extends BaseGenerator implements GeneratorInterface
 
     /**
      * Generates set of code based on data.
-     * 
+     *
      * @return array
      */
     public function generate()

@@ -14,7 +14,7 @@ use Rougin\Combustor\Common\Tools;
  * Abstract Command
  *
  * Extends the Symfony\Console\Command class with Twig's renderer.
- * 
+ *
  * @package Combustor
  * @author  Rougin Royce Gutib <rougingutib@gmail.com>
  */
@@ -62,17 +62,17 @@ abstract class AbstractCommand extends Command
                 'Name of the table'
             )->addOption(
                 'bootstrap',
-                NULL,
+                null,
                 InputOption::VALUE_NONE,
                 'Includes the Bootstrap CSS/JS Framework tags'
             )->addOption(
                 'camel',
-                NULL,
+                null,
                 InputOption::VALUE_NONE,
                 'Uses the camel case naming convention'
             )->addOption(
                 'keep',
-                NULL,
+                null,
                 InputOption::VALUE_NONE,
                 'Keeps the name to be used'
             );

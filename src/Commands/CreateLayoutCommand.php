@@ -14,7 +14,7 @@ use Rougin\Combustor\Common\Tools;
  * Create Layout Command
  *
  * Creates a new header and footer file for CodeIgniter
- * 
+ *
  * @package Combustor
  * @author  Rougin Royce Gutib <rougingutib@gmail.com>
  */
@@ -41,7 +41,7 @@ class CreateLayoutCommand extends AbstractCommand
             ->setDescription('Creates a new header and footer file')
             ->addOption(
                 'bootstrap',
-                NULL,
+                null,
                 InputOption::VALUE_NONE,
                 'Includes the Bootstrap CSS/JS Framework tags'
             );
@@ -49,7 +49,7 @@ class CreateLayoutCommand extends AbstractCommand
 
     /**
      * Executes the command.
-     * 
+     *
      * @param \Symfony\Component\Console\Input\InputInterface   $input
      * @param \Symfony\Component\Console\Output\OutputInterface $output
      * @return object|\Symfony\Component\Console\Output\OutputInterface
@@ -66,7 +66,7 @@ class CreateLayoutCommand extends AbstractCommand
 
         $css = '//maxcdn.bootstrapcdn.com/font-awesome/4.2.0/css/font-awesome.min.css';
 
-        if ( ! is_dir('bower_components/font-awesome') && system('bower install font-awesome')) {
+        if (! is_dir('bower_components/font-awesome') && system('bower install font-awesome')) {
             $css = '<?php echo base_url(\'bower_components/font-awesome/css/font-awesome.min.css\'); ?>';
         }
 
@@ -79,7 +79,7 @@ class CreateLayoutCommand extends AbstractCommand
             $js = 'https://maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap.min.js';
             $jquery = 'https://code.jquery.com/jquery-2.1.1.min.js';
 
-            if ( ! is_dir('bower_components/bootstrap') && system('bower install bootstrap')) {
+            if (! is_dir('bower_components/bootstrap') && system('bower install bootstrap')) {
                 $css = '<?php echo base_url(\'bower_components/bootstrap/dist/css/bootstrap.min.css\'); ?>';
                 $js = '<?php echo base_url(\'bower_components/bootstrap/dist/js/bootstrap.min.js\'); ?>';
                 $jquery = '<?php echo base_url(\'bower_components/jquery/dist/jquery.min.js\'); ?>';
@@ -90,7 +90,7 @@ class CreateLayoutCommand extends AbstractCommand
             array_push($data['scripts'], $js);
         }
 
-        if ( ! @mkdir($layoutPath, 0777, true)) {
+        if (! @mkdir($layoutPath, 0777, true)) {
             $message = 'The layout directory already exists!';
 
             return $output->writeln('<error>' . $message . '</error>');

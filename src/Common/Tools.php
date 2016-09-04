@@ -6,7 +6,7 @@ namespace Rougin\Combustor\Common;
  * Tools
  *
  * Provides a list of multi-purpose functions for Combustor.
- * 
+ *
  * @package Combustor
  * @author  Rougin Royce Gutib <rougingutib@gmail.com>
  */
@@ -27,7 +27,7 @@ class Tools
 
     /**
      * "Ignites" the post installation process.
-     * 
+     *
      * @return void
      */
     public static function ignite()
@@ -52,7 +52,7 @@ class Tools
         $drivers = $autoload->get('drivers', 81, 'array');
 
         // Includes "session" driver.
-        if ( ! in_array('session', $drivers)) {
+        if (! in_array('session', $drivers)) {
             array_push($drivers, 'session');
         }
 
@@ -61,7 +61,7 @@ class Tools
         $helpers = $autoload->get('helper', 91, 'array');
 
         foreach ($defaultHelpers as $helper) {
-            if ( ! in_array($helper, $helpers)) {
+            if (! in_array($helper, $helpers)) {
                 array_push($helpers, $helper);
             }
         }
@@ -110,7 +110,7 @@ class Tools
 
     /**
      * Strips the table schema from the table name.
-     * 
+     *
      * @param  string $table
      * @return string
      */
@@ -123,7 +123,7 @@ class Tools
 
     /**
      * Strips the table schema from the table name.
-     * 
+     *
      * @param  string $table
      * @return string
      */

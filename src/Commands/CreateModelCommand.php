@@ -16,7 +16,7 @@ use Rougin\Combustor\Generator\ModelGenerator;
  * Create Model Command
  *
  * Generates a Wildfire or Doctrine-based model for CodeIgniter
- * 
+ *
  * @package Combustor
  * @author  Rougin Royce Gutib <rougingutib@gmail.com>
  */
@@ -43,12 +43,12 @@ class CreateModelCommand extends AbstractCommand
                 'Name of the table'
             )->addOption(
                 'camel',
-                NULL,
+                null,
                 InputOption::VALUE_NONE,
                 'Uses the camel case naming convention'
             )->addOption(
                 'lowercase',
-                NULL,
+                null,
                 InputOption::VALUE_NONE,
                 'Keeps the first character of the name to lowercase'
             );
@@ -56,7 +56,7 @@ class CreateModelCommand extends AbstractCommand
 
     /**
      * Executes the command.
-     * 
+     *
      * @param \Symfony\Component\Console\Input\InputInterface   $input
      * @param \Symfony\Component\Console\Output\OutputInterface $output
      * @return object|\Symfony\Component\Console\Output\OutputInterface

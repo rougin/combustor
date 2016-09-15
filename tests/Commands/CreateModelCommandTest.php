@@ -42,7 +42,7 @@ class CreateModelCommandTest extends PHPUnit_Framework_TestCase
 
     /**
      * Tests if the expected Wildfire model is created.
-     * 
+     *
      * @return void
      */
     public function testWildfireModelIsCreated()
@@ -70,7 +70,7 @@ class CreateModelCommandTest extends PHPUnit_Framework_TestCase
 
     /**
      * Tests if the expected Doctrine model is created.
-     * 
+     *
      * @return void
      */
     public function testDoctrineModelIsCreated()
@@ -98,7 +98,7 @@ class CreateModelCommandTest extends PHPUnit_Framework_TestCase
 
     /**
      * Tests if command prompts an error if there is no library installed.
-     * 
+     *
      * @return void
      */
     public function testNoLibraryInstalled()

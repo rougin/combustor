@@ -42,7 +42,7 @@ class ValidatorTest extends PHPUnit_Framework_TestCase
 
     /**
      * Tests if command prompts an error if there is no library installed.
-     * 
+     *
      * @return void
      */
     public function testNoLibraryInstalled()
@@ -65,7 +65,7 @@ class ValidatorTest extends PHPUnit_Framework_TestCase
 
     /**
      * Tests if command prompts an error if user does not select a library.
-     * 
+     *
      * @return void
      */
     public function testNoLibrarySelected()
@@ -101,7 +101,7 @@ class ValidatorTest extends PHPUnit_Framework_TestCase
 
     /**
      * Tests if the generated file already exists.
-     * 
+     *
      * @return void
      */
     public function testFileExists()
@@ -137,7 +137,7 @@ class ValidatorTest extends PHPUnit_Framework_TestCase
 
     /**
      * Tests if the command prompts an error if camel is used in Wildfire.
-     * 
+     *
      * @return void
      */
     public function testWildfireCamelCasing()

@@ -1,5 +1,5 @@
 <?php
-defined('BASEPATH') OR exit('No direct script access allowed');
+defined('BASEPATH') or exit('No direct script access allowed');
 
 /*
 | -------------------------------------------------------------------
@@ -71,26 +71,26 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 | the query builder class.
 */
 $active_group = 'default';
-$query_builder = TRUE;
+$query_builder = true;
 
 $db['default'] = array(
-	'dsn'	=> '',
-	'hostname' => 'sqlite:' . APPPATH . 'databases/test.db',
-	'username' => '',
-	'password' => '',
-	'database' => '',
-	'dbdriver' => 'pdo',
-	'dbprefix' => '',
-	'pconnect' => FALSE,
-	'db_debug' => (ENVIRONMENT !== 'production'),
-	'cache_on' => FALSE,
-	'cachedir' => '',
-	'char_set' => 'utf8',
-	'dbcollat' => 'utf8_general_ci',
-	'swap_pre' => '',
-	'encrypt' => FALSE,
-	'compress' => FALSE,
-	'stricton' => FALSE,
-	'failover' => array(),
-	'save_queries' => TRUE
+    'dsn'    => '',
+    'hostname' => 'sqlite:' . APPPATH . 'databases/test.db',
+    'username' => '',
+    'password' => '',
+    'database' => '',
+    'dbdriver' => 'pdo',
+    'dbprefix' => '',
+    'pconnect' => false,
+    'db_debug' => (ENVIRONMENT !== 'production'),
+    'cache_on' => false,
+    'cachedir' => '',
+    'char_set' => 'utf8',
+    'dbcollat' => 'utf8_general_ci',
+    'swap_pre' => '',
+    'encrypt' => false,
+    'compress' => false,
+    'stricton' => false,
+    'failover' => array(),
+    'save_queries' => true
 );

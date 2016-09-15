@@ -44,7 +44,7 @@ class CreateScaffoldCommandTest extends PHPUnit_Framework_TestCase
 
     /**
      * Tests if the initial commands exists.
-     * 
+     *
      * @return void
      */
     public function testCommandsExist()
@@ -96,7 +96,7 @@ class CreateScaffoldCommandTest extends PHPUnit_Framework_TestCase
 
     /**
      * Gets the application with the loaded classes.
-     * 
+     *
      * @return \Symfony\Component\Console\Application
      */
     protected function getApplication()

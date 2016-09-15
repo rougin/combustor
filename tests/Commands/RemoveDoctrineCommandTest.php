@@ -46,7 +46,7 @@ class RemoveDoctrineCommandTest extends PHPUnit_Framework_TestCase
 
     /**
      * Tests if the expected file exists after executing the command.
-     * 
+     *
      * @return void
      */
     public function testFileExists()
@@ -59,7 +59,7 @@ class RemoveDoctrineCommandTest extends PHPUnit_Framework_TestCase
 
         $file = $this->appPath . '/libraries/Doctrine.php';
 
-        $this->assertTrue( ! file_exists($file));
+        $this->assertTrue(! file_exists($file));
 
         CodeIgniterHelper::setDefaults($this->appPath);
     }

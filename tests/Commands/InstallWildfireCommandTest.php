@@ -38,7 +38,7 @@ class InstallWildfireCommandTest extends PHPUnit_Framework_TestCase
 
     /**
      * Tests if the expected file exists after executing the command.
-     * 
+     *
      * @return void
      */
     public function testFileExists()

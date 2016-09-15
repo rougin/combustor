@@ -42,7 +42,7 @@ class CreateViewCommandTest extends PHPUnit_Framework_TestCase
 
     /**
      * Tests if the expected views are created.
-     * 
+     *
      * @return void
      */
     public function testViewsAreCreated()
@@ -72,7 +72,7 @@ class CreateViewCommandTest extends PHPUnit_Framework_TestCase
 
     /**
      * Tests if the command prompts an error if the folder already exists.
-     * 
+     *
      * @return void
      */
     public function testFolderAlreadyExists()

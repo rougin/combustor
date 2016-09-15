@@ -42,7 +42,7 @@ class CreateControllerCommandTest extends PHPUnit_Framework_TestCase
 
     /**
      * Tests if the expected Wildfire controller is created.
-     * 
+     *
      * @return void
      */
     public function testWildfireControllerIsCreated()
@@ -71,7 +71,7 @@ class CreateControllerCommandTest extends PHPUnit_Framework_TestCase
 
     /**
      * Tests if the expected Doctrine controller is created.
-     * 
+     *
      * @return void
      */
     public function testDoctrineControllerIsCreated()

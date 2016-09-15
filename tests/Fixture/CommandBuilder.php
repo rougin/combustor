@@ -12,7 +12,7 @@ use Rougin\Describe\Driver\CodeIgniterDriver;
 
 /**
  * Command Builder
- * 
+ *
  * @package Combustor
  * @author  Rougin Royce Gutib <rougingutib@gmail.com>
  */
@@ -20,7 +20,7 @@ class CommandBuilder
 {
     /**
      * Injects a command with its dependencies.
-     * 
+     *
      * @param  string $command
      * @param  string $app
      * @param  string $templates

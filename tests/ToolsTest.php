@@ -11,7 +11,7 @@ class ToolsTest extends PHPUnit_Framework_TestCase
 {
     /**
      * Tests Tools::strip_table_schema.
-     * 
+     *
      * @return void
      */
     public function testStripTableSchema()

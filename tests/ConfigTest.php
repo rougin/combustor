@@ -30,7 +30,7 @@ class ConfigTest extends PHPUnit_Framework_TestCase
 
     /**
      * Tests Config::get.
-     * 
+     *
      * @return void
      */
     public function testGet()
@@ -48,7 +48,7 @@ class ConfigTest extends PHPUnit_Framework_TestCase
 
     /**
      * Tests Config::set.
-     * 
+     *
      * @return void
      */
     public function testSet()

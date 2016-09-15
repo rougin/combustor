@@ -1,5 +1,5 @@
 <?php
-defined('BASEPATH') OR exit('No direct script access allowed');
+defined('BASEPATH') or exit('No direct script access allowed');
 
 /*
 |--------------------------------------------------------------------------
@@ -47,7 +47,7 @@ define('FOPEN_READ_WRITE_CREATE_STRICT', 'x+b');
 | of this setting
 |
 */
-define('SHOW_DEBUG_BACKTRACE', TRUE);
+define('SHOW_DEBUG_BACKTRACE', true);
 
 /*
 |--------------------------------------------------------------------------

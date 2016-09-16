@@ -56,9 +56,7 @@ class ValidatorTest extends PHPUnit_Framework_TestCase
             '--keep' => true
         ]);
 
-        $expected = 'Please install Wildfire or Doctrine!' . PHP_EOL;
-
-        $this->assertEquals($expected, $createCommand->getDisplay());
+        $this->assertRegExp('/Please install Wildfire or Doctrine/', $createCommand->getDisplay());
 
         CodeIgniterHelper::setDefaults($this->appPath);
     }
@@ -92,9 +90,7 @@ class ValidatorTest extends PHPUnit_Framework_TestCase
             '--keep' => false
         ]);
 
-        $expected = 'Both Wildfire and Doctrine exists! Choose only one.' . PHP_EOL;
-
-        $this->assertEquals($expected, $createCommand->getDisplay());
+        $this->assertRegExp('/Choose only one/', $createCommand->getDisplay());
 
         CodeIgniterHelper::setDefaults($this->appPath);
     }
@@ -128,9 +124,7 @@ class ValidatorTest extends PHPUnit_Framework_TestCase
             '--keep' => true
         ]);
 
-        $expected = 'The "' . ucfirst($this->table) . '" controller already exists!' . PHP_EOL;
-
-        $this->assertEquals($expected, $createCommand->getDisplay());
+        $this->assertRegExp('/controller already exists/', $createCommand->getDisplay());
 
         CodeIgniterHelper::setDefaults($this->appPath);
     }
@@ -157,9 +151,7 @@ class ValidatorTest extends PHPUnit_Framework_TestCase
             '--keep' => true
         ]);
 
-        $expected = 'Wildfire does not support camel casing!' . PHP_EOL;
-
-        $this->assertEquals($expected, $createCommand->getDisplay());
+        $this->assertRegExp('/not support camel casing/', $createCommand->getDisplay());
 
         CodeIgniterHelper::setDefaults($this->appPath);
     }

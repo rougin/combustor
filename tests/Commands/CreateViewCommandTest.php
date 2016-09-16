@@ -92,9 +92,7 @@ class CreateViewCommandTest extends PHPUnit_Framework_TestCase
         $createCommand = new CommandTester($this->createCommand);
         $createCommand->execute($options);
 
-        $expected = 'The "' . plural($this->table) . '" views folder already exists!' . PHP_EOL;
-
-        $this->assertEquals($expected, $createCommand->getDisplay());
+        $this->assertRegExp('/views folder already exists/', $createCommand->getDisplay());
 
         CodeIgniterHelper::setDefaults($this->appPath);
     }

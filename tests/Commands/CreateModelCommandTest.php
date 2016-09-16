@@ -113,7 +113,7 @@ class CreateModelCommandTest extends PHPUnit_Framework_TestCase
 
         $expected = 'Please install Wildfire or Doctrine!' . PHP_EOL;
 
-        $this->assertEquals($expected, $createCommand->getDisplay());
+        $this->assertRegExp('/Please install Wildfire or Doctrine/', $createCommand->getDisplay());
 
         CodeIgniterHelper::setDefaults($this->appPath);
     }

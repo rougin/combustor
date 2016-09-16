@@ -60,7 +60,7 @@ class Config
 
                 break;
             case 'boolean':
-                $value = '(TRUE|FALSE)';
+                $value = '(true|TRUE|false|FALSE)';
 
                 break;
             case 'string':

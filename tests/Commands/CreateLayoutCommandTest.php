@@ -44,7 +44,7 @@ class CreateLayoutCommandTest extends PHPUnit_Framework_TestCase
         CodeIgniterHelper::setDefaults($this->appPath);
 
         $command = new CommandTester($this->command);
-        $command->execute([ '--bootstrap' => true]);
+        $command->execute([ '--bootstrap' => true ]);
 
         $header = $this->appPath . '/views/layout/header.php';
         $footer = $this->appPath . '/views/layout/footer.php';
@@ -64,12 +64,10 @@ class CreateLayoutCommandTest extends PHPUnit_Framework_TestCase
     {
         $command = new CommandTester($this->command);
 
-        $command->execute([ '--bootstrap' => true]);
-        $command->execute([ '--bootstrap' => true]);
+        $command->execute([ '--bootstrap' => true ]);
+        $command->execute([ '--bootstrap' => true ]);
 
-        $message = 'The layout directory already exists!' . PHP_EOL;
-
-        $this->assertEquals($message, $command->getDisplay());
+        $this->assertRegExp('/layout directory already exists/', $command->getDisplay());
 
         CodeIgniterHelper::setDefaults($this->appPath);
     }

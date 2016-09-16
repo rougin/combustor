@@ -2,6 +2,11 @@
 
 All notable changes to `Combustor` will be documented in this file.
 
+## [1.2.3](https://github.com/rougin/combustor/compare/v1.2.2...v1.2.3) - 2016-09-16
+
+### Fixed
+- Issues in unit testing
+
 ## [1.2.2](https://github.com/rougin/combustor/compare/v1.2.1...v1.2.2) - 2016-09-04
 
 ### Changed

@@ -46,33 +46,25 @@ class MakeModelCommand extends AbstractCommand
      */
     protected function execute(InputInterface $input, OutputInterface $output)
     {
+        $modelType = '';
+
+        load_class('Model', 'core');
+
+        if (class_exists('Rougin\Wildfire\CodeigniterModel')) {
+            $modelType = 'Models/Wildfire';
+        } elseif (class_exists('Rougin\Credo\CodeigniterModel')) {
+            $modelType = 'Models/Credo';
+        } else {
+            throw new ModelNotFoundException('Credo or Wildfire is not yet installed!');
+        }
+
         $contents  = (new DataGenerator($this->describe, $input))->generate();
         $converter = $this->renderer->getExtension('CaseExtension');
         $filename  = $converter->toUnderscoreCase($input->getArgument('table'));
-        $rendered  = $this->renderer->render($this->getModelType() . '.twig', $contents);
+        $rendered  = $this->renderer->render($modelType . '.twig', $contents);
 
         $this->filesystem->write(ucfirst(singular($filename)) . '.php', $rendered);
 
         $output->writeln('<info>Model created successfully!</info>');
-    }
-
-    /**
-     * Returns the existing type to be used as the model template.
-     *
-     * @return string
-     */
-    protected function getModelType()
-    {
-        load_class('Model', 'core');
-
-        if (class_exists('Rougin\Wildfire\CodeigniterModel')) {
-            return 'Models/Wildfire';
-        }
-
-        if (class_exists('Rougin\Credo\CodeigniterModel')) {
-            return 'Models/Credo';
-        }
-
-        throw new ModelNotFoundException('Credo or Wildfire is not yet installed!');
     }
 }

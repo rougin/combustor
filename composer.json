@@ -19,15 +19,17 @@
         }
     ],
     "require": {
+        "avro/case-bundle": "~0.1",
         "rougin/blueprint": "dev-master",
-        "rougin/codeigniter": "~3.0",
         "rougin/describe": "dev-master",
-        "rougin/spark-plug": "~0.4.2",
-        "avro/case-bundle": "^0.1.2"
+        "rougin/spark-plug": "~0.4.2"
     },
     "require-dev": {
+        "phpunit/phpunit" : "4.*",
+        "rougin/codeigniter": "~3.0",
         "rougin/credo": "dev-master",
-        "rougin/wildfire": "dev-master"
+        "rougin/wildfire": "dev-master",
+        "scrutinizer/ocular": "~1.1"
     },
     "bin": [
         "bin/combustor",

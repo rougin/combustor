@@ -19,15 +19,15 @@
         }
     ],
     "require": {
-        "php" : ">=5.4.0",
-        "rougin/blueprint": "~0.1",
-        "rougin/describe": "~1.4",
-        "rougin/spark-plug": "~0.4.2"
+        "rougin/blueprint": "dev-master",
+        "rougin/codeigniter": "~3.0",
+        "rougin/describe": "dev-master",
+        "rougin/spark-plug": "~0.4.2",
+        "avro/case-bundle": "^0.1.2"
     },
     "require-dev": {
-        "phpunit/phpunit" : "4.*",
-        "scrutinizer/ocular": "~1.1",
-        "rougin/codeigniter": "~3.0"
+        "rougin/credo": "dev-master",
+        "rougin/wildfire": "dev-master"
     },
     "bin": [
         "bin/combustor",
@@ -48,11 +48,11 @@
     },
     "extra": {
         "branch-alias": {
-            "dev-master": "1.3-dev"
+            "dev-master": "2.0-dev"
         }
     },
     "suggest": {
-        "rougin/codeigniter": "Yet another way to install CodeIgniter via Composer",
+        "rougin/codeigniter": "Installs CodeIgniter core through Composer",
         "rougin/refinery": "\"Ready-to-eat\" migrations for Codeigniter"
     }
 }

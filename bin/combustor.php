@@ -3,48 +3,35 @@
 // Include the Composer Autoloader
 require 'vendor/autoload.php';
 
-// Load the Blueprint library
+$codeigniter = Rougin\SparkPlug\Instance::create(__DIR__ . '/../build'); // test
+
+$codeigniter->load->helper('inflector')->database();
+
+$driver   = new Rougin\Describe\Driver\CodeIgniterDriver((array) $codeigniter->db);
+$describe = new Rougin\Describe\Describe($driver);
+
 $injector = new Auryn\Injector;
-$console = new Symfony\Component\Console\Application;
-$app = new Rougin\Blueprint\Blueprint($console, $injector);
 
-// Application details
-$app->console->setName('Combustor');
-$app->console->setVersion('1.2.2');
+$injector->share($codeigniter)->share($describe);
 
-$app
-    ->setTemplatePath(__DIR__ . '/../src/Templates')
-    ->setCommandPath(__DIR__ . '/../src/Commands')
-    ->setCommandNamespace('Rougin\Combustor\Commands');
+// Checks the data from combustor.yml
+$combustor = Rougin\Blueprint\Console::boot('combustor.yml', $injector);
 
-$app->injector->delegate('CI_Controller', function () {
-    return Rougin\SparkPlug\Instance::create();
-});
+// ------------------------------------------------------------
+// must be set in Blueprint
 
-$ci = $app->injector->make('CI_Controller');
+$twig = $combustor->injector->make('Twig_Environment');
 
-$app->injector->delegate('Rougin\Describe\Describe', function () use ($ci) {
-    $ci->load->database();
-    $ci->load->helper('inflector');
+$converter = new Avro\CaseBundle\Util\CaseConverter;
+$extension = new Avro\CaseBundle\Twig\Extension\CaseExtension($converter);
 
-    $config = [];
+// Add extensions
+$twig->addExtension($extension);
 
-    $config['default'] = [
-        'dbdriver' => $ci->db->dbdriver,
-        'hostname' => $ci->db->hostname,
-        'username' => $ci->db->username,
-        'password' => $ci->db->password,
-        'database' => $ci->db->database
-    ];
+$combustor->injector->share($twig);
+// ------------------------------------------------------------
 
-    if (empty($config['default']['hostname'])) {
-        $config['default']['hostname'] = $ci->db->dsn;
-    }
+$combustor->console->setName('Combustor');
+$combustor->console->setVersion('2.0.0');
 
-    $driver = new Rougin\Describe\Driver\CodeIgniterDriver($config);
-
-    return new Rougin\Describe\Describe($driver);
-});
-
-// Run the Combustor console application
-$app->run();
+$combustor->run();

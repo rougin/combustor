@@ -1,0 +1,44 @@
+<?php
+defined('BASEPATH') OR exit('No direct script access allowed');
+
+class {{ (singular | underscore) | capitalize }} extends \Rougin\Wildfire\CodeigniterModel {
+
+	use \Rougin\Wildfire\Traits\PaginateTrait,
+		\Rougin\Wildfire\Traits\ValidateTrait;
+
+	/**
+	 * Defines an inverse one-to-one or many relationship.
+	 *
+	 * @var array
+	 */
+	protected $belongs_to = array({% for column in foreign %}'{{ column.field | underscore | replace({ '_id': '' }) }}'{{ loop.last ? '' : ', ' }}{% endfor %});
+
+	/**
+     * Model's default primary key or unique identifier.
+     *
+     * @var string
+     */
+    protected $primary_key = '{{ primary_key }}';
+
+	/**
+	 * The table associated with the model.
+	 *
+	 * @var string
+	 */
+	protected $table = '{{ table }}';
+
+	/**
+	 * An array of validation rules. This needs to be the same format
+	 * as validation rules passed to the Form_validation library.
+	 *
+	 * @var array
+	 */
+	protected $validation_rules = array(
+{% for column in columns %}
+{% if not column.isNull and not column.isPrimaryKey %}
+		array('field' => '{{ column.field }}', 'label' => '{{ (column.isForeignKey ? (column.field | underscore | replace({ '_id': '' })) : column.field) | title }}', 'rules' => 'required'),
+{% endif %}
+{% endfor %}
+	);
+
+}

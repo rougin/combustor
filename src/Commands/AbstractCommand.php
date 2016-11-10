@@ -2,28 +2,28 @@
 
 namespace Rougin\Combustor\Commands;
 
-use Twig_Environment;
-use Symfony\Component\Console\Command\Command;
+use Rougin\Describe\Describe;
+use League\Flysystem\Filesystem;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Input\InputArgument;
-
-use Rougin\Describe\Describe;
-use Rougin\Combustor\Common\Tools;
 
 /**
  * Abstract Command
  *
- * Extends the Symfony\Console\Command class with Twig's renderer.
- *
  * @package Combustor
  * @author  Rougin Royce Gutib <rougingutib@gmail.com>
  */
-abstract class AbstractCommand extends Command
+abstract class AbstractCommand extends \Symfony\Component\Console\Command\Command
 {
+    /**
+     * @var \CI_Controller
+     */
+    protected $codeigniter;
+
     /**
      * @var string
      */
-    protected $command = '';
+    protected $command;
 
     /**
      * @var \Rougin\Describe\Describe
@@ -31,69 +31,28 @@ abstract class AbstractCommand extends Command
     protected $describe;
 
     /**
+     * @var \League\Flysystem\Filesystem
+     */
+    protected $filesystem;
+
+    /**
      * @var \Twig_Environment
      */
     protected $renderer;
 
     /**
-     * @param \Twig_Environment         $renderer
-     * @param \Rougin\Describe\Describe $describe
+     * @param \CI_Controller               $codeigniter
+     * @param \Rougin\Describe\Describe    $describe
+     * @param \League\Flysystem\Filesystem $filesystem
+     * @param \Twig_Environment            $renderer
      */
-    public function __construct(Describe $describe, Twig_Environment $renderer)
+    public function __construct(\CI_Controller $codeigniter, Describe $describe, Filesystem $filesystem, \Twig_Environment $renderer = null)
     {
         parent::__construct();
 
-        $this->describe = $describe;
-        $this->renderer = $renderer;
-    }
-
-    /**
-     * Set the configurations of the specified command
-     *
-     * @return void
-     */
-    protected function configure()
-    {
-        $this->setName('create:' . $this->command)
-            ->setDescription('Create a new ' . $this->command)
-            ->addArgument(
-                'name',
-                InputArgument::REQUIRED,
-                'Name of the table'
-            )->addOption(
-                'bootstrap',
-                null,
-                InputOption::VALUE_NONE,
-                'Includes the Bootstrap CSS/JS Framework tags'
-            )->addOption(
-                'camel',
-                null,
-                InputOption::VALUE_NONE,
-                'Uses the camel case naming convention'
-            )->addOption(
-                'keep',
-                null,
-                InputOption::VALUE_NONE,
-                'Keeps the name to be used'
-            );
-
-        if ($this->command == 'controller') {
-            $this->addOption(
-                'lowercase',
-                null,
-                InputOption::VALUE_NONE,
-                'Keeps the first character of the name to lowercase'
-            );
-        }
-    }
-
-    /**
-     * Checks whether the command is enabled or not in the current environment.
-     *
-     * @return bool
-     */
-    public function isEnabled()
-    {
-        return Tools::isCommandEnabled();
+        $this->codeigniter = $codeigniter;
+        $this->describe    = $describe;
+        $this->filesystem  = $filesystem;
+        $this->renderer    = $renderer;
     }
 }

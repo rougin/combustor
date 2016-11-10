@@ -31,11 +31,6 @@ class MakeViewCommand extends AbstractCommand
     {
         $this->setName('make:view')->setDescription('Creates a new view');
         $this->addArgument('table', InputArgument::REQUIRED, 'Name of the table');
-        $this->addOption('bootstrap', null, InputOption::VALUE_NONE, 'Includes the Bootstrap CSS/JS Framework tags');
-
-        // $this->addOption('camel', null, InputOption::VALUE_NONE, 'Uses the camel case naming convention');
-        // $this->addOption('keep', null, InputOption::VALUE_NONE, 'Keeps the name to be used');
-        // $this->addOption('overwrite', null, InputOption::VALUE_NONE, 'Overwrite the specified file');
     }
 
     /**

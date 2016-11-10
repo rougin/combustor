@@ -31,10 +31,6 @@ class MakeModelCommand extends AbstractCommand
     {
         $this->setName('make:model')->setDescription('Creates a new model');
         $this->addArgument('table', InputArgument::REQUIRED, 'Name of the table');
-
-        // $this->addOption('camel', null, InputOption::VALUE_NONE, 'Uses the camel case naming convention');
-        // $this->addOption('keep', null, InputOption::VALUE_NONE, 'Keeps the name to be used');
-        // $this->addOption('overwrite', null, InputOption::VALUE_NONE, 'Overwrite the specified file');
     }
 
     /**

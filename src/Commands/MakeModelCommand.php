@@ -42,8 +42,6 @@ class MakeModelCommand extends AbstractCommand
      */
     protected function execute(InputInterface $input, OutputInterface $output)
     {
-        $modelType = '';
-
         load_class('Model', 'core');
 
         if (class_exists('Rougin\Wildfire\CodeigniterModel')) {

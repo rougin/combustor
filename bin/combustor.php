@@ -6,12 +6,12 @@ $directory = __DIR__ . '/../build'; // test
 
 Rougin\SparkPlug\Instance::create($directory);
 
-require $directory . '/application/config/database.php';
+require APPPATH . 'config/database.php';
 
 if (file_exists('vendor/rougin/codeigniter/src/helpers/inflector_helper.php')) {
     require 'vendor/rougin/codeigniter/src/helpers/inflector_helper.php';
 } else {
-    require $directory . '/system/helpers/inflector_helper.php';
+    require BASEPATH . 'helpers/inflector_helper.php';
 }
 
 $driver   = new Rougin\Describe\Driver\CodeIgniterDriver($db[$active_group]);

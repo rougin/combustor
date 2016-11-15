@@ -18,18 +18,13 @@ use Rougin\Combustor\Common\DataGenerator;
 class MakeViewCommand extends AbstractCommand
 {
     /**
-     * @var string
-     */
-    protected $command = 'view';
-
-    /**
      * Set the configurations of the specified command
      *
      * @return void
      */
     protected function configure()
     {
-        $this->setName('make:view')->setDescription('Creates a new view');
+        $this->setName('make:view')->setDescription('Create a new view folder');
         $this->addArgument('table', InputArgument::REQUIRED, 'Name of the table');
     }
 

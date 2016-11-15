@@ -18,18 +18,13 @@ use Rougin\Combustor\Exceptions\ModelNotFoundException;
 class MakeModelCommand extends AbstractCommand
 {
     /**
-     * @var string
-     */
-    protected $command = 'model';
-
-    /**
      * Set the configurations of the specified command
      *
      * @return void
      */
     protected function configure()
     {
-        $this->setName('make:model')->setDescription('Creates a new model');
+        $this->setName('make:model')->setDescription('Create a new model class');
         $this->addArgument('table', InputArgument::REQUIRED, 'Name of the table');
     }
 

@@ -1,6 +1,6 @@
 {
     "name": "rougin/combustor",
-    "description": "Lets you generate controllers, models, and views from database tables for CodeIgniter",
+    "description": "Generate controllers, models, and views from database for CodeIgniter",
     "keywords": [
         "codeigniter",
         "combustor",

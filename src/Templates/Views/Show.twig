@@ -1,0 +1,16 @@
+<?php $this->load->view('layout/header'); ?>
+	<h1><i class="fa fa-lg fa-list"></i> {{ plural | title }}</h1>
+
+	<div class="text-right">
+		<a class="btn btn-default" href="<?php echo base_url('{{ plural }}'); ?>">Cancel</a>
+	</div>
+
+{% for column in columns if not column.isPrimaryKey and column.field != 'datetime_created' and column.field != 'datetime_updated' %}
+	<div class="form-group col-lg-12 col-md-12 col-sm-12 col-xs-12">
+		<?php echo form_label('{{ field }}', '{{ column.field }}', array('class' => 'control-label')); ?>
+		<div class="">
+			<input type="text" class="form-control" value="<?php echo ${{ singular }}->get_{{ column.field }}(); ?>" disabled>
+		</div>
+	</div>
+{% endfor %}
+<?php $this->load->view('layout/footer'); ?>

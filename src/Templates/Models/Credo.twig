@@ -1,0 +1,88 @@
+<?php
+defined('BASEPATH') OR exit('No direct script access allowed');
+
+/**
+ * @Entity
+ * @Table(name="{{ singular }}")
+ */
+class {{ (singular | underscore) | capitalize }} extends \Rougin\Credo\CodeigniterModel {
+
+	use \Rougin\Credo\Traits\PaginateTrait,
+		\Rougin\Credo\Traits\ValidateTrait;
+
+	/**
+	 * An array of validation rules. This needs to be the same format
+	 * as validation rules passed to the Form_validation library.
+	 *
+	 * @var array
+	 */
+	protected $validation_rules = array(
+{% for column in columns %}
+{% if not column.isNull and not column.isPrimaryKey %}
+		array('field' => '{{ column.field }}', 'label' => '{{ (column.isForeignKey ? (column.field | underscore | replace({ '_id': '' })) : column.field) | title }}', 'rules' => 'required'),
+{% endif %}
+{% endfor %}
+	);
+
+{% for column in columns %}
+	/**
+{% if column.isPrimaryKey or column.isAutoIncrement %}
+	 * {{ column.isPrimaryKey ? '@Id ' : ''}}{{ column.isAutoIncrement ? '@GeneratedValue' : '' }}
+{% endif %}
+	 * @Column(name="{{ column.field }}", type="{{ column.dataType }}"{{ column.length ? ', length=' ~ column.length ~ ',' : ','}} nullable={{ column.isNull ? 'TRUE' : 'FALSE' }}, unique={{ column.isUnique ? 'TRUE' : 'FALSE' }})
+	 * @var {{ column.dataType }}
+	 */
+	protected ${{ column.field }};
+
+{% if column.isForeignKey %}
+	/**
+	 * @ManyToOne(targetEntity="{{ column.referencedTable | capitalize }}", cascade={"persist"})
+	 * @JoinColumn(name="{{ column.field }}", referencedColumnName="{{ column.referencedField }}", nullable={{ column.isNull ? 'TRUE' : 'FALSE' }}, unique={{ column.isUnique ? 'TRUE' : 'FALSE' }}, onDelete="cascade")
+	 * @var {{ column.dataType }}
+	 */
+	protected ${{ column.field | underscore | replace({ '_id': '' }) }};
+
+{% endif %}
+{% endfor %}
+{% for column in columns %}
+	/**
+	 * Gets the {{ (column.isForeignKey ? (column.field | underscore | replace({ '_id': '' })) : column.field) | lower | replace({'_': ' '}) }}.
+	 *
+	 * @return {{ column.dataType }}
+	 */
+	public function get_{{ (column.isForeignKey ? (column.field | underscore | replace({ '_id': '' })) : column.field) | underscore }}()
+	{
+		return $this->{{ column.isForeignKey ? (column.field | underscore | replace({ '_id': '' })) : column.field }};
+	}
+
+	/**
+	 * Sets the {{ (column.isForeignKey ? (column.field | underscore | replace({ '_id': '' })) : column.field) | lower | replace({'_': ' '}) }}.
+	 *
+	 * @param  {{ column.isForeignKey ? ('\\' ~ column.referencedTable | capitalize) : column.dataType }}
+	 * @return self
+	 */
+	public function set_{{ (column.isForeignKey ? (column.field | underscore | replace({ '_id': '' })) : column.field) | underscore }}({{ column.isForeignKey ? '\\' ~ column.referencedTable | capitalize ~ ' ' : '' }}${{ (column.isForeignKey ? column.referencedTable : column.field) | underscore }})
+	{
+{% if column.dataType == 'date' or column.dataType == 'datetime' %}
+		$this->{{ column.isForeignKey ? (column.field | underscore | replace({ '_id': '' })) : column.field }} = new \DateTime(${{ (column.isForeignKey ? (column.field | underscore | replace({ '_id': '' })) : column.field) | underscore }});
+{% else %}
+		$this->{{ column.isForeignKey ? (column.field | underscore | replace({ '_id': '' })) : column.field }} = ${{ (column.isForeignKey ? (column.field | underscore | replace({ '_id': '' })) : column.field) | underscore }};
+{% endif %}
+
+		return $this;
+	}
+{% if column.isForeignKey %}
+
+	/**
+	 * Gets the {{ column.field | lower | replace({'_': ' '}) }}
+	 *
+	 * @return {{ column.dataType }}
+	 */
+	public function get_{{ column.field | underscore }}()
+	{
+		return $this->{{ column.field }};
+	}
+{% endif %}
+
+{% endfor %}
+}

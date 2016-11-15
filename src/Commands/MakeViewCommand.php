@@ -45,7 +45,7 @@ class MakeViewCommand extends AbstractCommand
         $contents  = (new DataGenerator($this->describe, $input))->generate();
         $converter = $this->renderer->getExtension('CaseExtension');
         $filename  = $converter->toUnderscoreCase($input->getArgument('table'));
-        $directory = strtolower(plural($filename));
+        $directory = 'application/views/' . strtolower(plural($filename));
 
         $create = $this->renderer->render('Views/Create.twig', $contents);
         $edit   = $this->renderer->render('Views/Edit.twig', $contents);

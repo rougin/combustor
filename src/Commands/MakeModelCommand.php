@@ -57,7 +57,7 @@ class MakeModelCommand extends AbstractCommand
         $filename  = $converter->toUnderscoreCase($input->getArgument('table'));
         $rendered  = $this->renderer->render($modelType . '.twig', $contents);
 
-        $this->filesystem->write(ucfirst(singular($filename)) . '.php', $rendered);
+        $this->filesystem->write('application/models/' . ucfirst(singular($filename)) . '.php', $rendered);
 
         $output->writeln('<info>Model created successfully!</info>');
     }

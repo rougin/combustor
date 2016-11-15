@@ -47,7 +47,7 @@ class MakeControllerCommand extends AbstractCommand
         $filename  = $converter->toUnderscoreCase($input->getArgument('table'));
         $rendered  = $this->renderer->render('Controller.twig', $contents);
 
-        $this->filesystem->write(ucfirst(plural($filename)) . '.php', $rendered);
+        $this->filesystem->write('application/controllers/' . ucfirst(plural($filename)) . '.php', $rendered);
 
         $output->writeln('<info>Controller created successfully!</info>');
     }

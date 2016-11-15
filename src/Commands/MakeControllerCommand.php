@@ -38,11 +38,10 @@ class MakeControllerCommand extends AbstractCommand
     protected function execute(InputInterface $input, OutputInterface $output)
     {
         $contents  = (new DataGenerator($this->describe, $input))->generate();
-        $converter = $this->renderer->getExtension('CaseExtension');
-        $filename  = $converter->toUnderscoreCase($input->getArgument('table'));
+        $filename  = ucfirst(plural(underscore($input->getArgument('table'))));
         $rendered  = $this->renderer->render('Controller.twig', $contents);
 
-        $this->filesystem->write('application/controllers/' . ucfirst(plural($filename)) . '.php', $rendered);
+        $this->filesystem->write('application/controllers/' . $filename . '.php', $rendered);
 
         $output->writeln('<info>Controller created successfully!</info>');
     }

@@ -19,7 +19,6 @@
         }
     ],
     "require": {
-        "avro/case-bundle": "~0.1",
         "rougin/blueprint": "dev-master",
         "rougin/describe": "dev-master",
         "rougin/spark-plug": "~0.4.2"

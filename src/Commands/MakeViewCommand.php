@@ -37,20 +37,17 @@ class MakeViewCommand extends AbstractCommand
      */
     protected function execute(InputInterface $input, OutputInterface $output)
     {
-        $contents  = (new DataGenerator($this->describe, $input))->generate();
-        $converter = $this->renderer->getExtension('CaseExtension');
-        $filename  = $converter->toUnderscoreCase($input->getArgument('table'));
-        $directory = 'application/views/' . strtolower(plural($filename));
+        $contents = (new DataGenerator($this->describe, $input))->generate();
+        $filename = strtolower(plural(underscore($input->getArgument('table'))));
 
-        $create = $this->renderer->render('Views/Create.twig', $contents);
-        $edit   = $this->renderer->render('Views/Edit.twig', $contents);
-        $index  = $this->renderer->render('Views/Index.twig', $contents);
-        $show   = $this->renderer->render('Views/Show.twig', $contents);
+        $views = [ 'create', 'edit', 'index', 'show' ];
 
-        $this->filesystem->write($directory . '/create.php', $create);
-        $this->filesystem->write($directory . '/edit.php', $edit);
-        $this->filesystem->write($directory . '/index.php', $index);
-        $this->filesystem->write($directory . '/show.php', $show);
+        foreach ($views as $item) {
+            $file = 'application/views/' . $filename . '/' . $item . '.php';
+            $view = $this->renderer->render('Views/' . ucfirst($item) . '.twig', $contents);
+
+            $this->filesystem->write($file, $view);
+        }
 
         $output->writeln('<info>Views created successfully!</info>');
     }

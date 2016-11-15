@@ -20,11 +20,10 @@ $injector->share($codeigniter)->share($describe);
 
 $combustor = Rougin\Blueprint\Console::boot('combustor.yml', $injector, __DIR__ . '/../build');
 
-$converter = new Avro\CaseBundle\Util\CaseConverter;
-$extension = new Avro\CaseBundle\Twig\Extension\CaseExtension($converter);
-$template  = $combustor->getTemplatePath();
+$extensions = [ new Rougin\Combustor\Common\InflectorExtension ];
+$template   = $combustor->getTemplatePath();
 
-$combustor->setTemplatePath($template, null, [ $extension ]);
+$combustor->setTemplatePath($template, null, $extensions);
 
 $combustor->console->setName('Combustor');
 $combustor->console->setVersion('2.0.0');

@@ -10,7 +10,7 @@
 			<thead>
 				<tr>
 {% for column in columns if not column.isPrimaryKey and column.field != 'datetime_created' and column.field != 'datetime_updated' %}
-					<td>{{ column.field | replace({'_id': '', '_': ' '}) | title }}</td>
+					<td>{{ column.field | replace({ '_id': '', '_': ' ' }) | title }}</td>
 {% endfor %}
 				</tr>
 			</thead>

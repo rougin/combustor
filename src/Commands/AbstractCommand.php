@@ -4,8 +4,6 @@ namespace Rougin\Combustor\Commands;
 
 use Rougin\Describe\Describe;
 use League\Flysystem\Filesystem;
-use Symfony\Component\Console\Input\InputOption;
-use Symfony\Component\Console\Input\InputArgument;
 
 /**
  * Abstract Command
@@ -15,11 +13,6 @@ use Symfony\Component\Console\Input\InputArgument;
  */
 abstract class AbstractCommand extends \Symfony\Component\Console\Command\Command
 {
-    /**
-     * @var \CI_Controller
-     */
-    protected $codeigniter;
-
     /**
      * @var string
      */
@@ -41,16 +34,14 @@ abstract class AbstractCommand extends \Symfony\Component\Console\Command\Comman
     protected $renderer;
 
     /**
-     * @param \CI_Controller               $codeigniter
      * @param \Rougin\Describe\Describe    $describe
      * @param \League\Flysystem\Filesystem $filesystem
      * @param \Twig_Environment            $renderer
      */
-    public function __construct(\CI_Controller $codeigniter, Describe $describe, Filesystem $filesystem, \Twig_Environment $renderer = null)
+    public function __construct(Describe $describe, Filesystem $filesystem, \Twig_Environment $renderer = null)
     {
         parent::__construct();
 
-        $this->codeigniter = $codeigniter;
         $this->describe    = $describe;
         $this->filesystem  = $filesystem;
         $this->renderer    = $renderer;

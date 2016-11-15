@@ -18,11 +18,11 @@ class InflectorExtension extends \Twig_Extension
     public function getFilters()
     {
         return array(
-            'camel'      => new \Twig_Filter_Method($this, 'toCamelCase'),
-            'plural'     => new \Twig_Filter_Method($this, 'toPluralFormat'),
-            'singular'   => new \Twig_Filter_Method($this, 'toSingularFormat'),
-            'title'      => new \Twig_Filter_Method($this, 'toTitleCase'),
-            'underscore' => new \Twig_Filter_Method($this, 'toUnderscoreCase'),
+            'camel'      => new \Twig_SimpleFilter($this, 'toCamelCase'),
+            'plural'     => new \Twig_SimpleFilter($this, 'toPluralFormat'),
+            'singular'   => new \Twig_SimpleFilter($this, 'toSingularFormat'),
+            'title'      => new \Twig_SimpleFilter($this, 'toTitleCase'),
+            'underscore' => new \Twig_SimpleFilter($this, 'toUnderscoreCase'),
         );
     }
 

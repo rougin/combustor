@@ -1,4 +1,2 @@
 #!/usr/bin/env php
-<?php
-// Load and run the Combustor application
-require 'combustor.php';
+<?php require 'combustor.php';

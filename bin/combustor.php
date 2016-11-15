@@ -2,23 +2,24 @@
 
 require 'vendor/autoload.php';
 
-$codeigniter = Rougin\SparkPlug\Instance::create(__DIR__ . '/../build');
+$directory = __DIR__ . '/../build'; // test
 
-require APPPATH . 'config/database.php';
+Rougin\SparkPlug\Instance::create($directory);
+
+require $directory . '/application/config/database.php';
 
 if (file_exists('vendor/rougin/codeigniter/src/helpers/inflector_helper.php')) {
     require 'vendor/rougin/codeigniter/src/helpers/inflector_helper.php';
 } else {
-    require BASEPATH . 'helpers/inflector_helper.php';
+    require $directory . '/system/helpers/inflector_helper.php';
 }
 
 $driver   = new Rougin\Describe\Driver\CodeIgniterDriver($db[$active_group]);
-$describe = new Rougin\Describe\Describe($driver);
 $injector = new Auryn\Injector;
 
-$injector->share($codeigniter)->share($describe);
+$injector->share(new Rougin\Describe\Describe($driver));
 
-$combustor = Rougin\Blueprint\Console::boot('combustor.yml', $injector, __DIR__ . '/../build');
+$combustor = Rougin\Blueprint\Console::boot('combustor.yml', $injector, $directory);
 
 $extensions = [ new Rougin\Combustor\Common\InflectorExtension ];
 $template   = $combustor->getTemplatePath();

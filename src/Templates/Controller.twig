@@ -1,0 +1,155 @@
+<?php
+defined('BASEPATH') OR exit('No direct script access allowed');
+
+class {{ (plural | underscore) | capitalize }} extends CI_Controller {
+
+	public function __construct()
+	{
+		parent::__construct();
+
+		$this->load->model('{{ singular }}', '', TRUE);
+{% for column in foreign %}
+		$this->load->model('{{ column.field | underscore | replace({ '_id': '' }) }}', '', TRUE);
+{% endfor %}
+	}
+
+	/**
+	 * Shows the form for creating a new item.
+	 *
+	 * @return view
+	 */
+	public function create()
+	{
+		$data = array();
+{% for column in foreign %}
+		$data['{{ column.field_plural | underscore | replace({ '_id': '' }) }}'] = $this->{{ column.field | underscore | replace({ '_id': '' }) }}->get()->as_dropdown();
+{% endfor %}
+
+		$this->load->view('{{ plural }}/create', $data);
+	}
+
+	/**
+	 * Deletes the specified item from storage.
+	 *
+	 * @param  integer $id
+	 * @return redirect
+	 */
+	public function delete($id)
+	{
+		if (empty($id))
+		{
+			show_404();
+		}
+
+		if ($this->{{ singular }}->delete($id))
+		{
+			$this->session->set_flashdata('notification', 'The {{ singular | replace({ '_': ' ' }) }} has been deleted successfully!');
+			$this->session->set_flashdata('alert', 'success');
+		}
+		else
+		{
+			$this->session->set_flashdata('notification', 'Oops! An unexpected error occured.');
+			$this->session->set_flashdata('alert', 'error');
+		}
+
+		redirect('{{ plural }}');
+	}
+
+	/**
+	 * Shows the form for editing the specified item.
+	 *
+	 * @param  integer $id
+	 * @return view
+	 */
+	public function edit($id)
+	{
+		if (empty($id))
+		{
+			show_404();
+		}
+
+		$data = array();
+		$data['item'] = $this->{{ singular }}->find($id);
+{% for column in foreign %}
+		$data['{{ column.field_plural | underscore | replace({ '_id': '' }) }}'] = $this->{{ column.field | underscore | replace({ '_id': '' }) }}->get()->as_dropdown();
+{% endfor %}
+
+		$this->load->view('{{ plural }}/edit', $data);
+	}
+
+	/**
+	 * Returns a listing of items.
+	 *
+	 * @return view
+	 */
+	public function index()
+	{
+		list($items, $links) = $this->{{ singular }}->paginate(10);
+
+		$this->load->view('{{ plural }}/index', compact('items', 'links'));
+	}
+
+	/**
+	 * Shows the specified item.
+	 *
+	 * @return view
+	 */
+	public function show($id)
+	{
+		if (empty($id))
+		{
+			show_404();
+		}
+
+		$data = array('item' => $this->{{ singular }}->find($id));
+
+		$this->load->view('{{ plural }}/show', $data);
+	}
+
+	/**
+	 * Stores the specified item to storage.
+	 *
+	 * @return redirect
+	 */
+	public function store()
+	{
+		if ($this->{{ singular }}->validate($this->input->post()))
+		{
+			$this->{{ singular }}->insert($this->input->post());
+
+			$this->session->set_flashdata('notification', 'The {{ singular | replace({ '_': ' ' }) }} has been created successfully!');
+			$this->session->set_flashdata('alert', 'success');
+
+			redirect('{{ plural }}');
+		}
+
+		redirect('{{ plural }}/create');
+	}
+
+	/**
+	 * Updates the specified item from storage.
+	 *
+	 * @param  integer $id
+	 * @return redirect
+	 */
+	public function update($id)
+	{
+		if (empty($id))
+		{
+			show_404();
+		}
+
+		if ($this->{{ singular }}->validate($this->input->input_stream()))
+		{
+			$this->{{ singular }}->update($id, $this->input->input_stream());
+
+			$this->session->set_flashdata('notification', 'The {{ singular | replace({ '_': ' ' }) }} has been updated successfully!');
+			$this->session->set_flashdata('alert', 'success');
+
+			redirect('{{ plural }}');
+		}
+
+		redirect('{{ plural }}/' . $id);
+	}
+
+}

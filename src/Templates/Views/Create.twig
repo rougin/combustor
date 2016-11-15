@@ -1,0 +1,27 @@
+<?php $this->load->view('layout/header'); ?>
+	<h1><i class="fa fa-lg fa-list"></i> {{ plural | title }}</h1>
+
+	<?php echo form_open('{{ plural }}/create', 'class=""'); ?>
+		<div class="text-right">
+			<button type="submit" class="btn btn-primary">Save</button>
+			<a class="btn btn-default" href="<?php echo base_url('{{ plural }}'); ?>">Cancel</a>
+		</div>
+
+{% for column in columns if not column.isPrimaryKey and column.field != 'datetime_created' and column.field != 'datetime_updated' %}
+		<div class="form-group col-lg-12 col-md-12 col-sm-12 col-xs-12">
+			<?php echo form_label('{{ (column.isForeignKey ? column.referencedTable : column.field) | title }}', '{{ column.field }}', array('class' => 'control-label')); ?>
+			<div class="">
+{% if column.field in foreignKeys|keys %}
+				<?php echo form_dropdown('{{ column.field }}', ${{ foreignKeys[column.field] }}, set_value('{{ column.field }}'), 'class="" {{ column.isNull ? '' : 'required' }}'); ?>
+{% elseif column.dataType == 'date' or column.dataType == 'datetime' %}
+				<input type="date" name="{{ column.field }}" class="" {{ column.isNull ? '' : 'required' }} />
+{% else %}
+				<?php echo form_input('{{ column.field }}', set_value('{{ column.field }}'), 'class="form-control" {{ column.isNull ? '' : 'required' }}'); ?>
+{% endif %}
+				<?php echo form_error('{{ column.field }}'); ?>
+			</div>
+		</div>
+{% endfor %}
+	<?php echo form_close(); ?>
+
+<?php $this->load->view('layout/footer'); ?>

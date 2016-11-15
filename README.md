@@ -7,7 +7,7 @@
 [![Quality Score][ico-code-quality]][link-code-quality]
 [![Total Downloads][ico-downloads]][link-downloads]
 
-Lets you generate controllers, models, and views from database tables for [CodeIgniter](https://codeigniter.com).
+Generate controllers, models, and views from database for [CodeIgniter](https://codeigniter.com).
 
 ## Install
 

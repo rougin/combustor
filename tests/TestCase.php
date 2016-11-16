@@ -2,7 +2,10 @@
 
 namespace Rougin\Combustor;
 
-class TestCase extends \PHPUnit_Framework_Testcase
+use League\Flysystem\Filesystem;
+use League\Flysystem\Adapter\Local;
+
+class TestCase extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var string
@@ -16,29 +19,43 @@ class TestCase extends \PHPUnit_Framework_Testcase
      */
     public function setUp()
     {
-        $this->path = __DIR__ . '/../TestApp/application';
+        $this->path = __DIR__ . DIRECTORY_SEPARATOR . 'Application';
     }
 
     /**
-     * Sets default configurations.
+     * Injects a command with its dependencies.
      *
-     * @return void
+     * @param  string $command
+     * @return \Symfony\Component\Console\Command\Command
      */
-    protected function setDefaults()
+    protected function buildCommand($command)
     {
-        $autoload = file_get_contents($this->path . '/config/default/autoload.php');
-        $config   = file_get_contents($this->path . '/config/default/config.php');
+        $injector = new \Auryn\Injector;
 
-        file_put_contents($this->path . '/config/autoload.php', $autoload);
-        file_put_contents($this->path . '/config/config.php', $config);
+        $loader = new \Twig_Loader_Filesystem(__DIR__ . '/../src/Templates');
+        $twig   = new \Twig_Environment($loader);
 
-        $this->emptyDirectory($this->path . '/controllers');
-        $this->emptyDirectory($this->path . '/models');
-        $this->emptyDirectory($this->path . '/views');
+        $twig->addExtension(new \Rougin\Combustor\Common\InflectorExtension);
 
-        $layouts = $this->path . '/views/layout';
+        $ci = \Rougin\SparkPlug\Instance::create($this->path);
 
-        ! is_dir($layouts) || $this->emptyDirectory($layouts, true);
+        $ci->load->helper('inflector')->database();
+
+        $database = (array) $ci->db;
+
+        if (strpos($database['dsn'], 'sqlite') !== false) {
+            $database['hostname'] = $database['dsn'];
+        }
+
+        $driver   = new \Rougin\Describe\Driver\CodeIgniterDriver($database);
+        $describe = new \Rougin\Describe\Describe($driver);
+
+        $adapter    = new \League\Flysystem\Adapter\Local($this->path);
+        $filesystem = new \League\Flysystem\Filesystem($adapter);
+
+        $injector->share($describe)->share($filesystem)->share($twig);
+
+        return $injector->make($command);
     }
 
     /**
@@ -50,8 +67,8 @@ class TestCase extends \PHPUnit_Framework_Testcase
      */
     protected function emptyDirectory($directory, $delete = false)
     {
-        $directory = new RecursiveDirectoryIterator($directory, RecursiveDirectoryIterator::SKIP_DOTS);
-        $iterator  = new RecursiveIteratorIterator($directory, RecursiveIteratorIterator::CHILD_FIRST);
+        $directory = new \RecursiveDirectoryIterator($directory, \RecursiveDirectoryIterator::SKIP_DOTS);
+        $iterator  = new \RecursiveIteratorIterator($directory, \RecursiveIteratorIterator::CHILD_FIRST);
 
         foreach ($iterator as $file) {
             $isErrorDirectory = strpos($file->getRealPath(), 'errors');
@@ -65,5 +82,29 @@ class TestCase extends \PHPUnit_Framework_Testcase
         }
 
         ! $delete || rmdir($directory);
+    }
+
+    /**
+     * Sets default configurations.
+     *
+     * @return void
+     */
+    protected function setDefaults()
+    {
+        $application = $this->path . '/application';
+
+        $autoload = file_get_contents($application . '/config/default/autoload.php');
+        $config   = file_get_contents($application . '/config/default/config.php');
+
+        file_put_contents($application . '/config/autoload.php', $autoload);
+        file_put_contents($application . '/config/config.php', $config);
+
+        $this->emptyDirectory($application . '/controllers');
+        $this->emptyDirectory($application . '/models');
+        $this->emptyDirectory($application . '/views');
+
+        $layouts = $application . '/views/layout';
+
+        ! is_dir($layouts) || $this->emptyDirectory($layouts, true);
     }
 }

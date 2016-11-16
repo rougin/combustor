@@ -4,12 +4,12 @@ namespace Rougin\Combustor\Commands;
 
 use Symfony\Component\Console\Tester\CommandTester;
 
-class MakeControllerCommandTest extends \Rougin\Combustor\TestCase
+class MakeModelCommandTest extends \Rougin\Combustor\TestCase
 {
     /**
      * @var string
      */
-    protected $command = 'Rougin\Combustor\Commands\MakeControllerCommand';
+    protected $command = 'Rougin\Combustor\Commands\MakeModelCommand';
 
     /**
      * @var string
@@ -29,8 +29,8 @@ class MakeControllerCommandTest extends \Rougin\Combustor\TestCase
 
         $tester->execute([ 'table' => $this->table ]);
 
-        $filename = ucfirst(plural($this->table));
-        $filePath = $this->path . '/application/controllers/' . $filename . '.php';
+        $filename = ucfirst(singular($this->table));
+        $filePath = $this->path . '/application/models/' . $filename . '.php';
 
         $this->assertFileExists($filePath);
 

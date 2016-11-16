@@ -47,9 +47,9 @@ class MakeModelCommand extends AbstractCommand
             throw new ModelNotFoundException('Credo or Wildfire is not yet installed!');
         }
 
-        $contents  = (new DataGenerator($this->describe, $input))->generate();
-        $filename  = ucfirst(singular(underscore($input->getArgument('table'))));
-        $rendered  = $this->renderer->render($modelType . '.twig', $contents);
+        $contents = (new DataGenerator($this->describe, $input))->generate();
+        $filename = ucfirst(singular(underscore($input->getArgument('table'))));
+        $rendered = $this->renderer->render($modelType . '.twig', $contents);
 
         $this->filesystem->write('application/models/' . $filename . '.php', $rendered);
 

@@ -7,7 +7,6 @@ use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 
 use Rougin\Combustor\Common\DataGenerator;
-use Rougin\Combustor\Exceptions\ModelNotFoundException;
 
 /**
  * Make Controller Command
@@ -37,9 +36,9 @@ class MakeControllerCommand extends AbstractCommand
      */
     protected function execute(InputInterface $input, OutputInterface $output)
     {
-        $contents  = (new DataGenerator($this->describe, $input))->generate();
-        $filename  = ucfirst(plural(underscore($input->getArgument('table'))));
-        $rendered  = $this->renderer->render('Controller.twig', $contents);
+        $contents = (new DataGenerator($this->describe, $input))->generate();
+        $filename = ucfirst(plural(underscore($input->getArgument('table'))));
+        $rendered = $this->renderer->render('Controller.twig', $contents);
 
         $this->filesystem->write('application/controllers/' . $filename . '.php', $rendered);
 

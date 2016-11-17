@@ -93,12 +93,6 @@ class TestCase extends \PHPUnit_Framework_TestCase
     {
         $application = $this->path . '/application';
 
-        $autoload = file_get_contents($application . '/config/default/autoload.php');
-        $config   = file_get_contents($application . '/config/default/config.php');
-
-        file_put_contents($application . '/config/autoload.php', $autoload);
-        file_put_contents($application . '/config/config.php', $config);
-
         $this->emptyDirectory($application . '/controllers');
         $this->emptyDirectory($application . '/models');
         $this->emptyDirectory($application . '/views');

@@ -3,9 +3,9 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 
 /**
  * @Entity
- * @Table(name="{{ singular }}")
+ * @Table(name="{{ table | singular }}")
  */
-class {{ (singular | underscore) | capitalize }} extends \Rougin\Credo\CodeigniterModel {
+class {{ (table | singular | underscore) | capitalize }} extends \Rougin\Credo\CodeigniterModel {
 
 	use \Rougin\Credo\Traits\PaginateTrait,
 		\Rougin\Credo\Traits\ValidateTrait;

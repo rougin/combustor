@@ -1,11 +1,11 @@
 <?php $this->load->view('layout/header'); ?>
-	<h1><i class="fa fa-lg fa-list"></i> {{ plural | title }}</h1>
+	<h1><i class="fa fa-lg fa-list"></i> {{ table | plural | title }}</h1>
 
 	<div class="text-right">
-		<a class="btn btn-primary" href="<?php echo base_url('{{ plural }}/create'); ?>">Create A New {{ singular | title }}</a>
+		<a class="btn btn-primary" href="<?php echo base_url('{{ table | plural }}/create'); ?>">Create A New {{ table | singular | title }}</a>
 	</div>
 
-	<?php if ( ! empty(${{ plural }})): ?>
+	<?php if ( ! empty(${{ table | plural }})): ?>
 		<table class="table table table-striped table-hover">
 			<thead>
 				<tr>
@@ -15,15 +15,15 @@
 				</tr>
 			</thead>
 			<tbody>
-				<?php foreach (${{ plural }} as ${{ singular }}): ?>
+				<?php foreach (${{ table | plural }} as ${{ table | singular }}): ?>
 					<tr>
 {% for column in columns if not column.isPrimaryKey and column.field != 'datetime_created' and column.field != 'datetime_updated' %}
-						<td><?php echo ${{ singular }}->get_{{ (column.isForeignKey ? column.referencedTable : column.field) | underscore }}(); ?></td>
+						<td><?php echo ${{ table | singular }}->get_{{ (column.isForeignKey ? column.referencedTable : column.field) | underscore }}(); ?></td>
 {% endfor %}
 						<td>
-							<a href="<?php echo base_url('{{ plural }}/edit/' . ${{ singular }}->{{ primary_key }}()); ?>"><i class="fa fa-edit fa-2x"></i>
+							<a href="<?php echo base_url('{{ table | plural }}/edit/' . ${{ table | singular }}->{{ primary_key }}()); ?>"><i class="fa fa-edit fa-2x"></i>
 							</a>
-							<a href="<?php echo base_url('{{ plural }}/delete/' . ${{ singular }}->{{ primary_key }}()); ?>"><i class="fa fa-trash fa-2x"></i></a>
+							<a href="<?php echo base_url('{{ table | plural }}/delete/' . ${{ table | singular }}->{{ primary_key }}()); ?>"><i class="fa fa-trash fa-2x"></i></a>
 						</td>
 					</tr>
 				<?php endforeach; ?>
@@ -31,8 +31,8 @@
 		</table>
 		<?php echo $links; ?>
 	<?php elseif ($this->input->get('keyword')): ?>
-		Your search - <b><?php echo $this->input->get('keyword') ?></b> - did not match any {{ plural | lower | replace({'_': ' '}) }}.
+		Your search - <b><?php echo $this->input->get('keyword') ?></b> - did not match any {{ table | plural | lower | replace({'_': ' '}) }}.
 	<?php else: ?>
-		There are no {{ plural | lower | replace({'_': ' '}) }} that are currently available.
+		There are no {{ table | plural | lower | replace({'_': ' '}) }} that are currently available.
 	<?php endif; ?>
 <?php $this->load->view('layout/footer'); ?>

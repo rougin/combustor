@@ -1,7 +1,7 @@
 <?php
 defined('BASEPATH') OR exit('No direct script access allowed');
 
-class {{ (singular | underscore) | capitalize }} extends \Rougin\Wildfire\CodeigniterModel {
+class {{ (table | singular | underscore) | capitalize }} extends \Rougin\Wildfire\CodeigniterModel {
 
 	use \Rougin\Wildfire\Traits\PaginateTrait,
 		\Rougin\Wildfire\Traits\ValidateTrait;
@@ -11,7 +11,7 @@ class {{ (singular | underscore) | capitalize }} extends \Rougin\Wildfire\Codeig
 	 *
 	 * @var array
 	 */
-	protected $belongs_to = array({% for column in foreign %}'{{ column.field | underscore | replace({ '_id': '' }) }}'{{ loop.last ? '' : ', ' }}{% endfor %});
+	protected $belongs_to = array({% for column in foreign_keys %}'{{ column | underscore | replace({ '_id': '' }) }}'{{ loop.last ? '' : ', ' }}{% endfor %});
 
 	/**
      * Model's default primary key or unique identifier.

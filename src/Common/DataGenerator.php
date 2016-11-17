@@ -30,17 +30,14 @@ class DataGenerator
      */
     public function __construct(\Rougin\Describe\Describe $describe, InputInterface $input)
     {
-        $this->describe = $describe;
-
         $inputs = $input->getArguments();
 
-        $inputs['columns']     = [];
-        $inputs['foreign']     = [];
-        $inputs['plural']      = strtolower(plural($inputs['table']));
-        $inputs['primary_key'] = $describe->getPrimaryKey($inputs['table']);
-        $inputs['singular']    = strtolower(singular($inputs['table']));
+        $inputs['columns']      = [];
+        $inputs['foreign_keys'] = [];
+        $inputs['primary_key']  = [];
 
-        $this->inputs = $inputs;
+        $this->describe = $describe;
+        $this->inputs   = $inputs;
     }
 
     /**
@@ -50,24 +47,17 @@ class DataGenerator
      */
     public function generate()
     {
-        $tableInformation = $this->getTableInformation($this->inputs['table']);
+        $columns = $this->getTableInformation($this->inputs['table']);
+        $primary = $this->describe->getPrimaryKey($this->inputs['table']);
 
-        foreach ($tableInformation as $column) {
+        foreach ($columns as $column) {
             if ($column->isForeignKey()) {
-                $table = $this->stripTableSchema($column->getReferencedTable());
-
-                $column->setReferencedTable(singular($table));
-
-                array_push($this->inputs['foreign'], [
-                    'field'        => $column->getField(),
-                    'field_plural' => plural($column->getField()),
-                    'plural'       => plural($column->getReferencedTable()),
-                    'singular'     => singular($column->getReferencedTable()),
-                ]);
+                array_push($this->inputs['foreign_keys'], $column->getField());
             }
         }
 
-        $this->inputs['columns'] = $tableInformation;
+        $this->inputs['columns']     = $columns;
+        $this->inputs['primary_key'] = $primary;
 
         return $this->inputs;
     }
@@ -87,16 +77,5 @@ class DataGenerator
         }
 
         return $tableInformation;
-    }
-
-    /**
-     * Strips the table schema from the table name.
-     *
-     * @param  string $table
-     * @return string
-     */
-    protected static function stripTableSchema($table)
-    {
-        return (strpos($table, '.') !== false) ? substr($table, strpos($table, '.') + 1) : $table;
     }
 }

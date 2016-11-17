@@ -1,15 +1,15 @@
 <?php
 defined('BASEPATH') OR exit('No direct script access allowed');
 
-class {{ (plural | underscore) | capitalize }} extends CI_Controller {
+class {{ (table | plural | underscore) | capitalize }} extends CI_Controller {
 
 	public function __construct()
 	{
 		parent::__construct();
 
-		$this->load->model('{{ singular }}', '', TRUE);
-{% for column in foreign %}
-		$this->load->model('{{ column.field | underscore | replace({ '_id': '' }) }}', '', TRUE);
+		$this->load->model('{{ table | singular }}', '', TRUE);
+{% for column in foreign_keys %}
+		$this->load->model('{{ column | underscore | replace({ '_id': '' }) }}', '', TRUE);
 {% endfor %}
 	}
 
@@ -21,11 +21,11 @@ class {{ (plural | underscore) | capitalize }} extends CI_Controller {
 	public function create()
 	{
 		$data = array();
-{% for column in foreign %}
-		$data['{{ column.field_plural | underscore | replace({ '_id': '' }) }}'] = $this->{{ column.field | underscore | replace({ '_id': '' }) }}->get()->as_dropdown();
+{% for column in foreign_keys %}
+		$data['{{ column | plural | underscore | replace({ '_id': '' }) }}'] = $this->{{ column | underscore | replace({ '_id': '' }) }}->get()->as_dropdown();
 {% endfor %}
 
-		$this->load->view('{{ plural }}/create', $data);
+		$this->load->view('{{ table | plural }}/create', $data);
 	}
 
 	/**
@@ -41,9 +41,9 @@ class {{ (plural | underscore) | capitalize }} extends CI_Controller {
 			show_404();
 		}
 
-		if ($this->{{ singular }}->delete($id))
+		if ($this->{{ table | singular }}->delete($id))
 		{
-			$this->session->set_flashdata('notification', 'The {{ singular | replace({ '_': ' ' }) }} has been deleted successfully!');
+			$this->session->set_flashdata('notification', 'The {{ table | singular | replace({ '_': ' ' }) }} has been deleted successfully!');
 			$this->session->set_flashdata('alert', 'success');
 		}
 		else
@@ -52,7 +52,7 @@ class {{ (plural | underscore) | capitalize }} extends CI_Controller {
 			$this->session->set_flashdata('alert', 'error');
 		}
 
-		redirect('{{ plural }}');
+		redirect('{{ table | plural }}');
 	}
 
 	/**
@@ -69,12 +69,12 @@ class {{ (plural | underscore) | capitalize }} extends CI_Controller {
 		}
 
 		$data = array();
-		$data['item'] = $this->{{ singular }}->find($id);
-{% for column in foreign %}
-		$data['{{ column.field_plural | underscore | replace({ '_id': '' }) }}'] = $this->{{ column.field | underscore | replace({ '_id': '' }) }}->get()->as_dropdown();
+		$data['item'] = $this->{{ table | singular }}->find($id);
+{% for column in foreign_keys %}
+		$data['{{ column | plural | underscore | replace({ '_id': '' }) }}'] = $this->{{ column | underscore | replace({ '_id': '' }) }}->get()->as_dropdown();
 {% endfor %}
 
-		$this->load->view('{{ plural }}/edit', $data);
+		$this->load->view('{{ table | plural }}/edit', $data);
 	}
 
 	/**
@@ -84,9 +84,9 @@ class {{ (plural | underscore) | capitalize }} extends CI_Controller {
 	 */
 	public function index()
 	{
-		list($items, $links) = $this->{{ singular }}->paginate(10);
+		list($items, $links) = $this->{{ table | singular }}->paginate(10);
 
-		$this->load->view('{{ plural }}/index', compact('items', 'links'));
+		$this->load->view('{{ table | plural }}/index', compact('items', 'links'));
 	}
 
 	/**
@@ -101,9 +101,9 @@ class {{ (plural | underscore) | capitalize }} extends CI_Controller {
 			show_404();
 		}
 
-		$data = array('item' => $this->{{ singular }}->find($id));
+		$data = array('item' => $this->{{ table | singular }}->find($id));
 
-		$this->load->view('{{ plural }}/show', $data);
+		$this->load->view('{{ table | plural }}/show', $data);
 	}
 
 	/**
@@ -113,17 +113,17 @@ class {{ (plural | underscore) | capitalize }} extends CI_Controller {
 	 */
 	public function store()
 	{
-		if ($this->{{ singular }}->validate($this->input->post()))
+		if ($this->{{ table | singular }}->validate($this->input->post()))
 		{
-			$this->{{ singular }}->insert($this->input->post());
+			$this->{{ table | singular }}->insert($this->input->post());
 
-			$this->session->set_flashdata('notification', 'The {{ singular | replace({ '_': ' ' }) }} has been created successfully!');
+			$this->session->set_flashdata('notification', 'The {{ table | singular | replace({ '_': ' ' }) }} has been created successfully!');
 			$this->session->set_flashdata('alert', 'success');
 
-			redirect('{{ plural }}');
+			redirect('{{ table | plural }}');
 		}
 
-		redirect('{{ plural }}/create');
+		redirect('{{ table | plural }}/create');
 	}
 
 	/**
@@ -139,17 +139,17 @@ class {{ (plural | underscore) | capitalize }} extends CI_Controller {
 			show_404();
 		}
 
-		if ($this->{{ singular }}->validate($this->input->input_stream()))
+		if ($this->{{ table | singular }}->validate($this->input->input_stream()))
 		{
-			$this->{{ singular }}->update($id, $this->input->input_stream());
+			$this->{{ table | singular }}->update($id, $this->input->input_stream());
 
-			$this->session->set_flashdata('notification', 'The {{ singular | replace({ '_': ' ' }) }} has been updated successfully!');
+			$this->session->set_flashdata('notification', 'The {{ table | singular | replace({ '_': ' ' }) }} has been updated successfully!');
 			$this->session->set_flashdata('alert', 'success');
 
-			redirect('{{ plural }}');
+			redirect('{{ table | plural }}');
 		}
 
-		redirect('{{ plural }}/' . $id);
+		redirect('{{ table | plural }}/' . $id);
 	}
 
 }

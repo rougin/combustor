@@ -2,17 +2,19 @@
 
 require 'vendor/autoload.php';
 
-$directory = __DIR__ . '/../build'; // test
+$directory = __DIR__ . '/../build'; // TEST DIRECTORY
 
 Rougin\SparkPlug\Instance::create($directory);
 
+$basePath = BASEPATH;
+
 require APPPATH . 'config/database.php';
 
-if (file_exists('vendor/rougin/codeigniter/src/helpers/inflector_helper.php')) {
-    require 'vendor/rougin/codeigniter/src/helpers/inflector_helper.php';
-} else {
-    require BASEPATH . 'helpers/inflector_helper.php';
+if (is_dir('vendor/rougin/codeigniter/src/')) {
+    $basePath = 'vendor/rougin/codeigniter/src/';
 }
+
+require $basePath . 'helpers/inflector_helper.php';
 
 $driver   = new Rougin\Describe\Driver\CodeIgniterDriver($db[$active_group]);
 $injector = new Auryn\Injector;

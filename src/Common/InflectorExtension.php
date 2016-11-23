@@ -18,23 +18,11 @@ class InflectorExtension extends \Twig_Extension
     public function getFilters()
     {
         return array(
-            'camel'      => new \Twig_SimpleFilter('camel', [ $this, 'toCamelCase' ]),
             'plural'     => new \Twig_SimpleFilter('plural', [ $this, 'toPluralFormat' ]),
             'singular'   => new \Twig_SimpleFilter('singular', [ $this, 'toSingularFormat' ]),
             'title'      => new \Twig_SimpleFilter('title', [ $this, 'toTitleCase' ]),
             'underscore' => new \Twig_SimpleFilter('underscore', [ $this, 'toUnderscoreCase' ]),
         );
-    }
-
-    /**
-     * Convert string to camel case format
-     *
-     * @param  string $input
-     * @return string In camel case
-     */
-    public function toCamelCase($input)
-    {
-        return camelize($input);
     }
 
     /**

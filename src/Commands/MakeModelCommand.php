@@ -26,6 +26,7 @@ class MakeModelCommand extends AbstractCommand
     {
         $this->setName('make:model')->setDescription('Create a new model class');
         $this->addArgument('table', InputArgument::REQUIRED, 'Name of the table');
+        $this->addOption('type', null, InputArgument::OPTIONAL, 'Type of model: Either Credo or Wildfire', 'wildfire');
     }
 
     /**
@@ -37,19 +38,10 @@ class MakeModelCommand extends AbstractCommand
      */
     protected function execute(InputInterface $input, OutputInterface $output)
     {
-        load_class('Model', 'core');
-
-        if (class_exists('Rougin\Wildfire\CodeigniterModel')) {
-            $modelType = 'Models/Wildfire';
-        } elseif (class_exists('Rougin\Credo\CodeigniterModel')) {
-            $modelType = 'Models/Credo';
-        } else {
-            throw new ModelNotFoundException('Both Credo and Wildfire are not found!');
-        }
-
-        $contents = (new DataGenerator($this->describe, $input))->generate();
-        $filename = ucfirst(singular(underscore($input->getArgument('table'))));
-        $rendered = $this->renderer->render($modelType . '.twig', $contents);
+        $modelType = 'Models/' . ucfirst($input->getOption('type'));
+        $contents  = (new DataGenerator($this->describe, $input))->generate();
+        $filename  = ucfirst(singular(underscore($input->getArgument('table'))));
+        $rendered  = $this->renderer->render($modelType . '.twig', $contents);
 
         $this->filesystem->write('application/models/' . $filename . '.php', $rendered);
 

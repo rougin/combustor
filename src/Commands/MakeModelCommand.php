@@ -44,7 +44,7 @@ class MakeModelCommand extends AbstractCommand
         } elseif (class_exists('Rougin\Credo\CodeigniterModel')) {
             $modelType = 'Models/Credo';
         } else {
-            throw new ModelNotFoundException('Credo or Wildfire is not yet installed!');
+            throw new ModelNotFoundException('Both Credo and Wildfire are not found!');
         }
 
         $contents = (new DataGenerator($this->describe, $input))->generate();

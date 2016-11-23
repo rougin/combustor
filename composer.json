@@ -21,7 +21,7 @@
     "require": {
         "rougin/blueprint": "dev-master",
         "rougin/describe": "dev-master",
-        "rougin/spark-plug": "~0.4.2"
+        "rougin/spark-plug": "~0.5"
     },
     "require-dev": {
         "phpunit/phpunit" : "4.*",

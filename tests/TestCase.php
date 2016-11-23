@@ -8,6 +8,16 @@ use League\Flysystem\Adapter\Local;
 class TestCase extends \PHPUnit_Framework_TestCase
 {
     /**
+     * @var array
+     */
+    protected $commands = [
+        'Rougin\Combustor\Commands\MakeControllerCommand',
+        'Rougin\Combustor\Commands\MakeModelCommand',
+        'Rougin\Combustor\Commands\MakeScaffoldCommand',
+        'Rougin\Combustor\Commands\MakeViewCommand',
+    ];
+
+    /**
      * @var string
      */
     protected $path;
@@ -82,6 +92,24 @@ class TestCase extends \PHPUnit_Framework_TestCase
         }
 
         ! $delete || rmdir($directory);
+    }
+
+    /**
+     * Gets the application with the loaded classes.
+     *
+     * @return \Symfony\Component\Console\Application
+     */
+    protected function getApplication()
+    {
+        $application = new \Symfony\Component\Console\Application;
+
+        foreach ($this->commands as $commandName) {
+            $command = $this->buildCommand($commandName);
+
+            $application->add($command);
+        }
+
+        return $application;
     }
 
     /**

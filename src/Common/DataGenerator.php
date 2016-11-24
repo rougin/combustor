@@ -4,8 +4,6 @@ namespace Rougin\Combustor\Common;
 
 use Symfony\Component\Console\Input\InputInterface;
 
-use Rougin\Combustor\Exceptions\TableNotFoundException;
-
 /**
  * Data Generator
  *
@@ -47,7 +45,7 @@ class DataGenerator
      */
     public function generate()
     {
-        $columns = $this->getTableInformation($this->inputs['table']);
+        $columns = $this->describe->getTable($this->inputs['table']);
         $primary = $this->describe->getPrimaryKey($this->inputs['table']);
 
         foreach ($columns as $column) {
@@ -60,22 +58,5 @@ class DataGenerator
         $this->inputs['primary_key'] = $primary;
 
         return $this->inputs;
-    }
-
-    /**
-     * Gets the table information from Describe.
-     *
-     * @param  string $tableName
-     * @return array
-     */
-    protected function getTableInformation($tableName)
-    {
-        $tableInformation = $this->describe->getTable($tableName);
-
-        if (empty($tableInformation)) {
-            throw new TableNotFoundException('"' . $tableName . '" table not found in database!');
-        }
-
-        return $tableInformation;
     }
 }

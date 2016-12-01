@@ -28,14 +28,13 @@ class DataGenerator
      */
     public function __construct(\Rougin\Describe\Describe $describe, InputInterface $input)
     {
-        $inputs = $input->getArguments();
+        $this->inputs = $input->getArguments();
 
-        $inputs['columns']      = [];
-        $inputs['foreign_keys'] = [];
-        $inputs['primary_key']  = [];
+        $this->inputs['columns']      = [];
+        $this->inputs['foreign_keys'] = [];
+        $this->inputs['primary_key']  = [];
 
         $this->describe = $describe;
-        $this->inputs   = $inputs;
     }
 
     /**

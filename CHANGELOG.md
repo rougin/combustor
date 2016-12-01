@@ -2,6 +2,27 @@
 
 All notable changes to `Combustor` will be documented in this file.
 
+## [2.0.0](https://github.com/rougin/combustor/compare/v1.2.3...v2.0.0) - Unreleased
+
+### Added
+- Integration of [Credo](https://github.com/rougin/credo) and [Wildfire](https://github.com/rougin/wildfire)
+- `--type` option in `make:model`, either choose `doctrine` or `wildfire`
+
+### Changed
+- Commands `create` to `make`
+- Clean code structure
+
+### Removed
+- Hardcode implementation of Wildfire and Doctrine models
+- Following options from commands:
+
+* `--bootstrap` - Bootstrap is included in `make:layout`
+* `--camel` - To follow CodeIgniters's [style guide](http://www.codeigniter.com/user_guide/general/styleguide.html) strictly
+* `--doctrine` - Removed in favor of `--type="doctrine"` in `make:model`
+* `--keep` - No use case in using this option
+* `--lowercase` - Same reason to `--camel`
+* `--wildfire` - Removed in favor of `--type="wildfire"` in `make:model`
+
 ## [1.2.3](https://github.com/rougin/combustor/compare/v1.2.2...v1.2.3) - 2016-09-16
 
 ### Fixed

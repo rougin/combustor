@@ -35,12 +35,9 @@ class MakeScaffoldCommandTest extends \Rougin\Combustor\TestCase
         $index  = $this->path . '/application/views/' . plural($this->table) . '/index.php';
         $show   = $this->path . '/application/views/' . plural($this->table) . '/show.php';
 
-        $this->assertFileExists($controller);
-        $this->assertFileExists($model);
-        $this->assertFileExists($create);
-        $this->assertFileExists($edit);
-        $this->assertFileExists($index);
-        $this->assertFileExists($show);
+        $filesExists = file_exists($controller) && file_exists($model) && file_exists($create) && file_exists($edit) && file_exists($index) && file_exists($show);
+
+        $this->assertTrue($filesExists);
 
         $this->setDefaults();
     }

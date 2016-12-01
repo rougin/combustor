@@ -26,6 +26,7 @@ class MakeScaffoldCommand extends AbstractCommand
     {
         $this->setName('make:scaffold')->setDescription('Create a new controller class, model class, and view folder');
         $this->addArgument('table', InputArgument::REQUIRED, 'Name of the table');
+        $this->addOption('type', null, InputArgument::OPTIONAL, 'Type of model: Either Credo or Wildfire', 'wildfire');
     }
 
     /**
@@ -41,11 +42,14 @@ class MakeScaffoldCommand extends AbstractCommand
 
         foreach ($commands as $command) {
             $arguments  = [ 'command' => $command, 'table' => $input->getArgument('table') ];
-            $arrayInput = new ArrayInput($arguments);
+
+            if ($command == 'make:model') {
+                $arguments['--type'] = $input->getOption('type');
+            }
 
             $application = $this->getApplication()->find($command);
 
-            $application->run($arrayInput, $output);
+            $application->run(new ArrayInput($arguments), $output);
         }
     }
 }

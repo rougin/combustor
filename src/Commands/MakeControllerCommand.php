@@ -17,7 +17,7 @@ use Rougin\Combustor\Common\DataGenerator;
 class MakeControllerCommand extends AbstractCommand
 {
     /**
-     * Set the configurations of the specified command
+     * Set the configurations of the specified command.
      *
      * @return void
      */

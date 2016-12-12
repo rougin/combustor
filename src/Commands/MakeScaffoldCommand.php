@@ -18,7 +18,7 @@ use Rougin\Combustor\Common\DataGenerator;
 class MakeScaffoldCommand extends AbstractCommand
 {
     /**
-     * Set the configurations of the specified command
+     * Set the configurations of the specified command.
      *
      * @return void
      */

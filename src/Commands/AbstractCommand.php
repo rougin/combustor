@@ -14,11 +14,6 @@ use League\Flysystem\Filesystem;
 abstract class AbstractCommand extends \Symfony\Component\Console\Command\Command
 {
     /**
-     * @var string
-     */
-    protected $command;
-
-    /**
      * @var \Rougin\Describe\Describe
      */
     protected $describe;
@@ -38,7 +33,7 @@ abstract class AbstractCommand extends \Symfony\Component\Console\Command\Comman
      * @param \League\Flysystem\Filesystem $filesystem
      * @param \Twig_Environment            $renderer
      */
-    public function __construct(Describe $describe, Filesystem $filesystem, \Twig_Environment $renderer = null)
+    public function __construct(Describe $describe, Filesystem $filesystem, \Twig_Environment $renderer)
     {
         parent::__construct();
 

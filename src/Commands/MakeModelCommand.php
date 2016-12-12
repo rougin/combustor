@@ -18,7 +18,7 @@ use Rougin\Combustor\Exceptions\ModelNotFoundException;
 class MakeModelCommand extends AbstractCommand
 {
     /**
-     * Set the configurations of the specified command
+     * Set the configurations of the specified command.
      *
      * @return void
      */

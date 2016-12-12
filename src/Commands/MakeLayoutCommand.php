@@ -14,7 +14,7 @@ use Symfony\Component\Console\Output\OutputInterface;
 class MakeLayoutCommand extends AbstractCommand
 {
     /**
-     * Set the configurations of the specified command
+     * Set the configurations of the specified command.
      *
      * @return void
      */

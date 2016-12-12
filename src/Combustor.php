@@ -54,6 +54,8 @@ class Combustor extends \Rougin\Blueprint\Console
      */
     protected static function prepareDependencies()
     {
+        $basePath = BASEPATH;
+
         require APPPATH . 'config/database.php';
 
         if (is_dir('vendor/rougin/codeigniter/src/')) {

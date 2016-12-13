@@ -13,7 +13,9 @@ class CombustorTest extends TestCase
     {
         $this->setDefaults();
 
-        $application = \Rougin\Combustor\Combustor::boot()->run(true);
+        $path = __DIR__ . '/Application';
+
+        $application = \Rougin\Combustor\Combustor::boot('combustor.yml', null, $path)->run(true);
 
         $this->assertTrue($application->has('make:layout'));
     }

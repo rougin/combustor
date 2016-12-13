@@ -2,4 +2,6 @@
 
 require 'vendor/autoload.php';
 
-Rougin\Combustor\Combustor::boot()->run();
+$directory = __DIR__ . '/../build'; // TEST DIRECTORY
+
+Rougin\Combustor\Combustor::boot('combustor.yml', null, $directory)->run();

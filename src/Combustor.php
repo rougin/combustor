@@ -28,15 +28,13 @@ class Combustor extends \Rougin\Blueprint\Console
     /**
      * Prepares the console application.
      *
-     * @param  string          $filename
-     * @param  \Auryn\Injector $injector
-     * @param  string|null     $directory
+     * @param  string               $filename
+     * @param  \Auryn\Injector|null $injector
+     * @param  string|null          $directory
      * @return \Rougin\Blueprint\Blueprint
      */
     public static function boot($filename = 'combustor.yml', \Auryn\Injector $injector = null, $directory = null)
     {
-        $directory = __DIR__ . '/../build'; // TEST DIRECTORY
-
         \Rougin\SparkPlug\Instance::create($directory);
 
         self::$application = parent::boot($filename, $injector, $directory);

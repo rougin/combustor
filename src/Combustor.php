@@ -42,6 +42,9 @@ class Combustor extends \Rougin\Blueprint\Console
         self::prepareDependencies();
         self::prepareTemplates();
 
+        self::$application->setCommandPath(__DIR__ . DIRECTORY_SEPARATOR . 'Commands');
+        self::$application->setCommandNamespace('Rougin\Combustor\Commands');
+
         return self::$application;
     }
 

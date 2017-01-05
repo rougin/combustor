@@ -37,8 +37,8 @@ abstract class AbstractCommand extends \Symfony\Component\Console\Command\Comman
     {
         parent::__construct();
 
-        $this->describe    = $describe;
-        $this->filesystem  = $filesystem;
-        $this->renderer    = $renderer;
+        $this->describe   = $describe;
+        $this->filesystem = $filesystem;
+        $this->renderer   = $renderer;
     }
 }

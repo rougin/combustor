@@ -7,7 +7,6 @@ use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 
 use Rougin\Combustor\Common\DataGenerator;
-use Rougin\Combustor\Exceptions\ModelNotFoundException;
 
 /**
  * Make Model Command

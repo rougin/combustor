@@ -19,7 +19,7 @@
         }
     ],
     "require": {
-        "rougin/blueprint": "dev-master",
+        "rougin/blueprint": "~0.5",
         "rougin/describe": "dev-master",
         "rougin/spark-plug": "~0.5"
     },

@@ -19,8 +19,9 @@
         }
     ],
     "require": {
+        "php": ">=5.4.0",
         "rougin/blueprint": "~0.5",
-        "rougin/describe": "dev-master",
+        "rougin/describe": "~1.6",
         "rougin/spark-plug": "~0.5"
     },
     "require-dev": {

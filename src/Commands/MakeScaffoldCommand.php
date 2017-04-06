@@ -24,7 +24,7 @@ class MakeScaffoldCommand extends AbstractCommand
     {
         $this->setName('make:scaffold')->setDescription('Create a new controller class, model class, and view folder');
         $this->addArgument('table', InputArgument::REQUIRED, 'Name of the table');
-        $this->addOption('type', null, InputArgument::OPTIONAL, 'Type of model: Either Credo or Wildfire', 'wildfire');
+        $this->addOption('type', null, InputArgument::OPTIONAL, 'Type of model: "credo" or "wildfire"', 'wildfire');
     }
 
     /**

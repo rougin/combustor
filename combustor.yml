@@ -1,0 +1,6 @@
+paths:
+    templates: %%CURRENT_DIRECTORY%%/src/Templates
+    commands: %%CURRENT_DIRECTORY%%/src/Commands
+
+namespaces:
+    commands: Rougin\Combustor\Commands

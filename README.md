@@ -9,19 +9,194 @@
 
 Lets you generate controllers, models, and views from database tables for [CodeIgniter](https://codeigniter.com).
 
-## Install
+Lets you generate controllers, models, and views from database tables for [Codeigniter](https://codeigniter.com).
 
-Via Composer
+## Installation
+
+1. Download the Codeigniter framework [here](https://github.com/bcit-ci/CodeIgniter/archive/3.1.8.zip) and extract it to your web server.
+2. Configure the database connectivity settings in **application/config/database.php**.
+3. Install Combustor through the [Composer](https://getcomposer.org) package manager:
+
+    ``` bash
+    $ composer require rougin/combustor
+    ```
+
+4. Choose if you want to install **Wildfire**, **Doctrine ORM** or both:
+
+    ``` bash
+    $ vendor/bin/combustor install:wildfire
+    $ vendor/bin/combustor install:doctrine
+    ```
+
+## Commands
+
+### `create:layout`
+
+Creates a new header and footer file.
+
+#### Options
+
+* `--bootstrap` - includes the Bootstrap tags
+
+#### Example
 
 ``` bash
-$ composer require rougin/combustor --dev
+$ vendor/bin/combustor create-layout --bootstrap
 ```
 
-If you want the latest updates, use ```rougin/combustor:dev-master --dev```.
+### `create:controller`
 
-## Usage
+Creates a new HTTP controller.
 
-The documentation for the commands can be found [here](http://rougin.github.io/combustor/commands.html).
+#### Arguments
+
+* `name` - name of the database table
+
+#### Options
+
+* `--camel` - uses camel case naming convention for the accessor and mutators
+* `--doctrine` - generates a controller based on Doctrine
+* `--keep` - keeps the name to be used
+* `--lowercase` - keeps the first character of the name to lowercase
+* `--wildfire` - generates a controller based from Wildfire
+
+#### Example
+
+``` bash
+$ vendor/bin/combustor create:controller users --camel --wildfire
+```
+
+### `create:model`
+
+Creates a new model.
+
+#### Arguments
+
+* `name` - name of the database table
+
+#### Options
+
+* `--camel` - uses camel case naming convention for the accessor and mutators
+* `--doctrine` - generates a controller based on Doctrine
+* `--keep` - keeps the name to be used
+* `--lowercase` - keeps the first character of the name to lowercase
+* `--wildfire` - generates a controller based from Wildfire
+
+#### Example
+
+``` bash
+$ vendor/bin/combustor create:model users --camel --wildfire
+```
+
+### `create:view`
+
+Creates a new view template.
+
+#### Arguments
+
+* `name` - name of the database table
+
+#### Options
+
+* `--bootstrap` - includes the Bootstrap tags
+* `--camel` - uses camel case naming convention for the accessor and mutators
+* `--doctrine` - generates a controller based on Doctrine
+* `--keep` - keeps the name to be used
+* `--lowercase` - keeps the first character of the name to lowercase
+* `--wildfire` - generates a controller based from Wildfire
+
+#### Example
+
+``` bash
+$ vendor/bin/combustor create:view users --bootstrap
+```
+
+### `create:scaffold`
+
+Creates a new HTTP controller, model, and view template.
+
+#### Arguments
+
+* `name` - name of the database table
+
+#### Options
+
+* `--bootstrap` - includes the Bootstrap tags
+* `--camel` - uses camel case naming convention for the accessor and mutators
+* `--doctrine` - generates a controller based on Doctrine
+* `--keep` - keeps the name to be used
+* `--lowercase` - keeps the first character of the name to lowercase
+* `--wildfire` - generates a controller based from Wildfire
+
+#### Example
+
+``` bash
+$ vendor/bin/combustor create:scaffold users --bootstrap --wildfire
+```
+
+## Wilfire's Methods
+
+The following methods below are available if `--wildfire` is installed:
+
+### `delete($table, $delimiters = [])`
+
+Deletes the specified data from storage.
+
+#### Arguments
+
+* `$table` - name of the database table
+* `$delimiters` - delimits the list of rows to be returned
+
+#### Example
+
+``` php
+$this->wildfire->delete('users', ['id' => 3]);
+```
+
+### `find($table, $delimiters = [])`
+
+Finds the row from the specified ID or with the list of delimiters from the specified table.
+
+#### Arguments
+
+* `$table` - name of the database table
+* `$delimiters` - delimits the list of rows to be returned
+
+#### Example
+
+``` php
+$this->wildfire->delete('users', ['id' => 3]);
+```
+
+### `get_all($table, $delimiters = [])`
+
+Returns all rows from the specified table
+
+#### Arguments
+
+* `$table` - name of the database table
+* `$delimiters` - delimits the list of rows to be returned
+    * `keyword` - used for searching the data from the storage
+    * `per_page` - defines the number of rows per page
+
+#### Returned methods
+
+* `as_dropdown($description)` - returns the list of rows that can be used in `form_dropdown()`
+    * `description` - the field to be displayed in the result (the default value is `description`)
+* `result()` - returns the list of rows from the storage in a model
+* `total_rows()` - returns the total number of rows based from the result
+
+#### Example
+
+``` php
+$delimiters = ['keyword' => 'test', 'per_page' = 3];
+
+$result = $this->wildfire->all('users', $delimiters);
+
+var_dump((array) $result->result());
+```
+
+**NOTE**: This method is also available if `--doctrine` is installed.
 
 ## Change Log
 

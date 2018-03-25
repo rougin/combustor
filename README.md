@@ -198,6 +198,18 @@ var_dump((array) $result->result());
 
 **NOTE**: This method is also available if `--doctrine` is installed.
 
+## Reminders
+
+* If you installed either **Wildfire** or **Doctrine**, there's no need to specify it as option in the specified command. You can specify an option, either **--wildfire** or **--doctrine**, if both components were installed in the specified library.
+
+* If you want to learn more about Doctrine's functionalities, just go head to their [documentation](http://doctrine-orm.readthedocs.org/en/latest/) page.
+
+* Before generating the models, views, and controllers, please make sure that you **set up your database** (foreign keys, indexes, relationships, normalizations) properly in order to minimize the modifications after the codes has been generated. Also, generate the models, views, and controllers first to tables that are having **no relationship with other tables** in the database.
+
+    * The reason for this is that Combustor will generate controllers, models, and views based on your specified database schema. If there's something wrong in your database, Combustor will definitely generate a bad codebase.
+
+* If you found a bug or want to suggest something, feel free to open an issue or create a pull request [here](https://github.com/rougin/combustor/issues)!
+
 ## Change Log
 
 Please see [CHANGELOG](CHANGELOG.md) for more information what has changed recently.

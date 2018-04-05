@@ -7,21 +7,26 @@
 [![Quality Score][ico-code-quality]][link-code-quality]
 [![Total Downloads][ico-downloads]][link-downloads]
 
-Lets you generate controllers, models, and views from database tables for [CodeIgniter](https://codeigniter.com).
+Combustor is a [Codeigniter](https://codeigniter.com) library that generates controllers, models, and views based from database tables. It uses the [Describe](https://rougin.github.io/describe) library for retrieving the database tables and as the basis for code generation.
 
-Lets you generate controllers, models, and views from database tables for [Codeigniter](https://codeigniter.com).
+## Features
+
+* Generates code based from the structure of the Codeigniter framework
+* Speeds up the code development for prototyping web applications
+* View templates are based on Bootstrap which can also be modified later
+* Needs to worry only on the database schema, and Combustor will do the rest
 
 ## Installation
 
-1. Download the Codeigniter framework [here](https://github.com/bcit-ci/CodeIgniter/archive/3.1.8.zip) and extract it to your web server.
+1. Download the Codeigniter framework [here](https://github.com/bcit-ci/CodeIgniter/archive/3.1.8.zip) and extract it to the web server.
 2. Configure the database connectivity settings in **application/config/database.php**.
 3. Install Combustor through the [Composer](https://getcomposer.org) package manager:
 
     ``` bash
-    $ composer require rougin/combustor
+    $ composer require rougin/combustor --dev
     ```
 
-4. Choose if you want to install **Wildfire**, **Doctrine ORM** or both:
+4. Install the ORM wrappers **Wildfire** and **Doctrine ORM** or both:
 
     ``` bash
     $ vendor/bin/combustor install:wildfire
@@ -200,15 +205,15 @@ var_dump((array) $result->result());
 
 ## Reminders
 
-* If you installed either **Wildfire** or **Doctrine**, there's no need to specify it as option in the specified command. You can specify an option, either **--wildfire** or **--doctrine**, if both components were installed in the specified library.
+* If either Wildfire or Doctrine is installed, no need to specify it as option for executing a specified command (e.g. `vendor/bin/combustor create:controller --wildfire`). However if both are installed, the command to be executed must have a `--wildfire` or `--doctrine` option added.
 
-* If you want to learn more about Doctrine's functionalities, just go head to their [documentation](http://doctrine-orm.readthedocs.org/en/latest/) page.
+* To learn more about Doctrine's functionalities and its concepts, the documentation page can be found [here](http://doctrine-orm.readthedocs.org/en/latest).
 
-* Before generating the models, views, and controllers, please make sure that you **set up your database** (foreign keys, indexes, relationships, normalizations) properly in order to minimize the modifications after the codes has been generated. Also, generate the models, views, and controllers first to tables that are having **no relationship with other tables** in the database.
+* Before generating the models, views, and controllers, please make sure that the **database is defined properly** (foreign keys, indexes, relationships, normalizations) in order to minimize the modifications after the codes has been generated. Also, generate the models, views, and controllers first to tables that are having **no relationship with other tables** in the database.
 
-    * The reason for this is that Combustor will generate controllers, models, and views based on your specified database schema. If there's something wrong in your database, Combustor will definitely generate a bad codebase.
+    * *The reason for this is that Combustor will generate controllers, models, and views based on the specified database schema. If there's something wrong in the said database, Combustor will definitely generate a bad codebase.*
 
-* If you found a bug or want to suggest something, feel free to open an issue or create a pull request [here](https://github.com/rougin/combustor/issues)!
+* For found bugs or suggestions, feel free to [open an issue](https://github.com/rougin/combustor/issues) or [create a pull request](https://github.com/rougin/combustor/compare).
 
 ## Change Log
 

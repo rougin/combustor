@@ -2,6 +2,11 @@
 
 All notable changes to `Combustor` will be documented in this file.
 
+## [1.2.4](https://github.com/rougin/combustor/compare/v1.2.3...v1.2.4) - 2018-04-18
+
+### Fixed
+- Bootstrap version in `CreateLayoutCommand`
+
 ## [1.2.3](https://github.com/rougin/combustor/compare/v1.2.2...v1.2.3) - 2016-09-16
 
 ### Fixed

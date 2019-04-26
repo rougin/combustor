@@ -16,7 +16,7 @@ use Rougin\Combustor\Common\Tools;
  * Extends the Symfony\Console\Command class with Twig's renderer.
  *
  * @package Combustor
- * @author  Rougin Royce Gutib <rougingutib@gmail.com>
+ * @author  Rougin Gutib <rougingutib@gmail.com>
  */
 abstract class AbstractCommand extends Command
 {

@@ -16,7 +16,7 @@ use Rougin\Combustor\Generator\ControllerGenerator;
  * Generates a Wildfire or Doctrine-based controller for CodeIgniter.
  *
  * @package Combustor
- * @author  Rougin Royce Gutib <rougingutib@gmail.com>
+ * @author  Rougin Gutib <rougingutib@gmail.com>
  */
 class CreateControllerCommand extends AbstractCommand
 {

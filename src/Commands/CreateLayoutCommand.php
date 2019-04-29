@@ -16,7 +16,7 @@ use Rougin\Combustor\Common\Tools;
  * Creates a new header and footer file for CodeIgniter
  *
  * @package Combustor
- * @author  Rougin Royce Gutib <rougingutib@gmail.com>
+ * @author  Rougin Gutib <rougingutib@gmail.com>
  */
 class CreateLayoutCommand extends AbstractCommand
 {

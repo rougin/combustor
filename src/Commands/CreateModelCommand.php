@@ -18,7 +18,7 @@ use Rougin\Combustor\Generator\ModelGenerator;
  * Generates a Wildfire or Doctrine-based model for CodeIgniter
  *
  * @package Combustor
- * @author  Rougin Royce Gutib <rougingutib@gmail.com>
+ * @author  Rougin Gutib <rougingutib@gmail.com>
  */
 class CreateModelCommand extends AbstractCommand
 {

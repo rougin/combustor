@@ -16,7 +16,7 @@ use Symfony\Component\Console\Output\OutputInterface;
  * model and view files for CodeIgniter
  *
  * @package Combustor
- * @author  Rougin Royce Gutib <rougingutib@gmail.com>
+ * @author  Rougin Gutib <rougingutib@gmail.com>
  */
 class CreateScaffoldCommand extends AbstractCommand
 {

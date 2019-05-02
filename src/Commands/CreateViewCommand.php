@@ -16,7 +16,7 @@ use Rougin\Combustor\Validator\ViewValidator;
  * Creates a list of views for CodeIgniter
  *
  * @package Combustor
- * @author  Rougin Royce Gutib <rougingutib@gmail.com>
+ * @author  Rougin Gutib <rougingutib@gmail.com>
  */
 class CreateViewCommand extends AbstractCommand
 {

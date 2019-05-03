@@ -15,7 +15,7 @@ use Rougin\Combustor\Common\Commands\InstallCommand;
  * Installs Doctrine for CodeIgniter
  *
  * @package Combustor
- * @author  Rougin Royce Gutib <rougingutib@gmail.com>
+ * @author  Rougin Gutib <rougingutib@gmail.com>
  */
 class InstallDoctrineCommand extends InstallCommand
 {

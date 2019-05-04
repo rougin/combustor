@@ -15,7 +15,7 @@ use Rougin\Combustor\Common\Commands\InstallCommand;
  * Installs Wildfire for CodeIgniter
  *
  * @package Combustor
- * @author  Rougin Royce Gutib <rougingutib@gmail.com>
+ * @author  Rougin Gutib <rougingutib@gmail.com>
  */
 class InstallWildfireCommand extends InstallCommand
 {

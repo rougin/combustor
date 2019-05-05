@@ -10,7 +10,7 @@ use Rougin\Combustor\Common\Commands\RemoveCommand;
  * Removes Doctrine from CodeIgniter
  *
  * @package Combustor
- * @author  Rougin Royce Gutib <rougingutib@gmail.com>
+ * @author  Rougin Gutib <rougingutib@gmail.com>
  */
 class RemoveDoctrineCommand extends RemoveCommand
 {

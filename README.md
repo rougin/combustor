@@ -1,26 +1,26 @@
 # Combustor
 
 [![Latest Version on Packagist][ico-version]][link-packagist]
-[![Software License][ico-license]](LICENSE.md)
+[![Software License][ico-license]][link-license]
 [![Build Status][ico-travis]][link-travis]
 [![Coverage Status][ico-scrutinizer]][link-scrutinizer]
 [![Quality Score][ico-code-quality]][link-code-quality]
 [![Total Downloads][ico-downloads]][link-downloads]
 
-Combustor is a [Codeigniter](https://codeigniter.com) library that generates controllers, models, and views based from database tables. It uses the [Describe](https://rougin.github.io/describe) library for retrieving the database tables and as the basis for code generation.
+Combustor is a [Codeigniter](https://codeigniter.com/) library that generates controllers, models, and views based from database tables. It uses the [Describe](https://rougin.github.io/describe/) library as the basis for retrieving database tables and for [CRUD](https://en.wikipedia.org/wiki/Create,_read,_update_and_delete) code generation.
 
 ## Features
 
 * Generates code based from the structure of the Codeigniter framework
+* Needs to worry only on the database schema, and Combustor will do the rest
 * Speeds up the code development for prototyping web applications
 * View templates are based on Bootstrap which can also be modified later
-* Needs to worry only on the database schema, and Combustor will do the rest
 
 ## Installation
 
-1. Download the Codeigniter framework [here](https://github.com/bcit-ci/CodeIgniter/archive/3.1.8.zip) and extract it to the web server.
+1. Download the Codeigniter framework [here](https://github.com/bcit-ci/CodeIgniter/archive/3.1.9.zip) and extract it to the web server.
 2. Configure the database connectivity settings in **application/config/database.php**.
-3. Install Combustor through the [Composer](https://getcomposer.org) package manager:
+3. Install `Combustor` via [Composer](https://getcomposer.org/):
 
     ``` bash
     $ composer require rougin/combustor --dev
@@ -215,9 +215,9 @@ var_dump((array) $result->result());
 
 * For found bugs or suggestions, feel free to [open an issue](https://github.com/rougin/combustor/issues) or [create a pull request](https://github.com/rougin/combustor/compare).
 
-## Change Log
+## Changelog
 
-Please see [CHANGELOG](CHANGELOG.md) for more information what has changed recently.
+Please see [CHANGELOG][link-changelog] for more information what has changed recently.
 
 ## Testing
 
@@ -225,34 +225,26 @@ Please see [CHANGELOG](CHANGELOG.md) for more information what has changed recen
 $ composer test
 ```
 
-## Contributing
-
-Please see [CONTRIBUTING](CONTRIBUTING.md) and [CONDUCT](CONDUCT.md) for details.
-
-## Security
-
-If you discover any security related issues, please email rougingutib@gmail.com instead of using the issue tracker.
-
 ## Credits
 
-- [Rougin Royce Gutib][link-author]
-- [All Contributors][link-contributors]
+- [All contributors][link-contributors]
 
 ## License
 
-The MIT License (MIT). Please see [License File](LICENSE.md) for more information.
+The MIT License (MIT). Please see [LICENSE][link-license] for more information.
 
-[ico-version]: https://img.shields.io/packagist/v/rougin/combustor.svg?style=flat-square
-[ico-license]: https://img.shields.io/badge/license-MIT-brightgreen.svg?style=flat-square
-[ico-travis]: https://img.shields.io/travis/rougin/combustor/master.svg?style=flat-square
-[ico-scrutinizer]: https://img.shields.io/scrutinizer/coverage/g/rougin/combustor.svg?style=flat-square
 [ico-code-quality]: https://img.shields.io/scrutinizer/g/rougin/combustor.svg?style=flat-square
 [ico-downloads]: https://img.shields.io/packagist/dt/rougin/combustor.svg?style=flat-square
+[ico-license]: https://img.shields.io/badge/license-MIT-brightgreen.svg?style=flat-square
+[ico-scrutinizer]: https://img.shields.io/scrutinizer/coverage/g/rougin/combustor.svg?style=flat-square
+[ico-travis]: https://img.shields.io/travis/rougin/combustor/master.svg?style=flat-square
+[ico-version]: https://img.shields.io/packagist/v/rougin/combustor.svg?style=flat-square
 
-[link-packagist]: https://packagist.org/packages/rougin/combustor
-[link-travis]: https://travis-ci.org/rougin/combustor
-[link-scrutinizer]: https://scrutinizer-ci.com/g/rougin/combustor/code-structure
+[link-changelog]: https://github.com/rougin/combustor/blob/master/CHANGELOG.md
 [link-code-quality]: https://scrutinizer-ci.com/g/rougin/combustor
+[link-contributors]: https://github.com/rougin/combustor/contributors
 [link-downloads]: https://packagist.org/packages/rougin/combustor
-[link-author]: https://github.com/rougin
-[link-contributors]: ../../contributors
+[link-license]: https://github.com/rougin/combustor/blob/master/LICENSE.md
+[link-packagist]: https://packagist.org/packages/rougin/combustor
+[link-scrutinizer]: https://scrutinizer-ci.com/g/rougin/combustor/code-structure
+[link-travis]: https://travis-ci.org/rougin/combustor

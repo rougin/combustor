@@ -15,7 +15,7 @@ use Rougin\Combustor\Commands\AbstractCommand;
  * Installs Doctrine/Wildfire library for CodeIgniter.
  *
  * @package Combustor
- * @author  Rougin Royce Gutib <rougingutib@gmail.com>
+ * @author  Rougin Gutib <rougingutib@gmail.com>
  */
 class InstallCommand extends AbstractCommand
 {

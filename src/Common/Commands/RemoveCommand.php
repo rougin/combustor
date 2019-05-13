@@ -15,7 +15,7 @@ use Rougin\Combustor\Commands\AbstractCommand;
  * Removes Doctrine/Wildfire library from CodeIgniter.
  *
  * @package Combustor
- * @author  Rougin Royce Gutib <rougingutib@gmail.com>
+ * @author  Rougin Gutib <rougingutib@gmail.com>
  */
 class RemoveCommand extends AbstractCommand
 {

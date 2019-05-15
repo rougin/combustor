@@ -8,7 +8,7 @@ namespace Rougin\Combustor\Common;
  * A simple object-oriented interface for handling files.
  *
  * @package Combustor
- * @author  Rougin Royce Gutib <rougingutib@gmail.com>
+ * @author  Rougin Gutib <rougingutib@gmail.com>
  */
 class File
 {

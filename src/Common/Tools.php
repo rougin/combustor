@@ -8,7 +8,7 @@ namespace Rougin\Combustor\Common;
  * Provides a list of multi-purpose functions for Combustor.
  *
  * @package Combustor
- * @author  Rougin Royce Gutib <rougingutib@gmail.com>
+ * @author  Rougin Gutib <rougingutib@gmail.com>
  */
 class Tools
 {

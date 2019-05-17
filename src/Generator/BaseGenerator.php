@@ -8,7 +8,7 @@ use Rougin\Describe\Describe;
  * Base Generator
  *
  * @package Combustor
- * @author  Rougin Royce Gutib <rougingutib@gmail.com>
+ * @author  Rougin Gutib <rougingutib@gmail.com>
  */
 class BaseGenerator
 {

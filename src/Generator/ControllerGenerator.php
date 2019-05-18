@@ -10,7 +10,7 @@ use Rougin\Combustor\Common\Tools;
  * Generates CodeIgniter-based controllers.
  *
  * @package Combustor
- * @author  Rougin Royce Gutib <rougingutib@gmail.com>
+ * @author  Rougin Gutib <rougingutib@gmail.com>
  */
 class ControllerGenerator extends BaseGenerator implements GeneratorInterface
 {

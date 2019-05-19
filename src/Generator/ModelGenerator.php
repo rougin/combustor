@@ -10,7 +10,7 @@ use Rougin\Combustor\Common\Tools;
  * Generates CodeIgniter-based models.
  *
  * @package Combustor
- * @author  Rougin Royce Gutib <rougingutib@gmail.com>
+ * @author  Rougin Gutib <rougingutib@gmail.com>
  */
 class ModelGenerator extends BaseGenerator implements GeneratorInterface
 {

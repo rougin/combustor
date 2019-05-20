@@ -8,7 +8,7 @@ namespace Rougin\Combustor\Generator;
  * An interface for generators.
  *
  * @package Combustor
- * @author  Rougin Royce Gutib <rougingutib@gmail.com>
+ * @author  Rougin Gutib <rougingutib@gmail.com>
  */
 interface GeneratorInterface
 {

@@ -10,7 +10,7 @@ use Rougin\Combustor\Common\Tools;
  * Generates CodeIgniter-based views.
  *
  * @package Combustor
- * @author  Rougin Royce Gutib <rougingutib@gmail.com>
+ * @author  Rougin Gutib <rougingutib@gmail.com>
  */
 class ViewGenerator extends BaseGenerator implements GeneratorInterface
 {

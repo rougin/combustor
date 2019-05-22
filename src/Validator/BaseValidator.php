@@ -8,7 +8,7 @@ namespace Rougin\Combustor\Validator;
  * Checks if Wildfire or Doctrine is available
  *
  * @package Combustor
- * @author  Rougin Royce Gutib <rougingutib@gmail.com>
+ * @author  Rougin Gutib <rougingutib@gmail.com>
  */
 class BaseValidator implements ValidatorInterface
 {

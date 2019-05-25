@@ -8,7 +8,7 @@ namespace Rougin\Combustor\Validator;
  * An interface for validating generators.
  *
  * @package Combustor
- * @author  Rougin Royce Gutib <rougingutib@gmail.com>
+ * @author  Rougin Gutib <rougingutib@gmail.com>
  */
 interface ValidatorInterface
 {

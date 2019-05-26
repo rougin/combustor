@@ -11,7 +11,7 @@ use Rougin\Combustor\Validator\ValidatorInterface;
  * Checks if it is valid to generate view files.
  *
  * @package Combustor
- * @author  Rougin Royce Gutib <rougingutib@gmail.com>
+ * @author  Rougin Gutib <rougingutib@gmail.com>
  */
 class ViewValidator implements ValidatorInterface
 {

@@ -14,7 +14,7 @@ use Rougin\Describe\Driver\CodeIgniterDriver;
  * Command Builder
  *
  * @package Combustor
- * @author  Rougin Royce Gutib <rougingutib@gmail.com>
+ * @author  Rougin Gutib <rougingutib@gmail.com>
  */
 class CommandBuilder
 {

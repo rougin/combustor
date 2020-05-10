@@ -7,7 +7,7 @@
 [![Quality Score][ico-code-quality]][link-code-quality]
 [![Total Downloads][ico-downloads]][link-downloads]
 
-Combustor is a [Codeigniter](https://codeigniter.com/) library that generates controllers, models, and views based from database tables. It uses the [Describe](https://rougin.github.io/describe/) library as the basis for retrieving database tables and for [CRUD](https://en.wikipedia.org/wiki/Create,_read,_update_and_delete) code generation.
+Combustor is a [Codeigniter](https://codeigniter.com/) library that generates controllers, models, and views based from database tables. It uses the [Describe](https://roug.in/describe/) library as the basis for retrieving database tables and for [CRUD](https://en.wikipedia.org/wiki/Create,_read,_update_and_delete) code generation.
 
 ## Features
 

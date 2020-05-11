@@ -2,13 +2,13 @@
     "name": "rougin/combustor",
     "description": "CRUD generator for the Codeigniter framework.",
     "keywords": ["codeigniter", "combustor", "crud", "generator"],
-    "homepage": "https://rougin.github.io/combustor/",
+    "homepage": "https://roug.in/combustor/",
     "license": "MIT",
     "authors":
     [
         {
             "email": "rougingutib@gmail.com",
-            "homepage": "http://rougin.github.io/",
+            "homepage": "https://roug.in/",
             "name": "Rougin Gutib",
             "role": "Software Engineer"
         }

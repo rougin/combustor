@@ -7,31 +7,28 @@
 [![Quality Score][ico-code-quality]][link-code-quality]
 [![Total Downloads][ico-downloads]][link-downloads]
 
-Combustor is a [Codeigniter](https://codeigniter.com/) library that generates controllers, models, and views based from database tables. It uses the [Describe](https://roug.in/describe/) library as the basis for retrieving database tables and for [CRUD](https://en.wikipedia.org/wiki/Create,_read,_update_and_delete) code generation.
+Combustor is a [Codeigniter](https://codeigniter.com/) library that generates controllers, models, and views based from database tables. It uses the [Describe](/describe/) library for retrieving the database tables and as the basis for code generation.
 
 ## Features
 
 * Generates code based from the structure of the Codeigniter framework
-* Needs to worry only on the database schema, and Combustor will do the rest
 * Speeds up the code development for prototyping web applications
 * View templates are based on Bootstrap which can also be modified later
+* Needs to worry only on the database schema, and Combustor will do the rest
 
 ## Installation
 
-1. Download the Codeigniter framework [here](https://github.com/bcit-ci/CodeIgniter/archive/3.1.9.zip) and extract it to the web server.
-2. Configure the database connectivity settings in **application/config/database.php**.
-3. Install `Combustor` via [Composer](https://getcomposer.org/):
-
-    ``` bash
-    $ composer require rougin/combustor --dev
-    ```
-
-4. Install the ORM wrappers **Wildfire** and **Doctrine ORM** or both:
-
-    ``` bash
-    $ vendor/bin/combustor install:wildfire
-    $ vendor/bin/combustor install:doctrine
-    ```
+1. Download the Codeigniter framework [here](https://github.com/bcit-ci/CodeIgniter/archive/3.1.8.zip) and extract it to the web server.
+2. Configure the application's database connectivity settings in `application/config/database.php`.
+3. Install Combustor through the [Composer](https://getcomposer.org/) package manager:
+``` bash
+$ composer require rougin/combustor --dev
+```
+4. Install the ORM wrappers `Wildfire` and `Doctrine ORM` or both:
+``` bash
+$ vendor/bin/combustor install:wildfire
+$ vendor/bin/combustor install:doctrine
+```
 
 ## Commands
 
@@ -211,7 +208,7 @@ var_dump((array) $result->result());
 
 * Before generating the models, views, and controllers, please make sure that the **database is defined properly** (foreign keys, indexes, relationships, normalizations) in order to minimize the modifications after the codes has been generated. Also, generate the models, views, and controllers first to tables that are having **no relationship with other tables** in the database.
 
-    * *The reason for this is that Combustor will generate controllers, models, and views based on the specified database schema. If there's something wrong in the said database, Combustor will definitely generate a bad codebase.*
+    * The reason for this is that Combustor will generate controllers, models, and views based on the specified database schema. If there's something wrong in the said database, Combustor will definitely generate a bad codebase.
 
 * For found bugs or suggestions, feel free to [open an issue](https://github.com/rougin/combustor/issues) or [create a pull request](https://github.com/rougin/combustor/compare).
 

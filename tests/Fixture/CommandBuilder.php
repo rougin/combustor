@@ -3,8 +3,8 @@
 namespace Rougin\Combustor\Fixture;
 
 use Auryn\Injector;
-use Twig_Environment;
-use Twig_Loader_Filesystem;
+use Twig\Environment;
+use Twig\Loader\FilesystemLoader;
 
 use Rougin\Describe\Describe;
 use Rougin\SparkPlug\Instance;
@@ -30,27 +30,32 @@ class CommandBuilder
     {
         $injector = new Injector;
 
-        if (empty($app)) {
+        if (empty($app))
+        {
             $app = __DIR__ . '/../TestApp';
         }
 
-        if (empty($templates)) {
+        if (empty($templates))
+        {
             $templates = __DIR__ . '/../../src/Templates';
         }
 
-        $injector->delegate('Twig_Environment', function () use ($templates) {
-            $loader = new Twig_Loader_Filesystem($templates);
+        $injector->delegate(Environment::class, function () use ($templates)
+        {
+            $loader = new FilesystemLoader($templates);
 
-            return new Twig_Environment($loader);
+            return new Environment($loader);
         });
 
-        $injector->delegate('Rougin\Describe\Describe', function () use ($app) {
+        $injector->delegate('Rougin\Describe\Describe', function () use ($app)
+        {
             $ci = Instance::create($app);
 
             $ci->load->database();
             $ci->load->helper('inflector');
 
-            $config['default'] = [
+            $config['default'] =
+            [
                 'dbdriver' => $ci->db->dbdriver,
                 'hostname' => $ci->db->hostname,
                 'username' => $ci->db->username,
@@ -58,7 +63,8 @@ class CommandBuilder
                 'database' => $ci->db->database
             ];
 
-            if (empty($config['default']['hostname'])) {
+            if (empty($config['default']['hostname']))
+            {
                 $config['default']['hostname'] = $ci->db->dsn;
             }
 

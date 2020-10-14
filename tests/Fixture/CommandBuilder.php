@@ -40,15 +40,13 @@ class CommandBuilder
             $templates = __DIR__ . '/../../src/Templates';
         }
 
-        $injector->delegate(Environment::class, function () use ($templates)
-        {
+        $injector->delegate('Twig\Environment', function () use ($templates) {
             $loader = new FilesystemLoader($templates);
 
             return new Environment($loader);
         });
 
-        $injector->delegate('Rougin\Describe\Describe', function () use ($app)
-        {
+        $injector->delegate('Rougin\Describe\Describe', function () use ($app) {
             $ci = Instance::create($app);
 
             $ci->load->database();

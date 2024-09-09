@@ -8,9 +8,9 @@ use Symfony\Component\Console\Tester\CommandTester;
 use Rougin\Combustor\Fixture\CommandBuilder;
 use Rougin\Combustor\Fixture\CodeIgniterHelper;
 
-use PHPUnit_Framework_TestCase;
+use Rougin\Combustor\Testcase;
 
-class CreateScaffoldCommandTest extends PHPUnit_Framework_TestCase
+class CreateScaffoldCommandTest extends Testcase
 {
     /**
      * @var string
@@ -37,7 +37,7 @@ class CreateScaffoldCommandTest extends PHPUnit_Framework_TestCase
      *
      * @return void
      */
-    public function setUp()
+    public function doSetUp()
     {
         $this->appPath = __DIR__ . '/../TestApp/application';
     }

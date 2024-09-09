@@ -1,5 +1,9 @@
+.php-cs-fixer.cache
 .phpintel
+.phpunit.result.cache
+bower_components
 build
 composer.lock
 docs
+node_modules
 vendor

@@ -8,9 +8,9 @@ use Rougin\Combustor\Common\Config;
 use Rougin\Combustor\Fixture\CommandBuilder;
 use Rougin\Combustor\Fixture\CodeIgniterHelper;
 
-use PHPUnit_Framework_TestCase;
+use Rougin\Combustor\Testcase;
 
-class InstallDoctrineCommandTest extends PHPUnit_Framework_TestCase
+class InstallDoctrineCommandTest extends Testcase
 {
     /**
      * @var string
@@ -27,7 +27,7 @@ class InstallDoctrineCommandTest extends PHPUnit_Framework_TestCase
      *
      * @return void
      */
-    public function setUp()
+    public function doSetUp()
     {
         $this->appPath = __DIR__ . '/../TestApp/application';
         $command = 'Rougin\Combustor\Commands\InstallDoctrineCommand';

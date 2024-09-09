@@ -9,9 +9,9 @@ use Rougin\Combustor\Common\Config;
 use Rougin\Combustor\Fixture\CommandBuilder;
 use Rougin\Combustor\Fixture\CodeIgniterHelper;
 
-use PHPUnit_Framework_TestCase;
+use Rougin\Combustor\Testcase;
 
-class InstallWildfireCommandTest extends PHPUnit_Framework_TestCase
+class InstallWildfireCommandTest extends Testcase
 {
     /**
      * @var string
@@ -28,7 +28,7 @@ class InstallWildfireCommandTest extends PHPUnit_Framework_TestCase
      *
      * @return void
      */
-    public function setUp()
+    public function doSetUp()
     {
         $this->appPath = __DIR__ . '/../TestApp/application';
         $command = 'Rougin\Combustor\Commands\InstallWildfireCommand';

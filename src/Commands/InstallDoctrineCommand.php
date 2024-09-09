@@ -33,7 +33,7 @@ class InstallDoctrineCommand extends InstallCommand
      */
     protected function execute(InputInterface $input, OutputInterface $output)
     {
-        system('composer require doctrine/orm');
+        system('composer require doctrine/orm:"~1.0|~2.0"');
 
         $cli = $this->renderer->render('DoctrineCLI.tpl');
         $doctrine = new File(APPPATH . 'libraries/Doctrine.php');

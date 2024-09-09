@@ -7,9 +7,9 @@ use Symfony\Component\Console\Tester\CommandTester;
 use Rougin\Combustor\Fixture\CommandBuilder;
 use Rougin\Combustor\Fixture\CodeIgniterHelper;
 
-use PHPUnit_Framework_TestCase;
+use Rougin\Combustor\Testcase;
 
-class CreateControllerCommandTest extends PHPUnit_Framework_TestCase
+class CreateControllerCommandTest extends Testcase
 {
     /**
      * @var \Symfony\Component\Console\Command\Command
@@ -31,7 +31,7 @@ class CreateControllerCommandTest extends PHPUnit_Framework_TestCase
      *
      * @return void
      */
-    public function setUp()
+    public function doSetUp()
     {
         $this->appPath = __DIR__ . '/../TestApp/application';
 

@@ -5,9 +5,7 @@ namespace Rougin\Combustor;
 use Rougin\Combustor\Common\File;
 use Rougin\Combustor\Common\Tools;
 
-use PHPUnit_Framework_TestCase;
-
-class ToolsTest extends PHPUnit_Framework_TestCase
+class ToolsTest extends Testcase
 {
     /**
      * Tests Tools::strip_table_schema.

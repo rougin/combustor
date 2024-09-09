@@ -4,10 +4,9 @@ namespace Rougin\Combustor;
 
 use Rougin\Combustor\Common\Config;
 
-use PHPUnit_Framework_TestCase;
 use Rougin\Combustor\Fixture\CodeIgniterHelper;
 
-class ConfigTest extends PHPUnit_Framework_TestCase
+class ConfigTest extends Testcase
 {
     /**
      * @var string
@@ -22,7 +21,7 @@ class ConfigTest extends PHPUnit_Framework_TestCase
     /**
      * Sets up the config path.
      */
-    public function setUp()
+    public function doSetUp()
     {
         $this->appPath = __DIR__ . '/TestApp/application';
         $this->configPath = $this->appPath . '/config';

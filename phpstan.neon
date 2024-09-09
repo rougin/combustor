@@ -1,0 +1,16 @@
+parameters:
+  level: 9
+  paths:
+    - src
+    - tests
+  excludePaths:
+    analyse:
+      - tests/Weblog/application/views
+  scanDirectories:
+    - vendor/rougin/codeigniter/src
+  ignoreErrors:
+    - '#^Call to an undefined method Rougin\\Wildfire\\Wildfire\:\:test\(\)\.$#'
+    - '#^Access to an undefined property CI_Controller\:\:\$db\.$#'
+    - '#^Access to an undefined property CI_Controller\:\:\$user\.$#'
+    - '#^Constant APPPATH not found\.$#'
+    - '#^Constant ENVIRONMENT not found\.$#'

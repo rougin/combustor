@@ -8,9 +8,7 @@ use Symfony\Component\Console\Tester\CommandTester;
 use Rougin\Combustor\Fixture\CommandBuilder;
 use Rougin\Combustor\Fixture\CodeIgniterHelper;
 
-use PHPUnit_Framework_TestCase;
-
-class CombustorTest extends PHPUnit_Framework_TestCase
+class CombustorTest extends Testcase
 {
     /**
      * @var string
@@ -37,7 +35,7 @@ class CombustorTest extends PHPUnit_Framework_TestCase
      *
      * @return void
      */
-    public function setUp()
+    public function doSetUp()
     {
         $this->appPath = __DIR__ . '/TestApp/application';
     }

@@ -48,4 +48,14 @@ class Command extends Blueprint
             $this->addOption('lowercase', 'Keeps the first character of the name to lowercase');
         }
     }
+
+    /**
+     * Executes the command.
+     *
+     * @return integer
+     */
+    public function run()
+    {
+        return self::RETURN_SUCCESS;
+    }
 }

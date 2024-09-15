@@ -16,9 +16,10 @@
   "require":
   {
     "php": ">=5.3.0",
-    "rougin/blueprint": "~0.1",
-    "rougin/describe": "~1.4",
-    "rougin/spark-plug": "~0.4"
+    "rougin/blueprint": "dev-master",
+    "rougin/classidy": "dev-master",
+    "rougin/describe": "dev-master",
+    "rougin/spark-plug": "dev-master"
   },
   "require-dev":
   {
@@ -28,8 +29,7 @@
   },
   "bin":
   [
-    "bin/combustor",
-    "bin/combustor.php"
+    "bin/combustor"
   ],
   "autoload":
   {
@@ -60,7 +60,7 @@
   {
     "rougin/codeigniter": "Codeigniter 3's Composer-based package.",
     "rougin/credo": "A Doctrine ORM wrapper for Codeigniter 3.",
-    "rougin/ignite": "A Codeigniter 3 project based on Composer.",
+    "rougin/ignite": "A Composer-based Codeigniter 3 project.",
     "rougin/refinery": "\"Ready-to-eat\" migrations for Codeigniter 3.",
     "rougin/wildfire": "A Query Builder wrapper for Codeigniter 3."
   }

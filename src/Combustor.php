@@ -9,4 +9,5 @@ namespace Rougin\Combustor;
  */
 class Combustor
 {
+    const VERSION = '1.3.0';
 }

@@ -1,5 +1,77 @@
 #!/usr/bin/env php
+
 <?php
 
-// Load and run the Combustor application
-require 'combustor.php';
+use Rougin\Blueprint\Blueprint;
+use Rougin\Blueprint\Container;
+use Rougin\Combustor\Combustor;
+use Rougin\Combustor\Packages\DescribePackage;
+use Rougin\Combustor\Packages\SparkplugPackage;
+use Rougin\Slytherin\Integration\Configuration;
+use Symfony\Component\Yaml\Yaml;
+
+// Return the root directory of the project ------------
+$vendor = (string) __DIR__ . '/../../../../';
+
+$exists = file_exists($vendor . '/vendor/autoload.php');
+
+$root = $exists ? $vendor : __DIR__ . '/../';
+// -----------------------------------------------------
+
+// Load the Composer autoloader -------
+require $root . '/vendor/autoload.php';
+// ------------------------------------
+
+$app = new Blueprint;
+
+$app->setName('Combustor');
+$app->setVersion(Combustor::VERSION);
+
+// Set the directory for the defined commands. ----
+$app->setCommandPath(__DIR__ . '/../src/Commands');
+// ------------------------------------------------
+
+// Set the namespace for the "commands" path. ---
+$namespace = 'Rougin\Combustor\Commands';
+$app->setCommandNamespace($namespace);
+// ----------------------------------------------
+
+/** @var string */
+$path = realpath($root);
+
+// If "combustor.yml" exists, set the application path ---
+if (file_exists($root . '/combustor.yml'))
+{
+    $file = $root . '/combustor.yml';
+
+    /** @var string */
+    $file = file_get_contents($file);
+
+    // Replace the constant with root path ----
+    $search = '%%CURRENT_DIRECTORY%%';
+
+    $file = str_replace($search, $path, $file);
+    // ----------------------------------------
+
+    /** @var array<string, string> */
+    $parsed = Yaml::parse($file);
+
+    /** @var string */
+    $path = realpath($parsed['app_path']);
+}
+// -------------------------------------------------------
+
+// Set the definitions in the container ------------
+$config = new Configuration;
+
+$container = new Container($config);
+
+$container->addPackage(new SparkplugPackage($path));
+$container->addPackage(new DescribePackage);
+
+$app->setContainer($container);
+// -------------------------------------------------
+
+// Run the console application ---
+$app->run();
+// -------------------------------

@@ -65,11 +65,10 @@ class Command extends Blueprint
      */
     public function run()
     {
+        /** @var string */
         $table = $this->getArgument('name');
 
         $plate = $this->getTemplate($table);
-
-        $plate->init();
 
         echo $this->maker->make($plate);
 
@@ -78,6 +77,7 @@ class Command extends Blueprint
 
     /**
      * @param string $table
+     *
      * @return \Rougin\Classidy\Classidy
      * @throws \Exception
      */

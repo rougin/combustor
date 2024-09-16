@@ -14,28 +14,25 @@ use Rougin\Combustor\Inflector;
 class Controller extends Classidy
 {
     /**
-     * @var string
-     */
-    protected $table;
-
-    /**
      * @param string $table
      */
     public function __construct($table)
     {
-        $this->table = $table;
+        $this->init($table);
     }
 
     /**
      * Configures the current class.
      *
+     * @param string $table
+     *
      * @return void
      */
-    public function init()
+    public function init($table)
     {
         $this->setPackage('Codeigniter');
 
-        $name = Inflector::plural($this->table);
+        $name = Inflector::plural($table);
         $this->setName(ucfirst($name));
 
         $extends = 'Rougin\SparkPlug\Controller';
@@ -45,11 +42,32 @@ class Controller extends Classidy
         $method->setCodeLine(function ($lines)
         {
             $lines[] = 'parent::__construct();';
-            $lines[] = '';
 
             return $lines;
         });
+        $this->addMethod($method);
 
+        $method = new Method('create');
+        $method->setReturn('void');
+        $this->addMethod($method);
+
+        $method = new Method('delete');
+        $method->addIntegerArgument('id');
+        $method->setReturn('void');
+        $this->addMethod($method);
+
+        $method = new Method('edit');
+        $method->addIntegerArgument('id');
+        $method->setReturn('void');
+        $this->addMethod($method);
+
+        $method = new Method('index');
+        $method->setReturn('void');
+        $this->addMethod($method);
+
+        $method = new Method('show');
+        $method->addIntegerArgument('id');
+        $method->setReturn('void');
         $this->addMethod($method);
     }
 }

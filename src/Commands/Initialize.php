@@ -45,7 +45,7 @@ class Initialize extends Command
     public function run()
     {
         /** @var string */
-        $path = realpath(__DIR__ . '/../Templates');
+        $path = realpath(__DIR__ . '/../Template');
 
         /** @var string */
         $file = file_get_contents($path . '/' . $this->file);

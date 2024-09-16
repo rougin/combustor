@@ -1,5 +1,4 @@
 #!/usr/bin/env php
-
 <?php
 
 use Rougin\Blueprint\Blueprint;
@@ -38,7 +37,7 @@ $app->setCommandNamespace($namespace);
 /** @var string */
 $path = realpath($root);
 
-// If "combustor.yml" exists, set the application path ---
+// Update APPPATH if "combustor.yml" exists ---
 if (file_exists($root . '/combustor.yml'))
 {
     $file = $root . '/combustor.yml';
@@ -55,10 +54,13 @@ if (file_exists($root . '/combustor.yml'))
     /** @var array<string, string> */
     $parsed = Yaml::parse($file);
 
-    /** @var string */
-    $path = realpath($parsed['app_path']);
+    if (array_key_exists('app_path', $parsed))
+    {
+        /** @var string */
+        $path = realpath($parsed['app_path']);
+    }
 }
-// -------------------------------------------------------
+// --------------------------------------------
 
 // Set the definitions in the container ------------
 $container = new Container;

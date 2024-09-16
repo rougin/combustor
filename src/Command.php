@@ -13,14 +13,14 @@ use Rougin\Describe\Driver\DriverInterface;
 class Command extends Blueprint
 {
     /**
-     * @var \Rougin\Describe\Driver\DriverInterface
+     * @var \Rougin\Describe\Driver\DriverInterface|null
      */
     protected $driver;
 
     /**
-     * @param \Rougin\Describe\Driver\DriverInterface $driver
+     * @param \Rougin\Describe\Driver\DriverInterface|null $driver
      */
-    public function __construct(DriverInterface $driver)
+    public function __construct(DriverInterface $driver = null)
     {
         $this->driver = $driver;
     }
@@ -47,6 +47,16 @@ class Command extends Blueprint
         {
             $this->addOption('lowercase', 'Keeps the first character of the name to lowercase');
         }
+    }
+
+    /**
+     * Checks whether the command is enabled or not in the current environment.
+     *
+     * @return boolean
+     */
+    public function isEnabled()
+    {
+        return $this->driver !== null;
     }
 
     /**

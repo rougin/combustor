@@ -2,10 +2,13 @@
 
 namespace Rougin\Combustor\Packages;
 
+use Rougin\Combustor\Commands\CreateController;
 use Rougin\Describe\Driver\DatabaseDriver;
+use Rougin\Describe\Driver\DriverInterface;
 use Rougin\Slytherin\Container\ContainerInterface;
 use Rougin\Slytherin\Integration\Configuration;
 use Rougin\Slytherin\Integration\IntegrationInterface;
+use Rougin\SparkPlug\Controller;
 
 /**
  * @package Combustor
@@ -22,16 +25,41 @@ class DescribePackage implements IntegrationInterface
      */
     public function define(ContainerInterface $container, Configuration $config)
     {
-        $class = 'Rougin\SparkPlug\Controller';
+        // Ignore if Spark Plug is not defined ---
+        $ci3Ctrl = 'Rougin\SparkPlug\Controller';
 
-        if (! $container->has($class))
+        if (! $container->has($ci3Ctrl))
         {
             return $container;
         }
+        // ---------------------------------------
 
         /** @var \Rougin\SparkPlug\Controller */
-        $ci = $container->get($class);
+        $ci3App = $container->get($ci3Ctrl);
 
+        $config = $this->getConfig($ci3App);
+
+        // TODO: No need to add DriverInterface per Command ---
+        $driver = $this->getDriver($config);
+
+        $commands = $this->setCommands($driver);
+
+        foreach ($commands as $item)
+        {
+            $container->set(get_class($item), $item);
+        }
+        // ----------------------------------------------------
+
+        return $container;
+    }
+
+    /**
+     * @param \Rougin\SparkPlug\Controller $ci
+     *
+     * @return array<string, string>
+     */
+    protected function getConfig(Controller $ci)
+    {
         $ci->load->database();
         $ci->load->helper('inflector');
 
@@ -48,12 +76,30 @@ class DescribePackage implements IntegrationInterface
             $config['hostname'] = $ci->db->dsn;
         };
 
-        $interface = 'Rougin\Describe\Driver\DriverInterface';
+        return $config;
+    }
 
-        $name = $config['dbdriver'];
+    /**
+     * @param array<string, string> $config
+     *
+     * @return \Rougin\Describe\Driver\DriverInterface
+     */
+    protected function getDriver($config)
+    {
+        return new DatabaseDriver($config['dbdriver'], $config);
+    }
 
-        $driver = new DatabaseDriver($name, $config);
+    /**
+     * @param \Rougin\Describe\Driver\DriverInterface $driver
+     *
+     * @return \Rougin\Combustor\Command[]
+     */
+    protected function setCommands(DriverInterface $driver)
+    {
+        $commands = array();
 
-        return $container->set($interface, $driver);
+        $commands[] = new CreateController($driver);
+
+        return $commands;
     }
 }

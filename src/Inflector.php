@@ -14,14 +14,15 @@ class Inflector
     /**
      * Takes a singular word and makes it plural
      *
-     * @param  string $word
+     * @param string $word
+     *
      * @return string
      */
     public static function plural($word)
     {
         $result = strval($word);
 
-        if ( ! word_is_countable($result))
+        if (! word_is_countable($result))
         {
             return $result;
         }
@@ -53,6 +54,7 @@ class Inflector
         {
             if (preg_match($rule, $result))
             {
+                /** @var string */
                 $result = preg_replace($rule, $replace, $result);
 
                 break;

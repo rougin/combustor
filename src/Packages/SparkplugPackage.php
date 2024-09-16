@@ -15,14 +15,14 @@ use Rougin\SparkPlug\Instance;
 class SparkplugPackage implements IntegrationInterface
 {
     /**
-     * @var string|null
+     * @var string
      */
-    protected $root = null;
+    protected $root;
 
     /**
-     * @param string|null $root
+     * @param string $root
      */
-    public function __construct($root = null)
+    public function __construct($root)
     {
         $this->root = $root;
     }
@@ -37,6 +37,19 @@ class SparkplugPackage implements IntegrationInterface
     {
         $class = 'Rougin\SparkPlug\Controller';
 
-        return $container->set($class, Instance::create($this->root));
+        // If cannot determine APPPATH, ignore ---
+        $appPath = $this->root . '/application';
+
+        $root = $this->root . '/config';
+
+        if (! is_dir($appPath) && ! is_dir($root))
+        {
+            return $container;
+        }
+        // ---------------------------------------
+
+        $app = Instance::create($this->root);
+
+        return $container->set($class, $app);
     }
 }

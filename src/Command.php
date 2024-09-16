@@ -3,6 +3,8 @@
 namespace Rougin\Combustor;
 
 use Rougin\Blueprint\Command as Blueprint;
+use Rougin\Classidy\Generator;
+use Rougin\Combustor\Template\Controller;
 use Rougin\Describe\Driver\DriverInterface;
 
 /**
@@ -13,16 +15,23 @@ use Rougin\Describe\Driver\DriverInterface;
 class Command extends Blueprint
 {
     /**
-     * @var \Rougin\Describe\Driver\DriverInterface|null
+     * @var \Rougin\Describe\Driver\DriverInterface
      */
     protected $driver;
 
     /**
-     * @param \Rougin\Describe\Driver\DriverInterface|null $driver
+     * @var \Rougin\Classidy\Generator
      */
-    public function __construct(DriverInterface $driver = null)
+    protected $maker;
+
+    /**
+     * @param \Rougin\Describe\Driver\DriverInterface $driver
+     */
+    public function __construct(DriverInterface $driver, Generator $maker)
     {
         $this->driver = $driver;
+
+        $this->maker = $maker;
     }
 
     /**
@@ -50,22 +59,35 @@ class Command extends Blueprint
     }
 
     /**
-     * Checks whether the command is enabled or not in the current environment.
-     *
-     * @return boolean
-     */
-    public function isEnabled()
-    {
-        return $this->driver !== null;
-    }
-
-    /**
      * Executes the command.
      *
      * @return integer
      */
     public function run()
     {
+        $table = $this->getArgument('name');
+
+        $plate = $this->getTemplate($table);
+
+        $plate->init();
+
+        echo $this->maker->make($plate);
+
         return self::RETURN_SUCCESS;
+    }
+
+    /**
+     * @param string $table
+     * @return \Rougin\Classidy\Classidy
+     * @throws \Exception
+     */
+    protected function getTemplate($table)
+    {
+        if ($this->name === 'create:controller')
+        {
+            return new Controller($table);
+        }
+
+        throw new \Exception('Invalid command');
     }
 }

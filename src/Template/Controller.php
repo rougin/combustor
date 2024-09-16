@@ -1,6 +1,6 @@
 <?php
 
-namespace Rougin\Combustor\Templates;
+namespace Rougin\Combustor\Template;
 
 use Rougin\Classidy\Classidy;
 use Rougin\Classidy\Method;
@@ -46,6 +46,8 @@ class Controller extends Classidy
         {
             $lines[] = 'parent::__construct();';
             $lines[] = '';
+
+            return $lines;
         });
 
         $this->addMethod($method);

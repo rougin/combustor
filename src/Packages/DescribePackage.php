@@ -2,9 +2,7 @@
 
 namespace Rougin\Combustor\Packages;
 
-use Rougin\Combustor\Commands\CreateController;
 use Rougin\Describe\Driver\DatabaseDriver;
-use Rougin\Describe\Driver\DriverInterface;
 use Rougin\Slytherin\Container\ContainerInterface;
 use Rougin\Slytherin\Integration\Configuration;
 use Rougin\Slytherin\Integration\IntegrationInterface;
@@ -39,18 +37,11 @@ class DescribePackage implements IntegrationInterface
 
         $config = $this->getConfig($ci3App);
 
-        // TODO: No need to add DriverInterface per Command ---
+        $interface = 'Rougin\Describe\Driver\DriverInterface';
+
         $driver = $this->getDriver($config);
 
-        $commands = $this->setCommands($driver);
-
-        foreach ($commands as $item)
-        {
-            $container->set(get_class($item), $item);
-        }
-        // ----------------------------------------------------
-
-        return $container;
+        return $container->set($interface, $driver);
     }
 
     /**
@@ -87,19 +78,5 @@ class DescribePackage implements IntegrationInterface
     protected function getDriver($config)
     {
         return new DatabaseDriver($config['dbdriver'], $config);
-    }
-
-    /**
-     * @param \Rougin\Describe\Driver\DriverInterface $driver
-     *
-     * @return \Rougin\Combustor\Command[]
-     */
-    protected function setCommands(DriverInterface $driver)
-    {
-        $commands = array();
-
-        $commands[] = new CreateController($driver);
-
-        return $commands;
     }
 }

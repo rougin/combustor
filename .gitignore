@@ -1,11 +1,6 @@
-.env
 .php-cs-fixer.cache
 .phpintel
 .phpunit.result.cache
-/combustor.yml
-bower_components
 build
 composer.lock
-docs
-node_modules
 vendor

@@ -22,11 +22,6 @@ class Inflector
     {
         $result = strval($word);
 
-        if (! word_is_countable($result))
-        {
-            return $result;
-        }
-
         $rules = array(
             '/(quiz)$/'                => '\1zes',      // quizzes
             '/^(ox)$/'                 => '\1\2en',     // ox
@@ -74,11 +69,6 @@ class Inflector
     public static function singular($word)
     {
         $result = strval($word);
-
-        if (! word_is_countable($result))
-        {
-            return $result;
-        }
 
         $rules = array(
             '/(matr)ices$/'     => '\1ix',

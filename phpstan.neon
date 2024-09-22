@@ -5,10 +5,10 @@ parameters:
     - tests
   excludePaths:
     analyse:
-      - tests/Fixture/application/controllers
-      - tests/Fixture/application/models
-      - tests/Fixture/application/views
       - tests/Fixture/Plates
+      - tests/Fixture/Sample/controllers
+      - tests/Fixture/Sample/models
+      - tests/Fixture/Sample/views
   scanDirectories:
     - vendor/rougin/codeigniter/src
   ignoreErrors:

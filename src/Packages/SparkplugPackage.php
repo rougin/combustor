@@ -44,7 +44,9 @@ class SparkplugPackage implements IntegrationInterface
 
         if (! is_dir($appPath) && ! is_dir($root))
         {
+            // @codeCoverageIgnoreStart
             return $container;
+            // @codeCoverageIgnoreEnd
         }
         // ---------------------------------------
 

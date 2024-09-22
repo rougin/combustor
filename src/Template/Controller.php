@@ -43,16 +43,16 @@ class Controller extends Classidy
         $model = Inflector::singular($table);
 
         /** @var class-string */
-        $class = ucfirst($model);
+        $class = $model;
 
-        $ctrl = ucfirst($name);
+        $ctrl = $name;
 
-        if ($this->lower)
+        if (! $this->lower)
         {
             /** @var class-string */
-            $class = $model;
+            $class = ucfirst($model);
 
-            $ctrl = $name;
+            $ctrl = ucfirst($name);
         }
 
         $this->addClassProperty('db', 'CI_DB_query_builder')->asTag();

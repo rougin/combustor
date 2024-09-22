@@ -30,10 +30,9 @@ class PlateTest extends Testcase
      */
     public function doSetUp()
     {
-        /** @var string */
-        $root = realpath(__DIR__ . '/Fixture');
+        $root = __DIR__ . '/Fixture/Sample';
 
-        $this->path = $root . '/application';
+        $this->path = $root;
 
         $this->app = new Combustor($root);
     }

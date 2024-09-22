@@ -3,4 +3,7 @@
 .phpunit.result.cache
 build
 composer.lock
+tests/Fixture/application/controllers
+tests/Fixture/application/models
+tests/Fixture/application/views
 vendor

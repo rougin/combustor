@@ -43,10 +43,12 @@ class Command extends Blueprint
     {
         $this->addArgument('name', 'Name of the table');
 
-        if ($this->name === 'create:layout')
-        {
-            $this->addOption('bootstrap', 'Includes Bootstrap styling');
-        }
+        // TODO: Add Bootstrap styling in the generated views -------------
+        // if ($this->name === 'create:layout')
+        // {
+        //     $this->addOption('bootstrap', 'Includes Bootstrap styling');
+        // }
+        // ----------------------------------------------------------------
 
         $this->addOption('camel', 'Uses the camelCase convention');
 
@@ -68,26 +70,31 @@ class Command extends Blueprint
         /** @var string */
         $table = $this->getArgument('name');
 
-        $plate = $this->getTemplate($table);
+        /** @var boolean */
+        $lower = $this->getOption('lowercase');
+        $lower = (bool) $lower;
 
-        echo $this->maker->make($plate);
+        $plate = $this->getTemplate($table, $lower);
+
+        $plate = $this->maker->make($plate);
+
+        $name = ucfirst(Inflector::plural($table));
+        $file = APPPATH . 'controllers/' . $name . '.php';
+        file_put_contents($file, $plate);
+
+        $this->showPass('Controller successfully created!');
 
         return self::RETURN_SUCCESS;
     }
 
     /**
-     * @param string $table
+     * @param string  $table
+     * @param boolean $lower
      *
      * @return \Rougin\Classidy\Classidy
-     * @throws \Exception
      */
-    protected function getTemplate($table)
+    protected function getTemplate($table, $lower)
     {
-        if ($this->name === 'create:controller')
-        {
-            return new Controller($table);
-        }
-
-        throw new \Exception('Invalid command');
+        return new Controller($table, $lower);
     }
 }

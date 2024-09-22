@@ -1,12 +1,7 @@
 #!/usr/bin/env php
 <?php
 
-use Rougin\Blueprint\Blueprint;
-use Rougin\Blueprint\Container;
 use Rougin\Combustor\Combustor;
-use Rougin\Combustor\Packages\DescribePackage;
-use Rougin\Combustor\Packages\SparkplugPackage;
-use Symfony\Component\Yaml\Yaml;
 
 // Return the root directory of the project ------------
 $vendor = (string) __DIR__ . '/../../../../';
@@ -20,56 +15,7 @@ $root = $exists ? $vendor : __DIR__ . '/../';
 require $root . '/vendor/autoload.php';
 // ------------------------------------
 
-$app = new Blueprint;
-
-$app->setName('Combustor');
-$app->setVersion(Combustor::VERSION);
-
-// Set the directory for the defined commands. ----
-$app->setCommandPath(__DIR__ . '/../src/Commands');
-// ------------------------------------------------
-
-// Set the namespace for the "commands" path. ---
-$namespace = 'Rougin\Combustor\Commands';
-$app->setCommandNamespace($namespace);
-// ----------------------------------------------
-
-/** @var string */
-$path = realpath($root);
-
-// Update APPPATH if "combustor.yml" exists ---
-if (file_exists($root . '/combustor.yml'))
-{
-    $file = $root . '/combustor.yml';
-
-    /** @var string */
-    $file = file_get_contents($file);
-
-    // Replace the constant with root path ----
-    $search = '%%CURRENT_DIRECTORY%%';
-
-    $file = str_replace($search, $path, $file);
-    // ----------------------------------------
-
-    /** @var array<string, string> */
-    $parsed = Yaml::parse($file);
-
-    if (array_key_exists('app_path', $parsed))
-    {
-        /** @var string */
-        $path = realpath($parsed['app_path']);
-    }
-}
-// --------------------------------------------
-
-// Set the definitions in the container ------------
-$container = new Container;
-
-$container->addPackage(new SparkplugPackage($path));
-$container->addPackage(new DescribePackage);
-
-$app->setContainer($container);
-// -------------------------------------------------
+$app = new Combustor($root);
 
 // Run the console application ---
 $app->run();

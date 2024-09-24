@@ -29,10 +29,12 @@ class Location
     {
         $root = $this->root;
 
+        // @codeCoverageIgnoreStart
         if (is_dir($this->root . '/application'))
         {
             $root = $this->root . '/application';
         }
+        // @codeCoverageIgnoreEnd
 
         return (string) $root;
     }

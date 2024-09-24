@@ -42,16 +42,16 @@ class PlateTest extends Testcase
      */
     public function test_doctrine_controller()
     {
-        $command = $this->findCommand('create:controller');
+        $test = $this->findCommand('create:controller');
 
         $input = array('name' => 'users');
         $input['--doctrine'] = true;
 
-        $command->execute($input);
+        $test->execute($input);
 
         $expected = $this->getTemplate('DoctrineController');
 
-        $actual = $this->getActual('Users');
+        $actual = $this->getActualFile('Users');
 
         $this->assertEquals($expected, $actual);
     }
@@ -61,18 +61,82 @@ class PlateTest extends Testcase
      */
     public function test_wildfire_controller()
     {
-        $command = $this->findCommand('create:controller');
+        $test = $this->findCommand('create:controller');
 
         $input = array('name' => 'users');
         $input['--wildfire'] = true;
 
-        $command->execute($input);
+        $test->execute($input);
 
         $expected = $this->getTemplate('WildfireController');
 
-        $actual = $this->getActual('Users');
+        $actual = $this->getActualFile('Users');
 
         $this->assertEquals($expected, $actual);
+    }
+
+    /**
+     * @return void
+     */
+    // public function test_with_both_packages_installed()
+    // {
+    //     system('composer require rougin/credo:dev-master rougin/wildfire:dev-master');
+
+    //     $test = $this->findCommand('create:controller');
+
+    //     $input = array('name' => 'users');
+
+    //     $test->execute($input);
+
+    //     $expected = '[FAIL] Both "rougin/credo" and "rougin/wildfire" are installed. Kindly select --doctrine or --wildfire first.';
+
+    //     $actual = $this->getActualDisplay($test);
+
+    //     $this->assertEquals($expected, $actual);
+
+    //     system('composer remove rougin/credo:dev-master rougin/wildfire:dev-master');
+    // }
+
+    /**
+     * @return void
+     */
+    public function test_without_package_installed()
+    {
+        $test = $this->findCommand('create:controller');
+
+        $input = array('name' => 'users');
+
+        $test->execute($input);
+
+        $expected = '[FAIL] Both "rougin/credo" and "rougin/wildfire" are not installed. Kindly "rougin/credo" or "rougin/wildfire" first.';
+
+        $actual = $this->getActualDisplay($test);
+
+        $this->assertEquals($expected, $actual);
+    }
+
+    /**
+     * @param string $name
+     *
+     * @return \Symfony\Component\Console\Tester\CommandTester
+     */
+    protected function findCommand($name)
+    {
+        return new CommandTester($this->app->make()->find($name));
+    }
+
+    /**
+     * @param \Symfony\Component\Console\Tester\CommandTester $tester
+     *
+     * @return string
+     */
+    protected function getActualDisplay(CommandTester $tester)
+    {
+        $actual = $tester->getDisplay();
+
+        $actual = str_replace("\r\n", '', $actual);
+
+        return str_replace("\n", '', $actual);
     }
 
     /**
@@ -81,7 +145,7 @@ class PlateTest extends Testcase
      *
      * @return string
      */
-    protected function getActual($name, $type = self::TYPE_CONTROLLER)
+    protected function getActualFile($name, $type = self::TYPE_CONTROLLER)
     {
         $path = $this->path;
 
@@ -116,15 +180,5 @@ class PlateTest extends Testcase
         $file = file_get_contents($path);
 
         return str_replace("\r\n", "\n", $file);
-    }
-
-    /**
-     * @param string $name
-     *
-     * @return \Symfony\Component\Console\Tester\CommandTester
-     */
-    protected function findCommand($name)
-    {
-        return new CommandTester($this->app->make()->find($name));
     }
 }

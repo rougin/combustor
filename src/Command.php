@@ -137,12 +137,14 @@ class Command extends Blueprint
             // ------------------------------------------------------------------------------------
 
             // If both installed and not specified in option ----------------------------------
+            // @codeCoverageIgnoreStart
             if ($doctrineExists && $wildfireExists)
             {
                 $text = 'Both "rougin/credo" and "rougin/wildfire" are installed.';
 
                 throw new \Exception($text . ' Kindly select --doctrine or --wildfire first.');
             }
+            // @codeCoverageIgnoreEnd
             // --------------------------------------------------------------------------------
         }
         // ----------------------------------------------------------------------------------------

@@ -164,7 +164,7 @@ class Users extends Controller
 
         if ($exists)
         {
-            $data['error'] = 'Email already exists.';
+            $data['error'] = '';
         }
         // ------------------------------------
 

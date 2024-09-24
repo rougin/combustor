@@ -1,15 +1,23 @@
 <?php
 
+use Rougin\Credo\Credo;
 use Rougin\SparkPlug\Controller;
 
 /**
  * @property \CI_DB_query_builder $db
  * @property \CI_Input            $input
+ * @property \MY_Loader           $load
  * @property \CI_Session          $session
  * @property \User                $user
+ * @property \User_repository     $user_repository
  */
 class Users extends Controller
 {
+    /**
+     * @var \User_repository
+     */
+    private $repo;
+
     /**
      * Loads the required helpers, libraries, and models.
      */
@@ -18,7 +26,6 @@ class Users extends Controller
         parent::__construct();
 
         // Initialize the Database loader ---
-        $this->load->helper('inflector');
         $this->load->database();
         // ----------------------------------
 
@@ -31,7 +38,18 @@ class Users extends Controller
 
         // Load multiple models if required ---
         $this->load->model('user');
+
+        $this->load->repository('user');
         // ------------------------------------
+
+        // Load the main repository of the model ---
+        $credo = new Credo($this->db);
+
+        /** @var \User_repository */
+        $repo = $credo->get_repository('User');
+
+        $this->repo = $repo;
+        // -----------------------------------------
     }
 
     /**
@@ -55,7 +73,7 @@ class Users extends Controller
         // --------------------------------
 
         // Specify logic here if applicable ---
-        $exists = $this->user->exists($input);
+        $exists = $this->repo->exists($input);
 
         $data = array();
 
@@ -77,7 +95,7 @@ class Users extends Controller
         // ------------------------------------
 
         // Create the item then go back to "index" page ---
-        $this->user->create($input);
+        $this->repo->create($input, new User);
 
         $text = (string) 'User successfully created!';
 
@@ -99,7 +117,7 @@ class Users extends Controller
         // Show 404 page if not using "DELETE" method ---
         $method = $this->input->post('_method', true);
 
-        $item = $this->user->find($id);
+        $item = $this->repo->find($id);
 
         if ($method !== 'DELETE' || ! $item)
         {
@@ -108,7 +126,8 @@ class Users extends Controller
         // ----------------------------------------------
 
         // Delete the item then go back to "index" page ---
-        $this->user->delete($id);
+        /** @var \User $item */
+        $this->repo->delete($item);
 
         $text = (string) 'User successfully deleted!';
 
@@ -129,7 +148,7 @@ class Users extends Controller
     public function edit($id)
     {
         // Show 404 page if item not found ---
-        if (! $item = $this->user->find($id))
+        if (! $item = $this->repo->find($id))
         {
             show_404();
         }
@@ -160,11 +179,11 @@ class Users extends Controller
         // -------------------------------------------
 
         // Specify logic here if applicable ---
-        $exists = $this->user->exists($input, $id);
+        $exists = $this->repo->exists($input, $id);
 
         if ($exists)
         {
-            $data['error'] = 'Email already exists.';
+            $data['error'] = '';
         }
         // ------------------------------------
 
@@ -180,7 +199,8 @@ class Users extends Controller
         // ------------------------------------
 
         // Update the item then go back to "index" page ---
-        $this->user->update($id, $input);
+        /** @var \User $item */
+        $this->repo->update($item, $input);
 
         $text = (string) 'User successfully updated!';
 
@@ -198,7 +218,7 @@ class Users extends Controller
     public function index()
     {
         // Create pagination links and get the offset ---
-        $total = (int) $this->user->total();
+        $total = (int) $this->repo->total();
 
         $result = $this->user->paginate(10, $total);
 
@@ -208,9 +228,9 @@ class Users extends Controller
         $offset = $result[0];
         // ----------------------------------------------
 
-        $items = $this->user->get(10, $offset);
+        $items = $this->repo->get(10, $offset);
 
-        $data['items'] = $items->result();
+        $data['items'] = $items;
 
         if ($alert = $this->session->flashdata('alert'))
         {

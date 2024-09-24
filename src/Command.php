@@ -14,6 +14,10 @@ use Rougin\Describe\Driver\DriverInterface;
  */
 class Command extends Blueprint
 {
+    const TYPE_WILDFIRE = 0;
+
+    const TYPE_DOCTRINE = 1;
+
     /**
      * @var \Rougin\Describe\Driver\DriverInterface
      */
@@ -25,11 +29,20 @@ class Command extends Blueprint
     protected $maker;
 
     /**
-     * @param \Rougin\Describe\Driver\DriverInterface $driver
+     * @var \Rougin\Combustor\Location
      */
-    public function __construct(DriverInterface $driver, Generator $maker)
+    protected $path;
+
+    /**
+     * @param \Rougin\Describe\Driver\DriverInterface $driver
+     * @param \Rougin\Classidy\Generator              $maker
+     * @param \Rougin\Combustor\Location              $path
+     */
+    public function __construct(DriverInterface $driver, Generator $maker, Location $path)
     {
         $this->driver = $driver;
+
+        $this->path = $path;
 
         $this->maker = $maker;
     }
@@ -67,19 +80,27 @@ class Command extends Blueprint
      */
     public function run()
     {
+        try
+        {
+            $type = $this->getInstalled();
+        }
+        catch (\Exception $e)
+        {
+            $this->showFail($e->getMessage());
+
+            return self::RETURN_FAILURE;
+        }
+
         /** @var string */
         $table = $this->getArgument('name');
 
-        /** @var boolean */
-        $lower = $this->getOption('lowercase');
-        $lower = (bool) $lower;
-
-        $plate = $this->getTemplate($table, $lower);
+        $plate = $this->getTemplate($table, $type);
 
         $plate = $this->maker->make($plate);
 
         $name = ucfirst(Inflector::plural($table));
-        $file = APPPATH . 'controllers/' . $name . '.php';
+        $root = $this->path->getAppPath();
+        $file = $root . '/controllers/' . $name . '.php';
         file_put_contents($file, $plate);
 
         $this->showPass('Controller successfully created!');
@@ -88,13 +109,60 @@ class Command extends Blueprint
     }
 
     /**
+     * @return integer
+     * @throws \Exception
+     */
+    protected function getInstalled()
+    {
+        /** @var boolean */
+        $doctrine = $this->getOption('doctrine');
+        $class = 'Rougin\Credo\Credo';
+        $doctrineExists = class_exists($class);
+
+        /** @var boolean */
+        $wildfire = $this->getOption('wildfire');
+        $class = 'Rougin\Wildfire\Wildfire';
+        $wildfireExists = class_exists($class);
+
+        // If --doctrine or --wildfire not specified ----------------------------------------------
+        if (! $doctrine && ! $wildfire)
+        {
+            // If not specified as option and packages are not yet installed ----------------------
+            if (! $doctrineExists && ! $wildfireExists)
+            {
+                $text = 'Both "rougin/credo" and "rougin/wildfire" are not installed.';
+
+                throw new \Exception($text . ' Kindly "rougin/credo" or "rougin/wildfire" first.');
+            }
+            // ------------------------------------------------------------------------------------
+
+            // If both installed and not specified in option ----------------------------------
+            if ($doctrineExists && $wildfireExists)
+            {
+                $text = 'Both "rougin/credo" and "rougin/wildfire" are installed.';
+
+                throw new \Exception($text . ' Kindly select --doctrine or --wildfire first.');
+            }
+            // --------------------------------------------------------------------------------
+        }
+        // ----------------------------------------------------------------------------------------
+
+        if ($doctrine || $doctrineExists)
+        {
+            return self::TYPE_DOCTRINE;
+        }
+
+        return self::TYPE_WILDFIRE;
+    }
+
+    /**
      * @param string  $table
-     * @param boolean $lower
+     * @param integer $type
      *
      * @return \Rougin\Classidy\Classidy
      */
-    protected function getTemplate($table, $lower)
+    protected function getTemplate($table, $type)
     {
-        return new Controller($table, $lower);
+        return new Controller($table, $type);
     }
 }

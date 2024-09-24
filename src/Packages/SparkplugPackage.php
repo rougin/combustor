@@ -2,6 +2,7 @@
 
 namespace Rougin\Combustor\Packages;
 
+use Rougin\Combustor\Location;
 use Rougin\Slytherin\Container\ContainerInterface;
 use Rougin\Slytherin\Integration\Configuration;
 use Rougin\Slytherin\Integration\IntegrationInterface;
@@ -51,6 +52,10 @@ class SparkplugPackage implements IntegrationInterface
         // ---------------------------------------
 
         $app = Instance::create($this->root);
+
+        $path = new Location($this->root);
+
+        $container->set(get_class($path), $path);
 
         return $container->set($class, $app);
     }

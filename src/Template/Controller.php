@@ -13,20 +13,24 @@ use Rougin\Combustor\Inflector;
  */
 class Controller extends Classidy
 {
+    const TYPE_WILDFIRE = 0;
+
+    const TYPE_DOCTRINE = 1;
+
     /**
-     * @var boolean
+     * @var integer
      */
-    protected $lower = false;
+    protected $type;
 
     /**
      * @param string  $table
-     * @param boolean $lower
+     * @param integer $type
      */
-    public function __construct($table, $lower = false)
+    public function __construct($table, $type)
     {
-        $this->init($table);
+        $this->type = $type;
 
-        $this->lower = $lower;
+        $this->init($table);
     }
 
     /**
@@ -43,24 +47,37 @@ class Controller extends Classidy
         $model = Inflector::singular($table);
 
         /** @var class-string */
-        $class = $model;
+        $class = ucfirst($model);
 
-        $ctrl = $name;
+        $ctrl = ucfirst($name);
 
-        if (! $this->lower)
-        {
-            /** @var class-string */
-            $class = ucfirst($model);
+        // Only applicable for Doctrine ---
+        $repo = $model . '_repository';
 
-            $ctrl = ucfirst($name);
-        }
+        $repoU = ucfirst($repo);
+        // --------------------------------
+
+        $type = $this->type;
 
         $this->addClassProperty('db', 'CI_DB_query_builder')->asTag();
         $this->addClassProperty('input', 'CI_Input')->asTag();
-        // $this->addClassProperty('load', 'MY_Loader')->asTag();
+
+        if ($type === self::TYPE_DOCTRINE)
+        {
+            $this->imports[] = 'Rougin\Credo\Credo';
+
+            $this->addClassProperty('load', 'MY_Loader')->asTag();
+        }
+
         $this->addClassProperty('session', 'CI_Session')->asTag();
         $this->addClassProperty($model, $class)->asTag();
-        // $this->addClassProperty('user_repository', 'User_repository')->asTag();
+
+        if ($type === self::TYPE_DOCTRINE)
+        {
+            $this->addClassProperty($repo, $repoU)->asTag();
+
+            $this->addClassProperty('repo', $repoU)->asPrivate();
+        }
 
         $this->setName($ctrl);
 
@@ -69,13 +86,18 @@ class Controller extends Classidy
 
         $method = new Method('__construct');
         $method->setComment('Loads the required helpers, libraries, and models.');
-        $method->setCodeLine(function ($lines) use ($model)
+        $method->setCodeLine(function ($lines) use ($model, $type, $repoU, $class)
         {
             $lines[] = 'parent::__construct();';
             $lines[] = '';
 
             $lines[] = '// Initialize the Database loader ---';
-            $lines[] = '$this->load->helper(\'inflector\');';
+
+            if ($type === self::TYPE_WILDFIRE)
+            {
+                $lines[] = '$this->load->helper(\'inflector\');';
+            }
+
             $lines[] = '$this->load->database();';
             $lines[] = '// ----------------------------------';
             $lines[] = '';
@@ -92,7 +114,27 @@ class Controller extends Classidy
 
             $lines[] = '// Load multiple models if required ---';
             $lines[] = '$this->load->model(\'' . $model . '\');';
+
+            if ($type === self::TYPE_DOCTRINE)
+            {
+                $lines[] = '';
+                $lines[] = '$this->load->repository(\'' . $model . '\');';
+            }
+
             $lines[] = '// ------------------------------------';
+
+            if ($type === self::TYPE_DOCTRINE)
+            {
+                $lines[] = '';
+                $lines[] = '// Load the main repository of the model ---';
+                $lines[] = '$credo = new Credo($this->db);';
+                $lines[] = '';
+                $lines[] = '/** @var \\' . $repoU . ' */';
+                $lines[] = '$repo = $credo->get_repository(\'' . $class . '\');';
+                $lines[] = '';
+                $lines[] = '$this->repo = $repo;';
+                $lines[] = '// -----------------------------------------';
+            }
 
             return $lines;
         });
@@ -103,7 +145,7 @@ class Controller extends Classidy
         $texts[] = 'Creates a new ' . $model . ' if receiving payload.';
         $method->setComment($texts);
         $method->setReturn('void');
-        $method->setCodeLine(function ($lines) use ($name, $model)
+        $method->setCodeLine(function ($lines) use ($name, $model, $type, $class)
         {
             $lines[] = '// Skip if provided empty input ---';
             $lines[] = '/** @var array<string, mixed> */';
@@ -123,7 +165,16 @@ class Controller extends Classidy
             $lines[] = '';
 
             $lines[] = '// Specify logic here if applicable ---';
-            $lines[] = '$exists = $this->' . $model . '->exists($input);';
+
+            if ($type === self::TYPE_WILDFIRE)
+            {
+                $lines[] = '$exists = $this->' . $model . '->exists($input);';
+            }
+            else
+            {
+                $lines[] = '$exists = $this->repo->exists($input);';
+            }
+
             $lines[] = '';
             $lines[] = '$data = array();';
             $lines[] = '';
@@ -151,7 +202,16 @@ class Controller extends Classidy
             $lines[] = '';
 
             $lines[] = '// Create the item then go back to "index" page ---';
-            $lines[] = '$this->' . $model . '->create($input);';
+
+            if ($type === self::TYPE_WILDFIRE)
+            {
+                $lines[] = '$this->' . $model . '->create($input);';
+            }
+            else
+            {
+                $lines[] = '$this->repo->create($input, new ' . $class . ');';
+            }
+
             $lines[] = '';
             $lines[] = '$text = (string) \'' . ucfirst($model) . ' successfully created!\';';
             $lines[] = '';
@@ -168,12 +228,21 @@ class Controller extends Classidy
         $method->setComment('Deletes the specified ' . $model . '.');
         $method->addIntegerArgument('id');
         $method->setReturn('void');
-        $method->setCodeLine(function ($lines) use ($name, $model)
+        $method->setCodeLine(function ($lines) use ($name, $model, $type, $class)
         {
             $lines[] = '// Show 404 page if not using "DELETE" method ---';
             $lines[] = '$method = $this->input->post(\'_method\', true);';
             $lines[] = '';
-            $lines[] = '$item = $this->' . $model . '->find($id);';
+
+            if ($type === self::TYPE_WILDFIRE)
+            {
+                $lines[] = '$item = $this->' . $model . '->find($id);';
+            }
+            else
+            {
+                $lines[] = '$item = $this->repo->find($id);';
+            }
+
             $lines[] = '';
             $lines[] = 'if ($method !== \'DELETE\' || ! $item)';
             $lines[] = '{';
@@ -183,7 +252,17 @@ class Controller extends Classidy
             $lines[] = '';
 
             $lines[] = '// Delete the item then go back to "index" page ---';
-            $lines[] = '$this->' . $model . '->delete($id);';
+
+            if ($type === self::TYPE_WILDFIRE)
+            {
+                $lines[] = '$this->' . $model . '->delete($id);';
+            }
+            else
+            {
+                $lines[] = '/** @var \\' . $class . ' $item */';
+                $lines[] = '$this->repo->delete($item);';
+            }
+
             $lines[] = '';
             $lines[] = '$text = (string) \'' . ucfirst($model) . ' successfully deleted!\';';
             $lines[] = '';
@@ -202,10 +281,19 @@ class Controller extends Classidy
         $method->setComment($texts);
         $method->addIntegerArgument('id');
         $method->setReturn('void');
-        $method->setCodeLine(function ($lines) use ($name, $model)
+        $method->setCodeLine(function ($lines) use ($name, $model, $type, $class)
         {
             $lines[] = '// Show 404 page if item not found ---';
-            $lines[] = 'if (! $item = $this->' . $model . '->find($id))';
+
+            if ($type === self::TYPE_WILDFIRE)
+            {
+                $lines[] = 'if (! $item = $this->' . $model . '->find($id))';
+            }
+            else
+            {
+                $lines[] = 'if (! $item = $this->repo->find($id))';
+            }
+
             $lines[] = '{';
             $lines[] = '    show_404();';
             $lines[] = '}';
@@ -243,11 +331,20 @@ class Controller extends Classidy
             $lines[] = '';
 
             $lines[] = '// Specify logic here if applicable ---';
-            $lines[] = '$exists = $this->' . $model . '->exists($input, $id);';
+
+            if ($type === self::TYPE_WILDFIRE)
+            {
+                $lines[] = '$exists = $this->' . $model . '->exists($input, $id);';
+            }
+            else
+            {
+                $lines[] = '$exists = $this->repo->exists($input, $id);';
+            }
+
             $lines[] = '';
             $lines[] = 'if ($exists)';
             $lines[] = '{';
-            $lines[] = '    $data[\'error\'] = \'Email already exists.\';';
+            $lines[] = '    $data[\'error\'] = \'\';';
             $lines[] = '}';
             $lines[] = '// ------------------------------------';
             $lines[] = '';
@@ -269,7 +366,17 @@ class Controller extends Classidy
             $lines[] = '';
 
             $lines[] = '// Update the item then go back to "index" page ---';
-            $lines[] = '$this->' . $model . '->update($id, $input);';
+
+            if ($type === self::TYPE_WILDFIRE)
+            {
+                $lines[] = '$this->' . $model . '->update($id, $input);';
+            }
+            else
+            {
+                $lines[] = '/** @var \\' . $class . ' $item */';
+                $lines[] = '$this->repo->update($item, $input);';
+            }
+
             $lines[] = '';
             $lines[] = '$text = (string) \'User successfully updated!\';';
             $lines[] = '';
@@ -285,10 +392,19 @@ class Controller extends Classidy
         $method = new Method('index');
         $method->setComment('Returns the list of paginated ' . $name . '.');
         $method->setReturn('void');
-        $method->setCodeLine(function ($lines) use ($name, $model)
+        $method->setCodeLine(function ($lines) use ($name, $model, $type)
         {
             $lines[] = '// Create pagination links and get the offset ---';
-            $lines[] = '$total = (int) $this->' . $model . '->total();';
+
+            if ($type === self::TYPE_WILDFIRE)
+            {
+                $lines[] = '$total = (int) $this->' . $model . '->total();';
+            }
+            else
+            {
+                $lines[] = '$total = (int) $this->repo->total();';
+            }
+
             $lines[] = '';
             $lines[] = '$result = $this->' . $model . '->paginate(10, $total);';
             $lines[] = '';
@@ -299,9 +415,26 @@ class Controller extends Classidy
             $lines[] = '// ----------------------------------------------';
             $lines[] = '';
 
-            $lines[] = '$items = $this->' . $model . '->get(10, $offset);';
+            if ($type === self::TYPE_WILDFIRE)
+            {
+                $lines[] = '$items = $this->' . $model . '->get(10, $offset);';
+            }
+            else
+            {
+                $lines[] = '$items = $this->repo->get(10, $offset);';
+            }
+
             $lines[] = '';
-            $lines[] = '$data[\'items\'] = $items->result();';
+
+            if ($type === self::TYPE_WILDFIRE)
+            {
+                $lines[] = '$data[\'items\'] = $items->result();';
+            }
+            else
+            {
+                $lines[] = '$data[\'items\'] = $items;';
+            }
+
             $lines[] = '';
             $lines[] = 'if ($alert = $this->session->flashdata(\'alert\'))';
             $lines[] = '{';

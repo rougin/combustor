@@ -40,15 +40,35 @@ class PlateTest extends Testcase
     /**
      * @return void
      */
-    public function test_create_controller()
+    public function test_doctrine_controller()
     {
         $command = $this->findCommand('create:controller');
 
         $input = array('name' => 'users');
+        $input['--doctrine'] = true;
 
         $command->execute($input);
 
-        $expected = $this->getTemplate('Controller');
+        $expected = $this->getTemplate('DoctrineController');
+
+        $actual = $this->getActual('Users');
+
+        $this->assertEquals($expected, $actual);
+    }
+
+    /**
+     * @return void
+     */
+    public function test_wildfire_controller()
+    {
+        $command = $this->findCommand('create:controller');
+
+        $input = array('name' => 'users');
+        $input['--wildfire'] = true;
+
+        $command->execute($input);
+
+        $expected = $this->getTemplate('WildfireController');
 
         $actual = $this->getActual('Users');
 

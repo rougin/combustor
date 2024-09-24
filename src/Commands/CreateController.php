@@ -20,4 +20,18 @@ class CreateController extends Command
      * @var string
      */
     protected $description = 'Creates a new HTTP controller';
+
+    /**
+     * Configures the current command.
+     *
+     * @return void
+     */
+    public function init()
+    {
+        parent::init();
+
+        $this->addOption('doctrine', 'generates the controller based from Doctrine');
+
+        $this->addOption('wildfire', 'generates the controller based from Wildfire');
+    }
 }

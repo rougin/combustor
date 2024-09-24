@@ -5,6 +5,7 @@ namespace Rougin\Combustor;
 use Rougin\Blueprint\Command as Blueprint;
 use Rougin\Classidy\Generator;
 use Rougin\Combustor\Template\Controller;
+use Rougin\Combustor\Template\Wildfire\Model as WildfireModel;
 use Rougin\Describe\Driver\DriverInterface;
 
 /**
@@ -98,10 +99,21 @@ class Command extends Blueprint
 
         $plate = $this->maker->make($plate);
 
-        $name = ucfirst(Inflector::plural($table));
         $root = $this->path->getAppPath();
-        $file = $root . '/controllers/' . $name . '.php';
-        file_put_contents($file, $plate);
+
+        if ($this->name === 'create:controller')
+        {
+            $name = ucfirst(Inflector::plural($table));
+            $file = $root . '/controllers/' . $name . '.php';
+            file_put_contents($file, $plate);
+        }
+
+        if ($this->name === 'create:model')
+        {
+            $name = ucfirst(Inflector::singular($table));
+            $file = $root . '/models/' . $name . '.php';
+            file_put_contents($file, $plate);
+        }
 
         $this->showPass('Controller successfully created!');
 
@@ -165,6 +177,14 @@ class Command extends Blueprint
      */
     protected function getTemplate($table, $type)
     {
+        if ($this->name === 'create:model')
+        {
+            if ($type === self::TYPE_WILDFIRE)
+            {
+                return new WildfireModel($table, $type);
+            }
+        }
+
         return new Controller($table, $type);
     }
 }

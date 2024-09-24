@@ -78,6 +78,25 @@ class PlateTest extends Testcase
     /**
      * @return void
      */
+    public function test_wildfire_model()
+    {
+        $test = $this->findCommand('create:model');
+
+        $input = array('name' => 'users');
+        $input['--wildfire'] = true;
+
+        $test->execute($input);
+
+        $expected = $this->getTemplate('WildfireModel');
+
+        $actual = $this->getActualFile('User', self::TYPE_MODEL);
+
+        $this->assertEquals($expected, $actual);
+    }
+
+    /**
+     * @return void
+     */
     // public function test_with_both_packages_installed()
     // {
     //     system('composer require rougin/credo:dev-master rougin/wildfire:dev-master');

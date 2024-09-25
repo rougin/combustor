@@ -7,7 +7,6 @@ use Rougin\Classidy\Generator;
 use Rougin\Combustor\Template\Controller;
 use Rougin\Combustor\Template\Doctrine\Model as DoctrineModel;
 use Rougin\Combustor\Template\Wildfire\Model as WildfireModel;
-use Rougin\Describe\Driver\DriverInterface;
 
 /**
  * @package Combustor
@@ -21,9 +20,9 @@ class Command extends Blueprint
     const TYPE_DOCTRINE = 1;
 
     /**
-     * @var \Rougin\Describe\Driver\DriverInterface
+     * @var \Rougin\Describe\Driver\DriverInterface|null
      */
-    protected $driver;
+    protected $driver = null;
 
     /**
      * @var \Rougin\Classidy\Generator
@@ -31,22 +30,21 @@ class Command extends Blueprint
     protected $maker;
 
     /**
-     * @var \Rougin\Combustor\Location
+     * @var string
      */
     protected $path;
 
     /**
-     * @param \Rougin\Describe\Driver\DriverInterface $driver
-     * @param \Rougin\Classidy\Generator              $maker
-     * @param \Rougin\Combustor\Location              $path
+     * @param \Rougin\Combustor\Combustor $combustor
+     * @param \Rougin\Classidy\Generator  $maker
      */
-    public function __construct(DriverInterface $driver, Generator $maker, Location $path)
+    public function __construct(Combustor $combustor, Generator $maker)
     {
-        $this->driver = $driver;
-
-        $this->path = $path;
+        $this->driver = $combustor->getDriver();
 
         $this->maker = $maker;
+
+        $this->path = $combustor->getAppPath();
     }
 
     /**
@@ -76,6 +74,16 @@ class Command extends Blueprint
     }
 
     /**
+     * Checks whether the command is enabled or not in the current environment.
+     *
+     * @return boolean
+     */
+    public function isEnabled()
+    {
+        return $this->driver !== null;
+    }
+
+    /**
      * Executes the command.
      *
      * @return integer
@@ -100,19 +108,17 @@ class Command extends Blueprint
 
         $plate = $this->maker->make($plate);
 
-        $root = $this->path->getAppPath();
-
         if ($this->name === 'create:controller')
         {
             $name = ucfirst(Inflector::plural($table));
-            $file = $root . '/controllers/' . $name . '.php';
+            $file = $this->path . '/controllers/' . $name . '.php';
             file_put_contents($file, $plate);
         }
 
         if ($this->name === 'create:model')
         {
             $name = ucfirst(Inflector::singular($table));
-            $file = $root . '/models/' . $name . '.php';
+            $file = $this->path . '/models/' . $name . '.php';
             file_put_contents($file, $plate);
         }
 

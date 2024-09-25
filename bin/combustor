@@ -1,7 +1,7 @@
 #!/usr/bin/env php
 <?php
 
-use Rougin\Combustor\Combustor;
+use Rougin\Combustor\Console;
 
 // Return the root directory of the project ------------
 $vendor = (string) __DIR__ . '/../../../../';
@@ -15,7 +15,7 @@ $root = $exists ? $vendor : __DIR__ . '/../';
 require $root . '/vendor/autoload.php';
 // ------------------------------------
 
-$app = new Combustor($root);
+$app = new Console($root);
 
 // Run the console application ---
 $app->run();

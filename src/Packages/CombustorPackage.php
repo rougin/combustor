@@ -2,17 +2,17 @@
 
 namespace Rougin\Combustor\Packages;
 
+use Rougin\Combustor\Combustor;
 use Rougin\Slytherin\Container\ContainerInterface;
 use Rougin\Slytherin\Integration\Configuration;
 use Rougin\Slytherin\Integration\IntegrationInterface;
-use Rougin\SparkPlug\Instance;
 
 /**
  * @package Combustor
  *
  * @author Rougin Gutib <rougingutib@gmail.com>
  */
-class SparkplugPackage implements IntegrationInterface
+class CombustorPackage implements IntegrationInterface
 {
     /**
      * @var string
@@ -35,21 +35,28 @@ class SparkplugPackage implements IntegrationInterface
      */
     public function define(ContainerInterface $container, Configuration $config)
     {
-        $class = 'Rougin\SparkPlug\Controller';
+        $app = new Combustor($this->root);
 
-        // If cannot determine APPPATH, ignore ---
-        $appPath = $this->root . '/application';
+        $name = 'Rougin\SparkPlug\Controller';
 
-        $root = $this->root . '/config';
-
-        if (! is_dir($appPath) && ! is_dir($root))
+        if ($container->has($name))
         {
-            return $container;
+            /** @var \Rougin\SparkPlug\Controller */
+            $class = $container->get($name);
+
+            $app->setApp($class);
         }
-        // ---------------------------------------
 
-        $app = Instance::create($this->root);
+        $name = 'Rougin\Describe\Driver\DriverInterface';
 
-        return $container->set($class, $app);
+        if ($container->has($name))
+        {
+            /** @var \Rougin\Describe\Driver\DriverInterface */
+            $class = $container->get($name);
+
+            $app->setDriver($class);
+        }
+
+        return $container->set(get_class($app), $app);
     }
 }

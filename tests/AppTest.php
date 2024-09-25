@@ -10,19 +10,30 @@ namespace Rougin\Combustor;
 class AppTest extends Testcase
 {
     /**
-     * @var string
-     */
-    protected $error = 'Symfony\Component\Console\Exception\CommandNotFoundException';
-
-    /**
      * @return void
      */
     public function test_combustor_yml_file()
     {
-        $this->setExpectedException($this->error);
+        $app = new Console(__DIR__ . '/Fixture');
 
-        $app = new Combustor(__DIR__ . '/Fixture');
+        $expected = 'Rougin\Blueprint\Wrapper';
 
-        $app->make()->find('init');
+        $actual = $app->make()->find('create:controller');
+
+        $this->assertInstanceOf($expected, $actual);
+    }
+
+    /**
+     * @return void
+     */
+    public function test_without_combustor_yml()
+    {
+        $app = new Console(__DIR__ . '/../');
+
+        $expected = 'Rougin\Blueprint\Wrapper';
+
+        $actual = $app->make()->find('init');
+
+        $this->assertInstanceOf($expected, $actual);
     }
 }

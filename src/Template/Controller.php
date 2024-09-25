@@ -49,17 +49,10 @@ class Controller extends Classidy
         /** @var class-string */
         $class = ucfirst($model);
 
-        $ctrl = ucfirst($name);
-
-        // Only applicable for Doctrine ---
-        $repo = $model . '_repository';
-
-        $repoU = ucfirst($repo);
-        // --------------------------------
-
         $type = $this->type;
 
         $this->addClassProperty('db', 'CI_DB_query_builder')->asTag();
+
         $this->addClassProperty('input', 'CI_Input')->asTag();
 
         if ($type === self::TYPE_DOCTRINE)
@@ -70,23 +63,48 @@ class Controller extends Classidy
         }
 
         $this->addClassProperty('session', 'CI_Session')->asTag();
+
         $this->addClassProperty($model, $class)->asTag();
 
         if ($type === self::TYPE_DOCTRINE)
         {
-            $this->addClassProperty($repo, $repoU)->asTag();
+            $repo = $model . '_repository';
 
-            $this->addClassProperty('repo', $repoU)->asPrivate();
+            $class = ucfirst($repo);
+
+            $this->addClassProperty($repo, $class)->asTag();
+
+            $this->addClassProperty('repo', $class)->asPrivate();
         }
 
-        $this->setName($ctrl);
+        $this->setName(ucfirst($name));
 
-        $extends = 'Rougin\SparkPlug\Controller';
-        $this->extendsTo($extends);
+        $this->extendsTo('Rougin\SparkPlug\Controller');
 
+        $this->setConstructor($model, $type);
+
+        $this->setCreateMethod($name, $model, $type);
+
+        $this->setDeleteMethod($name, $model, $type);
+
+        $this->setEditMethod($name, $model, $type);
+
+        $this->setIndexMethod($name, $model, $type);
+    }
+
+    /**
+     * @param string  $model
+     * @param integer $type
+     *
+     * @return void
+     */
+    protected function setConstructor($model, $type)
+    {
         $method = new Method('__construct');
+
         $method->setComment('Loads the required helpers, libraries, and models.');
-        $method->setCodeLine(function ($lines) use ($model, $type, $repoU, $class)
+
+        $method->setCodeLine(function ($lines) use ($model, $type)
         {
             $lines[] = 'parent::__construct();';
             $lines[] = '';
@@ -123,14 +141,16 @@ class Controller extends Classidy
 
             $lines[] = '// ------------------------------------';
 
+            $model = ucfirst($model);
+
             if ($type === self::TYPE_DOCTRINE)
             {
                 $lines[] = '';
                 $lines[] = '// Load the main repository of the model ---';
                 $lines[] = '$credo = new Credo($this->db);';
                 $lines[] = '';
-                $lines[] = '/** @var \\' . $repoU . ' */';
-                $lines[] = '$repo = $credo->get_repository(\'' . $class . '\');';
+                $lines[] = '/** @var \\' . $model . '_repository */';
+                $lines[] = '$repo = $credo->get_repository(\'' . $model . '\');';
                 $lines[] = '';
                 $lines[] = '$this->repo = $repo;';
                 $lines[] = '// -----------------------------------------';
@@ -138,14 +158,28 @@ class Controller extends Classidy
 
             return $lines;
         });
-        $this->addMethod($method);
 
+        $this->addMethod($method);
+    }
+
+    /**
+     * @param string  $name
+     * @param string  $model
+     * @param integer $type
+     *
+     * @return void
+     */
+    protected function setCreateMethod($name, $model, $type)
+    {
         $method = new Method('create');
+
         $texts = array('Returns the form page for creating a ' . $model . '.');
         $texts[] = 'Creates a new ' . $model . ' if receiving payload.';
         $method->setComment($texts);
+
         $method->setReturn('void');
-        $method->setCodeLine(function ($lines) use ($name, $model, $type, $class)
+
+        $method->setCodeLine(function ($lines) use ($name, $model, $type)
         {
             $lines[] = '// Skip if provided empty input ---';
             $lines[] = '/** @var array<string, mixed> */';
@@ -209,6 +243,8 @@ class Controller extends Classidy
             }
             else
             {
+                $class = ucfirst($model);
+
                 $lines[] = '$this->repo->create($input, new ' . $class . ');';
             }
 
@@ -222,13 +258,28 @@ class Controller extends Classidy
 
             return $lines;
         });
-        $this->addMethod($method);
 
+        $this->addMethod($method);
+    }
+
+    /**
+     * @param string  $name
+     * @param string  $model
+     * @param integer $type
+     *
+     * @return void
+     */
+    protected function setDeleteMethod($name, $model, $type)
+    {
         $method = new Method('delete');
+
         $method->setComment('Deletes the specified ' . $model . '.');
+
         $method->addIntegerArgument('id');
+
         $method->setReturn('void');
-        $method->setCodeLine(function ($lines) use ($name, $model, $type, $class)
+
+        $method->setCodeLine(function ($lines) use ($name, $model, $type)
         {
             $lines[] = '// Show 404 page if not using "DELETE" method ---';
             $lines[] = '$method = $this->input->post(\'_method\', true);';
@@ -259,6 +310,8 @@ class Controller extends Classidy
             }
             else
             {
+                $class = ucfirst($model);
+
                 $lines[] = '/** @var \\' . $class . ' $item */';
                 $lines[] = '$this->repo->delete($item);';
             }
@@ -273,15 +326,30 @@ class Controller extends Classidy
 
             return $lines;
         });
-        $this->addMethod($method);
 
+        $this->addMethod($method);
+    }
+
+    /**
+     * @param string  $name
+     * @param string  $model
+     * @param integer $type
+     *
+     * @return void
+     */
+    protected function setEditMethod($name, $model, $type)
+    {
         $method = new Method('edit');
+
         $texts = array('Returns the form page for updating a ' . $model . '.');
         $texts[] = 'Updates the specified ' . $model . ' if receiving payload.';
         $method->setComment($texts);
+
         $method->addIntegerArgument('id');
+
         $method->setReturn('void');
-        $method->setCodeLine(function ($lines) use ($name, $model, $type, $class)
+
+        $method->setCodeLine(function ($lines) use ($name, $model, $type)
         {
             $lines[] = '// Show 404 page if item not found ---';
 
@@ -373,6 +441,8 @@ class Controller extends Classidy
             }
             else
             {
+                $class = ucfirst($model);
+
                 $lines[] = '/** @var \\' . $class . ' $item */';
                 $lines[] = '$this->repo->update($item, $input);';
             }
@@ -387,11 +457,25 @@ class Controller extends Classidy
 
             return $lines;
         });
-        $this->addMethod($method);
 
+        $this->addMethod($method);
+    }
+
+    /**
+     * @param string  $name
+     * @param string  $model
+     * @param integer $type
+     *
+     * @return void
+     */
+    protected function setIndexMethod($name, $model, $type)
+    {
         $method = new Method('index');
+
         $method->setComment('Returns the list of paginated ' . $name . '.');
+
         $method->setReturn('void');
+
         $method->setCodeLine(function ($lines) use ($name, $model, $type)
         {
             $lines[] = '// Create pagination links and get the offset ---';
@@ -448,6 +532,7 @@ class Controller extends Classidy
 
             return $lines;
         });
+
         $this->addMethod($method);
     }
 }

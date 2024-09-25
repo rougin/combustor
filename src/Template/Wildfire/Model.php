@@ -13,23 +13,11 @@ use Rougin\Combustor\Inflector;
  */
 class Model extends Classidy
 {
-    const TYPE_WILDFIRE = 0;
-
-    const TYPE_DOCTRINE = 1;
-
     /**
-     * @var integer
+     * @param string $table
      */
-    protected $type;
-
-    /**
-     * @param string  $table
-     * @param integer $type
-     */
-    public function __construct($table, $type)
+    public function __construct($table)
     {
-        $this->type = $type;
-
         $this->init($table);
     }
 
@@ -42,16 +30,9 @@ class Model extends Classidy
      */
     public function init($table)
     {
-        $name = Inflector::plural($table);
+        $name = Inflector::singular($table);
 
-        $model = Inflector::singular($table);
-
-        /** @var class-string */
-        $class = ucfirst($model);
-
-        $ctrl = ucfirst($name);
-
-        $this->setName('User');
+        $this->setName(ucfirst($name));
         $this->extendsTo('Rougin\Wildfire\Model');
 
         $this->addTrait('Rougin\Wildfire\Traits\PaginateTrait');
@@ -60,7 +41,9 @@ class Model extends Classidy
         $this->addTrait('Rougin\Wildfire\Traits\WritableTrait');
 
         $this->addClassProperty('db', 'CI_DB_query_builder')->asTag();
-        $this->addClassProperty($model, $class)->asTag();
+        $this->addClassProperty($name, ucfirst($name))->asTag();
+
+        $ciLink = 'https://codeigniter.com/userguide3/libraries';
 
         $default = array();
         $default['page_query_string'] = true;
@@ -70,12 +53,12 @@ class Model extends Classidy
 
         $this->addArrayProperty('pagee', 'array<string, mixed>')
             ->withComment('Additional configuration to Pagination Class.')
-            ->withLink('https://codeigniter.com/userguide3/libraries/pagination.html?highlight=pagination#customizing-the-pagination')
+            ->withLink($ciLink . '/pagination.html#customizing-the-pagination')
             ->withDefaultValue($default);
 
         $this->addArrayProperty('rules', 'array<string, string>[]')
-            ->withComment('List of validation rules.')
-            ->withLink('https://codeigniter.com/userguide3/libraries/form_validation.html#setting-rules-using-an-array');
+            ->withComment('List of validation rules for Form Validation.')
+            ->withLink($ciLink . '/form_validation.html#setting-rules-using-an-array');
 
         $this->addStringProperty('table')
             ->withComment('The table associated with the model.')

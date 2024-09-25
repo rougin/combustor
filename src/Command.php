@@ -5,6 +5,7 @@ namespace Rougin\Combustor;
 use Rougin\Blueprint\Command as Blueprint;
 use Rougin\Classidy\Generator;
 use Rougin\Combustor\Template\Controller;
+use Rougin\Combustor\Template\Doctrine\Model as DoctrineModel;
 use Rougin\Combustor\Template\Wildfire\Model as WildfireModel;
 use Rougin\Describe\Driver\DriverInterface;
 
@@ -136,30 +137,31 @@ class Command extends Blueprint
         $class = 'Rougin\Wildfire\Wildfire';
         $wildfireExists = class_exists($class);
 
-        // If --doctrine or --wildfire not specified ----------------------------------------------
+        /**
+         * If --doctrine or --wildfire not specified
+         */
         if (! $doctrine && ! $wildfire)
         {
-            // If not specified as option and packages are not yet installed ----------------------
+            /**
+             * If not specified as option and packages are not yet installed
+             */
             if (! $doctrineExists && ! $wildfireExists)
             {
                 $text = 'Both "rougin/credo" and "rougin/wildfire" are not installed.';
 
                 throw new \Exception($text . ' Kindly "rougin/credo" or "rougin/wildfire" first.');
             }
-            // ------------------------------------------------------------------------------------
 
-            // If both installed and not specified in option ----------------------------------
-            // @codeCoverageIgnoreStart
+            /**
+             * If both installed and not specified as option
+             */
             if ($doctrineExists && $wildfireExists)
             {
                 $text = 'Both "rougin/credo" and "rougin/wildfire" are installed.';
 
                 throw new \Exception($text . ' Kindly select --doctrine or --wildfire first.');
             }
-            // @codeCoverageIgnoreEnd
-            // --------------------------------------------------------------------------------
         }
-        // ----------------------------------------------------------------------------------------
 
         if ($doctrine || $doctrineExists)
         {
@@ -177,12 +179,16 @@ class Command extends Blueprint
      */
     protected function getTemplate($table, $type)
     {
-        if ($this->name === 'create:model')
+        $isModel = $this->name === 'create:model';
+
+        if ($isModel && $type === self::TYPE_DOCTRINE)
         {
-            if ($type === self::TYPE_WILDFIRE)
-            {
-                return new WildfireModel($table, $type);
-            }
+            return new DoctrineModel($table);
+        }
+
+        if ($isModel && $type === self::TYPE_WILDFIRE)
+        {
+            return new WildfireModel($table);
         }
 
         return new Controller($table, $type);

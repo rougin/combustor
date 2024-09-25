@@ -28,9 +28,7 @@ class DescribePackage implements IntegrationInterface
 
         if (! $container->has($ci3Ctrl))
         {
-            // @codeCoverageIgnoreStart
             return $container;
-            // @codeCoverageIgnoreEnd
         }
         // ---------------------------------------
 

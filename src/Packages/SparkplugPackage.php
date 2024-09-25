@@ -45,17 +45,17 @@ class SparkplugPackage implements IntegrationInterface
 
         if (! is_dir($appPath) && ! is_dir($root))
         {
-            // @codeCoverageIgnoreStart
             return $container;
-            // @codeCoverageIgnoreEnd
         }
         // ---------------------------------------
 
         $app = Instance::create($this->root);
 
+        // Set the root path in a utility class ---
         $path = new Location($this->root);
 
         $container->set(get_class($path), $path);
+        // ----------------------------------------
 
         return $container->set($class, $app);
     }

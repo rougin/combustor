@@ -20,7 +20,7 @@ class User extends Model
     /**
      * Additional configuration to Pagination Class.
      *
-     * @link https://codeigniter.com/userguide3/libraries/pagination.html?highlight=pagination#customizing-the-pagination
+     * @link https://codeigniter.com/userguide3/libraries/pagination.html#customizing-the-pagination
      *
      * @var array<string, mixed>
      */
@@ -32,7 +32,7 @@ class User extends Model
     );
 
     /**
-     * List of validation rules.
+     * List of validation rules for Form Validation.
      *
      * @link https://codeigniter.com/userguide3/libraries/form_validation.html#setting-rules-using-an-array
      *

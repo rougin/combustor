@@ -27,15 +27,10 @@ class Location
      */
     public function getAppPath()
     {
+        $app = $this->root . '/application';
+
         $root = $this->root;
 
-        // @codeCoverageIgnoreStart
-        if (is_dir($this->root . '/application'))
-        {
-            $root = $this->root . '/application';
-        }
-        // @codeCoverageIgnoreEnd
-
-        return (string) $root;
+        return is_dir($app) ? $app : $root;
     }
 }

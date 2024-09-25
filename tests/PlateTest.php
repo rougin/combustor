@@ -59,6 +59,25 @@ class PlateTest extends Testcase
     /**
      * @return void
      */
+    public function test_doctrine_model()
+    {
+        $test = $this->findCommand('create:model');
+
+        $input = array('name' => 'users');
+        $input['--doctrine'] = true;
+
+        $test->execute($input);
+
+        $expected = $this->getTemplate('DoctrineModel');
+
+        $actual = $this->getActualModel('User');
+
+        $this->assertEquals($expected, $actual);
+    }
+
+    /**
+     * @return void
+     */
     public function test_wildfire_controller()
     {
         $test = $this->findCommand('create:controller');
@@ -89,32 +108,10 @@ class PlateTest extends Testcase
 
         $expected = $this->getTemplate('WildfireModel');
 
-        $actual = $this->getActualFile('User', self::TYPE_MODEL);
+        $actual = $this->getActualModel('User');
 
         $this->assertEquals($expected, $actual);
     }
-
-    /**
-     * @return void
-     */
-    // public function test_with_both_packages_installed()
-    // {
-    //     system('composer require rougin/credo:dev-master rougin/wildfire:dev-master');
-
-    //     $test = $this->findCommand('create:controller');
-
-    //     $input = array('name' => 'users');
-
-    //     $test->execute($input);
-
-    //     $expected = '[FAIL] Both "rougin/credo" and "rougin/wildfire" are installed. Kindly select --doctrine or --wildfire first.';
-
-    //     $actual = $this->getActualDisplay($test);
-
-    //     $this->assertEquals($expected, $actual);
-
-    //     system('composer remove rougin/credo:dev-master rougin/wildfire:dev-master');
-    // }
 
     /**
      * @return void
@@ -159,6 +156,16 @@ class PlateTest extends Testcase
     }
 
     /**
+     * @param string $name
+     *
+     * @return string
+     */
+    protected function getActualCtrl($name)
+    {
+        return $this->getActualFile($name, self::TYPE_CONTROLLER);
+    }
+
+    /**
      * @param string  $name
      * @param integer $type
      *
@@ -184,6 +191,16 @@ class PlateTest extends Testcase
         $file = file_get_contents($file);
 
         return str_replace("\r\n", "\n", $file);
+    }
+
+    /**
+     * @param string $name
+     *
+     * @return string
+     */
+    protected function getActualModel($name)
+    {
+        return $this->getActualFile($name, self::TYPE_MODEL);
     }
 
     /**

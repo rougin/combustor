@@ -90,6 +90,9 @@ class Command extends Blueprint
      */
     public function run()
     {
+        /** @var string */
+        $table = $this->getArgument('name');
+
         try
         {
             $type = $this->getInstalled();
@@ -100,9 +103,6 @@ class Command extends Blueprint
 
             return self::RETURN_FAILURE;
         }
-
-        /** @var string */
-        $table = $this->getArgument('name');
 
         $plate = $this->getTemplate($table, $type);
 
@@ -187,14 +187,19 @@ class Command extends Blueprint
     {
         $isModel = $this->name === 'create:model';
 
+        /** @var \Rougin\Describe\Driver\DriverInterface */
+        $driver = $this->driver;
+
+        $cols = $driver->columns($table);
+
         if ($isModel && $type === self::TYPE_DOCTRINE)
         {
-            return new DoctrineModel($table);
+            return new DoctrineModel($table, $cols);
         }
 
         if ($isModel && $type === self::TYPE_WILDFIRE)
         {
-            return new WildfireModel($table);
+            return new WildfireModel($table, $cols);
         }
 
         return new Controller($table, $type);

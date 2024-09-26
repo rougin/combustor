@@ -14,10 +14,18 @@ use Rougin\Combustor\Inflector;
 class Model extends Classidy
 {
     /**
-     * @param string $table
+     * @var \Rougin\Describe\Column[]
      */
-    public function __construct($table)
+    protected $cols;
+
+    /**
+     * @param string                    $table
+     * @param \Rougin\Describe\Column[] $cols
+     */
+    public function __construct($table, $cols)
     {
+        $this->cols = $cols;
+
         $this->init($table);
     }
 

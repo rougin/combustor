@@ -8,7 +8,6 @@ use Rougin\Wildfire\Traits\WritableTrait;
 
 /**
  * @property \CI_DB_query_builder $db
- * @property \User                $user
  */
 class User extends Model
 {

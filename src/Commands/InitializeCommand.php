@@ -24,7 +24,7 @@ class InitializeCommand extends Blueprint
     protected function getPlatePath()
     {
         /** @var string */
-        return realpath(__DIR__ . '/../Templates');
+        return realpath(__DIR__ . '/../Template');
     }
 
     /**

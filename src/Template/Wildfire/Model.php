@@ -49,7 +49,6 @@ class Model extends Classidy
         $this->addTrait('Rougin\Wildfire\Traits\WritableTrait');
 
         $this->addClassProperty('db', 'CI_DB_query_builder')->asTag();
-        $this->addClassProperty($name, ucfirst($name))->asTag();
 
         $ciLink = 'https://codeigniter.com/userguide3/libraries';
 

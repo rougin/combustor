@@ -2,6 +2,7 @@
 .phpintel
 .phpunit.result.cache
 build
+combustor.yml
 composer.lock
 tests/Fixture/Sample/controllers
 tests/Fixture/Sample/models

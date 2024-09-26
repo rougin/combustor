@@ -114,4 +114,17 @@ class Inflector
 
         return $result;
     }
+
+    /**
+     * Takes multiple words separated by spaces and underscores them.
+     *
+     * @param string $word
+     *
+     * @return string
+     */
+    public static function snakeCase($word)
+    {
+        /** @var string */
+        return preg_replace('/[\s]+/', '_', mb_strtolower($word));
+    }
 }

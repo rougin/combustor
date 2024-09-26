@@ -17,6 +17,20 @@ class User extends Model
     use ValidateTrait;
 
     /**
+     * @Column(name="age", type="integer", nullable=false, unique=false)
+     *
+     * @var integer
+     */
+    protected $age;
+
+    /**
+     * @Column(name="gender", type="string", nullable=false, unique=false)
+     *
+     * @var string
+     */
+    protected $gender;
+
+    /**
      * @Id @GeneratedValue
      *
      * @Column(name="id", type="integer", nullable=false, unique=false)
@@ -31,20 +45,6 @@ class User extends Model
      * @var string
      */
     protected $name;
-
-    /**
-     * @Column(name="age", type="integer", nullable=false, unique=false)
-     *
-     * @var integer
-     */
-    protected $age;
-
-    /**
-     * @Column(name="gender", type="string", nullable=false, unique=false)
-     *
-     * @var string
-     */
-    protected $gender;
 
     /**
      * Additional configuration to Pagination Class.
@@ -72,4 +72,72 @@ class User extends Model
         array('field' => 'age', 'label' => 'Age', 'rules' => 'required'),
         array('field' => 'gender', 'label' => 'Gender', 'rules' => 'required'),
     );
+
+    /**
+     * @return integer
+     */
+    public function get_age()
+    {
+        return $this->age;
+    }
+
+    /**
+     * @return string
+     */
+    public function get_gender()
+    {
+        return $this->gender;
+    }
+
+    /**
+     * @return integer
+     */
+    public function get_id()
+    {
+        return $this->id;
+    }
+
+    /**
+     * @return string
+     */
+    public function get_name()
+    {
+        return $this->name;
+    }
+
+    /**
+     * @param integer $age
+     *
+     * @return self
+     */
+    public function set_age($age)
+    {
+        $this->age = $age;
+
+        return $this;
+    }
+
+    /**
+     * @param string $gender
+     *
+     * @return self
+     */
+    public function set_gender($gender)
+    {
+        $this->gender = $gender;
+
+        return $this;
+    }
+
+    /**
+     * @param string $name
+     *
+     * @return self
+     */
+    public function set_name($name)
+    {
+        $this->name = $name;
+
+        return $this;
+    }
 }

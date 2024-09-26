@@ -3,6 +3,7 @@
 namespace Rougin\Combustor\Template\Doctrine;
 
 use Rougin\Classidy\Classidy;
+use Rougin\Classidy\Method;
 use Rougin\Combustor\Inflector;
 
 /**
@@ -54,11 +55,109 @@ class Model extends Classidy
 
         $link = 'https://codeigniter.com/userguide3/libraries';
 
-        $this->setProperties();
+        // Sort columns by name ------------
+        $items = array();
+
+        foreach ($this->cols as $col)
+        {
+            $items[$col->getField()] = $col;
+        }
+
+        ksort($items);
+        // ---------------------------------
+
+        $this->setProperties($items);
 
         $this->setPagee($link);
 
         $this->setRules($link);
+
+        $this->setMethods($items);
+    }
+
+    /**
+     * @param \Rougin\Describe\Column[] $cols
+     *
+     * @return void
+     */
+    protected function setMethods($cols)
+    {
+        foreach ($cols as $col)
+        {
+            $name = $col->getField();
+
+            $name = Inflector::snakeCase($name);
+
+            $type = $col->getDataType();
+
+            if ($col->isNull())
+            {
+                $type = $type . '|null';
+            }
+
+            $method = new Method('get_' . $name);
+
+            $method->setReturn($type);
+
+            $method->setCodeLine(function ($lines) use ($name)
+            {
+                $lines[] = 'return $this->' . $name . ';';
+
+                return $lines;
+            });
+
+            $this->addMethod($method);
+        }
+
+        foreach ($cols as $col)
+        {
+            if ($col->isPrimaryKey())
+            {
+                continue;
+            }
+
+            $name = $col->getField();
+
+            $name = Inflector::snakeCase($name);
+
+            $type = $col->getDataType();
+
+            if ($col->isNull())
+            {
+                $type = $type . '|null';
+            }
+
+            $method = new Method('set_' . $name);
+
+            $method->setReturn('self');
+
+            $type = $col->getDataType();
+
+            $isNull = $col->isNull();
+
+            switch ($type)
+            {
+                case 'string':
+                    $method->addStringArgument($name, $isNull);
+
+                    break;
+                case 'integer':
+                    $method->addIntegerArgument($name, $isNull);
+
+                    break;
+            }
+
+            $method->setCodeLine(function ($lines) use ($name)
+            {
+                $lines[] = '$this->' . $name . ' = $' . $name . ';';
+                $lines[] = '';
+                $lines[] = 'return $this;';
+
+                return $lines;
+            });
+
+            $this->addMethod($method);
+        }
     }
 
     /**
@@ -82,17 +181,21 @@ class Model extends Classidy
     }
 
     /**
+     * @param \Rougin\Describe\Column[] $cols
+     *
      * @return void
      */
-    protected function setProperties()
+    protected function setProperties($cols)
     {
-        foreach ($this->cols as $col)
+        foreach ($cols as $col)
         {
             $isNull = $col->isNull();
 
             $isUnique = $col->isUnique();
 
             $name = $col->getField();
+
+            $name = Inflector::snakeCase($name);
 
             $type = $col->getDataType();
 

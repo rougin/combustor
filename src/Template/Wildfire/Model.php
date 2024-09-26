@@ -48,33 +48,32 @@ class Model extends Classidy
         $this->addTrait('Rougin\Wildfire\Traits\WildfireTrait');
         $this->addTrait('Rougin\Wildfire\Traits\WritableTrait');
 
-        $this->addClassProperty('db', 'CI_DB_query_builder')->asTag();
+        $this->setProperties();
 
-        $ciLink = 'https://codeigniter.com/userguide3/libraries';
+        $link = 'https://codeigniter.com/userguide3/libraries';
 
-        $default = array();
-        $default['page_query_string'] = true;
-        $default['use_page_numbers'] = true;
-        $default['query_string_segment'] = 'p';
-        $default['reuse_query_string'] = true;
+        $this->setPagee($link);
 
-        $this->addArrayProperty('pagee', 'array<string, mixed>')
-            ->withComment('Additional configuration to Pagination Class.')
-            ->withLink($ciLink . '/pagination.html#customizing-the-pagination')
-            ->withDefaultValue($default);
+        $this->setRules($link);
 
-        $this->addArrayProperty('rules', 'array<string, string>[]')
-            ->withComment('List of validation rules for Form Validation.')
-            ->withLink($ciLink . '/form_validation.html#setting-rules-using-an-array');
+        $this->setExistsMethod();
 
-        $this->addStringProperty('table')
-            ->withComment('The table associated with the model.')
-            ->withDefaultValue('users');
+        $this->setInputMethod();
+    }
 
+    /**
+     * @return void
+     */
+    protected function setExistsMethod()
+    {
         $method = new Method('exists');
+
         $method->setReturn('boolean');
+
         $method->addArrayArgument('data', 'array<string, mixed>');
+
         $method->addIntegerArgument('id', true);
+
         $method->setCodeLine(function ($lines)
         {
             $lines[] = '// Specify logic here if applicable ---';
@@ -84,24 +83,140 @@ class Model extends Classidy
 
             return $lines;
         });
-        $this->addMethod($method);
 
+        $this->addMethod($method);
+    }
+
+    /**
+     * @return void
+     */
+    protected function setInputMethod()
+    {
         $method = new Method('input');
+
         $method->asProtected();
+
         $method->setReturn('array<string, mixed>');
+
         $method->addArrayArgument('data', 'array<string, mixed>');
+
         $method->addIntegerArgument('id', true);
-        $method->setCodeLine(function ($lines)
+
+        $cols = $this->cols;
+
+        $method->setCodeLine(function ($lines) use ($cols)
         {
-            $lines[] = '$input = array();';
+            $lines[] = '$load = array();';
             $lines[] = '';
             $lines[] = '// List editable fields from table ---';
+
+            foreach ($cols as $index => $col)
+            {
+                if ($col->isPrimaryKey())
+                {
+                    continue;
+                }
+
+                $name = $col->getField();
+
+                $lines[] = '/** @var ' . $col->getDataType() . ' */';
+                $lines[] = '$' . $name . ' = $data[\'' . $name . '\'];';
+                $lines[] = '$load[\'' . $name . '\'] = $' . $name . ';';
+
+                if (array_key_exists($index + 1, $cols))
+                {
+                    $lines[] = '';
+                }
+            }
+
             $lines[] = '// -----------------------------------';
             $lines[] = '';
-            $lines[] = 'return $input;';
+            $lines[] = 'return $load;';
 
             return $lines;
         });
+
         $this->addMethod($method);
+    }
+
+    /**
+     * @param string $link
+     *
+     * @return void
+     */
+    protected function setPagee($link)
+    {
+        $default = array();
+        $default['page_query_string'] = true;
+        $default['use_page_numbers'] = true;
+        $default['query_string_segment'] = 'p';
+        $default['reuse_query_string'] = true;
+
+        $this->addArrayProperty('pagee', 'array<string, mixed>')
+            ->withComment('Additional configuration to Pagination Class.')
+            ->withLink($link . '/pagination.html#customizing-the-pagination')
+            ->withDefaultValue($default);
+    }
+
+    /**
+     * @return void
+     */
+    protected function setProperties()
+    {
+        foreach ($this->cols as $col)
+        {
+            $type = $col->getDataType();
+
+            $name = $col->getField();
+
+            $isNull = $col->isNull();
+
+            switch ($type)
+            {
+                case 'string':
+                    $this->addStringProperty($name, $isNull)->asTag();
+
+                    break;
+                case 'integer':
+                    $this->addIntegerProperty($name, $isNull)->asTag();
+
+                    break;
+            }
+        }
+
+        $this->addClassProperty('db', 'CI_DB_query_builder')->asTag();
+    }
+
+    /**
+     * @param string $link
+     *
+     * @return void
+     */
+    protected function setRules($link)
+    {
+        $rules = array();
+
+        foreach ($this->cols as $col)
+        {
+            if ($col->isNull() || $col->isPrimaryKey())
+            {
+                continue;
+            }
+
+            $name = $col->getField();
+
+            $rule = array('field' => $name);
+
+            $rule['label'] = ucfirst($name);
+
+            $rule['rules'] = 'required';
+
+            $rules[] = $rule;
+        }
+
+        $this->addArrayProperty('rules', 'array<string, string>[]')
+            ->withComment('List of validation rules for Form Validation.')
+            ->withLink($link . '/form_validation.html#setting-rules-using-an-array')
+            ->withDefaultValue($rules);
     }
 }

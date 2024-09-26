@@ -7,6 +7,10 @@ use Rougin\Wildfire\Traits\WildfireTrait;
 use Rougin\Wildfire\Traits\WritableTrait;
 
 /**
+ * @property integer              $id
+ * @property string               $name
+ * @property integer              $age
+ * @property string               $gender
  * @property \CI_DB_query_builder $db
  */
 class User extends Model
@@ -37,7 +41,11 @@ class User extends Model
      *
      * @var array<string, string>[]
      */
-    protected $rules = array();
+    protected $rules = array(
+        array('field' => 'name', 'label' => 'Name', 'rules' => 'required'),
+        array('field' => 'age', 'label' => 'Age', 'rules' => 'required'),
+        array('field' => 'gender', 'label' => 'Gender', 'rules' => 'required'),
+    );
 
     /**
      * The table associated with the model.
@@ -68,11 +76,22 @@ class User extends Model
      */
     protected function input($data, $id = null)
     {
-        $input = array();
+        $load = array();
 
         // List editable fields from table ---
+        /** @var string */
+        $name = $data['name'];
+        $load['name'] = $name;
+
+        /** @var integer */
+        $age = $data['age'];
+        $load['age'] = $age;
+
+        /** @var string */
+        $gender = $data['gender'];
+        $load['gender'] = $gender;
         // -----------------------------------
 
-        return $input;
+        return $load;
     }
 }

@@ -18,7 +18,7 @@ class Combustor
     protected $app = null;
 
     /**
-     * @var \Rougin\Describe\Driver\DriverInterface
+     * @var \Rougin\Describe\Driver\DriverInterface|null
      */
     protected $driver = null;
 

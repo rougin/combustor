@@ -56,6 +56,10 @@ class Model extends Classidy
 
         $this->setRules($link);
 
+        $this->addStringProperty('table')
+            ->withComment('The table associated with the model.')
+            ->withDefaultValue($table);
+
         $this->setExistsMethod();
 
         $this->setInputMethod();
@@ -147,6 +151,7 @@ class Model extends Classidy
     protected function setPagee($link)
     {
         $default = array();
+
         $default['page_query_string'] = true;
         $default['use_page_numbers'] = true;
         $default['query_string_segment'] = 'p';

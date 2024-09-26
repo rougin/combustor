@@ -5,13 +5,46 @@ use Rougin\Credo\Traits\PaginateTrait;
 use Rougin\Credo\Traits\ValidateTrait;
 
 /**
+ * @Entity(repositoryClass="User_repository")
+ *
+ * @Table(name="users")
+ *
  * @property \CI_DB_query_builder $db
- * @property \User                $user
  */
 class User extends Model
 {
     use PaginateTrait;
     use ValidateTrait;
+
+    /**
+     * @Id @GeneratedValue
+     *
+     * @Column(name="id", type="integer", nullable=false, unique=false)
+     *
+     * @var integer
+     */
+    protected $id;
+
+    /**
+     * @Column(name="name", type="string", nullable=false, unique=false)
+     *
+     * @var string
+     */
+    protected $name;
+
+    /**
+     * @Column(name="age", type="integer", nullable=false, unique=false)
+     *
+     * @var integer
+     */
+    protected $age;
+
+    /**
+     * @Column(name="gender", type="string", nullable=false, unique=false)
+     *
+     * @var string
+     */
+    protected $gender;
 
     /**
      * Additional configuration to Pagination Class.
@@ -34,5 +67,9 @@ class User extends Model
      *
      * @var array<string, string>[]
      */
-    protected $rules = array();
+    protected $rules = array(
+        array('field' => 'name', 'label' => 'Name', 'rules' => 'required'),
+        array('field' => 'age', 'label' => 'Age', 'rules' => 'required'),
+        array('field' => 'gender', 'label' => 'Gender', 'rules' => 'required'),
+    );
 }

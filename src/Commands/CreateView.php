@@ -4,6 +4,7 @@ namespace Rougin\Combustor\Commands;
 
 use Rougin\Combustor\Command;
 use Rougin\Combustor\Inflector;
+use Rougin\Combustor\Template\IndexPlate;
 
 /**
  * @package Combustor
@@ -31,9 +32,9 @@ class CreateModel extends Command
     {
         parent::init();
 
-        $this->addOption('doctrine', 'generates a Doctrine-based model');
+        $this->addOption('doctrine', 'generates Doctrine-based views');
 
-        $this->addOption('wildfire', 'generates a Wildfire-based model');
+        $this->addOption('wildfire', 'generates Wildfire-based views');
     }
 
     /**
@@ -57,23 +58,19 @@ class CreateModel extends Command
             return self::RETURN_FAILURE;
         }
 
-        // Create the model file --------------------
-        $name = Inflector::singular($table);
+        $name = Inflector::plural($table);
 
-        $name = ucfirst(Inflector::singular($table));
+        $path = $this->path . '/views/';
 
-        $path = $this->path . '/models/';
+        // Create the "index.php" file ----------
+        $index = new IndexPlate($table, $type);
 
-        $file = $path . $name . '.php';
+        $file = $path . $name . '/index.php';
 
-        $plate = $this->getTemplate($type);
+        file_put_contents($file, $index->make());
+        // --------------------------------------
 
-        $plate = $this->maker->make($plate);
-
-        file_put_contents($file, $plate);
-        // ------------------------------------------
-
-        $this->showPass('Model successfully created!');
+        $this->showPass('Views successfully created!');
 
         return self::RETURN_SUCCESS;
     }

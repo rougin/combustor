@@ -146,7 +146,7 @@ class PlateTest extends Testcase
         class_alias($test, $wildfire);
         // ------------------------------------
 
-        $test = $this->findCommand('create:controller');
+        $test = $this->findCommand('create:model');
 
         $input = array('name' => 'users');
 

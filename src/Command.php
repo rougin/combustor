@@ -84,50 +84,6 @@ class Command extends Blueprint
     }
 
     /**
-     * Executes the command.
-     *
-     * @return integer
-     */
-    public function run()
-    {
-        /** @var string */
-        $table = $this->getArgument('name');
-
-        try
-        {
-            $type = $this->getInstalled();
-        }
-        catch (\Exception $e)
-        {
-            $this->showFail($e->getMessage());
-
-            return self::RETURN_FAILURE;
-        }
-
-        $plate = $this->getTemplate($table, $type);
-
-        $plate = $this->maker->make($plate);
-
-        if ($this->name === 'create:controller')
-        {
-            $name = ucfirst(Inflector::plural($table));
-            $file = $this->path . '/controllers/' . $name . '.php';
-            file_put_contents($file, $plate);
-        }
-
-        if ($this->name === 'create:model')
-        {
-            $name = ucfirst(Inflector::singular($table));
-            $file = $this->path . '/models/' . $name . '.php';
-            file_put_contents($file, $plate);
-        }
-
-        $this->showPass('Controller successfully created!');
-
-        return self::RETURN_SUCCESS;
-    }
-
-    /**
      * @return integer
      * @throws \Exception
      */
@@ -178,13 +134,15 @@ class Command extends Blueprint
     }
 
     /**
-     * @param string  $table
      * @param integer $type
      *
      * @return \Rougin\Classidy\Classidy
      */
-    protected function getTemplate($table, $type)
+    protected function getTemplate($type)
     {
+        /** @var string */
+        $table = $this->getArgument('name');
+
         $isModel = $this->name === 'create:model';
 
         /** @var \Rougin\Describe\Driver\DriverInterface */

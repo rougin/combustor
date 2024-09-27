@@ -49,9 +49,9 @@ class PlateTest extends Testcase
 
         $test->execute($input);
 
-        $expected = $this->getTemplate('DoctrineController');
+        $expected = $this->getDoctrineCtrl();
 
-        $actual = $this->getActualFile('Users');
+        $actual = $this->getActualCtrl('Users');
 
         $this->assertEquals($expected, $actual);
     }
@@ -68,7 +68,7 @@ class PlateTest extends Testcase
 
         $test->execute($input);
 
-        $expected = $this->getTemplate('DoctrineModel');
+        $expected = $this->getDoctrineModel();
 
         $actual = $this->getActualModel('User');
 
@@ -87,9 +87,9 @@ class PlateTest extends Testcase
 
         $test->execute($input);
 
-        $expected = $this->getTemplate('WildfireController');
+        $expected = $this->getWildfireCtrl();
 
-        $actual = $this->getActualFile('Users');
+        $actual = $this->getActualCtrl('Users');
 
         $this->assertEquals($expected, $actual);
     }
@@ -106,7 +106,7 @@ class PlateTest extends Testcase
 
         $test->execute($input);
 
-        $expected = $this->getTemplate('WildfireModel');
+        $expected = $this->getWildfireModel();
 
         $actual = $this->getActualModel('User');
 
@@ -116,7 +116,7 @@ class PlateTest extends Testcase
     /**
      * @return void
      */
-    public function test_with_no_package_installed()
+    public function test_with_packages_absent()
     {
         $test = $this->findCommand('create:controller');
 
@@ -134,7 +134,7 @@ class PlateTest extends Testcase
     /**
      * @return void
      */
-    public function test_with_both_packages_installed()
+    public function test_with_packages_present()
     {
         // Mock class of specified packages ---
         $test = 'Rougin\Combustor\Inflector';
@@ -232,6 +232,22 @@ class PlateTest extends Testcase
     }
 
     /**
+     * @return string
+     */
+    protected function getDoctrineCtrl()
+    {
+        return $this->getTemplate('Doctrine/Controller');
+    }
+
+    /**
+     * @return string
+     */
+    protected function getDoctrineModel()
+    {
+        return $this->getTemplate('Doctrine/Model');
+    }
+
+    /**
      * @param string $name
      *
      * @return string
@@ -244,5 +260,21 @@ class PlateTest extends Testcase
         $file = file_get_contents($path);
 
         return str_replace("\r\n", "\n", $file);
+    }
+
+    /**
+     * @return string
+     */
+    protected function getWildfireCtrl()
+    {
+        return $this->getTemplate('Wildfire/Controller');
+    }
+
+    /**
+     * @return string
+     */
+    protected function getWildfireModel()
+    {
+        return $this->getTemplate('Wildfire/Model');
     }
 }

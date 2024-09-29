@@ -2,14 +2,14 @@
 
 namespace Rougin\Combustor\Commands;
 
-use Rougin\Blueprint\Commands\InitializeCommand as Blueprint;
+use Rougin\Blueprint\Commands\InitializeCommand;
 
 /**
  * @package Combustor
  *
  * @author Rougin Gutib <rougingutib@gmail.com>
  */
-class InitializeCommand extends Blueprint
+class CreateYamlFile extends InitializeCommand
 {
     /**
      * @var string

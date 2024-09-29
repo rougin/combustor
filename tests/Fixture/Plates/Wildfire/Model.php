@@ -11,6 +11,7 @@ use Rougin\Wildfire\Traits\WritableTrait;
  * @property string               $name
  * @property integer              $age
  * @property string               $gender
+ * @property string|null          $remarks
  * @property \CI_DB_query_builder $db
  */
 class User extends Model
@@ -90,6 +91,10 @@ class User extends Model
         /** @var string */
         $gender = $data['gender'];
         $load['gender'] = $gender;
+
+        /** @var string */
+        $remarks = $data['remarks'];
+        $load['remarks'] = $remarks;
         // -----------------------------------
 
         return $load;

@@ -47,6 +47,13 @@ class User extends Model
     protected $name;
 
     /**
+     * @Column(name="remarks", type="string", nullable=true, unique=false)
+     *
+     * @var string|null
+     */
+    protected $remarks = null;
+
+    /**
      * Additional configuration to Pagination Class.
      *
      * @link https://codeigniter.com/userguide3/libraries/pagination.html#customizing-the-pagination
@@ -106,6 +113,14 @@ class User extends Model
     }
 
     /**
+     * @return string|null
+     */
+    public function get_remarks()
+    {
+        return $this->remarks;
+    }
+
+    /**
      * @param integer $age
      *
      * @return self
@@ -137,6 +152,18 @@ class User extends Model
     public function set_name($name)
     {
         $this->name = $name;
+
+        return $this;
+    }
+
+    /**
+     * @param string|null $remarks
+     *
+     * @return self
+     */
+    public function set_remarks($remarks = null)
+    {
+        $this->remarks = $remarks;
 
         return $this;
     }

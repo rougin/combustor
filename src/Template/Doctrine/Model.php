@@ -223,10 +223,14 @@ class Model extends Classidy
             $keys = array('name="' . $name . '"');
             $keys[] = 'type="' . $type . '"';
 
+            // @codeCoverageIgnoreStart
+            // Does not applicable to SQLite databases ---
             if ($length = $col->getLength())
             {
                 $keys[] = 'length=' . $length;
             }
+            // -------------------------------------------
+            // @codeCoverageIgnoreEnd
 
             $keys[] = 'nullable=' . ($isNull ? 'true' : 'false');
             $keys[] = 'unique=' . ($isUnique ? 'true' : 'false');

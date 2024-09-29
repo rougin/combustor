@@ -13,6 +13,7 @@
       <th>Name</th>
       <th>Age</th>
       <th>Gender</th>
+      <th>Remarks</th>
     </tr>
   </thead>
   <tbody>
@@ -21,6 +22,7 @@
         <td><?= $item->get_name() ?></td>
         <td><?= $item->get_age() ?></td>
         <td><?= $item->get_gender() ?></td>
+        <td><?= $item->get_remarks() ?></td>
         <td>
           <span>
             <a href="<?= base_url('users/edit/' . $item->get_id()) ?>">Edit</a>

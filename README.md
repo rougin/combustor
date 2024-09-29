@@ -7,7 +7,7 @@
 [![Quality Score][ico-code-quality]][link-code-quality]
 [![Total Downloads][ico-downloads]][link-downloads]
 
-Combustor is a [Codeigniter](https://codeigniter.com/) library that generates controllers, models, and views based from database tables. It uses the [Describe](/describe/) library for retrieving the database tables and as the basis for code generation.
+Combustor is a [Codeigniter 3](https://codeigniter.com/) package that generates controllers, models, and views based from the provided database tables. It uses the [Describe](/describe/) library for getting columns from a database table and as the basis for code generation.
 
 ## Features
 
@@ -49,13 +49,13 @@ $db['default'] = array(
 );
 ```
 
-Proceed to install `Combustor` via [Composer](https://getcomposer.org/):
+Next is to proceed in installing `Combustor` via [Composer](https://getcomposer.org/):
 
 ``` bash
 $ composer require rougin/combustor --dev
 ```
 
-Lastly, install the ORM wrappers either `Wildfire` or `Doctrine`:
+Lastly, install the ORM wrappers like `Wildfire` or `Doctrine`:
 
 ``` bash
 $ vendor/bin/combustor install:wildfire
@@ -63,7 +63,7 @@ $ vendor/bin/combustor install:doctrine
 ```
 
 > [!NOTE]
-> Using the `install:wildfire` command installs [Wildfire](https://roug.in/wildfire/) while the `install:doctrine` installs [Credo](https://roug.in/credo/).
+> Using the `install:wildfire` command installs [Wildfire](https://roug.in/wildfire/) package while the `install:doctrine` installs [Credo](https://roug.in/credo/) package.
 
 ## Reminders
 

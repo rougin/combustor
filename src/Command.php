@@ -125,7 +125,7 @@ class Command extends Blueprint
             }
         }
 
-        if ($doctrine || $doctrineExists)
+        if ($doctrine || (! $wildfire && $doctrineExists))
         {
             return self::TYPE_DOCTRINE;
         }

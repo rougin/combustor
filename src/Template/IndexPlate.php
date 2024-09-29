@@ -41,9 +41,11 @@ class IndexPlate
     }
 
     /**
+     * @param string $tab
+     *
      * @return string
      */
-    public function make()
+    public function make($tab = '')
     {
         $model = Inflector::singular($this->table);
 
@@ -64,7 +66,7 @@ class IndexPlate
 
         $table = new TablePlate($this->table, $this->cols, $this->type);
 
-        foreach ($table->make('  ') as $line)
+        foreach ($table->make($tab) as $line)
         {
             $lines[] = $line;
         }

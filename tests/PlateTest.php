@@ -281,22 +281,6 @@ class PlateTest extends Testcase
         /** @var string */
         $result = file_get_contents($file);
 
-        if ($type !== self::TYPE_VIEW)
-        {
-            return str_replace("\r\n", "\n", $result);
-        }
-
-        // Delete directory after getting the files ---
-        $path = dirname($file);
-
-        /** @var string[] */
-        $files = glob($path . '/*.*');
-
-        array_map('unlink', $files);
-
-        rmdir((string) $path);
-        // --------------------------------------------
-
         return str_replace("\r\n", "\n", $result);
     }
 
@@ -319,9 +303,24 @@ class PlateTest extends Testcase
     {
         $name = strtolower(Inflector::plural($name));
 
+        $create = $this->getActualFile($name . '/create', self::TYPE_VIEW);
+
+        $edit = $this->getActualFile($name . '/edit', self::TYPE_VIEW);
+
         $index = $this->getActualFile($name . '/index', self::TYPE_VIEW);
 
-        return $index;
+        // Delete directory after getting the files ---
+        $path = $this->path . '/views/' . $name;
+
+        /** @var string[] */
+        $files = glob($path . '/*.*');
+
+        array_map('unlink', $files);
+
+        rmdir((string) $path);
+        // --------------------------------------------
+
+        return $create . "\n" . $edit . "\n" . $index;
     }
 
     /**
@@ -345,9 +344,13 @@ class PlateTest extends Testcase
      */
     protected function getDoctrineView()
     {
+        $create = $this->getTemplate('Doctrine/CreateView');
+
+        $edit = $this->getTemplate('Doctrine/EditView');
+
         $index = $this->getTemplate('Doctrine/IndexView');
 
-        return $index;
+        return $create . "\n" . $edit . "\n" . $index;
     }
 
     /**
@@ -386,8 +389,12 @@ class PlateTest extends Testcase
      */
     protected function getWildfireView()
     {
+        $create = $this->getTemplate('Wildfire/CreateView');
+
+        $edit = $this->getTemplate('Wildfire/EditView');
+
         $index = $this->getTemplate('Wildfire/IndexView');
 
-        return $index;
+        return $create . "\n" . $edit . "\n" . $index;
     }
 }

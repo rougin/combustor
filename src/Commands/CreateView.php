@@ -4,6 +4,8 @@ namespace Rougin\Combustor\Commands;
 
 use Rougin\Combustor\Command;
 use Rougin\Combustor\Inflector;
+use Rougin\Combustor\Template\CreatePlate;
+use Rougin\Combustor\Template\EditPlate;
 use Rougin\Combustor\Template\IndexPlate;
 
 /**
@@ -72,12 +74,28 @@ class CreateView extends Command
             mkdir($path . $name);
         }
 
+        // Create the "create.php" file ----------------
+        $create = new CreatePlate($table, $type, $cols);
+
+        $file = $path . $name . '/create.php';
+
+        file_put_contents($file, $create->make('  '));
+        // ---------------------------------------------
+
+        // Create the "edit.php" file --------------
+        $edit = new EditPlate($table, $type, $cols);
+
+        $file = $path . $name . '/edit.php';
+
+        file_put_contents($file, $edit->make('  '));
+        // -----------------------------------------
+
         // Create the "index.php" file ---------------
         $index = new IndexPlate($table, $type, $cols);
 
         $file = $path . $name . '/index.php';
 
-        file_put_contents($file, $index->make());
+        file_put_contents($file, $index->make('  '));
         // -------------------------------------------
 
         $this->showPass('Views successfully created!');

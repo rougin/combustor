@@ -12,6 +12,11 @@ use Rougin\Combustor\Inflector;
 class IndexPlate
 {
     /**
+     * @var \Rougin\Describe\Column[]
+     */
+    protected $cols;
+
+    /**
      * @var string
      */
     protected $table;
@@ -22,14 +27,17 @@ class IndexPlate
     protected $type;
 
     /**
-     * @param string  $table
-     * @param integer $type
+     * @param string                    $table
+     * @param integer                   $type
+     * @param \Rougin\Describe\Column[] $cols
      */
-    public function __construct($table, $type)
+    public function __construct($table, $type, $cols)
     {
         $this->type = $type;
 
         $this->table = $table;
+
+        $this->cols = $cols;
     }
 
     /**
@@ -53,6 +61,14 @@ class IndexPlate
         $lines[] = '';
 
         $lines[] = '<div>';
+
+        $table = new TablePlate($this->cols);
+
+        foreach ($table->make() as $line)
+        {
+            $lines[] = $line;
+        }
+
         $lines[] = '  <?= $links ?>';
         $lines[] = '</div>';
         $lines[] = '';

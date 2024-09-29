@@ -11,7 +11,7 @@ use Rougin\Combustor\Template\IndexPlate;
  *
  * @author Rougin Gutib <rougingutib@gmail.com>
  */
-class CreateModel extends Command
+class CreateView extends Command
 {
     /**
      * @var string
@@ -58,17 +58,27 @@ class CreateModel extends Command
             return self::RETURN_FAILURE;
         }
 
+        /** @var \Rougin\Describe\Driver\DriverInterface */
+        $describe = $this->driver;
+
+        $cols = $describe->columns($table);
+
         $name = Inflector::plural($table);
 
         $path = $this->path . '/views/';
 
-        // Create the "index.php" file ----------
-        $index = new IndexPlate($table, $type);
+        if (! is_dir($path . $name))
+        {
+            mkdir($path . $name);
+        }
+
+        // Create the "index.php" file ---------------
+        $index = new IndexPlate($table, $type, $cols);
 
         $file = $path . $name . '/index.php';
 
         file_put_contents($file, $index->make());
-        // --------------------------------------
+        // -------------------------------------------
 
         $this->showPass('Views successfully created!');
 

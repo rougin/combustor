@@ -121,12 +121,12 @@ class Controller extends Classidy
             $lines[] = '';
 
             // TODO: Show if --with-view enabled -------------
-            $lines[] = '// Load view-related helpers -------';
+            $lines[] = '// Load view-related helpers ------';
             $lines[] = '$this->load->helper(\'form\');';
             $lines[] = '$this->load->helper(\'url\');';
-            $lines[] = '$this->load->helper(\'pagination\');';
+            $lines[] = '$this->load->library(\'pagination\');';
             $lines[] = '$this->load->helper(\'session\');';
-            $lines[] = '// ---------------------------------';
+            $lines[] = '// --------------------------------';
             $lines[] = '';
             // -----------------------------------------------
 

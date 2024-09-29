@@ -22,12 +22,12 @@ class Users extends Controller
         $this->load->database();
         // ----------------------------------
 
-        // Load view-related helpers -------
+        // Load view-related helpers ------
         $this->load->helper('form');
         $this->load->helper('url');
-        $this->load->helper('pagination');
+        $this->load->library('pagination');
         $this->load->helper('session');
-        // ---------------------------------
+        // --------------------------------
 
         // Load multiple models if required ---
         $this->load->model('user');

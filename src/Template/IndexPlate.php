@@ -62,9 +62,9 @@ class IndexPlate
 
         $lines[] = '<div>';
 
-        $table = new TablePlate($this->cols);
+        $table = new TablePlate($this->table, $this->cols, $this->type);
 
-        foreach ($table->make() as $line)
+        foreach ($table->make('  ') as $line)
         {
             $lines[] = $line;
         }

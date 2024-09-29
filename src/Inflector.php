@@ -12,6 +12,26 @@ namespace Rougin\Combustor;
 class Inflector
 {
     /**
+     * Takes multiple words separated by the separator and changes them to spaces
+     *
+     * @param string $word
+     * @param string $separator
+     *
+     * @return  string
+     */
+    public static function humanize($word, $separator = '_')
+    {
+        $regex = '/[' . preg_quote($separator) . ']+/';
+
+        $word = trim(mb_strtolower($word));
+
+        /** @var string */
+        $result = preg_replace($regex, ' ', $word);
+
+        return ucwords($result);
+    }
+
+    /**
      * Takes a singular word and makes it plural.
      *
      * @param string $word

@@ -32,16 +32,7 @@ class AppTest extends Testcase
 
         $expected = 'Rougin\Blueprint\Wrapper';
 
-        try
-        {
-            $actual = $app->make()->find('init');
-        }
-        catch (\Exception $e)
-        {
-            $text = '"combustor.yml" already exists.';
-
-            $this->markTestSkipped($text);
-        }
+        $actual = $app->make()->find('init');
 
         $this->assertInstanceOf($expected, $actual);
     }

@@ -15,6 +15,8 @@ class PlateTest extends Testcase
 
     const TYPE_MODEL = 1;
 
+    const TYPE_VIEW = 2;
+
     /**
      * @var \Rougin\Blueprint\Blueprint
      */
@@ -78,6 +80,25 @@ class PlateTest extends Testcase
     /**
      * @return void
      */
+    public function test_doctrine_view()
+    {
+        $test = $this->findCommand('create:view');
+
+        $input = array('name' => 'users');
+        $input['--doctrine'] = true;
+
+        $test->execute($input);
+
+        $expected = $this->getDoctrineView();
+
+        $actual = $this->getActualView('User');
+
+        $this->assertEquals($expected, $actual);
+    }
+
+    /**
+     * @return void
+     */
     public function test_wildfire_controller()
     {
         $test = $this->findCommand('create:controller');
@@ -116,9 +137,46 @@ class PlateTest extends Testcase
     /**
      * @return void
      */
+    public function test_wildfire_view()
+    {
+        $test = $this->findCommand('create:view');
+
+        $input = array('name' => 'users');
+        $input['--wildfire'] = true;
+
+        $test->execute($input);
+
+        $expected = $this->getWildfireView();
+
+        $actual = $this->getActualView('User');
+
+        $this->assertEquals($expected, $actual);
+    }
+
+    /**
+     * @return void
+     */
     public function test_with_packages_absent()
     {
         $test = $this->findCommand('create:controller');
+
+        $input = array('name' => 'users');
+
+        $test->execute($input);
+
+        $expected = '[FAIL] Both "rougin/credo" and "rougin/wildfire" are not installed. Kindly "rougin/credo" or "rougin/wildfire" first.';
+
+        $actual = $this->getActualDisplay($test);
+
+        $this->assertEquals($expected, $actual);
+    }
+
+    /**
+     * @return void
+     */
+    public function test_with_packages_absent_view()
+    {
+        $test = $this->findCommand('create:view');
 
         $input = array('name' => 'users');
 
@@ -203,6 +261,11 @@ class PlateTest extends Testcase
     {
         $path = $this->path;
 
+        if ($type === self::TYPE_VIEW)
+        {
+            $path .= '/views';
+        }
+
         if ($type === self::TYPE_CONTROLLER)
         {
             $path .= '/controllers';
@@ -216,9 +279,25 @@ class PlateTest extends Testcase
         $file = $path . '/' . $name . '.php';
 
         /** @var string */
-        $file = file_get_contents($file);
+        $result = file_get_contents($file);
 
-        return str_replace("\r\n", "\n", $file);
+        if ($type !== self::TYPE_VIEW)
+        {
+            return str_replace("\r\n", "\n", $result);
+        }
+
+        // Delete directory after getting the files ---
+        $path = dirname($file);
+
+        /** @var string[] */
+        $files = glob($path . '/*.*');
+
+        array_map('unlink', $files);
+
+        rmdir((string) $path);
+        // --------------------------------------------
+
+        return str_replace("\r\n", "\n", $result);
     }
 
     /**
@@ -229,6 +308,20 @@ class PlateTest extends Testcase
     protected function getActualModel($name)
     {
         return $this->getActualFile($name, self::TYPE_MODEL);
+    }
+
+    /**
+     * @param string $name
+     *
+     * @return string
+     */
+    protected function getActualView($name)
+    {
+        $name = strtolower(Inflector::plural($name));
+
+        $index = $this->getActualFile($name . '/index', self::TYPE_VIEW);
+
+        return $index;
     }
 
     /**
@@ -245,6 +338,16 @@ class PlateTest extends Testcase
     protected function getDoctrineModel()
     {
         return $this->getTemplate('Doctrine/Model');
+    }
+
+    /**
+     * @return string
+     */
+    protected function getDoctrineView()
+    {
+        $index = $this->getTemplate('Doctrine/IndexView');
+
+        return $index;
     }
 
     /**
@@ -276,5 +379,15 @@ class PlateTest extends Testcase
     protected function getWildfireModel()
     {
         return $this->getTemplate('Wildfire/Model');
+    }
+
+    /**
+     * @return string
+     */
+    protected function getWildfireView()
+    {
+        $index = $this->getTemplate('Wildfire/IndexView');
+
+        return $index;
     }
 }

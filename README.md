@@ -171,16 +171,6 @@ Creates a new HTTP controller, model, and view template.
 $ vendor/bin/combustor create:scaffold users --bootstrap --wildfire
 ```
 
-## Reminders
-
-* To learn more about functionalities of `Doctrine` and its concepts, the documentation page can be found [here](http://doctrine-orm.readthedocs.org/en/latest).
-
-* Before generating the models, views, and controllers, please make sure that the **database is defined properly** (foreign keys, indexes, relationships, normalizations) in order to minimize the modifications after the codes has been generated. Also, generate the models, views, and controllers first to tables that are having **no relationship with other tables** in the database.
-
-    * The reason for this is that Combustor will generate controllers, models, and views based on the specified database schema. If there's something wrong in the said database, Combustor will definitely generate a bad codebase.
-
-* For found bugs or suggestions, feel free to [open an issue](https://github.com/rougin/combustor/issues) or [create a pull request](https://github.com/rougin/combustor/compare).
-
 ## Changelog
 
 Please see [CHANGELOG][link-changelog] for more information what has changed recently.

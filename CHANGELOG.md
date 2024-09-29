@@ -2,6 +2,17 @@
 
 All notable changes to `Combustor` will be documented in this file.
 
+## [1.3.0](https://github.com/rougin/transcribe/compare/v1.2.4...v1.3.0) - Unreleased
+
+### Changed
+- Minimum version of PHP to `v5.3.0`
+- Code documentation by `php-cs-fixer`, code quality by `phpstan`
+- Workflow from `Travis CI` to `Github Actions`
+- Code coverage from `Scrutinizer CI` to `Codecov`
+
+### Removed
+- `CONTRIBUTING.md`
+
 ## [1.2.4](https://github.com/rougin/combustor/compare/v1.2.3...v1.2.4) - 2018-04-18
 
 ### Fixed

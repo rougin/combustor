@@ -5,12 +5,18 @@ parameters:
     - tests
   excludePaths:
     analyse:
-      - tests/Weblog/application/views
+      - tests/Fixture/Plates
+      - tests/Fixture/Sample/controllers
+      - tests/Fixture/Sample/models
+      - tests/Fixture/Sample/views
   scanDirectories:
     - vendor/rougin/codeigniter/src
   ignoreErrors:
-    - '#^Call to an undefined method Rougin\\Wildfire\\Wildfire\:\:test\(\)\.$#'
-    - '#^Access to an undefined property CI_Controller\:\:\$db\.$#'
-    - '#^Access to an undefined property CI_Controller\:\:\$user\.$#'
+    - '#^Access to property \$database on an unknown class CI_DB\.$#'
+    - '#^Access to property \$dbdriver on an unknown class CI_DB\.$#'
+    - '#^Access to property \$dsn on an unknown class CI_DB\.$#'
+    - '#^Access to property \$hostname on an unknown class CI_DB\.$#'
+    - '#^Access to property \$password on an unknown class CI_DB\.$#'
+    - '#^Access to property \$username on an unknown class CI_DB\.$#'
     - '#^Constant APPPATH not found\.$#'
     - '#^Constant ENVIRONMENT not found\.$#'

@@ -1,5 +1,22 @@
 #!/usr/bin/env php
 <?php
 
-// Load and run the Combustor application
-require 'combustor.php';
+use Rougin\Combustor\Console;
+
+// Return the root directory of the project ------------
+$vendor = (string) __DIR__ . '/../../../../';
+
+$exists = file_exists($vendor . '/vendor/autoload.php');
+
+$root = $exists ? $vendor : __DIR__ . '/../';
+// -----------------------------------------------------
+
+// Load the Composer autoloader -------
+require $root . '/vendor/autoload.php';
+// ------------------------------------
+
+$app = new Console($root);
+
+// Run the console application ---
+$app->run();
+// -------------------------------

@@ -1,9 +1,11 @@
 .php-cs-fixer.cache
 .phpintel
 .phpunit.result.cache
-bower_components
 build
+combustor.bak
+combustor.yml
 composer.lock
-docs
-node_modules
+tests/Fixture/Sample/controllers
+tests/Fixture/Sample/models
+tests/Fixture/Sample/views
 vendor

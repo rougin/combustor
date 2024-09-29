@@ -18,17 +18,61 @@ Combustor is a [Codeigniter](https://codeigniter.com/) library that generates co
 
 ## Installation
 
-1. Download the Codeigniter framework [here](https://github.com/bcit-ci/CodeIgniter/archive/3.1.8.zip) and extract it to the web server.
-2. Configure the application's database connectivity settings in `application/config/database.php`.
-3. Install Combustor through the [Composer](https://getcomposer.org/) package manager:
+Download the [latest Codeigniter 3 project](https://github.com/bcit-ci/CodeIgniter/archive/3.1.13.zip) and extract its contents:
+
+``` bash
+$ wget https://github.com/bcit-ci/CodeIgniter/archive/3.1.13.zip
+$ unzip 3.1.13.zip -d acme
+```
+
+Then configure the project's database connectivity settings:
+
+```
+$ cd acme
+$ nano application/config/database.php
+```
+
+``` php
+// acme/application/config/database.php
+
+// ...
+
+$db['default'] = array(
+    'dsn'   => '',
+    'hostname' => 'localhost',
+    'username' => '',
+    'password' => '',
+    'database' => '',
+    'dbdriver' => 'mysqli',
+    
+    // ...
+);
+```
+
+Proceed to install `Combustor` via [Composer](https://getcomposer.org/):
+
 ``` bash
 $ composer require rougin/combustor --dev
 ```
-4. Install the ORM wrappers `Wildfire` and `Doctrine ORM` or both:
+
+Lastly, install the ORM wrappers either `Wildfire` or `Doctrine`:
+
 ``` bash
 $ vendor/bin/combustor install:wildfire
 $ vendor/bin/combustor install:doctrine
 ```
+
+> [!NOTE]
+> Using the `install:wildfire` command installs [Wildfire](https://roug.in/wildfire/) while the `install:doctrine` installs [Credo](https://roug.in/credo/).
+
+## Reminders
+
+Prior in executing any commands, kindly ensure that the **database table is defined properly** (foreign keys, indexes, relationships, normalizations) in order to minimize the modifications after the codes has been generated.
+
+Also, proceed first in generating models, views, or controllers to database tables that are having **no relationship with other tables** in the database.
+
+> [!TIP]
+> `Combustor` will generate controllers, models, or views based on the specified database schema. If there's something wrong in the specified database schema, `Combustor` will generate a bad codebase.
 
 ## Commands
 
@@ -56,11 +100,11 @@ Creates a new HTTP controller.
 
 #### Options
 
-* `--camel` - uses camel case naming convention for the accessor and mutators
-* `--doctrine` - generates a controller based on Doctrine
-* `--keep` - keeps the name to be used
-* `--lowercase` - keeps the first character of the name to lowercase
-* `--wildfire` - generates a controller based from Wildfire
+* `--doctrine` - generates a Doctrine-based controller
+* `--wildfire` - generates a Wildfire-based controller
+
+> [!NOTE]
+> If either `Wildfire` or `Doctrine` is installed, no need to specify it as option for executing a specified command (e.g. `--wildfire`). However if both are installed, a command must have a `--wildfire` or `--doctrine` option added
 
 #### Example
 
@@ -78,11 +122,8 @@ Creates a new model.
 
 #### Options
 
-* `--camel` - uses camel case naming convention for the accessor and mutators
-* `--doctrine` - generates a controller based on Doctrine
-* `--keep` - keeps the name to be used
-* `--lowercase` - keeps the first character of the name to lowercase
-* `--wildfire` - generates a controller based from Wildfire
+* `--doctrine` - generates a Doctrine-based model
+* `--wildfire` - generates a Wildfire-based model
 
 #### Example
 
@@ -101,11 +142,8 @@ Creates a new view template.
 #### Options
 
 * `--bootstrap` - includes the Bootstrap tags
-* `--camel` - uses camel case naming convention for the accessor and mutators
-* `--doctrine` - generates a controller based on Doctrine
-* `--keep` - keeps the name to be used
-* `--lowercase` - keeps the first character of the name to lowercase
-* `--wildfire` - generates a controller based from Wildfire
+* `--doctrine` - generates Doctrine-based views
+* `--wildfire` - generates Wildfire-based views
 
 #### Example
 
@@ -124,11 +162,8 @@ Creates a new HTTP controller, model, and view template.
 #### Options
 
 * `--bootstrap` - includes the Bootstrap tags
-* `--camel` - uses camel case naming convention for the accessor and mutators
-* `--doctrine` - generates a controller based on Doctrine
-* `--keep` - keeps the name to be used
-* `--lowercase` - keeps the first character of the name to lowercase
-* `--wildfire` - generates a controller based from Wildfire
+* `--doctrine` - generates a Doctrine-based controller, model, and views
+* `--wildfire` - generates a Wildfire-based controller, model, and views
 
 #### Example
 
@@ -136,75 +171,9 @@ Creates a new HTTP controller, model, and view template.
 $ vendor/bin/combustor create:scaffold users --bootstrap --wildfire
 ```
 
-## Wilfire's Methods
-
-The following methods below are available if `--wildfire` is installed:
-
-### `delete($table, $delimiters = [])`
-
-Deletes the specified data from storage.
-
-#### Arguments
-
-* `$table` - name of the database table
-* `$delimiters` - delimits the list of rows to be returned
-
-#### Example
-
-``` php
-$this->wildfire->delete('users', ['id' => 3]);
-```
-
-### `find($table, $delimiters = [])`
-
-Finds the row from the specified ID or with the list of delimiters from the specified table.
-
-#### Arguments
-
-* `$table` - name of the database table
-* `$delimiters` - delimits the list of rows to be returned
-
-#### Example
-
-``` php
-$this->wildfire->delete('users', ['id' => 3]);
-```
-
-### `get_all($table, $delimiters = [])`
-
-Returns all rows from the specified table
-
-#### Arguments
-
-* `$table` - name of the database table
-* `$delimiters` - delimits the list of rows to be returned
-    * `keyword` - used for searching the data from the storage
-    * `per_page` - defines the number of rows per page
-
-#### Returned methods
-
-* `as_dropdown($description)` - returns the list of rows that can be used in `form_dropdown()`
-    * `description` - the field to be displayed in the result (the default value is `description`)
-* `result()` - returns the list of rows from the storage in a model
-* `total_rows()` - returns the total number of rows based from the result
-
-#### Example
-
-``` php
-$delimiters = ['keyword' => 'test', 'per_page' = 3];
-
-$result = $this->wildfire->all('users', $delimiters);
-
-var_dump((array) $result->result());
-```
-
-**NOTE**: This method is also available if `--doctrine` is installed.
-
 ## Reminders
 
-* If either Wildfire or Doctrine is installed, no need to specify it as option for executing a specified command (e.g. `vendor/bin/combustor create:controller --wildfire`). However if both are installed, the command to be executed must have a `--wildfire` or `--doctrine` option added.
-
-* To learn more about Doctrine's functionalities and its concepts, the documentation page can be found [here](http://doctrine-orm.readthedocs.org/en/latest).
+* To learn more about functionalities of `Doctrine` and its concepts, the documentation page can be found [here](http://doctrine-orm.readthedocs.org/en/latest).
 
 * Before generating the models, views, and controllers, please make sure that the **database is defined properly** (foreign keys, indexes, relationships, normalizations) in order to minimize the modifications after the codes has been generated. Also, generate the models, views, and controllers first to tables that are having **no relationship with other tables** in the database.
 

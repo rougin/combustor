@@ -11,6 +11,10 @@ All notable changes to `Combustor` will be documented in this file.
 - Code coverage from `Scrutinizer CI` to `Codecov`
 
 ### Removed
+- Options to strictly conform in coding style of `Codeigniter`:
+  - `--camel`
+  - `--keep`
+  - `--lowercase`
 - `CONTRIBUTING.md`
 
 ## [1.2.4](https://github.com/rougin/combustor/compare/v1.2.3...v1.2.4) - 2018-04-18

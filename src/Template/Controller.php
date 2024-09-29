@@ -125,7 +125,7 @@ class Controller extends Classidy
             $lines[] = '$this->load->helper(\'form\');';
             $lines[] = '$this->load->helper(\'url\');';
             $lines[] = '$this->load->library(\'pagination\');';
-            $lines[] = '$this->load->helper(\'session\');';
+            $lines[] = '$this->load->library(\'session\');';
             $lines[] = '// --------------------------------';
             $lines[] = '';
             // -----------------------------------------------

@@ -26,7 +26,7 @@ class Users extends Controller
         $this->load->helper('form');
         $this->load->helper('url');
         $this->load->library('pagination');
-        $this->load->helper('session');
+        $this->load->library('session');
         // --------------------------------
 
         // Load multiple models if required ---

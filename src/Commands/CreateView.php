@@ -16,12 +16,12 @@ class CreateView extends Command
     /**
      * @var string
      */
-    protected $name = 'create:model';
+    protected $name = 'create:views';
 
     /**
      * @var string
      */
-    protected $description = 'Creates a new model';
+    protected $description = 'Creates view templates';
 
     /**
      * Configures the current command.

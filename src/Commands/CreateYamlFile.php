@@ -34,8 +34,7 @@ class CreateYamlFile extends InitializeCommand
      */
     protected function getRootPath()
     {
-        /** @var string */
-        $vendor = realpath(__DIR__ . '/../../../../../');
+        $vendor = (string) __DIR__ . '/../../../../../';
 
         $exists = file_exists($vendor . '/../autoload.php');
 

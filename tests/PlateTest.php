@@ -46,7 +46,7 @@ class PlateTest extends Testcase
     {
         $test = $this->findCommand('create:controller');
 
-        $input = array('name' => 'users');
+        $input = array('table' => 'users');
         $input['--doctrine'] = true;
 
         $test->execute($input);
@@ -65,7 +65,7 @@ class PlateTest extends Testcase
     {
         $test = $this->findCommand('create:model');
 
-        $input = array('name' => 'users');
+        $input = array('table' => 'users');
         $input['--doctrine'] = true;
 
         $test->execute($input);
@@ -84,7 +84,7 @@ class PlateTest extends Testcase
     {
         $test = $this->findCommand('create:view');
 
-        $input = array('name' => 'users');
+        $input = array('table' => 'users');
         $input['--doctrine'] = true;
 
         $test->execute($input);
@@ -103,7 +103,7 @@ class PlateTest extends Testcase
     {
         $test = $this->findCommand('create:controller');
 
-        $input = array('name' => 'users');
+        $input = array('table' => 'users');
         $input['--wildfire'] = true;
 
         $test->execute($input);
@@ -122,7 +122,7 @@ class PlateTest extends Testcase
     {
         $test = $this->findCommand('create:model');
 
-        $input = array('name' => 'users');
+        $input = array('table' => 'users');
         $input['--wildfire'] = true;
 
         $test->execute($input);
@@ -141,7 +141,7 @@ class PlateTest extends Testcase
     {
         $test = $this->findCommand('create:view');
 
-        $input = array('name' => 'users');
+        $input = array('table' => 'users');
         $input['--wildfire'] = true;
 
         $test->execute($input);
@@ -160,7 +160,7 @@ class PlateTest extends Testcase
     {
         $test = $this->findCommand('create:controller');
 
-        $input = array('name' => 'users');
+        $input = array('table' => 'users');
 
         $test->execute($input);
 
@@ -178,7 +178,7 @@ class PlateTest extends Testcase
     {
         $test = $this->findCommand('create:view');
 
-        $input = array('name' => 'users');
+        $input = array('table' => 'users');
 
         $test->execute($input);
 
@@ -206,7 +206,7 @@ class PlateTest extends Testcase
 
         $test = $this->findCommand('create:model');
 
-        $input = array('name' => 'users');
+        $input = array('table' => 'users');
 
         $test->execute($input);
 

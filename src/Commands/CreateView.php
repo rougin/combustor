@@ -47,7 +47,7 @@ class CreateView extends Command
     public function run()
     {
         /** @var string */
-        $table = $this->getArgument('name');
+        $table = $this->getArgument('table');
 
         try
         {

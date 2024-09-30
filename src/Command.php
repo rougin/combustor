@@ -59,7 +59,7 @@ class Command extends Blueprint
      */
     public function init()
     {
-        $this->addArgument('name', 'Name of the table');
+        $this->addArgument('table', 'Name of the database table');
 
         if ($this->name !== 'create:views')
         {
@@ -133,7 +133,7 @@ class Command extends Blueprint
     protected function getTemplate($type)
     {
         /** @var string */
-        $table = $this->getArgument('name');
+        $table = $this->getArgument('table');
 
         $isModel = $this->name === 'create:model';
 

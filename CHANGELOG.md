@@ -10,10 +10,13 @@ All notable changes to `Combustor` will be documented in this file.
 - Specify customized `application` path using `app_path` 
 
 ### Changed
+- Code coverage provider to `Codecov`
+- Code documentation by `php-cs-fixer`
+- Improved code quality by `phpstan`
+- Main argument `name` to `table` in `Commands`
 - Minimum version of PHP to `v5.3.0`
-- Code documentation by `php-cs-fixer`, code quality by `phpstan`
-- Workflow from `Travis CI` to `Github Actions`
-- Code coverage from `Scrutinizer CI` to `Codecov`
+- Simplified code structure
+- Workflow provider to `Github Actions`
 
 ### Removed
 - Options to strictly conform in coding style of `Codeigniter`:

@@ -2,23 +2,22 @@
 
 [![Latest Version on Packagist][ico-version]][link-packagist]
 [![Software License][ico-license]][link-license]
-[![Build Status][ico-travis]][link-travis]
-[![Coverage Status][ico-scrutinizer]][link-scrutinizer]
-[![Quality Score][ico-code-quality]][link-code-quality]
+[![Build Status][ico-build]][link-build]
+[![Coverage Status][ico-coverage]][link-coverage]
 [![Total Downloads][ico-downloads]][link-downloads]
 
-Combustor is a [Codeigniter 3](https://codeigniter.com/) package that generates controllers, models, and views based from the provided database tables. It uses the [Describe](/describe/) library for getting columns from a database table and as the basis for code generation.
+Combustor is a utility package for [Codeigniter 3](https://codeigniter.com/userguide3/) that generates controllers, models, and views based from the provided database tables. It uses the [Describe](/describe/) library for getting columns from a database table and as the basis for code generation.
 
 ## Features
 
-* Generates code based from the structure of the Codeigniter framework
-* Speeds up the code development for prototyping web applications
-* View templates are based on Bootstrap which can also be modified later
-* Needs to worry only on the database schema, and Combustor will do the rest
+* Generates code based from the structure of the `Codeigniter 3` framework;
+* Speeds up the code development for prototyping web applications;
+* View templates are based on Bootstrap which can also be modified later; and
+* Only worry on the database schema, and `Combustor` will do the rest.
 
 ## Installation
 
-Download the [latest Codeigniter 3 project](https://github.com/bcit-ci/CodeIgniter/archive/3.1.13.zip) and extract its contents:
+Extract the contents of the [latest Codeigniter 3 project](https://github.com/bcit-ci/CodeIgniter/archive/3.1.13.zip):
 
 ``` bash
 $ wget https://github.com/bcit-ci/CodeIgniter/archive/3.1.13.zip
@@ -55,6 +54,21 @@ Next is to proceed in installing `Combustor` via [Composer](https://getcomposer.
 $ composer require rougin/combustor --dev
 ```
 
+``` json
+// acme/composer.json
+
+{
+  // ...
+
+  "require-dev":
+  {
+    "mikey179/vfsstream": "1.6.*",
+    "phpunit/phpunit": "4.* || 5.* || 9.*",
+    "rougin/combustor": "~1.0"
+  }
+}
+```
+
 Lastly, install the ORM wrappers like `Wildfire` or `Doctrine`:
 
 ``` bash
@@ -78,7 +92,7 @@ Also, proceed first in generating models, views, or controllers to database tabl
 
 ### `create:layout`
 
-Creates a new header and footer file.
+Create a new header and footer file.
 
 **Options**
 
@@ -92,11 +106,11 @@ $ vendor/bin/combustor create-layout --bootstrap
 
 ### `create:controller`
 
-Creates a new HTTP controller.
+Create a new HTTP controller.
 
 **Arguments**
 
-* `name` - name of the database table
+* `table` - name of the database table
 
 **Options**
 
@@ -114,11 +128,11 @@ $ vendor/bin/combustor create:controller users --camel --wildfire
 
 ### `create:model`
 
-Creates a new model.
+Create a new model.
 
 **Arguments**
 
-* `name` - name of the database table
+* `table` - name of the database table
 
 **Options**
 
@@ -133,11 +147,11 @@ $ vendor/bin/combustor create:model users --camel --wildfire
 
 ### `create:view`
 
-Creates a new view template.
+Create a new view template.
 
 **Arguments**
 
-* `name` - name of the database table
+* `table` - name of the database table
 
 **Options**
 
@@ -153,11 +167,11 @@ $ vendor/bin/combustor create:view users --bootstrap
 
 ### `create:scaffold`
 
-Creates a new HTTP controller, model, and view template.
+Create a new HTTP controller, model, and view template.
 
 **Arguments**
 
-* `name` - name of the database table
+* `table` - name of the database table
 
 **Options**
 
@@ -245,18 +259,16 @@ $ composer test
 
 The MIT License (MIT). Please see [LICENSE][link-license] for more information.
 
-[ico-code-quality]: https://img.shields.io/scrutinizer/g/rougin/combustor.svg?style=flat-square
+[ico-build]: https://img.shields.io/github/actions/workflow/status/rougin/combustor/build.yml?style=flat-square
+[ico-coverage]: https://img.shields.io/codecov/c/github/rougin/combustor?style=flat-square
 [ico-downloads]: https://img.shields.io/packagist/dt/rougin/combustor.svg?style=flat-square
 [ico-license]: https://img.shields.io/badge/license-MIT-brightgreen.svg?style=flat-square
-[ico-scrutinizer]: https://img.shields.io/scrutinizer/coverage/g/rougin/combustor.svg?style=flat-square
-[ico-travis]: https://img.shields.io/travis/rougin/combustor/master.svg?style=flat-square
 [ico-version]: https://img.shields.io/packagist/v/rougin/combustor.svg?style=flat-square
 
+[link-build]: https://github.com/rougin/combustor/actions
 [link-changelog]: https://github.com/rougin/combustor/blob/master/CHANGELOG.md
-[link-code-quality]: https://scrutinizer-ci.com/g/rougin/combustor
 [link-contributors]: https://github.com/rougin/combustor/contributors
+[link-coverage]: https://app.codecov.io/gh/rougin/combustor
 [link-downloads]: https://packagist.org/packages/rougin/combustor
 [link-license]: https://github.com/rougin/combustor/blob/master/LICENSE.md
 [link-packagist]: https://packagist.org/packages/rougin/combustor
-[link-scrutinizer]: https://scrutinizer-ci.com/g/rougin/combustor/code-structure
-[link-travis]: https://travis-ci.org/rougin/combustor

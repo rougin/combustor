@@ -32,7 +32,7 @@ class AppTest extends Testcase
 
         $expected = 'Rougin\Blueprint\Wrapper';
 
-        $actual = $app->make()->find('init');
+        $actual = $app->make()->find('initialize');
 
         $this->assertInstanceOf($expected, $actual);
     }

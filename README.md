@@ -6,13 +6,13 @@
 [![Coverage Status][ico-coverage]][link-coverage]
 [![Total Downloads][ico-downloads]][link-downloads]
 
-Combustor is a utility package for [Codeigniter 3](https://codeigniter.com/userguide3/) that generates controllers, models, and views based from the provided database tables. It uses the [Describe](/describe/) library for getting columns from a database table and as the basis for code generation.
+Combustor is a utility package for [Codeigniter 3](https://codeigniter.com/userguide3/) that generates controllers, models, and views based on the provided database tables. It uses the [Describe](https://roug.in/describe/) library for getting columns from a database table and as the basis for code generation.
 
 ## Features
 
-* Generates code based from the structure of the `Codeigniter 3` framework;
+* Generates code based on the structure of the `Codeigniter 3` framework;
 * Speeds up the code development for prototyping web applications;
-* View templates are based on Bootstrap which can also be modified later; and
+* View templates can be based on Bootstrap and are upgradable; and
 * Only worry on the database schema, and `Combustor` will do the rest.
 
 ## Installation
@@ -81,9 +81,9 @@ $ vendor/bin/combustor install:doctrine
 
 ## Reminders
 
-Prior in executing any commands, kindly ensure that the **database table is defined properly** (foreign keys, indexes, relationships, normalizations) in order to minimize the modifications after the structured code has been generated.
+Prior in executing any commands, kindly ensure that the **database tables are defined properly** (foreign keys, indexes, relationships, normalizations) in order to minimize the modifications after the code structure has been generated.
 
-Also, proceed first in generating models, views, or controllers to database tables that are having _**no relationship with other tables**_ in the database.
+Also, please proceed first in generating models, views, or controllers to database tables that are having _**no relationship with other tables**_ in the database.
 
 > [!TIP]
 > `Combustor` will generate controllers, models, or views based on the specified database schema. If there's something wrong in the specified database schema, `Combustor` will generate a bad codebase.

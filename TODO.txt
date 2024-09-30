@@ -7,3 +7,4 @@
 - updated_at
 - deleted_at
 [ ] form rules
+[ ] fix init on ciacme

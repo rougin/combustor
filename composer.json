@@ -1,6 +1,6 @@
 {
   "name": "rougin/combustor",
-  "description": "An MVC code generator for Codeigniter 3.",
+  "description": "MVC code generator for Codeigniter 3.",
   "keywords": [ "codeigniter", "crud", "generator" ],
   "homepage": "https://roug.in/combustor/",
   "license": "MIT",
@@ -58,11 +58,11 @@
   },
   "suggest":
   {
-    "rougin/codeigniter": "A Composer-based Codeigniter 3.",
-    "rougin/credo": "A Doctrine ORM wrapper for Codeigniter 3.",
-    "rougin/ignite": "A Composer-based Codeigniter 3 project.",
-    "rougin/refinery": "\"Ready-to-eat\" migrations for Codeigniter 3.",
-    "rougin/spark-plug": "Codeigniter 3 in a single variable.",
-    "rougin/wildfire": "A Query Builder wrapper for Codeigniter 3."
+    "rougin/codeigniter": "Packaged \"system\" of Codeigniter 3.",
+    "rougin/credo": "Doctrine ORM wrapper for Codeigniter 3.",
+    "rougin/ignite": "Yet another Codeigniter 3 project template.",
+    "rougin/refinery": "\"Ready-to-eat\" Codeigniter 3 migrations.",
+    "rougin/spark-plug": "Codeigniter 3 projects as variables.",
+    "rougin/wildfire": "Query Builder wrapper for Codeigniter 3."
   }
 }

@@ -17,7 +17,7 @@ Combustor is a utility package for [Codeigniter 3](https://codeigniter.com/userg
 
 ## Installation
 
-Extract the contents of the [latest Codeigniter 3 project](https://github.com/bcit-ci/CodeIgniter/archive/3.1.13.zip):
+Extract the contents of the [latest Codeigniter 3 project](https://github.com/bcit-ci/CodeIgniter/archive/3.1.13.zip) first:
 
 ``` bash
 $ wget https://github.com/bcit-ci/CodeIgniter/archive/3.1.13.zip
@@ -81,9 +81,9 @@ $ vendor/bin/combustor install:doctrine
 
 ## Reminders
 
-Prior in executing any commands, kindly ensure that the **database table is defined properly** (foreign keys, indexes, relationships, normalizations) in order to minimize the modifications after the codes has been generated.
+Prior in executing any commands, kindly ensure that the **database table is defined properly** (foreign keys, indexes, relationships, normalizations) in order to minimize the modifications after the structured code has been generated.
 
-Also, proceed first in generating models, views, or controllers to database tables that are having **no relationship with other tables** in the database.
+Also, proceed first in generating models, views, or controllers to database tables that are having _**no relationship with other tables**_ in the database.
 
 > [!TIP]
 > `Combustor` will generate controllers, models, or views based on the specified database schema. If there's something wrong in the specified database schema, `Combustor` will generate a bad codebase.
@@ -118,12 +118,12 @@ Create a new HTTP controller.
 * `--wildfire` - generates a Wildfire-based controller
 
 > [!NOTE]
-> If either `Wildfire` or `Doctrine` is installed, no need to specify it as option for executing a specified command (e.g. `--wildfire`). However if both are installed, a command must have a `--wildfire` or `--doctrine` option added
+> If either `Wildfire` or `Doctrine` is installed, no need to specify it as option for executing a specified command (e.g. `--wildfire`). However if both are installed, a command must have a `--wildfire` or `--doctrine` option added.
 
 **Example**
 
 ``` bash
-$ vendor/bin/combustor create:controller users --camel --wildfire
+$ vendor/bin/combustor create:controller users --wildfire
 ```
 
 ### `create:model`
@@ -142,7 +142,7 @@ Create a new model.
 **Example**
 
 ``` bash
-$ vendor/bin/combustor create:model users --camel --wildfire
+$ vendor/bin/combustor create:model users --wildfire
 ```
 
 ### `create:view`
@@ -209,7 +209,7 @@ $ vendor/bin/combustor initialize
 
 ### `app_path`
 
-This property specifies the `application` directory. It may updated to a directory as long it can detect the `config/config.php` file:
+This property specifies the `application` directory. It may updated to any directory (e.g., `acme/application`, `acme/config`, etc.) as long it can detect the `config/config.php` file from the defined directory:
 
 ``` yaml
 # combustor.yml
@@ -218,6 +218,9 @@ app_path: %%CURRENT_DIRECTORY%%/Sample
 
 # ...
 ```
+
+> [!NOTE]
+> `Combustor` will try to check the path specified in `app_path` if it is a valid `Codeigniter 3` project. Then it will perform another check if the `application` directory exists or if the `config` directory can be accessed directly from the directory defined in `app_path`.
 
 ### `excluded_fields`
 

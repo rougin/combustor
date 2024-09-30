@@ -20,7 +20,7 @@ class CreateController extends Command
     /**
      * @var string
      */
-    protected $description = 'Creates a new HTTP controller';
+    protected $description = 'Create a new HTTP controller';
 
     /**
      * Configures the current command.

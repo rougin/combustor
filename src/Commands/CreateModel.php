@@ -20,7 +20,7 @@ class CreateModel extends Command
     /**
      * @var string
      */
-    protected $description = 'Creates a new model';
+    protected $description = 'Create a new model';
 
     /**
      * Configures the current command.

@@ -23,7 +23,7 @@ class CreateView extends Command
     /**
      * @var string
      */
-    protected $description = 'Creates view templates';
+    protected $description = 'Create view templates';
 
     /**
      * Configures the current command.

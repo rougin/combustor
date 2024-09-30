@@ -25,6 +25,11 @@ class Command extends Blueprint
     protected $driver = null;
 
     /**
+     * @var string[]
+     */
+    protected $excluded = array();
+
+    /**
      * @var \Rougin\Classidy\Generator
      */
     protected $maker;
@@ -41,6 +46,8 @@ class Command extends Blueprint
     public function __construct(Combustor $combustor, Generator $maker)
     {
         $this->driver = $combustor->getDriver();
+
+        $this->excluded = $combustor->getExcluded();
 
         $this->maker = $maker;
 
@@ -137,12 +144,12 @@ class Command extends Blueprint
 
         if ($isModel && $type === self::TYPE_DOCTRINE)
         {
-            return new DoctrineModel($table, $cols);
+            return new DoctrineModel($table, $cols, $this->excluded);
         }
 
         if ($isModel && $type === self::TYPE_WILDFIRE)
         {
-            return new WildfireModel($table, $cols);
+            return new WildfireModel($table, $cols, $this->excluded);
         }
 
         return new Controller($table, $type);

@@ -19,12 +19,20 @@ class Model extends Classidy
     protected $cols;
 
     /**
+     * @var string[]
+     */
+    protected $excluded = array();
+
+    /**
      * @param string                    $table
      * @param \Rougin\Describe\Column[] $cols
+     * @param string[]                  $excluded
      */
-    public function __construct($table, $cols)
+    public function __construct($table, $cols, $excluded = array())
     {
         $this->cols = $cols;
+
+        $this->excluded = $excluded;
 
         $this->init($table);
     }
@@ -116,20 +124,43 @@ class Model extends Classidy
 
             foreach ($cols as $index => $col)
             {
-                if ($col->isPrimaryKey())
+                $name = $col->getField();
+
+                if ($col->isPrimaryKey() || in_array($name, $this->excluded))
                 {
                     continue;
                 }
 
-                $name = $col->getField();
+                $type = $col->getDataType();
 
-                $lines[] = '/** @var ' . $col->getDataType() . ' */';
+                if ($col->isNull())
+                {
+                    $type = $type . '|null';
+                }
+
+                $lines[] = '/** @var ' . $type . ' */';
                 $lines[] = '$' . $name . ' = $data[\'' . $name . '\'];';
-                $lines[] = '$load[\'' . $name . '\'] = $' . $name . ';';
+
+                if ($col->isNull())
+                {
+                    $lines[] = 'if ($' . $name . ')';
+                    $lines[] = '{';
+                    $lines[] = '    $load[\'' . $name . '\'] = $' . $name . ';';
+                    $lines[] = '}';
+                }
+                else
+                {
+                    $lines[] = '$load[\'' . $name . '\'] = $' . $name . ';';
+                }
 
                 if (array_key_exists($index + 1, $cols))
                 {
-                    $lines[] = '';
+                    $next = $cols[$index + 1];
+
+                    if (! in_array($next->getField(), $this->excluded))
+                    {
+                        $lines[] = '';
+                    }
                 }
             }
 
@@ -178,18 +209,20 @@ class Model extends Classidy
 
             switch ($type)
             {
-                case 'string':
-                    $this->addStringProperty($name, $isNull)->asTag();
+                case 'boolean':
+                    $this->addBooleanProperty($name, $isNull)->asTag();
 
                     break;
                 case 'integer':
                     $this->addIntegerProperty($name, $isNull)->asTag();
 
                     break;
+                default:
+                    $this->addStringProperty($name, $isNull)->asTag();
+
+                    break;
             }
         }
-
-        $this->addClassProperty('db', 'CI_DB_query_builder')->asTag();
     }
 
     /**
@@ -203,12 +236,14 @@ class Model extends Classidy
 
         foreach ($this->cols as $col)
         {
-            if ($col->isNull() || $col->isPrimaryKey())
+            $name = $col->getField();
+
+            $isExcluded = in_array($name, $this->excluded);
+
+            if ($col->isNull() || $col->isPrimaryKey() || $isExcluded)
             {
                 continue;
             }
-
-            $name = $col->getField();
 
             $rule = array('field' => $name);
 

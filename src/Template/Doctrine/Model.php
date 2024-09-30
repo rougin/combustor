@@ -19,12 +19,20 @@ class Model extends Classidy
     protected $cols;
 
     /**
+     * @var string[]
+     */
+    protected $excluded = array();
+
+    /**
      * @param string                    $table
      * @param \Rougin\Describe\Column[] $cols
+     * @param string[]                  $excluded
      */
-    public function __construct($table, $cols)
+    public function __construct($table, $cols, $excluded = array())
     {
         $this->cols = $cols;
+
+        $this->excluded = $excluded;
 
         $this->init($table);
     }
@@ -50,8 +58,6 @@ class Model extends Classidy
         $comment[] = '';
         $comment[] = '@Table(name="' . $table . '")';
         $this->setComment($comment);
-
-        $this->addClassProperty('db', 'CI_DB_query_builder')->asTag();
 
         $link = 'https://codeigniter.com/userguide3/libraries';
 
@@ -95,7 +101,18 @@ class Model extends Classidy
                 $type = $type . '|null';
             }
 
-            $method = new Method('get_' . $name);
+            $method = 'get_' . $name;
+
+            if ($col->getDataType() === 'boolean')
+            {
+                // Remove "is_" from name to get proper name ---
+                $temp = str_replace('is_', '', $name);
+                // ---------------------------------------------
+
+                $method = 'is_' . $temp;
+            }
+
+            $method = new Method($method);
 
             $method->setReturn($type);
 
@@ -137,12 +154,16 @@ class Model extends Classidy
 
             switch ($type)
             {
-                case 'string':
-                    $method->addStringArgument($name, $isNull);
+                case 'boolean':
+                    $method->addBooleanArgument($name, $isNull);
 
                     break;
                 case 'integer':
                     $method->addIntegerArgument($name, $isNull);
+
+                    break;
+                default:
+                    $method->addStringArgument($name, $isNull);
 
                     break;
             }
@@ -201,12 +222,16 @@ class Model extends Classidy
 
             switch ($type)
             {
-                case 'string':
-                    $this->addStringProperty($name, $isNull);
+                case 'boolean':
+                    $this->addBooleanProperty($name, $isNull);
 
                     break;
                 case 'integer':
                     $this->addIntegerProperty($name, $isNull);
+
+                    break;
+                default:
+                    $this->addStringProperty($name, $isNull);
 
                     break;
             }
@@ -223,14 +248,10 @@ class Model extends Classidy
             $keys = array('name="' . $name . '"');
             $keys[] = 'type="' . $type . '"';
 
-            // @codeCoverageIgnoreStart
-            // Does not applicable to SQLite databases ---
             if ($length = $col->getLength())
             {
                 $keys[] = 'length=' . $length;
             }
-            // -------------------------------------------
-            // @codeCoverageIgnoreEnd
 
             $keys[] = 'nullable=' . ($isNull ? 'true' : 'false');
             $keys[] = 'unique=' . ($isUnique ? 'true' : 'false');
@@ -253,12 +274,14 @@ class Model extends Classidy
 
         foreach ($this->cols as $col)
         {
-            if ($col->isNull() || $col->isPrimaryKey())
+            $name = $col->getField();
+
+            $isExcluded = in_array($name, $this->excluded);
+
+            if ($col->isNull() || $col->isPrimaryKey() || $isExcluded)
             {
                 continue;
             }
-
-            $name = $col->getField();
 
             $rule = array('field' => $name);
 

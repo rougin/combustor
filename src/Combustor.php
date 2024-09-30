@@ -23,6 +23,11 @@ class Combustor
     protected $driver = null;
 
     /**
+     * @var string[]
+     */
+    protected $excluded = array();
+
+    /**
      * @var string
      */
     protected $root;
@@ -56,6 +61,14 @@ class Combustor
     }
 
     /**
+     * @return string[]
+     */
+    public function getExcluded()
+    {
+        return $this->excluded;
+    }
+
+    /**
      * @return string
      */
     public function getRootPath()
@@ -83,6 +96,18 @@ class Combustor
     public function setDriver(DriverInterface $driver)
     {
         $this->driver = $driver;
+
+        return $this;
+    }
+
+    /**
+     * @param string[] $excluded
+     *
+     * @return self
+     */
+    public function setExcluded($excluded)
+    {
+        $this->excluded = $excluded;
 
         return $this;
     }

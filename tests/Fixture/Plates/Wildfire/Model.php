@@ -7,12 +7,15 @@ use Rougin\Wildfire\Traits\WildfireTrait;
 use Rougin\Wildfire\Traits\WritableTrait;
 
 /**
- * @property integer              $id
- * @property string               $name
- * @property integer              $age
- * @property string               $gender
- * @property string|null          $remarks
- * @property \CI_DB_query_builder $db
+ * @property integer     $id
+ * @property string      $email
+ * @property string      $name
+ * @property integer     $year
+ * @property boolean     $admin
+ * @property string|null $remarks
+ * @property string      $created_at
+ * @property string|null $updated_at
+ * @property string|null $deleted_at
  */
 class User extends Model
 {
@@ -43,9 +46,10 @@ class User extends Model
      * @var array<string, string>[]
      */
     protected $rules = array(
+        array('field' => 'email', 'label' => 'Email', 'rules' => 'required'),
         array('field' => 'name', 'label' => 'Name', 'rules' => 'required'),
-        array('field' => 'age', 'label' => 'Age', 'rules' => 'required'),
-        array('field' => 'gender', 'label' => 'Gender', 'rules' => 'required'),
+        array('field' => 'year', 'label' => 'Year', 'rules' => 'required'),
+        array('field' => 'admin', 'label' => 'Admin', 'rules' => 'required'),
     );
 
     /**
@@ -81,20 +85,27 @@ class User extends Model
 
         // List editable fields from table ---
         /** @var string */
+        $email = $data['email'];
+        $load['email'] = $email;
+
+        /** @var string */
         $name = $data['name'];
         $load['name'] = $name;
 
         /** @var integer */
-        $age = $data['age'];
-        $load['age'] = $age;
+        $year = $data['year'];
+        $load['year'] = $year;
 
-        /** @var string */
-        $gender = $data['gender'];
-        $load['gender'] = $gender;
+        /** @var boolean */
+        $admin = $data['admin'];
+        $load['admin'] = $admin;
 
-        /** @var string */
+        /** @var string|null */
         $remarks = $data['remarks'];
-        $load['remarks'] = $remarks;
+        if ($remarks)
+        {
+            $load['remarks'] = $remarks;
+        }
         // -----------------------------------
 
         return $load;

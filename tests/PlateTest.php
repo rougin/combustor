@@ -18,7 +18,7 @@ class PlateTest extends Testcase
     const TYPE_VIEW = 2;
 
     /**
-     * @var \Rougin\Blueprint\Blueprint
+     * @var \Rougin\Combustor\Console
      */
     protected $app;
 
@@ -32,7 +32,7 @@ class PlateTest extends Testcase
      */
     public function doSetUp()
     {
-        $root = __DIR__ . '/Fixture/Sample';
+        $root = __DIR__ . '/Fixture';
 
         $this->path = $root;
 
@@ -259,7 +259,7 @@ class PlateTest extends Testcase
      */
     protected function getActualFile($name, $type = self::TYPE_CONTROLLER)
     {
-        $path = $this->path;
+        $path = $this->app->getAppPath();
 
         if ($type === self::TYPE_VIEW)
         {
@@ -310,7 +310,9 @@ class PlateTest extends Testcase
         $index = $this->getActualFile($name . '/index', self::TYPE_VIEW);
 
         // Delete directory after getting the files ---
-        $path = $this->path . '/views/' . $name;
+        $path = $this->app->getAppPath();
+
+        $path = $path . '/views/' . $name;
 
         /** @var string[] */
         $files = glob($path . '/*.*');

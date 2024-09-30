@@ -10,19 +10,27 @@
 <table>
   <thead>
     <tr>
+      <th>Email</th>
       <th>Name</th>
-      <th>Age</th>
-      <th>Gender</th>
+      <th>Year</th>
+      <th>Admin</th>
       <th>Remarks</th>
+      <th>Created At</th>
+      <th>Updated At</th>
+      <th>Deleted At</th>
     </tr>
   </thead>
   <tbody>
     <?php foreach ($items as $item): ?>
       <tr>
+        <td><?= $item->email ?></td>
         <td><?= $item->name ?></td>
-        <td><?= $item->age ?></td>
-        <td><?= $item->gender ?></td>
+        <td><?= $item->year ?></td>
+        <td><?= $item->admin ?></td>
         <td><?= $item->remarks ?></td>
+        <td><?= $item->created_at ?></td>
+        <td><?= $item->updated_at ?></td>
+        <td><?= $item->deleted_at ?></td>
         <td>
           <span>
             <a href="<?= base_url('users/edit/' . $item->id) ?>">Edit</a>

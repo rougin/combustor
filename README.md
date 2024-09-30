@@ -80,11 +80,11 @@ Also, proceed first in generating models, views, or controllers to database tabl
 
 Creates a new header and footer file.
 
-#### Options
+**Options**
 
 * `--bootstrap` - includes the Bootstrap tags
 
-#### Example
+**Example**
 
 ``` bash
 $ vendor/bin/combustor create-layout --bootstrap
@@ -94,11 +94,11 @@ $ vendor/bin/combustor create-layout --bootstrap
 
 Creates a new HTTP controller.
 
-#### Arguments
+**Arguments**
 
 * `name` - name of the database table
 
-#### Options
+**Options**
 
 * `--doctrine` - generates a Doctrine-based controller
 * `--wildfire` - generates a Wildfire-based controller
@@ -106,7 +106,7 @@ Creates a new HTTP controller.
 > [!NOTE]
 > If either `Wildfire` or `Doctrine` is installed, no need to specify it as option for executing a specified command (e.g. `--wildfire`). However if both are installed, a command must have a `--wildfire` or `--doctrine` option added
 
-#### Example
+**Example**
 
 ``` bash
 $ vendor/bin/combustor create:controller users --camel --wildfire
@@ -116,16 +116,16 @@ $ vendor/bin/combustor create:controller users --camel --wildfire
 
 Creates a new model.
 
-#### Arguments
+**Arguments**
 
 * `name` - name of the database table
 
-#### Options
+**Options**
 
 * `--doctrine` - generates a Doctrine-based model
 * `--wildfire` - generates a Wildfire-based model
 
-#### Example
+**Example**
 
 ``` bash
 $ vendor/bin/combustor create:model users --camel --wildfire
@@ -135,17 +135,17 @@ $ vendor/bin/combustor create:model users --camel --wildfire
 
 Creates a new view template.
 
-#### Arguments
+**Arguments**
 
 * `name` - name of the database table
 
-#### Options
+**Options**
 
 * `--bootstrap` - includes the Bootstrap tags
 * `--doctrine` - generates Doctrine-based views
 * `--wildfire` - generates Wildfire-based views
 
-#### Example
+**Example**
 
 ``` bash
 $ vendor/bin/combustor create:view users --bootstrap
@@ -155,21 +155,77 @@ $ vendor/bin/combustor create:view users --bootstrap
 
 Creates a new HTTP controller, model, and view template.
 
-#### Arguments
+**Arguments**
 
 * `name` - name of the database table
 
-#### Options
+**Options**
 
 * `--bootstrap` - includes the Bootstrap tags
 * `--doctrine` - generates a Doctrine-based controller, model, and views
 * `--wildfire` - generates a Wildfire-based controller, model, and views
 
-#### Example
+**Example**
 
 ``` bash
 $ vendor/bin/combustor create:scaffold users --bootstrap --wildfire
 ```
+
+## Using `combustor.yml`
+
+`Combustor` currently works out of the box after the configuration based on `Installation`. However, using a `combustor.yml` can be used for complex setups like specifying the new application path and excluding columns:
+
+``` yaml
+# combustor.yml
+
+app_path: %%CURRENT_DIRECTORY%%/Sample
+
+excluded_fields:
+  - created_at
+  - updated_at
+  - deleted_at
+```
+
+To create a `combustor.yml`, simply run the `initialize` command:
+
+``` bash
+$ vendor/bin/combustor initialize
+[PASS] "combustor.yml" added successfully!
+```
+
+### `app_path`
+
+This property specifies the `application` directory. It may updated to a directory as long it can detect the `config/config.php` file:
+
+``` yaml
+# combustor.yml
+
+app_path: %%CURRENT_DIRECTORY%%/Sample
+
+# ...
+```
+
+### `excluded_fields`
+
+Specified fields in this property are excluded from generation to the following templates:
+
+* `controllers`
+* `models`
+* `views` (only for `create` and `edit` templates)
+
+``` yaml
+# combustor.yml
+
+# ...
+
+excluded_fields:
+  - created_at
+  - updated_at
+  - deleted_at
+```
+
+> [!NOTE]
+> By default, the timestamps are added when creating a `combustor.yml` for the first time as they are usually populated automatically by installed ORMs such as `Wildfire` or `Doctrine`.
 
 ## Changelog
 

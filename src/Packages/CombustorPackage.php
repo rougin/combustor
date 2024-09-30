@@ -15,6 +15,11 @@ use Rougin\Slytherin\Integration\IntegrationInterface;
 class CombustorPackage implements IntegrationInterface
 {
     /**
+     * @var string[]
+     */
+    protected $excluded = array();
+
+    /**
      * @var string
      */
     protected $root;
@@ -37,6 +42,11 @@ class CombustorPackage implements IntegrationInterface
     {
         $app = new Combustor($this->root);
 
+        if ($this->excluded)
+        {
+            $app->setExcluded($this->excluded);
+        }
+
         $name = 'Rougin\SparkPlug\Controller';
 
         if ($container->has($name))
@@ -58,5 +68,17 @@ class CombustorPackage implements IntegrationInterface
         }
 
         return $container->set(get_class($app), $app);
+    }
+
+    /**
+     * @param string[] $excluded
+     *
+     * @return self
+     */
+    public function setExcluded($excluded)
+    {
+        $this->excluded = $excluded;
+
+        return $this;
     }
 }

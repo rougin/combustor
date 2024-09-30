@@ -27,6 +27,11 @@ class FormPlate
     protected $edit = false;
 
     /**
+     * @var string[]
+     */
+    protected $excluded = array();
+
+    /**
      * @var string
      */
     protected $table;
@@ -40,14 +45,17 @@ class FormPlate
      * @param string                    $table
      * @param integer                   $type
      * @param \Rougin\Describe\Column[] $cols
+     * @param string[]                  $excluded
      */
-    public function __construct($table, $type, $cols)
+    public function __construct($table, $type, $cols, $excluded = array())
     {
+        $this->cols = $cols;
+
+        $this->excluded = $excluded;
+
         $this->type = $type;
 
         $this->table = $table;
-
-        $this->cols = $cols;
     }
 
     /**
@@ -97,12 +105,12 @@ class FormPlate
 
         foreach ($this->cols as $col)
         {
-            if ($col->isPrimaryKey())
+            $name = $col->getField();
+
+            if ($col->isPrimaryKey() || in_array($name, $this->excluded))
             {
                 continue;
             }
-
-            $name = $col->getField();
 
             $title = Inflector::humanize($name);
 

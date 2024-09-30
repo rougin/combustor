@@ -74,21 +74,21 @@ class CreateView extends Command
             mkdir($path . $name);
         }
 
-        // Create the "create.php" file ----------------
-        $create = new CreatePlate($table, $type, $cols);
+        // Create the "create.php" file ---------------------------------
+        $create = new CreatePlate($table, $type, $cols, $this->excluded);
 
         $file = $path . $name . '/create.php';
 
         file_put_contents($file, $create->make('  '));
-        // ---------------------------------------------
+        // --------------------------------------------------------------
 
-        // Create the "edit.php" file --------------
-        $edit = new EditPlate($table, $type, $cols);
+        // Create the "edit.php" file -------------------------------
+        $edit = new EditPlate($table, $type, $cols, $this->excluded);
 
         $file = $path . $name . '/edit.php';
 
         file_put_contents($file, $edit->make('  '));
-        // -----------------------------------------
+        // ----------------------------------------------------------
 
         // Create the "index.php" file ---------------
         $index = new IndexPlate($table, $type, $cols);

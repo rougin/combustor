@@ -4,21 +4,27 @@
   <?= form_hidden('_method', 'PUT') ?>
 
   <div>
+    <?= form_label('Email') ?>
+    <?= form_input('email', set_value('email', $item->email)) ?>
+    <?= form_error('email', '<div><span>', '</span></div>') ?>
+  </div>
+
+  <div>
     <?= form_label('Name') ?>
     <?= form_input('name', set_value('name', $item->name)) ?>
     <?= form_error('name', '<div><span>', '</span></div>') ?>
   </div>
 
   <div>
-    <?= form_label('Age') ?>
-    <?= form_input('age', set_value('age', $item->age)) ?>
-    <?= form_error('age', '<div><span>', '</span></div>') ?>
+    <?= form_label('Year') ?>
+    <?= form_input('year', set_value('year', $item->year)) ?>
+    <?= form_error('year', '<div><span>', '</span></div>') ?>
   </div>
 
   <div>
-    <?= form_label('Gender') ?>
-    <?= form_input('gender', set_value('gender', $item->gender)) ?>
-    <?= form_error('gender', '<div><span>', '</span></div>') ?>
+    <?= form_label('Admin') ?>
+    <?= form_input('admin', set_value('admin', $item->admin)) ?>
+    <?= form_error('admin', '<div><span>', '</span></div>') ?>
   </div>
 
   <div>

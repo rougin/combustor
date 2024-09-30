@@ -24,6 +24,11 @@ class Console extends Blueprint
     /**
      * @var string
      */
+    protected $file = 'combustor.yml';
+
+    /**
+     * @var string
+     */
     protected $root;
 
     /**
@@ -50,7 +55,7 @@ class Console extends Blueprint
     /**
      * @return string
      */
-    protected function getAppPath()
+    public function getAppPath()
     {
         /** @var string */
         $path = realpath($this->root);
@@ -60,7 +65,50 @@ class Console extends Blueprint
             return $path;
         }
 
-        $file = $path . '/combustor.yml';
+        $parsed = $this->getParsed();
+
+        if (array_key_exists('app_path', $parsed))
+        {
+            /** @var string */
+            $path = $parsed['app_path'];
+        }
+
+        /** @var string */
+        return realpath($path);
+    }
+
+    /**
+     * @return string[]
+     */
+    public function getExcluded()
+    {
+        $parsed = $this->getParsed();
+
+        $field = 'excluded_fields';
+
+        if (! array_key_exists($field, $parsed))
+        {
+            return array();
+        }
+
+        /** @var string[] */
+        return $parsed[$field];
+    }
+
+    /**
+     * @return array<string, mixed>
+     */
+    protected function getParsed()
+    {
+        /** @var string */
+        $path = realpath($this->root);
+
+        if (! file_exists($path . '/' . $this->file))
+        {
+            return array();
+        }
+
+        $file = $path . '/' . $this->file;
 
         /** @var string */
         $file = file_get_contents($file);
@@ -71,16 +119,8 @@ class Console extends Blueprint
         $file = str_replace($search, $path, $file);
         // ----------------------------------------
 
-        /** @var array<string, string> */
-        $parsed = Yaml::parse($file);
-
-        if (array_key_exists('app_path', $parsed))
-        {
-            /** @var string */
-            $path = realpath($parsed['app_path']);
-        }
-
-        return $path;
+        /** @var array<string, mixed> */
+        return Yaml::parse($file);
     }
 
     /**
@@ -92,9 +132,17 @@ class Console extends Blueprint
 
         $path = $this->getAppPath();
 
-        $container->addPackage(new SparkplugPackage($path));
-        $container->addPackage(new DescribePackage);
-        $container->addPackage(new CombustorPackage($path));
+        $sparkPlug = new SparkplugPackage($path);
+        $container->addPackage($sparkPlug);
+
+        $describe = new DescribePackage;
+        $container->addPackage($describe);
+
+        $combustor = new CombustorPackage($path);
+        $excluded = $this->getExcluded();
+
+        $combustor->setExcluded($excluded);
+        $container->addPackage($combustor);
 
         $this->setContainer($container);
     }

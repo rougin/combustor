@@ -9,7 +9,6 @@ use Rougin\Credo\Traits\ValidateTrait;
  *
  * @Table(name="users")
  *
- * @property \CI_DB_query_builder $db
  */
 class User extends Model
 {
@@ -17,18 +16,32 @@ class User extends Model
     use ValidateTrait;
 
     /**
-     * @Column(name="age", type="integer", nullable=false, unique=false)
+     * @Column(name="admin", type="boolean", nullable=false, unique=false)
      *
-     * @var integer
+     * @var boolean
      */
-    protected $age;
+    protected $admin;
 
     /**
-     * @Column(name="gender", type="string", nullable=false, unique=false)
+     * @Column(name="created_at", type="datetime", nullable=false, unique=false)
      *
      * @var string
      */
-    protected $gender;
+    protected $created_at;
+
+    /**
+     * @Column(name="deleted_at", type="datetime", nullable=true, unique=false)
+     *
+     * @var string|null
+     */
+    protected $deleted_at = null;
+
+    /**
+     * @Column(name="email", type="string", length=100, nullable=false, unique=false)
+     *
+     * @var string
+     */
+    protected $email;
 
     /**
      * @Id @GeneratedValue
@@ -40,18 +53,32 @@ class User extends Model
     protected $id;
 
     /**
-     * @Column(name="name", type="string", nullable=false, unique=false)
+     * @Column(name="name", type="string", length=100, nullable=false, unique=false)
      *
      * @var string
      */
     protected $name;
 
     /**
-     * @Column(name="remarks", type="string", nullable=true, unique=false)
+     * @Column(name="remarks", type="string", length=100, nullable=true, unique=false)
      *
      * @var string|null
      */
     protected $remarks = null;
+
+    /**
+     * @Column(name="updated_at", type="datetime", nullable=true, unique=false)
+     *
+     * @var string|null
+     */
+    protected $updated_at = null;
+
+    /**
+     * @Column(name="year", type="integer", nullable=false, unique=false)
+     *
+     * @var integer
+     */
+    protected $year;
 
     /**
      * Additional configuration to Pagination Class.
@@ -75,25 +102,42 @@ class User extends Model
      * @var array<string, string>[]
      */
     protected $rules = array(
+        array('field' => 'email', 'label' => 'Email', 'rules' => 'required'),
         array('field' => 'name', 'label' => 'Name', 'rules' => 'required'),
-        array('field' => 'age', 'label' => 'Age', 'rules' => 'required'),
-        array('field' => 'gender', 'label' => 'Gender', 'rules' => 'required'),
+        array('field' => 'year', 'label' => 'Year', 'rules' => 'required'),
+        array('field' => 'admin', 'label' => 'Admin', 'rules' => 'required'),
     );
 
     /**
-     * @return integer
+     * @return boolean
      */
-    public function get_age()
+    public function is_admin()
     {
-        return $this->age;
+        return $this->admin;
+    }
+
+    /**
+     * @return datetime
+     */
+    public function get_created_at()
+    {
+        return $this->created_at;
+    }
+
+    /**
+     * @return datetime|null
+     */
+    public function get_deleted_at()
+    {
+        return $this->deleted_at;
     }
 
     /**
      * @return string
      */
-    public function get_gender()
+    public function get_email()
     {
-        return $this->gender;
+        return $this->email;
     }
 
     /**
@@ -121,25 +165,65 @@ class User extends Model
     }
 
     /**
-     * @param integer $age
+     * @return datetime|null
+     */
+    public function get_updated_at()
+    {
+        return $this->updated_at;
+    }
+
+    /**
+     * @return integer
+     */
+    public function get_year()
+    {
+        return $this->year;
+    }
+
+    /**
+     * @param boolean $admin
      *
      * @return self
      */
-    public function set_age($age)
+    public function set_admin($admin)
     {
-        $this->age = $age;
+        $this->admin = $admin;
 
         return $this;
     }
 
     /**
-     * @param string $gender
+     * @param string $created_at
      *
      * @return self
      */
-    public function set_gender($gender)
+    public function set_created_at($created_at)
     {
-        $this->gender = $gender;
+        $this->created_at = $created_at;
+
+        return $this;
+    }
+
+    /**
+     * @param string|null $deleted_at
+     *
+     * @return self
+     */
+    public function set_deleted_at($deleted_at = null)
+    {
+        $this->deleted_at = $deleted_at;
+
+        return $this;
+    }
+
+    /**
+     * @param string $email
+     *
+     * @return self
+     */
+    public function set_email($email)
+    {
+        $this->email = $email;
 
         return $this;
     }
@@ -164,6 +248,30 @@ class User extends Model
     public function set_remarks($remarks = null)
     {
         $this->remarks = $remarks;
+
+        return $this;
+    }
+
+    /**
+     * @param string|null $updated_at
+     *
+     * @return self
+     */
+    public function set_updated_at($updated_at = null)
+    {
+        $this->updated_at = $updated_at;
+
+        return $this;
+    }
+
+    /**
+     * @param integer $year
+     *
+     * @return self
+     */
+    public function set_year($year)
+    {
+        $this->year = $year;
 
         return $this;
     }

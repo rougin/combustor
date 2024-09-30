@@ -34,10 +34,10 @@ class CreateYamlFile extends InitializeCommand
      */
     protected function getRootPath()
     {
-        $vendor = (string) __DIR__ . '/../../../../../';
+        $root = (string) __DIR__ . '/../../../../../';
 
-        $exists = file_exists($vendor . '/../autoload.php');
+        $exists = file_exists($root . '/vendor/autoload.php');
 
-        return $exists ? $vendor : __DIR__ . '/../../';
+        return $exists ? $root : __DIR__ . '/../../';
     }
 }

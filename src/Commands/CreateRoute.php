@@ -10,7 +10,7 @@ use Rougin\Combustor\Inflector;
  *
  * @author Rougin Gutib <rougingutib@gmail.com>
  */
-class CreateController extends Command
+class CreateRoute extends Command
 {
     /**
      * @var string

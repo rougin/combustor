@@ -9,7 +9,7 @@ use Rougin\Blueprint\Commands\InitializeCommand;
  *
  * @author Rougin Gutib <rougingutib@gmail.com>
  */
-class CreateYamlFile extends InitializeCommand
+class CreateYaml extends InitializeCommand
 {
     /**
      * @var string

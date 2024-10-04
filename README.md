@@ -196,8 +196,8 @@ $ vendor/bin/combustor install:doctrine
 ```
 
 > [!NOTE]
-> * This command will be available if `Wildfire` is not installed in the project.
-> * After running this command, it adds a `Loader.php` in the `core` directory. It is used for loading custom repositories.
+> * This command will be available if `Doctrine` is not installed in the project.
+> * It also adds a `Loader.php` in the `core` directory. The said file is used for loading custom repositories extended to `EntityRepository`.
 
 ### `install:wildfire`
 

@@ -3,6 +3,8 @@
 namespace Rougin\Combustor;
 
 /**
+ * @runTestsInSeparateProcesses
+ *
  * @package Combustor
  *
  * @author Rougin Gutib <rougingutib@gmail.com>

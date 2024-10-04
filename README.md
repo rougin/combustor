@@ -185,6 +185,49 @@ Create a new HTTP controller, model, and view template.
 $ vendor/bin/combustor create:scaffold users --bootstrap --wildfire
 ```
 
+### `install:doctrine`
+
+Install the [Doctrine](https://roug.in/credo/) package.
+
+**Example**
+
+``` bash
+$ vendor/bin/combustor install:doctrine
+```
+
+> [!NOTE]
+> Using this command also adds the `Loader.php` file required for loading repositories in the `core` directory.
+
+### `install:wildfire`
+
+Install the [Wildfire](https://roug.in/wildfire/) package.
+
+**Example**
+
+``` bash
+$ vendor/bin/combustor install:wildfire
+```
+
+### `remove:doctrine`
+
+Remove the [Wildfire](https://roug.in/doctrine/) package.
+
+**Example**
+
+``` bash
+$ vendor/bin/combustor remove:doctrine
+```
+
+### `remove:wildfire`
+
+Remove the [Wildfire](https://roug.in/wildfire/) package.
+
+**Example**
+
+``` bash
+$ vendor/bin/combustor remove:wildfire
+```
+
 ## Using `combustor.yml`
 
 `Combustor` currently works out of the box after the configuration based on `Installation`. However, using a `combustor.yml` can be used for complex setups like specifying the new application path and excluding columns:

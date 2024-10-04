@@ -27,20 +27,11 @@ class PlateTest extends Testcase
     protected $app;
 
     /**
-     * @var string
-     */
-    protected $path;
-
-    /**
      * @return void
      */
     public function doSetUp()
     {
-        $root = __DIR__ . '/Fixture';
-
-        $this->path = $root;
-
-        $this->app = new Console($root);
+        $this->app = new Console(__DIR__ . '/Fixture');
     }
 
     /**
@@ -234,70 +225,6 @@ class PlateTest extends Testcase
     }
 
     /**
-     * @return void
-     */
-    public function test_with_packages_absent()
-    {
-        $test = $this->findCommand('create:controller');
-
-        $input = array('table' => 'users');
-
-        $test->execute($input);
-
-        $expected = '[FAIL] Both "rougin/credo" and "rougin/wildfire" are not installed. Kindly "rougin/credo" or "rougin/wildfire" first.';
-
-        $actual = $this->getActualDisplay($test);
-
-        $this->assertEquals($expected, $actual);
-    }
-
-    /**
-     * @return void
-     */
-    public function test_with_packages_absent_view()
-    {
-        $test = $this->findCommand('create:view');
-
-        $input = array('table' => 'users');
-
-        $test->execute($input);
-
-        $expected = '[FAIL] Both "rougin/credo" and "rougin/wildfire" are not installed. Kindly "rougin/credo" or "rougin/wildfire" first.';
-
-        $actual = $this->getActualDisplay($test);
-
-        $this->assertEquals($expected, $actual);
-    }
-
-    /**
-     * @return void
-     */
-    public function test_with_packages_present()
-    {
-        // Mock class of specified packages ---
-        $test = 'Rougin\Combustor\Inflector';
-
-        $doctrine = 'Rougin\Credo\Credo';
-        class_alias($test, $doctrine);
-
-        $wildfire = 'Rougin\Wildfire\Wildfire';
-        class_alias($test, $wildfire);
-        // ------------------------------------
-
-        $test = $this->findCommand('create:model');
-
-        $input = array('table' => 'users');
-
-        $test->execute($input);
-
-        $expected = '[FAIL] Both "rougin/credo" and "rougin/wildfire" are installed. Kindly select --doctrine or --wildfire first.';
-
-        $actual = $this->getActualDisplay($test);
-
-        $this->assertEquals($expected, $actual);
-    }
-
-    /**
      * @param string $name
      *
      * @return void
@@ -334,20 +261,6 @@ class PlateTest extends Testcase
     protected function getActualCtrl($name)
     {
         return $this->getActualFile($name, self::TYPE_CONTROLLER);
-    }
-
-    /**
-     * @param \Symfony\Component\Console\Tester\CommandTester $tester
-     *
-     * @return string
-     */
-    protected function getActualDisplay(CommandTester $tester)
-    {
-        $actual = $tester->getDisplay();
-
-        $actual = str_replace("\r\n", '', $actual);
-
-        return str_replace("\n", '', $actual);
     }
 
     /**

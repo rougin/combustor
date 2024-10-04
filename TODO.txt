@@ -13,3 +13,8 @@
 [ ] --force
 [ ] custom fields
 - email
+[*] install:wildfire
+[*] install:doctrine
+[*] install:wildfire
+[*] install:doctrine
+[ ] credo repository

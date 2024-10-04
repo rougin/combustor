@@ -196,7 +196,8 @@ $ vendor/bin/combustor install:doctrine
 ```
 
 > [!NOTE]
-> Using this command also adds the `Loader.php` file required for loading repositories in the `core` directory.
+> * This command will be available if `Wildfire` is not installed in the project.
+> * After running this command, it adds a `Loader.php` in the `core` directory. It is used for loading custom repositories.
 
 ### `install:wildfire`
 
@@ -208,15 +209,21 @@ Install the [Wildfire](https://roug.in/wildfire/) package.
 $ vendor/bin/combustor install:wildfire
 ```
 
+> [!NOTE]
+> This command will be available if `Wildfire` is not installed in the project.
+
 ### `remove:doctrine`
 
-Remove the [Wildfire](https://roug.in/doctrine/) package.
+Remove the [Doctrine](https://roug.in/credo/) package.
 
 **Example**
 
 ``` bash
 $ vendor/bin/combustor remove:doctrine
 ```
+
+> [!NOTE]
+> This command will be available if `Doctrine` is installed in the project.
 
 ### `remove:wildfire`
 
@@ -227,6 +234,9 @@ Remove the [Wildfire](https://roug.in/wildfire/) package.
 ``` bash
 $ vendor/bin/combustor remove:wildfire
 ```
+
+> [!NOTE]
+> This command will be available if `Wildfire` is installed in the project.
 
 ## Using `combustor.yml`
 

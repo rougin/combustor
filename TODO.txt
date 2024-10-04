@@ -13,7 +13,7 @@
 [*] form rules
 [*] fix init on ciacme
 [*] install:wildfire
-[x] install:doctrine
+[*] install:doctrine
 - credo repository
 [*] install:wildfire
 [*] install:doctrine

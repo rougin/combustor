@@ -96,8 +96,6 @@ class InstallTest extends Testcase
      */
     protected function findCommand($name)
     {
-        system('composer update');
-
         $app = new Console(__DIR__ . '/Fixture');
 
         $command = $app->make()->find($name);

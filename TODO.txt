@@ -6,7 +6,7 @@
 [x] custom fields
 - [ ] email
 [*] create:layout
-[ ] create:scaffold
+[*] create:scaffold
 [*] exclude fields
 - [*] created_at
 - [*] updated_at

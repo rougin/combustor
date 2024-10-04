@@ -38,6 +38,28 @@ class CheckTest extends Testcase
     /**
      * @return void
      */
+    public function test_with_packages_absent_as_scaffold()
+    {
+        $app = new Console(__DIR__ . '/Fixture');
+
+        $command = $app->make()->find('create:scaffold');
+
+        $test = new CommandTester($command);
+
+        $input = array('table' => 'users');
+
+        $test->execute($input);
+
+        $expected = '[FAIL] Both "rougin/credo" and "rougin/wildfire" are not installed. Kindly "rougin/credo" or "rougin/wildfire" first.';
+
+        $actual = $this->getActualDisplay($test);
+
+        $this->assertEquals($expected, $actual);
+    }
+
+    /**
+     * @return void
+     */
     public function test_with_packages_absent_view()
     {
         $app = new Console(__DIR__ . '/Fixture');

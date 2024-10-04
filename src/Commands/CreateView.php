@@ -51,9 +51,15 @@ class CreateView extends Command
         /** @var string */
         $table = $this->getArgument('table');
 
+        /** @var boolean */
+        $doctrine = $this->getOption('doctrine');
+
+        /** @var boolean */
+        $wildfire = $this->getOption('wildfire');
+
         try
         {
-            $type = $this->getInstalled();
+            $type = self::getInstalled($doctrine, $wildfire);
         }
         catch (\Exception $e)
         {

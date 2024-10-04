@@ -76,18 +76,16 @@ class Command extends Blueprint
     }
 
     /**
+     * @param boolean $doctrine
+     * @param boolean $wildfire
      * @return integer
      * @throws \Exception
      */
-    protected function getInstalled()
+    public static function getInstalled($doctrine, $wildfire)
     {
-        /** @var boolean */
-        $doctrine = $this->getOption('doctrine');
         $class = 'Rougin\Credo\Credo';
         $doctrineExists = class_exists($class);
 
-        /** @var boolean */
-        $wildfire = $this->getOption('wildfire');
         $class = 'Rougin\Wildfire\Wildfire';
         $wildfireExists = class_exists($class);
 

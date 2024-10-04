@@ -147,7 +147,7 @@ $ vendor/bin/combustor create:model users --wildfire
 
 ### `create:view`
 
-Create a new view template.
+Create view templates.
 
 **Arguments**
 
@@ -167,7 +167,7 @@ $ vendor/bin/combustor create:view users --bootstrap
 
 ### `create:scaffold`
 
-Create a new HTTP controller, model, and view template.
+Create a new HTTP controller, model, and view templates.
 
 **Arguments**
 

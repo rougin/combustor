@@ -150,6 +150,42 @@ class PlateTest extends Testcase
     /**
      * @return void
      */
+    public function test_scaffold_on_doctrine()
+    {
+        $test = $this->findCommand('create:scaffold');
+
+        $input = array('table' => 'users');
+        $input['--doctrine'] = true;
+        $input['--bootstrap'] = true;
+
+        $test->execute($input);
+
+        // Return the controller, model, and views --------
+        $route = $this->getDoctrineCtrl();
+
+        $model = $this->getDoctrineModel();
+
+        $views = $this->getDoctrineView(self::VIEW_STYLED);
+
+        $expected = $route . "\n" . $model . "\n" . $views;
+        // ------------------------------------------------
+
+        // Return the actual results --------------------
+        $route = $this->getActualCtrl('Users');
+
+        $model = $this->getActualModel('User');
+
+        $views = $this->getActualView('User');
+
+        $actual = $route . "\n" . $model . "\n" . $views;
+        // ----------------------------------------------
+
+        $this->assertEquals($expected, $actual);
+    }
+
+    /**
+     * @return void
+     */
     public function test_wildfire_controller()
     {
         $test = $this->findCommand('create:controller');

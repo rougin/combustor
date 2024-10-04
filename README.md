@@ -202,6 +202,9 @@ Create a new HTTP controller, model, and view templates.
 $ vendor/bin/combustor create:scaffold users --bootstrap --wildfire
 ```
 
+> [!NOTE]
+> If `--doctrine` is selected, the command will also execute the `create:repository` command.
+
 ### `install:doctrine`
 
 Install the [Doctrine](https://roug.in/credo/) package.

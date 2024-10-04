@@ -1,5 +1,7 @@
 <?php
 
+use Rougin\Credo\Repository;
+
 /**
  * @extends \Rougin\Credo\Repository<\User>
  *
@@ -12,7 +14,7 @@
  * @method \User      set(array<string, mixed> $data, \User $entity, integer|null $id = null)
  * @method void       update(\User $entity, array<string, mixed> $data)
  */
-class User_repository
+class User_repository extends Repository
 {
     /**
      * @param array<string, mixed> $data
@@ -35,7 +37,7 @@ class User_repository
      *
      * @return User
      */
-    public function set($data, User $entity, $id = null)
+    public function set($data, \User $entity, $id = null)
     {
         // List editable fields from table ---
         /** @var string */

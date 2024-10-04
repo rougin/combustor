@@ -94,6 +94,12 @@ class CreateScaffold extends Command
         $this->runCommand('create:views', $input);
         // ----------------------------------------
 
+        // Execute the "create:repository" command ----
+        $input = array('table' => $table);
+
+        $this->runCommand('create:repository', $input);
+        // --------------------------------------------
+
         return Command::RETURN_SUCCESS;
     }
 }

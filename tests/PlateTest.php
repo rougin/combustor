@@ -185,9 +185,13 @@ class PlateTest extends Testcase
 
         $model = $this->getDoctrineModel();
 
+        $repo = $this->getDoctrineRepo();
+
         $views = $this->getDoctrineView(self::VIEW_STYLED);
 
         $expected = $route . "\n" . $model . "\n" . $views;
+
+        $expected = $expected . "\n" . $repo;
         // ------------------------------------------------
 
         // Return the actual results --------------------
@@ -195,9 +199,13 @@ class PlateTest extends Testcase
 
         $model = $this->getActualModel('User');
 
+        $repo = $this->getActualRepo('User');
+
         $views = $this->getActualView('User');
 
         $actual = $route . "\n" . $model . "\n" . $views;
+
+        $actual = $actual . "\n" . $repo;
         // ----------------------------------------------
 
         $this->assertEquals($expected, $actual);
@@ -285,18 +293,18 @@ class PlateTest extends Testcase
      *
      * @return void
      */
-    protected function deleteView($name)
+    protected function deleteDir($name)
     {
         $path = $this->app->getAppPath();
 
-        $source = $path . '/views/' . $name;
+        $source = $path . '/' . $name;
 
         /** @var string[] */
         $files = glob($source . '/*.*');
 
         array_map('unlink', $files);
 
-        rmdir($path . '/views/' . $name);
+        rmdir($path . '/' . $name);
     }
 
     /**
@@ -371,7 +379,7 @@ class PlateTest extends Testcase
         $footer = $this->getActualFile($name . '/footer', self::TYPE_VIEW);
 
         // Delete directory after getting the files ---
-        $this->deleteView($name);
+        $this->deleteDir('views/' . $name);
         // --------------------------------------------
 
         return $header . "\n" . $footer;
@@ -394,7 +402,13 @@ class PlateTest extends Testcase
      */
     protected function getActualRepo($name)
     {
-        return $this->getActualFile($name, self::TYPE_REPOSITORY);
+        $file = $this->getActualFile($name, self::TYPE_REPOSITORY);
+
+        // Delete directory after getting the files ---
+        $this->deleteDir('repositories');
+        // --------------------------------------------
+
+        return $file;
     }
 
     /**
@@ -413,7 +427,7 @@ class PlateTest extends Testcase
         $index = $this->getActualFile($name . '/index', self::TYPE_VIEW);
 
         // Delete directory after getting the files ---
-        $this->deleteView($name);
+        $this->deleteDir('views/' . $name);
         // --------------------------------------------
 
         return $create . "\n" . $edit . "\n" . $index;

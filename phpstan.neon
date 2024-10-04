@@ -8,6 +8,7 @@ parameters:
       - tests/Fixture/Plates
       - tests/Fixture/Sample/controllers
       - tests/Fixture/Sample/models
+      - tests/Fixture/Sample/repositories
       - tests/Fixture/Sample/views
   scanDirectories:
     - vendor/rougin/codeigniter/src

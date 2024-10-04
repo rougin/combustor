@@ -63,8 +63,6 @@ class Repository extends Classidy
         $method->addClassArgument('entity', '\\' . $model);
         $this->addMethod($method->asTag());
 
-        $this->setExistsMethod();
-
         $method = new Method('find');
         $method->setReturn('\\' . $model . '|null');
         $method->addIntegerArgument('id');
@@ -83,12 +81,14 @@ class Repository extends Classidy
         $method->addIntegerArgument('id', true);
         $this->addMethod($method->asTag());
 
-        $this->setSetMethod($table);
-
         $method = new Method('update');
         $method->addClassArgument('entity', '\\' . $model);
         $method->addArrayArgument('data', 'array<string, mixed>');
         $this->addMethod($method->asTag());
+
+        $this->setExistsMethod();
+
+        $this->setSetMethod($table);
     }
 
     /**

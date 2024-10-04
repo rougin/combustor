@@ -1,5 +1,11 @@
+.php-cs-fixer.cache
 .phpintel
+.phpunit.result.cache
 build
+combustor.bak
+combustor.yml
 composer.lock
-docs
+tests/Fixture/Sample/controllers
+tests/Fixture/Sample/models
+tests/Fixture/Sample/views
 vendor

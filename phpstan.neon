@@ -1,0 +1,22 @@
+parameters:
+  level: 9
+  paths:
+    - src
+    - tests
+  excludePaths:
+    analyse:
+      - tests/Fixture/Plates
+      - tests/Fixture/Sample/controllers
+      - tests/Fixture/Sample/models
+      - tests/Fixture/Sample/views
+  scanDirectories:
+    - vendor/rougin/codeigniter/src
+  ignoreErrors:
+    - '#^Access to property \$database on an unknown class CI_DB\.$#'
+    - '#^Access to property \$dbdriver on an unknown class CI_DB\.$#'
+    - '#^Access to property \$dsn on an unknown class CI_DB\.$#'
+    - '#^Access to property \$hostname on an unknown class CI_DB\.$#'
+    - '#^Access to property \$password on an unknown class CI_DB\.$#'
+    - '#^Access to property \$username on an unknown class CI_DB\.$#'
+    - '#^Constant APPPATH not found\.$#'
+    - '#^Constant ENVIRONMENT not found\.$#'

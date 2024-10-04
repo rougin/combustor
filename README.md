@@ -2,45 +2,103 @@
 
 [![Latest Version on Packagist][ico-version]][link-packagist]
 [![Software License][ico-license]][link-license]
-[![Build Status][ico-travis]][link-travis]
-[![Coverage Status][ico-scrutinizer]][link-scrutinizer]
-[![Quality Score][ico-code-quality]][link-code-quality]
+[![Build Status][ico-build]][link-build]
+[![Coverage Status][ico-coverage]][link-coverage]
 [![Total Downloads][ico-downloads]][link-downloads]
 
-Combustor is a [Codeigniter](https://codeigniter.com/) library that generates controllers, models, and views based from database tables. It uses the [Describe](/describe/) library for retrieving the database tables and as the basis for code generation.
+Combustor is a utility package for [Codeigniter 3](https://codeigniter.com/userguide3/) that generates controllers, models, and views based on the provided database tables. It uses the [Describe](https://roug.in/describe/) library for getting columns from a database table and as the basis for code generation.
 
 ## Features
 
-* Generates code based from the structure of the Codeigniter framework
-* Speeds up the code development for prototyping web applications
-* View templates are based on Bootstrap which can also be modified later
-* Needs to worry only on the database schema, and Combustor will do the rest
+* Generates code based on the structure of the `Codeigniter 3` framework;
+* Speeds up the code development for prototyping web applications;
+* View templates can be based on Bootstrap and are upgradable; and
+* Only worry on the database schema, and `Combustor` will do the rest.
 
 ## Installation
 
-1. Download the Codeigniter framework [here](https://github.com/bcit-ci/CodeIgniter/archive/3.1.8.zip) and extract it to the web server.
-2. Configure the application's database connectivity settings in `application/config/database.php`.
-3. Install Combustor through the [Composer](https://getcomposer.org/) package manager:
+Extract the contents of the [latest Codeigniter 3 project](https://github.com/bcit-ci/CodeIgniter/archive/3.1.13.zip) first:
+
+``` bash
+$ wget https://github.com/bcit-ci/CodeIgniter/archive/3.1.13.zip
+$ unzip 3.1.13.zip -d acme
+```
+
+Then configure the project's database connectivity settings:
+
+```
+$ cd acme
+$ nano application/config/database.php
+```
+
+``` php
+// acme/application/config/database.php
+
+// ...
+
+$db['default'] = array(
+    'dsn'   => '',
+    'hostname' => 'localhost',
+    'username' => '',
+    'password' => '',
+    'database' => '',
+    'dbdriver' => 'mysqli',
+    
+    // ...
+);
+```
+
+Next is to proceed in installing `Combustor` via [Composer](https://getcomposer.org/):
+
 ``` bash
 $ composer require rougin/combustor --dev
 ```
-4. Install the ORM wrappers `Wildfire` and `Doctrine ORM` or both:
+
+``` json
+// acme/composer.json
+
+{
+  // ...
+
+  "require-dev":
+  {
+    "mikey179/vfsstream": "1.6.*",
+    "phpunit/phpunit": "4.* || 5.* || 9.*",
+    "rougin/combustor": "~1.0"
+  }
+}
+```
+
+Lastly, install the ORM wrappers like `Wildfire` or `Doctrine`:
+
 ``` bash
 $ vendor/bin/combustor install:wildfire
 $ vendor/bin/combustor install:doctrine
 ```
 
+> [!NOTE]
+> Using the `install:wildfire` command installs [Wildfire](https://roug.in/wildfire/) package while the `install:doctrine` installs [Credo](https://roug.in/credo/) package.
+
+## Reminders
+
+Prior in executing any commands, kindly ensure that the **database tables are defined properly** (foreign keys, indexes, relationships, normalizations) in order to minimize the modifications after the code structure has been generated.
+
+Also, please proceed first in generating models, views, or controllers to database tables that are having _**no relationship with other tables**_ in the database.
+
+> [!TIP]
+> `Combustor` will generate controllers, models, or views based on the specified database schema. If there's something wrong in the specified database schema, `Combustor` will generate a bad codebase.
+
 ## Commands
 
 ### `create:layout`
 
-Creates a new header and footer file.
+Create a new header and footer file.
 
-#### Options
+**Options**
 
-* `--bootstrap` - includes the Bootstrap tags
+* `--bootstrap` - adds styling based on Bootstrap
 
-#### Example
+**Example**
 
 ``` bash
 $ vendor/bin/combustor create-layout --bootstrap
@@ -48,66 +106,60 @@ $ vendor/bin/combustor create-layout --bootstrap
 
 ### `create:controller`
 
-Creates a new HTTP controller.
+Create a new HTTP controller.
 
-#### Arguments
+**Arguments**
 
-* `name` - name of the database table
+* `table` - name of the database table
 
-#### Options
+**Options**
 
-* `--camel` - uses camel case naming convention for the accessor and mutators
-* `--doctrine` - generates a controller based on Doctrine
-* `--keep` - keeps the name to be used
-* `--lowercase` - keeps the first character of the name to lowercase
-* `--wildfire` - generates a controller based from Wildfire
+* `--doctrine` - generates a Doctrine-based controller
+* `--wildfire` - generates a Wildfire-based controller
 
-#### Example
+> [!NOTE]
+> If either `Wildfire` or `Doctrine` is installed, no need to specify it as option for executing a specified command (e.g. `--wildfire`). However if both are installed, a command must have a `--wildfire` or `--doctrine` option added.
+
+**Example**
 
 ``` bash
-$ vendor/bin/combustor create:controller users --camel --wildfire
+$ vendor/bin/combustor create:controller users --wildfire
 ```
 
 ### `create:model`
 
-Creates a new model.
+Create a new model.
 
-#### Arguments
+**Arguments**
 
-* `name` - name of the database table
+* `table` - name of the database table
 
-#### Options
+**Options**
 
-* `--camel` - uses camel case naming convention for the accessor and mutators
-* `--doctrine` - generates a controller based on Doctrine
-* `--keep` - keeps the name to be used
-* `--lowercase` - keeps the first character of the name to lowercase
-* `--wildfire` - generates a controller based from Wildfire
+* `--doctrine` - generates a Doctrine-based model
+* `--wildfire` - generates a Wildfire-based model
 
-#### Example
+**Example**
 
 ``` bash
-$ vendor/bin/combustor create:model users --camel --wildfire
+$ vendor/bin/combustor create:model users --wildfire
 ```
 
 ### `create:view`
 
-Creates a new view template.
+Create view templates.
 
-#### Arguments
+**Arguments**
 
-* `name` - name of the database table
+* `table` - name of the database table
 
-#### Options
+**Options**
 
-* `--bootstrap` - includes the Bootstrap tags
-* `--camel` - uses camel case naming convention for the accessor and mutators
-* `--doctrine` - generates a controller based on Doctrine
-* `--keep` - keeps the name to be used
-* `--lowercase` - keeps the first character of the name to lowercase
-* `--wildfire` - generates a controller based from Wildfire
+* `--bootstrap` - adds styling based on Bootstrap
+* `--doctrine` - generates Doctrine-based views
+* `--wildfire` - generates Wildfire-based views
 
-#### Example
+**Example**
 
 ``` bash
 $ vendor/bin/combustor create:view users --bootstrap
@@ -115,102 +167,135 @@ $ vendor/bin/combustor create:view users --bootstrap
 
 ### `create:scaffold`
 
-Creates a new HTTP controller, model, and view template.
+Create a new HTTP controller, model, and view templates.
 
-#### Arguments
+**Arguments**
 
-* `name` - name of the database table
+* `table` - name of the database table
 
-#### Options
+**Options**
 
-* `--bootstrap` - includes the Bootstrap tags
-* `--camel` - uses camel case naming convention for the accessor and mutators
-* `--doctrine` - generates a controller based on Doctrine
-* `--keep` - keeps the name to be used
-* `--lowercase` - keeps the first character of the name to lowercase
-* `--wildfire` - generates a controller based from Wildfire
+* `--bootstrap` - adds styling based on Bootstrap
+* `--doctrine` - generates a Doctrine-based controller, model, and views
+* `--wildfire` - generates a Wildfire-based controller, model, and views
 
-#### Example
+**Example**
 
 ``` bash
 $ vendor/bin/combustor create:scaffold users --bootstrap --wildfire
 ```
 
-## Wilfire's Methods
+### `install:doctrine`
 
-The following methods below are available if `--wildfire` is installed:
+Install the [Doctrine](https://roug.in/credo/) package.
 
-### `delete($table, $delimiters = [])`
+**Example**
 
-Deletes the specified data from storage.
-
-#### Arguments
-
-* `$table` - name of the database table
-* `$delimiters` - delimits the list of rows to be returned
-
-#### Example
-
-``` php
-$this->wildfire->delete('users', ['id' => 3]);
+``` bash
+$ vendor/bin/combustor install:doctrine
 ```
 
-### `find($table, $delimiters = [])`
+> [!NOTE]
+> * This command will be available if `Doctrine` is not installed in the project.
+> * It also adds a `Loader.php` in the `core` directory. The said file is used for loading custom repositories extended to `EntityRepository`.
 
-Finds the row from the specified ID or with the list of delimiters from the specified table.
+### `install:wildfire`
 
-#### Arguments
+Install the [Wildfire](https://roug.in/wildfire/) package.
 
-* `$table` - name of the database table
-* `$delimiters` - delimits the list of rows to be returned
+**Example**
 
-#### Example
-
-``` php
-$this->wildfire->delete('users', ['id' => 3]);
+``` bash
+$ vendor/bin/combustor install:wildfire
 ```
 
-### `get_all($table, $delimiters = [])`
+> [!NOTE]
+> This command will be available if `Wildfire` is not installed in the project.
 
-Returns all rows from the specified table
+### `remove:doctrine`
 
-#### Arguments
+Remove the [Doctrine](https://roug.in/credo/) package.
 
-* `$table` - name of the database table
-* `$delimiters` - delimits the list of rows to be returned
-    * `keyword` - used for searching the data from the storage
-    * `per_page` - defines the number of rows per page
+**Example**
 
-#### Returned methods
-
-* `as_dropdown($description)` - returns the list of rows that can be used in `form_dropdown()`
-    * `description` - the field to be displayed in the result (the default value is `description`)
-* `result()` - returns the list of rows from the storage in a model
-* `total_rows()` - returns the total number of rows based from the result
-
-#### Example
-
-``` php
-$delimiters = ['keyword' => 'test', 'per_page' = 3];
-
-$result = $this->wildfire->all('users', $delimiters);
-
-var_dump((array) $result->result());
+``` bash
+$ vendor/bin/combustor remove:doctrine
 ```
 
-**NOTE**: This method is also available if `--doctrine` is installed.
+> [!NOTE]
+> This command will be available if `Doctrine` is installed in the project.
 
-## Reminders
+### `remove:wildfire`
 
-* If either Wildfire or Doctrine is installed, no need to specify it as option for executing a specified command (e.g. `vendor/bin/combustor create:controller --wildfire`). However if both are installed, the command to be executed must have a `--wildfire` or `--doctrine` option added.
+Remove the [Wildfire](https://roug.in/wildfire/) package.
 
-* To learn more about Doctrine's functionalities and its concepts, the documentation page can be found [here](http://doctrine-orm.readthedocs.org/en/latest).
+**Example**
 
-* Before generating the models, views, and controllers, please make sure that the **database is defined properly** (foreign keys, indexes, relationships, normalizations) in order to minimize the modifications after the codes has been generated. Also, generate the models, views, and controllers first to tables that are having **no relationship with other tables** in the database.
+``` bash
+$ vendor/bin/combustor remove:wildfire
+```
 
-    * The reason for this is that Combustor will generate controllers, models, and views based on the specified database schema. If there's something wrong in the said database, Combustor will definitely generate a bad codebase.
+> [!NOTE]
+> This command will be available if `Wildfire` is installed in the project.
 
-* For found bugs or suggestions, feel free to [open an issue](https://github.com/rougin/combustor/issues) or [create a pull request](https://github.com/rougin/combustor/compare).
+## Using `combustor.yml`
+
+`Combustor` currently works out of the box after the configuration based on `Installation`. However, using a `combustor.yml` can be used for complex setups like specifying the new application path and excluding columns:
+
+``` yaml
+# combustor.yml
+
+app_path: %%CURRENT_DIRECTORY%%/Sample
+
+excluded_fields:
+  - created_at
+  - updated_at
+  - deleted_at
+```
+
+To create a `combustor.yml`, simply run the `initialize` command:
+
+``` bash
+$ vendor/bin/combustor initialize
+[PASS] "combustor.yml" added successfully!
+```
+
+### `app_path`
+
+This property specifies the `application` directory. It may updated to any directory (e.g., `acme/application`, `acme/config`, etc.) as long it can detect the `config/config.php` file from the defined directory:
+
+``` yaml
+# combustor.yml
+
+app_path: %%CURRENT_DIRECTORY%%/Sample
+
+# ...
+```
+
+> [!NOTE]
+> `Combustor` will try to check the path specified in `app_path` if it is a valid `Codeigniter 3` project. Then it will perform another check if the `application` directory exists or if the `config` directory can be accessed directly from the directory defined in `app_path`.
+
+### `excluded_fields`
+
+Specified fields in this property are excluded from generation to the following templates:
+
+* `controllers`
+* `models`
+* `views` (only for `create` and `edit` templates)
+
+``` yaml
+# combustor.yml
+
+# ...
+
+excluded_fields:
+  - created_at
+  - updated_at
+  - deleted_at
+```
+
+> [!NOTE]
+> By default, the timestamps are added when creating a `combustor.yml` for the first time as they are usually populated automatically by installed ORMs such as `Wildfire` or `Doctrine`.
 
 ## Changelog
 
@@ -230,18 +315,16 @@ $ composer test
 
 The MIT License (MIT). Please see [LICENSE][link-license] for more information.
 
-[ico-code-quality]: https://img.shields.io/scrutinizer/g/rougin/combustor.svg?style=flat-square
+[ico-build]: https://img.shields.io/github/actions/workflow/status/rougin/combustor/build.yml?style=flat-square
+[ico-coverage]: https://img.shields.io/codecov/c/github/rougin/combustor?style=flat-square
 [ico-downloads]: https://img.shields.io/packagist/dt/rougin/combustor.svg?style=flat-square
 [ico-license]: https://img.shields.io/badge/license-MIT-brightgreen.svg?style=flat-square
-[ico-scrutinizer]: https://img.shields.io/scrutinizer/coverage/g/rougin/combustor.svg?style=flat-square
-[ico-travis]: https://img.shields.io/travis/rougin/combustor/master.svg?style=flat-square
 [ico-version]: https://img.shields.io/packagist/v/rougin/combustor.svg?style=flat-square
 
+[link-build]: https://github.com/rougin/combustor/actions
 [link-changelog]: https://github.com/rougin/combustor/blob/master/CHANGELOG.md
-[link-code-quality]: https://scrutinizer-ci.com/g/rougin/combustor
 [link-contributors]: https://github.com/rougin/combustor/contributors
+[link-coverage]: https://app.codecov.io/gh/rougin/combustor
 [link-downloads]: https://packagist.org/packages/rougin/combustor
 [link-license]: https://github.com/rougin/combustor/blob/master/LICENSE.md
 [link-packagist]: https://packagist.org/packages/rougin/combustor
-[link-scrutinizer]: https://scrutinizer-ci.com/g/rougin/combustor/code-structure
-[link-travis]: https://travis-ci.org/rougin/combustor

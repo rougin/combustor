@@ -2,6 +2,28 @@
 
 All notable changes to `Combustor` will be documented in this file.
 
+## [1.3.0](https://github.com/rougin/transcribe/compare/v1.2.4...v1.3.0) - Unreleased
+
+### Added
+- Command for creating `combustor.yml` configuration file
+- Fields that can be excluded through `excluded_files`
+- Specify customized `application` path using `app_path` 
+
+### Changed
+- Code coverage provider to `Codecov`
+- Code documentation by `php-cs-fixer`
+- Improved code quality by `phpstan`
+- Main argument `name` to `table` in `Commands`
+- Simplified code structure
+- Workflow provider to `Github Actions`
+
+### Removed
+- Options to strictly conform in coding style of `Codeigniter`:
+  - `--camel`
+  - `--keep`
+  - `--lowercase`
+- `CONTRIBUTING.md`
+
 ## [1.2.4](https://github.com/rougin/combustor/compare/v1.2.3...v1.2.4) - 2018-04-18
 
 ### Fixed

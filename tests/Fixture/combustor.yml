@@ -1,0 +1,6 @@
+app_path: %%CURRENT_DIRECTORY%%/Sample
+
+excluded_fields:
+  - created_at
+  - updated_at
+  - deleted_at

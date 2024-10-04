@@ -28,6 +28,81 @@ class PlateTest extends Testcase
     protected $path;
 
     /**
+     * @return string
+     */
+    protected function getDoctrineCtrl()
+    {
+        return $this->getTemplate('Doctrine/Controller');
+    }
+
+    /**
+     * @return string
+     */
+    protected function getDoctrineModel()
+    {
+        return $this->getTemplate('Doctrine/Model');
+    }
+
+    /**
+     * @return string
+     */
+    protected function getDoctrineView()
+    {
+        $create = $this->getTemplate('Doctrine/CreateView');
+
+        $edit = $this->getTemplate('Doctrine/EditView');
+
+        $index = $this->getTemplate('Doctrine/IndexView');
+
+        return $create . "\n" . $edit . "\n" . $index;
+    }
+
+    /**
+     * @param string $name
+     *
+     * @return string
+     */
+    protected function getTemplate($name)
+    {
+        $path = __DIR__ . '/Fixture/Plates/' . $name . '.php';
+
+        /** @var string */
+        $file = file_get_contents($path);
+
+        return str_replace("\r\n", "\n", $file);
+    }
+
+    /**
+     * @return string
+     */
+    protected function getWildfireCtrl()
+    {
+        return $this->getTemplate('Wildfire/Controller');
+    }
+
+    /**
+     * @return string
+     */
+    protected function getWildfireModel()
+    {
+        return $this->getTemplate('Wildfire/Model');
+    }
+
+    /**
+     * @return string
+     */
+    protected function getWildfireView()
+    {
+        $create = $this->getTemplate('Wildfire/CreateView');
+
+        $edit = $this->getTemplate('Wildfire/EditView');
+
+        $index = $this->getTemplate('Wildfire/IndexView');
+
+        return $create . "\n" . $edit . "\n" . $index;
+    }
+
+    /**
      * @return void
      */
     public function doSetUp()
@@ -149,6 +224,22 @@ class PlateTest extends Testcase
         $expected = $this->getWildfireView();
 
         $actual = $this->getActualView('User');
+
+        $this->assertEquals($expected, $actual);
+    }
+
+    /**
+     * @return void
+     */
+    public function test_with_layout()
+    {
+        $test = $this->findCommand('create:layout');
+
+        $test->execute(array());
+
+        $expected = $this->getLayoutView();
+
+        $actual = $this->getActualLayout();
 
         $this->assertEquals($expected, $actual);
     }
@@ -285,6 +376,24 @@ class PlateTest extends Testcase
     }
 
     /**
+     * @return string
+     */
+    protected function getActualLayout()
+    {
+        $name = 'layout';
+
+        $header = $this->getActualFile($name . '/header', self::TYPE_VIEW);
+
+        $footer = $this->getActualFile($name . '/footer', self::TYPE_VIEW);
+
+        // Delete directory after getting the files ---
+        $this->deleteView($name);
+        // --------------------------------------------
+
+        return $header . "\n" . $footer;
+    }
+
+    /**
      * @param string $name
      *
      * @return string
@@ -310,16 +419,7 @@ class PlateTest extends Testcase
         $index = $this->getActualFile($name . '/index', self::TYPE_VIEW);
 
         // Delete directory after getting the files ---
-        $path = $this->app->getAppPath();
-
-        $path = $path . '/views/' . $name;
-
-        /** @var string[] */
-        $files = glob($path . '/*.*');
-
-        array_map('unlink', $files);
-
-        rmdir((string) $path);
+        $this->deleteView($name);
         // --------------------------------------------
 
         return $create . "\n" . $edit . "\n" . $index;
@@ -328,75 +428,31 @@ class PlateTest extends Testcase
     /**
      * @return string
      */
-    protected function getDoctrineCtrl()
+    protected function getLayoutView()
     {
-        return $this->getTemplate('Doctrine/Controller');
-    }
+        $header = $this->getTemplate('Layout/Header');
 
-    /**
-     * @return string
-     */
-    protected function getDoctrineModel()
-    {
-        return $this->getTemplate('Doctrine/Model');
-    }
+        $footer = $this->getTemplate('Layout/Footer');
 
-    /**
-     * @return string
-     */
-    protected function getDoctrineView()
-    {
-        $create = $this->getTemplate('Doctrine/CreateView');
-
-        $edit = $this->getTemplate('Doctrine/EditView');
-
-        $index = $this->getTemplate('Doctrine/IndexView');
-
-        return $create . "\n" . $edit . "\n" . $index;
+        return $header . "\n" . $footer;
     }
 
     /**
      * @param string $name
      *
-     * @return string
+     * @return void
      */
-    protected function getTemplate($name)
+    protected function deleteView($name)
     {
-        $path = __DIR__ . '/Fixture/Plates/' . $name . '.php';
+        $path = $this->app->getAppPath();
 
-        /** @var string */
-        $file = file_get_contents($path);
+        $source = $path . '/views/' . $name;
 
-        return str_replace("\r\n", "\n", $file);
-    }
+        /** @var string[] */
+        $files = glob($source . '/*.*');
 
-    /**
-     * @return string
-     */
-    protected function getWildfireCtrl()
-    {
-        return $this->getTemplate('Wildfire/Controller');
-    }
+        array_map('unlink', $files);
 
-    /**
-     * @return string
-     */
-    protected function getWildfireModel()
-    {
-        return $this->getTemplate('Wildfire/Model');
-    }
-
-    /**
-     * @return string
-     */
-    protected function getWildfireView()
-    {
-        $create = $this->getTemplate('Wildfire/CreateView');
-
-        $edit = $this->getTemplate('Wildfire/EditView');
-
-        $index = $this->getTemplate('Wildfire/IndexView');
-
-        return $create . "\n" . $edit . "\n" . $index;
+        rmdir($path . '/views/' . $name);
     }
 }

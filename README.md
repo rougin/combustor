@@ -96,7 +96,7 @@ Create a new header and footer file.
 
 **Options**
 
-* `--bootstrap` - includes the Bootstrap tags
+* `--bootstrap` - adds styling based on Bootstrap
 
 **Example**
 
@@ -155,7 +155,7 @@ Create a new view template.
 
 **Options**
 
-* `--bootstrap` - includes the Bootstrap tags
+* `--bootstrap` - adds styling based on Bootstrap
 * `--doctrine` - generates Doctrine-based views
 * `--wildfire` - generates Wildfire-based views
 
@@ -175,7 +175,7 @@ Create a new HTTP controller, model, and view template.
 
 **Options**
 
-* `--bootstrap` - includes the Bootstrap tags
+* `--bootstrap` - adds styling based on Bootstrap
 * `--doctrine` - generates a Doctrine-based controller, model, and views
 * `--wildfire` - generates a Wildfire-based controller, model, and views
 

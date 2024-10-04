@@ -148,7 +148,9 @@ class FormPlate
         $lines[] = $tab . '<?= form_submit(null, \'' . $submit . '\') ?>';
         $lines[] = '<?= form_close() ?>';
 
-        return implode("\n", $lines);
+        $result = implode("\n", $lines);
+
+        return str_replace(' class=""', '', $result);
     }
 
     /**

@@ -58,18 +58,23 @@ class IndexPlate
 
         $lines = array('<h1>' . ucfirst($route) . '</h1>');
         $lines[] = '';
-        $lines[] = '<div><?= isset($alert) ? $alert : \'\' ?></div>';
+
+        $lines[] = '<?php if (isset($alert)): ?>';
+        $lines[] = '  <div class=""><?= $alert ?></div>';
+        $lines[] = '<?php endif ?>';
         $lines[] = '';
 
         $text = 'Create New ' . ucfirst($model);
-        $lines[] = '<div>';
-        $lines[] = '  <a href="<?= base_url(\'' . $route . '/create\') ?>">' . $text . '</a>';
+        $lines[] = '<div class="">';
+        $lines[] = '  <a class="" href="<?= base_url(\'' . $route . '/create\') ?>">' . $text . '</a>';
         $lines[] = '</div>';
         $lines[] = '';
 
         $lines[] = '<div>';
 
         $table = new TablePlate($this->table, $this->cols, $this->type);
+
+        $table->withBootstrap($this->bootstrap);
 
         foreach ($table->make($tab) as $line)
         {
@@ -92,7 +97,9 @@ class IndexPlate
         $lines[] = '  }';
         $lines[] = '</script>';
 
-        return implode("\n", $lines);
+        $result = implode("\n", $lines);
+
+        return str_replace(' class=""', '', $result);
     }
 
     /**

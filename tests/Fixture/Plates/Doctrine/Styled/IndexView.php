@@ -1,6 +1,8 @@
 <h1>Users</h1>
 
-<div><?= isset($alert) ? $alert : '' ?></div>
+<?php if (isset($alert)): ?>
+  <div><?= $alert ?></div>
+<?php endif ?>
 
 <div>
   <a href="<?= base_url('users/create') ?>">Create New User</a>

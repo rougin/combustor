@@ -16,6 +16,11 @@ class TablePlate
     const TYPE_DOCTRINE = 1;
 
     /**
+     * @var boolean
+     */
+    protected $bootstrap = false;
+
+    /**
      * @var \Rougin\Describe\Column[]
      */
     protected $cols;
@@ -51,7 +56,7 @@ class TablePlate
      */
     public function make($tab = '')
     {
-        $lines = array('<table>');
+        $lines = array('<table class="">');
 
         $lines = $this->setCol($lines, $tab);
 
@@ -182,5 +187,17 @@ class TablePlate
         $lines[] = $tab . '</tbody>';
 
         return $lines;
+    }
+
+    /**
+     * @param boolean $bootstrap
+     *
+     * @return self
+     */
+    public function withBootstrap($bootstrap)
+    {
+        $this->bootstrap = $bootstrap;
+
+        return $this;
     }
 }

@@ -97,6 +97,7 @@ class CreateScaffold extends Symfony
         /** @var string */
         $table = $input->getArgument('table');
 
+        /** @var \Symfony\Component\Console\Application */
         $app = $this->getApplication();
 
         /** @var boolean */

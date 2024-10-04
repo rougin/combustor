@@ -8,3 +8,5 @@
 - deleted_at
 [*] form rules
 [*] fix init on ciacme
+[ ] --empty
+[ ] --force

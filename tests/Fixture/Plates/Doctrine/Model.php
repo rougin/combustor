@@ -8,7 +8,6 @@ use Rougin\Credo\Traits\ValidateTrait;
  * @Entity(repositoryClass="User_repository")
  *
  * @Table(name="users")
- *
  */
 class User extends Model
 {

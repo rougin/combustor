@@ -15,7 +15,9 @@ class PlateTest extends Testcase
 
     const TYPE_MODEL = 1;
 
-    const TYPE_VIEW = 2;
+    const TYPE_REPOSITORY = 2;
+
+    const TYPE_VIEW = 3;
 
     const VIEW_COMMON = 0;
 
@@ -104,6 +106,24 @@ class PlateTest extends Testcase
         $expected = $this->getDoctrineModel();
 
         $actual = $this->getActualModel('User');
+
+        $this->assertEquals($expected, $actual);
+    }
+
+    /**
+     * @return void
+     */
+    public function test_doctrine_repository()
+    {
+        $test = $this->findCommand('create:repository');
+
+        $input = array('table' => 'users');
+
+        $test->execute($input);
+
+        $expected = $this->getDoctrineRepo();
+
+        $actual = $this->getActualRepo('User');
 
         $this->assertEquals($expected, $actual);
     }
@@ -319,6 +339,13 @@ class PlateTest extends Testcase
             $path .= '/controllers';
         }
 
+        if ($type === self::TYPE_REPOSITORY)
+        {
+            $path .= '/repositories';
+
+            $name = $name . '_repository';
+        }
+
         if ($type === self::TYPE_MODEL)
         {
             $path .= '/models';
@@ -327,9 +354,7 @@ class PlateTest extends Testcase
         $file = $path . '/' . $name . '.php';
 
         /** @var string */
-
-
-     $result = file_get_contents($file);
+        $result = file_get_contents($file);
 
         return str_replace("\r\n", "\n", $result);
     }
@@ -360,6 +385,16 @@ class PlateTest extends Testcase
     protected function getActualModel($name)
     {
         return $this->getActualFile($name, self::TYPE_MODEL);
+    }
+
+    /**
+     * @param string $name
+     *
+     * @return string
+     */
+    protected function getActualRepo($name)
+    {
+        return $this->getActualFile($name, self::TYPE_REPOSITORY);
     }
 
     /**
@@ -398,6 +433,14 @@ class PlateTest extends Testcase
     protected function getDoctrineModel()
     {
         return $this->getTemplate('Doctrine/Model');
+    }
+
+    /**
+     * @return string
+     */
+    protected function getDoctrineRepo()
+    {
+        return $this->getTemplate('Doctrine/Repository');
     }
 
     /**

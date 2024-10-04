@@ -6,6 +6,7 @@ use Rougin\Blueprint\Command as Blueprint;
 use Rougin\Classidy\Generator;
 use Rougin\Combustor\Template\Controller;
 use Rougin\Combustor\Template\Doctrine\Model as DoctrineModel;
+use Rougin\Combustor\Template\Repository;
 use Rougin\Combustor\Template\Wildfire\Model as WildfireModel;
 
 /**
@@ -144,6 +145,11 @@ class Command extends Blueprint
         if ($isModel && $type === self::TYPE_WILDFIRE)
         {
             return new WildfireModel($table, $cols, $this->excluded);
+        }
+
+        if ($this->name === 'create:repository')
+        {
+            return new Repository($table, $cols, $this->excluded);
         }
 
         return new Controller($table, $type);

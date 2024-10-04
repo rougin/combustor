@@ -145,6 +145,23 @@ Create a new model.
 $ vendor/bin/combustor create:model users --wildfire
 ```
 
+### `create:repository`
+
+Create a new entity repository.
+
+**Arguments**
+
+* `table` - name of the database table
+
+**Example**
+
+``` bash
+$ vendor/bin/combustor create:repository users
+```
+
+> [!NOTE]
+> This command is only applicable to a [Doctrine](https://roug.in/credo) implementation.
+
 ### `create:view`
 
 Create view templates.
@@ -184,6 +201,9 @@ Create a new HTTP controller, model, and view templates.
 ``` bash
 $ vendor/bin/combustor create:scaffold users --bootstrap --wildfire
 ```
+
+> [!NOTE]
+> If `--doctrine` is selected, the command will also execute the `create:repository` command.
 
 ### `install:doctrine`
 

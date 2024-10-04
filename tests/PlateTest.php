@@ -15,7 +15,9 @@ class PlateTest extends Testcase
 
     const TYPE_MODEL = 1;
 
-    const TYPE_VIEW = 2;
+    const TYPE_REPOSITORY = 2;
+
+    const TYPE_VIEW = 3;
 
     const VIEW_COMMON = 0;
 
@@ -111,6 +113,24 @@ class PlateTest extends Testcase
     /**
      * @return void
      */
+    public function test_doctrine_repository()
+    {
+        $test = $this->findCommand('create:repository');
+
+        $input = array('table' => 'users');
+
+        $test->execute($input);
+
+        $expected = $this->getDoctrineRepo();
+
+        $actual = $this->getActualRepo('User');
+
+        $this->assertEquals($expected, $actual);
+    }
+
+    /**
+     * @return void
+     */
     public function test_doctrine_view()
     {
         $test = $this->findCommand('create:view');
@@ -165,9 +185,13 @@ class PlateTest extends Testcase
 
         $model = $this->getDoctrineModel();
 
+        $repo = $this->getDoctrineRepo();
+
         $views = $this->getDoctrineView(self::VIEW_STYLED);
 
         $expected = $route . "\n" . $model . "\n" . $views;
+
+        $expected = $expected . "\n" . $repo;
         // ------------------------------------------------
 
         // Return the actual results --------------------
@@ -175,9 +199,13 @@ class PlateTest extends Testcase
 
         $model = $this->getActualModel('User');
 
+        $repo = $this->getActualRepo('User');
+
         $views = $this->getActualView('User');
 
         $actual = $route . "\n" . $model . "\n" . $views;
+
+        $actual = $actual . "\n" . $repo;
         // ----------------------------------------------
 
         $this->assertEquals($expected, $actual);
@@ -265,18 +293,18 @@ class PlateTest extends Testcase
      *
      * @return void
      */
-    protected function deleteView($name)
+    protected function deleteDir($name)
     {
         $path = $this->app->getAppPath();
 
-        $source = $path . '/views/' . $name;
+        $source = $path . '/' . $name;
 
         /** @var string[] */
         $files = glob($source . '/*.*');
 
         array_map('unlink', $files);
 
-        rmdir($path . '/views/' . $name);
+        rmdir($path . '/' . $name);
     }
 
     /**
@@ -319,6 +347,13 @@ class PlateTest extends Testcase
             $path .= '/controllers';
         }
 
+        if ($type === self::TYPE_REPOSITORY)
+        {
+            $path .= '/repositories';
+
+            $name = $name . '_repository';
+        }
+
         if ($type === self::TYPE_MODEL)
         {
             $path .= '/models';
@@ -327,9 +362,7 @@ class PlateTest extends Testcase
         $file = $path . '/' . $name . '.php';
 
         /** @var string */
-
-
-     $result = file_get_contents($file);
+        $result = file_get_contents($file);
 
         return str_replace("\r\n", "\n", $result);
     }
@@ -346,7 +379,7 @@ class PlateTest extends Testcase
         $footer = $this->getActualFile($name . '/footer', self::TYPE_VIEW);
 
         // Delete directory after getting the files ---
-        $this->deleteView($name);
+        $this->deleteDir('views/' . $name);
         // --------------------------------------------
 
         return $header . "\n" . $footer;
@@ -367,6 +400,22 @@ class PlateTest extends Testcase
      *
      * @return string
      */
+    protected function getActualRepo($name)
+    {
+        $file = $this->getActualFile($name, self::TYPE_REPOSITORY);
+
+        // Delete directory after getting the files ---
+        $this->deleteDir('repositories');
+        // --------------------------------------------
+
+        return $file;
+    }
+
+    /**
+     * @param string $name
+     *
+     * @return string
+     */
     protected function getActualView($name)
     {
         $name = strtolower(Inflector::plural($name));
@@ -378,7 +427,7 @@ class PlateTest extends Testcase
         $index = $this->getActualFile($name . '/index', self::TYPE_VIEW);
 
         // Delete directory after getting the files ---
-        $this->deleteView($name);
+        $this->deleteDir('views/' . $name);
         // --------------------------------------------
 
         return $create . "\n" . $edit . "\n" . $index;
@@ -398,6 +447,14 @@ class PlateTest extends Testcase
     protected function getDoctrineModel()
     {
         return $this->getTemplate('Doctrine/Model');
+    }
+
+    /**
+     * @return string
+     */
+    protected function getDoctrineRepo()
+    {
+        return $this->getTemplate('Doctrine/Repository');
     }
 
     /**

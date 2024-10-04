@@ -7,5 +7,6 @@ combustor.yml
 composer.lock
 tests/Fixture/Sample/controllers
 tests/Fixture/Sample/models
+tests/Fixture/Sample/repositories
 tests/Fixture/Sample/views
 vendor

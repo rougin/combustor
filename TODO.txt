@@ -1,20 +1,21 @@
-[x] --bootstrap
-- index pagination
+[x] bootstrap
+- [*] --bootstrap
+- [ ] index pagination
 [ ] --empty
 [ ] --force
-[ ] custom fields
-- email
+[x] custom fields
+- [ ] email
 [*] create:layout
 [ ] create:scaffold
 [*] exclude fields
-- created_at
-- updated_at
-- deleted_at
+- [*] created_at
+- [*] updated_at
+- [*] deleted_at
 [*] form rules
 [*] fix init on ciacme
 [*] install:wildfire
 [*] install:doctrine
-- credo repository
+- [*] command
+- [*] loader
 [*] install:wildfire
-[*] install:doctrine
 [ ] multi relations

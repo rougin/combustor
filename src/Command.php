@@ -78,6 +78,7 @@ class Command extends Blueprint
     /**
      * @param boolean $doctrine
      * @param boolean $wildfire
+     *
      * @return integer
      * @throws \Exception
      */

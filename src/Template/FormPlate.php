@@ -119,18 +119,18 @@ class FormPlate
             $field = $this->getField($col);
 
             $lines[] = $tab . '<div>';
-            $lines[] = $tab . $tab . '<?= form_label(\'' . $title . '\') ?>';
+            $lines[] = $tab . $tab . '<?= form_label(\'' . $title . '\', \'\', [\'class\' => \'\']) ?>';
 
             if ($this->edit)
             {
-                $lines[] = $tab . $tab . '<?= form_input(\'' . $name . '\', set_value(\'' . $name . '\', ' . $field . ')) ?>';
+                $lines[] = $tab . $tab . '<?= form_input(\'' . $name . '\', set_value(\'' . $name . '\', ' . $field . '), \'class=""\') ?>';
             }
             else
             {
-                $lines[] = $tab . $tab . '<?= form_input(\'' . $name . '\', set_value(\'' . $name . '\')) ?>';
+                $lines[] = $tab . $tab . '<?= form_input(\'' . $name . '\', set_value(\'' . $name . '\'), \'class=""\') ?>';
             }
 
-            $lines[] = $tab . $tab . '<?= form_error(\'' . $name . '\', \'<div><span>\', \'</span></div>\') ?>';
+            $lines[] = $tab . $tab . '<?= form_error(\'' . $name . '\', \'<div><span class="">\', \'</span></div>\') ?>';
             $lines[] = $tab . '</div>';
             $lines[] = '';
         }
@@ -142,15 +142,26 @@ class FormPlate
             $submit = 'Update';
         }
 
-        $lines[] = $tab . '<div><?= isset($error) ? $error : \'\' ?></div>';
+        $lines[] = $tab . '<?php if (isset($error)): ?>';
+        $lines[] = $tab . '  <div class=""><?= $error ?></div>';
+        $lines[] = $tab . '<?php endif ?>';
         $lines[] = '';
+
         $lines[] = $tab . '<?= anchor(\'' . $route . '\', \'Cancel\') ?>';
         $lines[] = $tab . '<?= form_submit(null, \'' . $submit . '\') ?>';
         $lines[] = '<?= form_close() ?>';
 
         $result = implode("\n", $lines);
 
-        return str_replace(' class=""', '', $result);
+        // Replace all empty class placeholders -------------
+        $result = str_replace(' class=""', '', $result);
+
+        $result = str_replace(', \'class=""\'', '', $result);
+
+        $search = ', \'\', [\'class\' => \'\']';
+
+        return str_replace($search, '', $result);
+        // --------------------------------------------------
     }
 
     /**

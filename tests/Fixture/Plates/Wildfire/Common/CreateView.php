@@ -31,7 +31,9 @@
     <?= form_error('remarks', '<div><span>', '</span></div>') ?>
   </div>
 
-  <div><?= isset($error) ? $error : '' ?></div>
+  <?php if (isset($error)): ?>
+    <div><?= $error ?></div>
+  <?php endif ?>
 
   <?= anchor('users', 'Cancel') ?>
   <?= form_submit(null, 'Create') ?>

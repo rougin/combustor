@@ -76,8 +76,15 @@ class CreateView extends Command
             mkdir($path . $name);
         }
 
+        /** @var boolean */
+        $bootstrap = $this->getOption('bootstrap');
+
         // Create the "create.php" file ---------------------------------
-        $create = new CreatePlate($table, $type, $cols, $this->excluded);
+        $create = new CreatePlate($table, $type, $cols);
+
+        $create->withBootstrap($bootstrap);
+
+        $create->withExcluded($this->excluded);
 
         $file = $path . $name . '/create.php';
 
@@ -85,7 +92,11 @@ class CreateView extends Command
         // --------------------------------------------------------------
 
         // Create the "edit.php" file -------------------------------
-        $edit = new EditPlate($table, $type, $cols, $this->excluded);
+        $edit = new EditPlate($table, $type, $cols);
+
+        $edit->withBootstrap($bootstrap);
+
+        $edit->withExcluded($this->excluded);
 
         $file = $path . $name . '/edit.php';
 
@@ -94,6 +105,8 @@ class CreateView extends Command
 
         // Create the "index.php" file ---------------
         $index = new IndexPlate($table, $type, $cols);
+
+        $index->withBootstrap($bootstrap);
 
         $file = $path . $name . '/index.php';
 

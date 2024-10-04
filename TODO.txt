@@ -10,3 +10,5 @@
 [*] fix init on ciacme
 [ ] --empty
 [ ] --force
+[ ] custom fields
+- email

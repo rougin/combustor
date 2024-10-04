@@ -139,6 +139,26 @@ class PlateTest extends Testcase
     /**
      * @return void
      */
+    public function test_doctrine_view_with_bootstrap()
+    {
+        $test = $this->findCommand('create:view');
+
+        $input = array('table' => 'users');
+        $input['--doctrine'] = true;
+        $input['--bootstrap'] = true;
+
+        $test->execute($input);
+
+        $expected = $this->getDoctrineView(self::VIEW_STYLED);
+
+        $actual = $this->getActualView('User');
+
+        $this->assertEquals($expected, $actual);
+    }
+
+    /**
+     * @return void
+     */
     public function test_wildfire_controller()
     {
         $test = $this->findCommand('create:controller');
@@ -187,6 +207,26 @@ class PlateTest extends Testcase
         $test->execute($input);
 
         $expected = $this->getWildfireView();
+
+        $actual = $this->getActualView('User');
+
+        $this->assertEquals($expected, $actual);
+    }
+
+    /**
+     * @return void
+     */
+    public function test_wildfire_view_with_bootstrap()
+    {
+        $test = $this->findCommand('create:view');
+
+        $input = array('table' => 'users');
+        $input['--wildfire'] = true;
+        $input['--bootstrap'] = true;
+
+        $test->execute($input);
+
+        $expected = $this->getWildfireView(self::VIEW_STYLED);
 
         $actual = $this->getActualView('User');
 
@@ -412,15 +452,24 @@ class PlateTest extends Testcase
     }
 
     /**
+     * @param integer $type
+     *
      * @return string
      */
-    protected function getDoctrineView()
+    protected function getDoctrineView($type = self::VIEW_COMMON)
     {
-        $create = $this->getTemplate('Doctrine/CreateView');
+        $name = 'Common';
 
-        $edit = $this->getTemplate('Doctrine/EditView');
+        if ($type === self::VIEW_STYLED)
+        {
+            $name = 'Styled';
+        }
 
-        $index = $this->getTemplate('Doctrine/IndexView');
+        $create = $this->getTemplate('Doctrine/' . $name . '/CreateView');
+
+        $edit = $this->getTemplate('Doctrine/' . $name . '/EditView');
+
+        $index = $this->getTemplate('Doctrine/' . $name . '/IndexView');
 
         return $create . "\n" . $edit . "\n" . $index;
     }
@@ -478,15 +527,24 @@ class PlateTest extends Testcase
     }
 
     /**
+     * @param integer $type
+     *
      * @return string
      */
-    protected function getWildfireView()
+    protected function getWildfireView($type = self::VIEW_COMMON)
     {
-        $create = $this->getTemplate('Wildfire/CreateView');
+        $name = 'Common';
 
-        $edit = $this->getTemplate('Wildfire/EditView');
+        if ($type === self::VIEW_STYLED)
+        {
+            $name = 'Styled';
+        }
 
-        $index = $this->getTemplate('Wildfire/IndexView');
+        $create = $this->getTemplate('Wildfire/' . $name . '/CreateView');
+
+        $edit = $this->getTemplate('Wildfire/' . $name . '/EditView');
+
+        $index = $this->getTemplate('Wildfire/' . $name . '/IndexView');
 
         return $create . "\n" . $edit . "\n" . $index;
     }

@@ -12,6 +12,11 @@ use Rougin\Combustor\Inflector;
 class IndexPlate
 {
     /**
+     * @var boolean
+     */
+    protected $bootstrap = false;
+
+    /**
      * @var \Rougin\Describe\Column[]
      */
     protected $cols;
@@ -88,5 +93,17 @@ class IndexPlate
         $lines[] = '</script>';
 
         return implode("\n", $lines);
+    }
+
+    /**
+     * @param boolean $bootstrap
+     *
+     * @return self
+     */
+    public function withBootstrap($bootstrap)
+    {
+        $this->bootstrap = $bootstrap;
+
+        return $this;
     }
 }

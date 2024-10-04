@@ -17,6 +17,11 @@ class FormPlate
     const TYPE_DOCTRINE = 1;
 
     /**
+     * @var boolean
+     */
+    protected $bootstrap = false;
+
+    /**
      * @var \Rougin\Describe\Column[]
      */
     protected $cols;
@@ -45,13 +50,10 @@ class FormPlate
      * @param string                    $table
      * @param integer                   $type
      * @param \Rougin\Describe\Column[] $cols
-     * @param string[]                  $excluded
      */
-    public function __construct($table, $type, $cols, $excluded = array())
+    public function __construct($table, $type, $cols)
     {
         $this->cols = $cols;
-
-        $this->excluded = $excluded;
 
         $this->type = $type;
 
@@ -147,6 +149,30 @@ class FormPlate
         $lines[] = '<?= form_close() ?>';
 
         return implode("\n", $lines);
+    }
+
+    /**
+     * @param boolean $bootstrap
+     *
+     * @return self
+     */
+    public function withBootstrap($bootstrap)
+    {
+        $this->bootstrap = $bootstrap;
+
+        return $this;
+    }
+
+    /**
+     * @param string[] $excluded
+     *
+     * @return self
+     */
+    public function withExcluded($excluded)
+    {
+        $this->excluded = $excluded;
+
+        return $this;
     }
 
     /**

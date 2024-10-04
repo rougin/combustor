@@ -1,7 +1,7 @@
 {
   "name": "rougin/combustor",
   "description": "MVC code generator for Codeigniter 3.",
-  "keywords": [ "codeigniter", "crud", "generator" ],
+  "keywords": [ "code-generator", "crud-generator" ],
   "homepage": "https://roug.in/combustor/",
   "license": "MIT",
   "authors":

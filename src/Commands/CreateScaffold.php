@@ -2,21 +2,14 @@
 
 namespace Rougin\Combustor\Commands;
 
-use Rougin\Combustor\Combustor;
 use Rougin\Combustor\Command;
-use Symfony\Component\Console\Command\Command as Symfony;
-use Symfony\Component\Console\Input\ArrayInput;
-use Symfony\Component\Console\Input\InputArgument;
-use Symfony\Component\Console\Input\InputInterface;
-use Symfony\Component\Console\Input\InputOption;
-use Symfony\Component\Console\Output\OutputInterface;
 
 /**
  * @package Combustor
  *
  * @author Rougin Gutib <rougingutib@gmail.com>
  */
-class CreateScaffold extends Symfony
+class CreateScaffold extends Command
 {
     const TYPE_WILDFIRE = 0;
 
@@ -28,111 +21,78 @@ class CreateScaffold extends Symfony
     protected $driver = null;
 
     /**
-     * @param \Rougin\Combustor\Combustor $combustor
+     * @var string
      */
-    public function __construct(Combustor $combustor)
-    {
-        parent::__construct();
-
-        $this->driver = $combustor->getDriver();
-    }
+    protected $name = 'create:scaffold';
 
     /**
-     * @return boolean
+     * @var string
      */
-    public function isEnabled()
-    {
-        return $this->driver !== null;
-    }
+    protected $description = 'Create a new HTTP controller, model, and view templates';
 
     /**
+     * Configures the current command.
+     *
      * @return void
      */
-    protected function configure()
+    public function init()
     {
-        $this->setName('create:scaffold');
+        parent::init();
 
-        $this->setDescription('Create a new HTTP controller, model, and view templates');
+        $this->addOption('bootstrap', 'adds styling based on Bootstrap');
 
-        $required = InputArgument::REQUIRED;
+        $this->addOption('doctrine', 'generates a Doctrine-based controller, models, and views');
 
-        $this->addArgument('table', $required, 'Name of the database table');
-
-        $none = InputOption::VALUE_NONE;
-
-        $this->addOption('bootstrap', null, $none, 'adds styling based on Bootstrap');
-
-        $this->addOption('doctrine', null, $none, 'generates Doctrine-based views');
-
-        $this->addOption('wildfire', null, $none, 'generates Wildfire-based views');
+        $this->addOption('wildfire', 'generates a Wildfire-based controller, models, and views');
     }
 
     /**
-     * @param \Symfony\Component\Console\Input\InputInterface   $input
-     * @param \Symfony\Component\Console\Output\OutputInterface $output
+     * Executes the command.
      *
      * @return integer
      */
-    protected function execute(InputInterface $input, OutputInterface $output)
+    public function run()
     {
         /** @var boolean */
-        $doctrine = $input->getOption('doctrine');
+        $doctrine = $this->getOption('doctrine');
 
         /** @var boolean */
-        $wildfire = $input->getOption('wildfire');
+        $wildfire = $this->getOption('wildfire');
 
         try
         {
-            Command::getInstalled($doctrine, $wildfire);
+            $this->getInstalled($doctrine, $wildfire);
         }
         catch (\Exception $e)
         {
-            $text = $e->getMessage();
-
-            $output->writeln('<error>[FAIL] ' . $text . '</error>');
+            $this->showFail($e->getMessage());
 
             return Command::RETURN_FAILURE;
         }
 
         /** @var string */
-        $table = $input->getArgument('table');
+        $table = $this->getArgument('table');
 
-        /** @var \Symfony\Component\Console\Application */
-        $app = $this->getApplication();
+        $input = array('table' => $table);
+        $input['--doctrine'] = $doctrine;
+        $input['--wildfire'] = $wildfire;
 
+        // Execute the "create:controller" command ----
+        $this->runCommand('create:controller', $input);
+        // --------------------------------------------
+
+        // Execute the "create:model" command ----
+        $this->runCommand('create:model', $input);
+        // ---------------------------------------
+
+        // Execute the "create:views" command -----
         /** @var boolean */
-        $bootstrap = $input->getOption('bootstrap');
+        $bootstrap = $this->getOption('bootstrap');
 
-        // Execute the "create:controller" command ---
-        $command = 'create:controller';
-        $command = array('command' => $command);
-        $command['table'] = $table;
-        $command['--doctrine'] = $doctrine;
-        $command['--wildfire'] = $wildfire;
-        $input = new ArrayInput($command);
-        $app->doRun($input, $output);
-        // -------------------------------------------
+        $input['--bootstrap'] = $bootstrap;
 
-        // Execute the "create:model" command ---
-        $command = 'create:model';
-        $command = array('command' => $command);
-        $command['table'] = $table;
-        $command['--doctrine'] = $doctrine;
-        $command['--wildfire'] = $wildfire;
-        $input = new ArrayInput($command);
-        $app->doRun($input, $output);
-        // --------------------------------------
-
-        // Execute the "create:views" command ---
-        $command = 'create:views';
-        $command = array('command' => $command);
-        $command['table'] = $table;
-        $command['--bootstrap'] = $bootstrap;
-        $command['--doctrine'] = $doctrine;
-        $command['--wildfire'] = $wildfire;
-        $input = new ArrayInput($command);
-        $app->doRun($input, $output);
-        // --------------------------------------
+        $this->runCommand('create:views', $input);
+        // ----------------------------------------
 
         return Command::RETURN_SUCCESS;
     }

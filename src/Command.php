@@ -60,11 +60,6 @@ class Command extends Blueprint
     public function init()
     {
         $this->addArgument('table', 'Name of the database table');
-
-        if ($this->name !== 'create:views')
-        {
-            $this->addOption('keep', 'Do not inflect the class name');
-        }
     }
 
     /**
@@ -82,7 +77,7 @@ class Command extends Blueprint
      * @return integer
      * @throws \Exception
      */
-    public static function getInstalled($doctrine, $wildfire)
+    protected function getInstalled($doctrine, $wildfire)
     {
         $class = 'Rougin\Credo\Credo';
         $doctrineExists = class_exists($class);

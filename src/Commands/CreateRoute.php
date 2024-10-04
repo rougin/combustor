@@ -54,7 +54,7 @@ class CreateRoute extends Command
 
         try
         {
-            $type = self::getInstalled($doctrine, $wildfire);
+            $type = $this->getInstalled($doctrine, $wildfire);
         }
         catch (\Exception $e)
         {

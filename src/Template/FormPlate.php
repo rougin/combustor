@@ -118,19 +118,24 @@ class FormPlate
 
             $field = $this->getField($col);
 
-            $lines[] = $tab . '<div>';
-            $lines[] = $tab . $tab . '<?= form_label(\'' . $title . '\', \'\', [\'class\' => \'\']) ?>';
+            $class = $this->bootstrap ? 'mb-3' : '';
+            $lines[] = $tab . '<div class="' . $class . '">';
+            $class = $this->bootstrap ? 'form-label mb-0' : '';
+            $lines[] = $tab . $tab . '<?= form_label(\'' . $title . '\', \'\', [\'class\' => \'' . $class . '\']) ?>';
+
+            $class = $this->bootstrap ? 'form-control' : '';
 
             if ($this->edit)
             {
-                $lines[] = $tab . $tab . '<?= form_input(\'' . $name . '\', set_value(\'' . $name . '\', ' . $field . '), \'class=""\') ?>';
+                $lines[] = $tab . $tab . '<?= form_input(\'' . $name . '\', set_value(\'' . $name . '\', ' . $field . '), \'class="' . $class . '"\') ?>';
             }
             else
             {
-                $lines[] = $tab . $tab . '<?= form_input(\'' . $name . '\', set_value(\'' . $name . '\'), \'class=""\') ?>';
+                $lines[] = $tab . $tab . '<?= form_input(\'' . $name . '\', set_value(\'' . $name . '\'), \'class="' . $class . '"\') ?>';
             }
 
-            $lines[] = $tab . $tab . '<?= form_error(\'' . $name . '\', \'<div><span class="">\', \'</span></div>\') ?>';
+            $class = $this->bootstrap ? 'text-danger small' : '';
+            $lines[] = $tab . $tab . '<?= form_error(\'' . $name . '\', \'<div><span class="' . $class . '">\', \'</span></div>\') ?>';
             $lines[] = $tab . '</div>';
             $lines[] = '';
         }
@@ -143,12 +148,15 @@ class FormPlate
         }
 
         $lines[] = $tab . '<?php if (isset($error)): ?>';
-        $lines[] = $tab . '  <div class=""><?= $error ?></div>';
+        $class = $this->bootstrap ? 'alert alert-danger' : '';
+        $lines[] = $tab . '  <div class="' . $class . '"><?= $error ?></div>';
         $lines[] = $tab . '<?php endif ?>';
         $lines[] = '';
 
-        $lines[] = $tab . '<?= anchor(\'' . $route . '\', \'Cancel\') ?>';
-        $lines[] = $tab . '<?= form_submit(null, \'' . $submit . '\') ?>';
+        $class = $this->bootstrap ? 'btn btn-link text-secondary text-decoration-none' : '';
+        $lines[] = $tab . '<?= anchor(\'' . $route . '\', \'Cancel\', \'class="' . $class . '"\') ?>';
+        $class = $this->bootstrap ? 'btn btn-primary' : '';
+        $lines[] = $tab . '<?= form_submit(null, \'' . $submit . '\', \'class="' . $class . '"\') ?>';
         $lines[] = '<?= form_close() ?>';
 
         $result = implode("\n", $lines);

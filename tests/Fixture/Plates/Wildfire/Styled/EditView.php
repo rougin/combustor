@@ -3,40 +3,40 @@
 <?= form_open('users/edit/' . $item->id) ?>
   <?= form_hidden('_method', 'PUT') ?>
 
-  <div>
-    <?= form_label('Email') ?>
-    <?= form_input('email', set_value('email', $item->email)) ?>
-    <?= form_error('email', '<div><span>', '</span></div>') ?>
+  <div class="mb-3">
+    <?= form_label('Email', '', ['class' => 'form-label mb-0']) ?>
+    <?= form_input('email', set_value('email', $item->email), 'class="form-control"') ?>
+    <?= form_error('email', '<div><span class="text-danger small">', '</span></div>') ?>
   </div>
 
-  <div>
-    <?= form_label('Name') ?>
-    <?= form_input('name', set_value('name', $item->name)) ?>
-    <?= form_error('name', '<div><span>', '</span></div>') ?>
+  <div class="mb-3">
+    <?= form_label('Name', '', ['class' => 'form-label mb-0']) ?>
+    <?= form_input('name', set_value('name', $item->name), 'class="form-control"') ?>
+    <?= form_error('name', '<div><span class="text-danger small">', '</span></div>') ?>
   </div>
 
-  <div>
-    <?= form_label('Year') ?>
-    <?= form_input('year', set_value('year', $item->year)) ?>
-    <?= form_error('year', '<div><span>', '</span></div>') ?>
+  <div class="mb-3">
+    <?= form_label('Year', '', ['class' => 'form-label mb-0']) ?>
+    <?= form_input('year', set_value('year', $item->year), 'class="form-control"') ?>
+    <?= form_error('year', '<div><span class="text-danger small">', '</span></div>') ?>
   </div>
 
-  <div>
-    <?= form_label('Admin') ?>
-    <?= form_input('admin', set_value('admin', $item->admin)) ?>
-    <?= form_error('admin', '<div><span>', '</span></div>') ?>
+  <div class="mb-3">
+    <?= form_label('Admin', '', ['class' => 'form-label mb-0']) ?>
+    <?= form_input('admin', set_value('admin', $item->admin), 'class="form-control"') ?>
+    <?= form_error('admin', '<div><span class="text-danger small">', '</span></div>') ?>
   </div>
 
-  <div>
-    <?= form_label('Remarks') ?>
-    <?= form_input('remarks', set_value('remarks', $item->remarks)) ?>
-    <?= form_error('remarks', '<div><span>', '</span></div>') ?>
+  <div class="mb-3">
+    <?= form_label('Remarks', '', ['class' => 'form-label mb-0']) ?>
+    <?= form_input('remarks', set_value('remarks', $item->remarks), 'class="form-control"') ?>
+    <?= form_error('remarks', '<div><span class="text-danger small">', '</span></div>') ?>
   </div>
 
   <?php if (isset($error)): ?>
-    <div><?= $error ?></div>
+    <div class="alert alert-danger"><?= $error ?></div>
   <?php endif ?>
 
-  <?= anchor('users', 'Cancel') ?>
-  <?= form_submit(null, 'Update') ?>
+  <?= anchor('users', 'Cancel', 'class="btn btn-link text-secondary text-decoration-none"') ?>
+  <?= form_submit(null, 'Update', 'class="btn btn-primary"') ?>
 <?= form_close() ?>

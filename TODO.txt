@@ -1,6 +1,7 @@
-[ ] create:layout
+[*] create:layout
 [ ] create:scaffold
-[ ] --bootstrap
+[x] --bootstrap
+- index pagination
 [ ] multi relations
 [*] exclude fields
 - created_at

@@ -17,6 +17,10 @@ class PlateTest extends Testcase
 
     const TYPE_VIEW = 2;
 
+    const VIEW_COMMON = 0;
+
+    const VIEW_STYLED = 1;
+
     /**
      * @var \Rougin\Combustor\Console
      */
@@ -28,81 +32,6 @@ class PlateTest extends Testcase
     protected $path;
 
     /**
-     * @return string
-     */
-    protected function getDoctrineCtrl()
-    {
-        return $this->getTemplate('Doctrine/Controller');
-    }
-
-    /**
-     * @return string
-     */
-    protected function getDoctrineModel()
-    {
-        return $this->getTemplate('Doctrine/Model');
-    }
-
-    /**
-     * @return string
-     */
-    protected function getDoctrineView()
-    {
-        $create = $this->getTemplate('Doctrine/CreateView');
-
-        $edit = $this->getTemplate('Doctrine/EditView');
-
-        $index = $this->getTemplate('Doctrine/IndexView');
-
-        return $create . "\n" . $edit . "\n" . $index;
-    }
-
-    /**
-     * @param string $name
-     *
-     * @return string
-     */
-    protected function getTemplate($name)
-    {
-        $path = __DIR__ . '/Fixture/Plates/' . $name . '.php';
-
-        /** @var string */
-        $file = file_get_contents($path);
-
-        return str_replace("\r\n", "\n", $file);
-    }
-
-    /**
-     * @return string
-     */
-    protected function getWildfireCtrl()
-    {
-        return $this->getTemplate('Wildfire/Controller');
-    }
-
-    /**
-     * @return string
-     */
-    protected function getWildfireModel()
-    {
-        return $this->getTemplate('Wildfire/Model');
-    }
-
-    /**
-     * @return string
-     */
-    protected function getWildfireView()
-    {
-        $create = $this->getTemplate('Wildfire/CreateView');
-
-        $edit = $this->getTemplate('Wildfire/EditView');
-
-        $index = $this->getTemplate('Wildfire/IndexView');
-
-        return $create . "\n" . $edit . "\n" . $index;
-    }
-
-    /**
      * @return void
      */
     public function doSetUp()
@@ -112,6 +41,42 @@ class PlateTest extends Testcase
         $this->path = $root;
 
         $this->app = new Console($root);
+    }
+
+    /**
+     * @return void
+     */
+    public function test_creating_layout()
+    {
+        $test = $this->findCommand('create:layout');
+
+        $test->execute(array());
+
+        $type = self::VIEW_COMMON;
+
+        $expected = $this->getLayoutView($type);
+
+        $actual = $this->getActualLayout();
+
+        $this->assertEquals($expected, $actual);
+    }
+
+    /**
+     * @return void
+     */
+    public function test_creating_layout_with_bootstrap()
+    {
+        $test = $this->findCommand('create:layout');
+
+        $test->execute(array('--bootstrap' => true));
+
+        $type = self::VIEW_STYLED;
+
+        $expected = $this->getLayoutView($type);
+
+        $actual = $this->getActualLayout();
+
+        $this->assertEquals($expected, $actual);
     }
 
     /**
@@ -231,22 +196,6 @@ class PlateTest extends Testcase
     /**
      * @return void
      */
-    public function test_with_layout()
-    {
-        $test = $this->findCommand('create:layout');
-
-        $test->execute(array());
-
-        $expected = $this->getLayoutView();
-
-        $actual = $this->getActualLayout();
-
-        $this->assertEquals($expected, $actual);
-    }
-
-    /**
-     * @return void
-     */
     public function test_with_packages_absent()
     {
         $test = $this->findCommand('create:controller');
@@ -311,6 +260,25 @@ class PlateTest extends Testcase
     /**
      * @param string $name
      *
+     * @return void
+     */
+    protected function deleteView($name)
+    {
+        $path = $this->app->getAppPath();
+
+        $source = $path . '/views/' . $name;
+
+        /** @var string[] */
+        $files = glob($source . '/*.*');
+
+        array_map('unlink', $files);
+
+        rmdir($path . '/views/' . $name);
+    }
+
+    /**
+     * @param string $name
+     *
      * @return \Symfony\Component\Console\Tester\CommandTester
      */
     protected function findCommand($name)
@@ -370,7 +338,9 @@ class PlateTest extends Testcase
         $file = $path . '/' . $name . '.php';
 
         /** @var string */
-        $result = file_get_contents($file);
+
+
+     $result = file_get_contents($file);
 
         return str_replace("\r\n", "\n", $result);
     }
@@ -428,11 +398,50 @@ class PlateTest extends Testcase
     /**
      * @return string
      */
-    protected function getLayoutView()
+    protected function getDoctrineCtrl()
     {
-        $header = $this->getTemplate('Layout/Header');
+        return $this->getTemplate('Doctrine/Controller');
+    }
 
-        $footer = $this->getTemplate('Layout/Footer');
+    /**
+     * @return string
+     */
+    protected function getDoctrineModel()
+    {
+        return $this->getTemplate('Doctrine/Model');
+    }
+
+    /**
+     * @return string
+     */
+    protected function getDoctrineView()
+    {
+        $create = $this->getTemplate('Doctrine/CreateView');
+
+        $edit = $this->getTemplate('Doctrine/EditView');
+
+        $index = $this->getTemplate('Doctrine/IndexView');
+
+        return $create . "\n" . $edit . "\n" . $index;
+    }
+
+    /**
+     * @param integer $type
+     *
+     * @return string
+     */
+    protected function getLayoutView($type = self::VIEW_COMMON)
+    {
+        $name = 'Common';
+
+        if ($type === self::VIEW_STYLED)
+        {
+            $name = 'Styled';
+        }
+
+        $header = $this->getTemplate('Layout/' . $name . 'Header');
+
+        $footer = $this->getTemplate('Layout/' . $name . 'Footer');
 
         return $header . "\n" . $footer;
     }
@@ -440,19 +449,45 @@ class PlateTest extends Testcase
     /**
      * @param string $name
      *
-     * @return void
+     * @return string
      */
-    protected function deleteView($name)
+    protected function getTemplate($name)
     {
-        $path = $this->app->getAppPath();
+        $path = __DIR__ . '/Fixture/Plates/' . $name . '.php';
 
-        $source = $path . '/views/' . $name;
+        /** @var string */
+        $file = file_get_contents($path);
 
-        /** @var string[] */
-        $files = glob($source . '/*.*');
+        return str_replace("\r\n", "\n", $file);
+    }
 
-        array_map('unlink', $files);
+    /**
+     * @return string
+     */
+    protected function getWildfireCtrl()
+    {
+        return $this->getTemplate('Wildfire/Controller');
+    }
 
-        rmdir($path . '/views/' . $name);
+    /**
+     * @return string
+     */
+    protected function getWildfireModel()
+    {
+        return $this->getTemplate('Wildfire/Model');
+    }
+
+    /**
+     * @return string
+     */
+    protected function getWildfireView()
+    {
+        $create = $this->getTemplate('Wildfire/CreateView');
+
+        $edit = $this->getTemplate('Wildfire/EditView');
+
+        $index = $this->getTemplate('Wildfire/IndexView');
+
+        return $create . "\n" . $edit . "\n" . $index;
     }
 }

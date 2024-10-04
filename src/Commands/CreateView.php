@@ -34,6 +34,8 @@ class CreateView extends Command
     {
         parent::init();
 
+        $this->addOption('bootstrap', 'adds styling based on Bootstrap');
+
         $this->addOption('doctrine', 'generates Doctrine-based views');
 
         $this->addOption('wildfire', 'generates Wildfire-based views');

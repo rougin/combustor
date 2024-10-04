@@ -40,6 +40,9 @@ class CreateLayout extends Command
      */
     public function run()
     {
+        /** @var boolean */
+        $bootstrap = $this->getOption('bootstrap');
+
         $path = $this->path . '/views/';
 
         if (! is_dir($path . 'layout'))
@@ -48,7 +51,7 @@ class CreateLayout extends Command
         }
 
         // Create the "header.php" file ----------
-        $header = new HeaderPlate;
+        $header = new HeaderPlate($bootstrap);
 
         $file = $path . 'layout/header.php';
 
@@ -56,7 +59,7 @@ class CreateLayout extends Command
         // ---------------------------------------
 
         // Create the "footer.php" file ----------
-        $footer = new FooterPlate;
+        $footer = new FooterPlate($bootstrap);
 
         $file = $path . 'layout/footer.php';
 

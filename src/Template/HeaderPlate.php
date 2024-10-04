@@ -10,6 +10,19 @@ namespace Rougin\Combustor\Template;
 class HeaderPlate
 {
     /**
+     * @var boolean
+     */
+    protected $bootstrap;
+
+    /**
+     * @param boolean $bootstrap
+     */
+    public function __construct($bootstrap)
+    {
+        $this->bootstrap = $bootstrap;
+    }
+
+    /**
      * @param string $tab
      *
      * @return string
@@ -26,10 +39,22 @@ class HeaderPlate
         $lines[] = $tab . '<meta name="viewport" content="width=device-width, initial-scale=1">';
         $lines[] = $tab . '<title>Welcome to Codeigniter 3</title>';
 
+        if ($this->bootstrap)
+        {
+            $lines[] = $tab . '<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">';
+        }
+
         $lines[] = '</head>';
         $lines[] = '<body>';
 
-        $lines[] = $tab . '<div>';
+        if ($this->bootstrap)
+        {
+            $lines[] = $tab . '<div class="container">';
+        }
+        else
+        {
+            $lines[] = $tab . '<div>';
+        }
 
         return implode("\n", $lines);
     }

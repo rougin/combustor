@@ -56,7 +56,9 @@ class TablePlate
      */
     public function make($tab = '')
     {
-        $lines = array('<table class="">');
+        $class = $this->bootstrap ? 'table table-hover' : '';
+
+        $lines = array('<table class="' . $class . '">');
 
         $lines = $this->setCol($lines, $tab);
 
@@ -156,10 +158,13 @@ class TablePlate
 
             $route = Inflector::plural($this->table);
 
-            $lines[] = $space . '<td>';
+            $class = $this->bootstrap ? 'd-flex' : '';
+            $lines[] = $space . '<td class="' . $class . '">';
 
             $lines[] = $space . $tab . '<span>';
-            $link = '<a href="<?= base_url(\'' . $route . '/edit/\' . ' . $field . ') ?>">Edit</a>';
+            $class = $this->bootstrap ? 'btn btn-secondary' : '';
+            $link = '<?= base_url(\'' . $route . '/edit/\' . ' . $field . ') ?>';
+            $link = '<a class="' . $class . '" href="' . $link . '">Edit</a>';
             $lines[] = $space . $tab . $tab . $link;
             $lines[] = $space . $tab . '</span>';
 
@@ -171,7 +176,8 @@ class TablePlate
             $hidden = '<?= form_hidden(\'_method\', \'DELETE\') ?>';
             $lines[] = $space . $tab . $tab . $tab . $hidden;
 
-            $delete = '<a href="javascript:void(0)" onclick="trash(this.parentElement)">Delete</a>';
+            $class = $this->bootstrap ? 'btn btn-link text-danger text-decoration-none' : '';
+            $delete = '<a class="' . $class . '" href="javascript:void(0)" onclick="trash(this.parentElement)">Delete</a>';
             $lines[] = $space . $tab . $tab . $tab . $delete;
 
             $close = '<?= form_close() ?>';

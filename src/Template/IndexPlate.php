@@ -60,13 +60,16 @@ class IndexPlate
         $lines[] = '';
 
         $lines[] = '<?php if (isset($alert)): ?>';
-        $lines[] = '  <div class=""><?= $alert ?></div>';
+        $class = $this->bootstrap ? 'alert alert-success' : '';
+        $lines[] = '  <div class="' . $class . '"><?= $alert ?></div>';
         $lines[] = '<?php endif ?>';
         $lines[] = '';
 
         $text = 'Create New ' . ucfirst($model);
-        $lines[] = '<div class="">';
-        $lines[] = '  <a class="" href="<?= base_url(\'' . $route . '/create\') ?>">' . $text . '</a>';
+        $class = $this->bootstrap ? 'my-3' : '';
+        $lines[] = '<div class="' . $class . '">';
+        $class = $this->bootstrap ? 'btn btn-primary' : '';
+        $lines[] = '  <a class="' . $class . '" href="<?= base_url(\'' . $route . '/create\') ?>">' . $text . '</a>';
         $lines[] = '</div>';
         $lines[] = '';
 

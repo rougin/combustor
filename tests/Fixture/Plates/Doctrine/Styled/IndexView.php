@@ -1,15 +1,15 @@
 <h1>Users</h1>
 
 <?php if (isset($alert)): ?>
-  <div><?= $alert ?></div>
+  <div class="alert alert-success"><?= $alert ?></div>
 <?php endif ?>
 
-<div>
-  <a href="<?= base_url('users/create') ?>">Create New User</a>
+<div class="my-3">
+  <a class="btn btn-primary" href="<?= base_url('users/create') ?>">Create New User</a>
 </div>
 
 <div>
-<table>
+<table class="table table-hover">
   <thead>
     <tr>
       <th>Email</th>
@@ -33,14 +33,14 @@
         <td><?= $item->get_created_at() ?></td>
         <td><?= $item->get_updated_at() ?></td>
         <td><?= $item->get_deleted_at() ?></td>
-        <td>
+        <td class="d-flex">
           <span>
-            <a href="<?= base_url('users/edit/' . $item->get_id()) ?>">Edit</a>
+            <a class="btn btn-secondary" href="<?= base_url('users/edit/' . $item->get_id()) ?>">Edit</a>
           </span>
           <span>
             <?= form_open('users/delete/' . $item->get_id()) ?>
               <?= form_hidden('_method', 'DELETE') ?>
-              <a href="javascript:void(0)" onclick="trash(this.parentElement)">Delete</a>
+              <a class="btn btn-link text-danger text-decoration-none" href="javascript:void(0)" onclick="trash(this.parentElement)">Delete</a>
             <?= form_close() ?>
           </span>
         </td>

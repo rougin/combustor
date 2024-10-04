@@ -90,7 +90,7 @@ class CreateScaffold extends Symfony
 
             $output->writeln('<error>[FAIL] ' . $text . '</error>');
 
-            return self::FAILURE;
+            return Command::RETURN_FAILURE;
         }
 
         /** @var string */
@@ -132,6 +132,6 @@ class CreateScaffold extends Symfony
         $app->doRun($input, $output);
         // --------------------------------------
 
-        return self::SUCCESS;
+        return Command::RETURN_SUCCESS;
     }
 }

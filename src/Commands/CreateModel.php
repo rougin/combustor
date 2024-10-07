@@ -34,6 +34,8 @@ class CreateModel extends Command
         $this->addOption('doctrine', 'generates a Doctrine-based model');
 
         $this->addOption('wildfire', 'generates a Wildfire-based model');
+
+        $this->addOption('empty', 'generates an empty model');
     }
 
     /**
@@ -51,6 +53,9 @@ class CreateModel extends Command
 
         /** @var boolean */
         $wildfire = $this->getOption('wildfire');
+
+        /** @var boolean */
+        $empty = $this->getOption('empty');
 
         try
         {
@@ -73,6 +78,11 @@ class CreateModel extends Command
         $file = $path . $name . '.php';
 
         $plate = $this->getTemplate($type);
+
+        if ($empty)
+        {
+            $plate->setEmpty();
+        }
 
         $plate = $this->maker->make($plate);
 

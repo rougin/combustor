@@ -77,11 +77,11 @@ $ vendor/bin/combustor install:doctrine
 ```
 
 > [!NOTE]
-> Using the `install:wildfire` command installs [Wildfire](https://roug.in/wildfire/) package while the `install:doctrine` installs [Credo](https://roug.in/credo/) package.
+> Using the `install:wildfire` command installs the [Wildfire](https://roug.in/wildfire/) package while the `install:doctrine` installs the [Credo](https://roug.in/credo/) package.
 
 ## Reminders
 
-Prior in executing any commands, kindly ensure that the **database tables are defined properly** (foreign keys, indexes, relationships, normalizations) in order to minimize the modifications after the code structure has been generated.
+Prior in executing any commands, kindly ensure that the _**database tables are defined properly**_ (foreign keys, indexes, relationships, normalizations) in order to minimize the modifications after the code structure has been generated.
 
 Also, please proceed first in generating models, views, or controllers to database tables that are having _**no relationship with other tables**_ in the database.
 
@@ -116,6 +116,7 @@ Create a new HTTP controller.
 
 * `--doctrine` - generates a Doctrine-based controller
 * `--wildfire` - generates a Wildfire-based controller
+* `--empty` - generates an empty HTTP controller
 
 > [!NOTE]
 > If either `Wildfire` or `Doctrine` is installed, no need to specify it as option for executing a specified command (e.g. `--wildfire`). However if both are installed, a command must have a `--wildfire` or `--doctrine` option added.
@@ -138,6 +139,7 @@ Create a new model.
 
 * `--doctrine` - generates a Doctrine-based model
 * `--wildfire` - generates a Wildfire-based model
+* `--empty` - generates an empty model
 
 **Example**
 

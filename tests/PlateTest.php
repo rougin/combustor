@@ -170,6 +170,46 @@ class PlateTest extends Testcase
     /**
      * @return void
      */
+    public function test_empty_controller()
+    {
+        $test = $this->findCommand('create:controller');
+
+        $input = array('table' => 'users');
+        $input['--empty'] = true;
+        $input['--wildfire'] = true;
+
+        $test->execute($input);
+
+        $expected = $this->getEmptyCtrl();
+
+        $actual = $this->getActualCtrl('Users');
+
+        $this->assertEquals($expected, $actual);
+    }
+
+    /**
+     * @return void
+     */
+    public function test_empty_model()
+    {
+        $test = $this->findCommand('create:model');
+
+        $input = array('table' => 'users');
+        $input['--empty'] = true;
+        $input['--wildfire'] = true;
+
+        $test->execute($input);
+
+        $expected = $this->getEmptyModel();
+
+        $actual = $this->getActualModel('User');
+
+        $this->assertEquals($expected, $actual);
+    }
+
+    /**
+     * @return void
+     */
     public function test_scaffold_on_doctrine()
     {
         $test = $this->findCommand('create:scaffold');
@@ -478,6 +518,22 @@ class PlateTest extends Testcase
         $index = $this->getTemplate('Doctrine/' . $name . '/IndexView');
 
         return $create . "\n" . $edit . "\n" . $index;
+    }
+
+    /**
+     * @return string
+     */
+    protected function getEmptyCtrl()
+    {
+        return $this->getTemplate('Empty/Controller');
+    }
+
+    /**
+     * @return string
+     */
+    protected function getEmptyModel()
+    {
+        return $this->getTemplate('Empty/Model');
     }
 
     /**

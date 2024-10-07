@@ -1,8 +1,5 @@
-[x] bootstrap
-- [ ] index pagination
-[ ] --empty
+[ ] bootstrap pagination
 [ ] --force
-[x] custom fields
-- [ ] email
+[ ] custom field email
+[ ] custom field gender
 [ ] multi relations
-[*] create:repository

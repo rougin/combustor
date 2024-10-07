@@ -44,6 +44,8 @@ class CreateScaffold extends Command
         $this->addOption('doctrine', 'generates a Doctrine-based controller, models, and views');
 
         $this->addOption('wildfire', 'generates a Wildfire-based controller, models, and views');
+
+        $this->addOption('empty', 'generates an empty HTTP controller and model');
     }
 
     /**
@@ -55,6 +57,9 @@ class CreateScaffold extends Command
     {
         /** @var boolean */
         $doctrine = $this->getOption('doctrine');
+
+        /** @var boolean */
+        $empty = $this->getOption('empty');
 
         /** @var boolean */
         $wildfire = $this->getOption('wildfire');
@@ -75,6 +80,7 @@ class CreateScaffold extends Command
 
         $input = array('table' => $table);
         $input['--doctrine'] = $doctrine;
+        $input['--empty'] = $empty;
         $input['--wildfire'] = $wildfire;
 
         // Execute the "create:controller" command ----
@@ -88,6 +94,8 @@ class CreateScaffold extends Command
         // Execute the "create:views" command -----
         /** @var boolean */
         $bootstrap = $this->getOption('bootstrap');
+
+        unset($input['--empty']);
 
         $input['--bootstrap'] = $bootstrap;
 

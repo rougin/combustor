@@ -34,6 +34,8 @@ class CreateRoute extends Command
         $this->addOption('doctrine', 'generates a Doctrine-based controller');
 
         $this->addOption('wildfire', 'generates a Wildfire-based controller');
+
+        $this->addOption('empty', 'generates an empty HTTP controller');
     }
 
     /**
@@ -51,6 +53,9 @@ class CreateRoute extends Command
 
         /** @var boolean */
         $wildfire = $this->getOption('wildfire');
+
+        /** @var boolean */
+        $empty = $this->getOption('empty');
 
         try
         {
@@ -73,6 +78,11 @@ class CreateRoute extends Command
         $file = $path . $name . '.php';
 
         $plate = $this->getTemplate($type);
+
+        if ($empty)
+        {
+            $plate->setEmpty();
+        }
 
         $plate = $this->maker->make($plate);
 

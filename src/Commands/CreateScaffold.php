@@ -64,6 +64,9 @@ class CreateScaffold extends Command
         /** @var boolean */
         $wildfire = $this->getOption('wildfire');
 
+        /** @var boolean */
+        $force = $this->getOption('force');
+
         try
         {
             $this->getInstalled($doctrine, $wildfire);
@@ -82,6 +85,7 @@ class CreateScaffold extends Command
         $input['--doctrine'] = $doctrine;
         $input['--empty'] = $empty;
         $input['--wildfire'] = $wildfire;
+        $input['--force'] = $force;
 
         // Execute the "create:controller" command ----
         $this->runCommand('create:controller', $input);

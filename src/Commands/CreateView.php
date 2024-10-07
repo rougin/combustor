@@ -57,6 +57,9 @@ class CreateView extends Command
         /** @var boolean */
         $wildfire = $this->getOption('wildfire');
 
+        /** @var boolean */
+        $force = $this->getOption('force');
+
         try
         {
             $type = $this->getInstalled($doctrine, $wildfire);
@@ -77,6 +80,13 @@ class CreateView extends Command
 
         $path = $this->path . '/views/';
 
+        if (is_dir($path . $name) && ! $force)
+        {
+            $this->showFail('"' . $name . '" directory already exists. Use --force to overwrite the directory.');
+
+            return self::RETURN_FAILURE;
+        }
+
         if (! is_dir($path . $name))
         {
             mkdir($path . $name);
@@ -85,7 +95,7 @@ class CreateView extends Command
         /** @var boolean */
         $bootstrap = $this->getOption('bootstrap');
 
-        // Create the "create.php" file ---------------------------------
+        // Create the "create.php" file ----------------
         $create = new CreatePlate($table, $type, $cols);
 
         $create->withBootstrap($bootstrap);
@@ -95,9 +105,9 @@ class CreateView extends Command
         $file = $path . $name . '/create.php';
 
         file_put_contents($file, $create->make('  '));
-        // --------------------------------------------------------------
+        // ---------------------------------------------
 
-        // Create the "edit.php" file -------------------------------
+        // Create the "edit.php" file --------------
         $edit = new EditPlate($table, $type, $cols);
 
         $edit->withBootstrap($bootstrap);
@@ -107,7 +117,7 @@ class CreateView extends Command
         $file = $path . $name . '/edit.php';
 
         file_put_contents($file, $edit->make('  '));
-        // ----------------------------------------------------------
+        // -----------------------------------------
 
         // Create the "index.php" file ---------------
         $index = new IndexPlate($table, $type, $cols);

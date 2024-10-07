@@ -31,6 +31,8 @@ class CreateLayout extends Command
     public function init()
     {
         $this->addOption('bootstrap', 'adds styling based on Bootstrap');
+
+        $this->addOption('force', 'generates file/s even they already exists');
     }
 
     /**
@@ -43,7 +45,19 @@ class CreateLayout extends Command
         /** @var boolean */
         $bootstrap = $this->getOption('bootstrap');
 
+        /** @var boolean */
+        $force = $this->getOption('force');
+
         $path = $this->path . '/views/';
+
+        $file = $path . 'layout/header.php';
+
+        if (is_dir($path . 'layout') && ! $force)
+        {
+            $this->showFail('"header.php", "footer.php" already exists. Use --force to overwrite them.');
+
+            return self::RETURN_FAILURE;
+        }
 
         if (! is_dir($path . 'layout'))
         {
@@ -52,8 +66,6 @@ class CreateLayout extends Command
 
         // Create the "header.php" file ----------
         $header = new HeaderPlate($bootstrap);
-
-        $file = $path . 'layout/header.php';
 
         file_put_contents($file, $header->make());
         // ---------------------------------------

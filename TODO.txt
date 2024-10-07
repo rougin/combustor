@@ -1,5 +1,4 @@
 [ ] bootstrap pagination
-[ ] --force
 [ ] custom field email
 [ ] custom field gender
 [ ] multi relations

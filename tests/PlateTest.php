@@ -43,7 +43,7 @@ class PlateTest extends Testcase
     {
         $test = $this->findCommand('create:layout');
 
-        $test->execute(array());
+        $test->execute(array('--force' => true));
 
         $type = self::VIEW_COMMON;
 
@@ -61,11 +61,12 @@ class PlateTest extends Testcase
     {
         $test = $this->findCommand('create:layout');
 
-        $test->execute(array('--bootstrap' => true));
+        $input = array('--force' => true);
+        $input['--bootstrap'] = true;
 
-        $type = self::VIEW_STYLED;
+        $test->execute($input);
 
-        $expected = $this->getLayoutView($type);
+        $expected = $this->getLayoutView(self::VIEW_STYLED);
 
         $actual = $this->getActualLayout();
 
@@ -80,6 +81,7 @@ class PlateTest extends Testcase
         $test = $this->findCommand('create:controller');
 
         $input = array('table' => 'users');
+        $input['--force'] = true;
         $input['--doctrine'] = true;
 
         $test->execute($input);
@@ -99,6 +101,7 @@ class PlateTest extends Testcase
         $test = $this->findCommand('create:model');
 
         $input = array('table' => 'users');
+        $input['--force'] = true;
         $input['--doctrine'] = true;
 
         $test->execute($input);
@@ -118,6 +121,7 @@ class PlateTest extends Testcase
         $test = $this->findCommand('create:repository');
 
         $input = array('table' => 'users');
+        $input['--force'] = true;
 
         $test->execute($input);
 
@@ -136,6 +140,7 @@ class PlateTest extends Testcase
         $test = $this->findCommand('create:view');
 
         $input = array('table' => 'users');
+        $input['--force'] = true;
         $input['--doctrine'] = true;
 
         $test->execute($input);
@@ -157,6 +162,7 @@ class PlateTest extends Testcase
         $input = array('table' => 'users');
         $input['--doctrine'] = true;
         $input['--bootstrap'] = true;
+        $input['--force'] = true;
 
         $test->execute($input);
 
@@ -177,6 +183,7 @@ class PlateTest extends Testcase
         $input = array('table' => 'users');
         $input['--empty'] = true;
         $input['--wildfire'] = true;
+        $input['--force'] = true;
 
         $test->execute($input);
 
@@ -197,12 +204,122 @@ class PlateTest extends Testcase
         $input = array('table' => 'users');
         $input['--empty'] = true;
         $input['--wildfire'] = true;
+        $input['--force'] = true;
 
         $test->execute($input);
 
         $expected = $this->getEmptyModel();
 
         $actual = $this->getActualModel('User');
+
+        $this->assertEquals($expected, $actual);
+    }
+
+    /**
+     * @return void
+     */
+    public function test_existing_controller()
+    {
+        $test = $this->findCommand('create:controller');
+
+        $input = array('table' => 'users');
+        $input['--doctrine'] = true;
+
+        $test->execute($input);
+
+        $expected = '[FAIL] "Users" already exists. Use --force to overwrite the file.';
+
+        $actual = $this->getActualDisplay($test);
+
+        $this->assertEquals($expected, $actual);
+    }
+
+    /**
+     * @return void
+     */
+    public function test_existing_layout()
+    {
+        // Run the command to create its directory ---
+        $old = $this->findCommand('create:layout');
+
+        $old->execute(array());
+        // -------------------------------------------
+
+        $test = $this->findCommand('create:layout');
+
+        $test->execute(array());
+
+        $expected = '[FAIL] "header.php", "footer.php" already exists. Use --force to overwrite them.';
+
+        $actual = $this->getActualDisplay($test);
+
+        $this->assertEquals($expected, $actual);
+    }
+
+    /**
+     * @return void
+     */
+    public function test_existing_model()
+    {
+        $test = $this->findCommand('create:model');
+
+        $input = array('table' => 'users');
+        $input['--doctrine'] = true;
+
+        $test->execute($input);
+
+        $expected = '[FAIL] "User" already exists. Use --force to overwrite the file.';
+
+        $actual = $this->getActualDisplay($test);
+
+        $this->assertEquals($expected, $actual);
+    }
+
+    /**
+     * @return void
+     */
+    public function test_existing_repository()
+    {
+        $input = array('table' => 'users');
+
+        // Run the command to create its directory ---
+        $old = $this->findCommand('create:repository');
+
+        $old->execute($input);
+        // -------------------------------------------
+
+        $test = $this->findCommand('create:repository');
+
+        $test->execute($input);
+
+        $expected = '[FAIL] "User_repository" already exists. Use --force to overwrite the file.';
+
+        $actual = $this->getActualDisplay($test);
+
+        $this->assertEquals($expected, $actual);
+    }
+
+    /**
+     * @return void
+     */
+    public function test_existing_views()
+    {
+        $input = array('table' => 'users');
+        $input['--doctrine'] = true;
+
+        // Run the command to create the directory ---
+        $old = $this->findCommand('create:views');
+
+        $old->execute($input);
+        // -------------------------------------------
+
+        $test = $this->findCommand('create:views');
+
+        $test->execute($input);
+
+        $expected = '[FAIL] "users" directory already exists. Use --force to overwrite the directory.';
+
+        $actual = $this->getActualDisplay($test);
 
         $this->assertEquals($expected, $actual);
     }
@@ -217,6 +334,7 @@ class PlateTest extends Testcase
         $input = array('table' => 'users');
         $input['--doctrine'] = true;
         $input['--bootstrap'] = true;
+        $input['--force'] = true;
 
         $test->execute($input);
 
@@ -259,6 +377,7 @@ class PlateTest extends Testcase
         $test = $this->findCommand('create:controller');
 
         $input = array('table' => 'users');
+        $input['--force'] = true;
         $input['--wildfire'] = true;
 
         $test->execute($input);
@@ -278,6 +397,7 @@ class PlateTest extends Testcase
         $test = $this->findCommand('create:model');
 
         $input = array('table' => 'users');
+        $input['--force'] = true;
         $input['--wildfire'] = true;
 
         $test->execute($input);
@@ -297,6 +417,7 @@ class PlateTest extends Testcase
         $test = $this->findCommand('create:view');
 
         $input = array('table' => 'users');
+        $input['--force'] = true;
         $input['--wildfire'] = true;
 
         $test->execute($input);
@@ -316,8 +437,9 @@ class PlateTest extends Testcase
         $test = $this->findCommand('create:view');
 
         $input = array('table' => 'users');
-        $input['--wildfire'] = true;
         $input['--bootstrap'] = true;
+        $input['--force'] = true;
+        $input['--wildfire'] = true;
 
         $test->execute($input);
 
@@ -365,6 +487,20 @@ class PlateTest extends Testcase
     protected function getActualCtrl($name)
     {
         return $this->getActualFile($name, self::TYPE_CONTROLLER);
+    }
+
+    /**
+     * @param \Symfony\Component\Console\Tester\CommandTester $tester
+     *
+     * @return string
+     */
+    protected function getActualDisplay(CommandTester $tester)
+    {
+        $actual = $tester->getDisplay();
+
+        $actual = str_replace("\r\n", '', $actual);
+
+        return str_replace("\n", '', $actual);
     }
 
     /**
@@ -419,7 +555,7 @@ class PlateTest extends Testcase
         $footer = $this->getActualFile($name . '/footer', self::TYPE_VIEW);
 
         // Delete directory after getting the files ---
-        $this->deleteDir('views/' . $name);
+        $this->deleteDir('views/layout');
         // --------------------------------------------
 
         return $header . "\n" . $footer;

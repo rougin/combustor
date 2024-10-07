@@ -61,6 +61,8 @@ class Command extends Blueprint
     public function init()
     {
         $this->addArgument('table', 'Name of the database table');
+
+        $this->addOption('force', 'generates file/s even they already exists');
     }
 
     /**

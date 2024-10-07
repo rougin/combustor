@@ -9,4 +9,5 @@ tests/Fixture/Sample/controllers
 tests/Fixture/Sample/models
 tests/Fixture/Sample/repositories
 tests/Fixture/Sample/views
+tests/Fixture/Sample/views/layout
 vendor

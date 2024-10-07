@@ -97,6 +97,7 @@ Create a new header and footer file.
 **Options**
 
 * `--bootstrap` - adds styling based on Bootstrap
+* `--force` - generates file/s even they already exists
 
 **Example**
 
@@ -117,6 +118,7 @@ Create a new HTTP controller.
 * `--doctrine` - generates a Doctrine-based controller
 * `--wildfire` - generates a Wildfire-based controller
 * `--empty` - generates an empty HTTP controller
+* `--force` - generates file/s even they already exists
 
 > [!NOTE]
 > If either `Wildfire` or `Doctrine` is installed, no need to specify it as option for executing a specified command (e.g. `--wildfire`). However if both are installed, a command must have a `--wildfire` or `--doctrine` option added.
@@ -140,6 +142,7 @@ Create a new model.
 * `--doctrine` - generates a Doctrine-based model
 * `--wildfire` - generates a Wildfire-based model
 * `--empty` - generates an empty model
+* `--force` - generates file/s even they already exists
 
 **Example**
 
@@ -154,6 +157,10 @@ Create a new entity repository.
 **Arguments**
 
 * `table` - name of the database table
+
+**Options**
+
+* `--force` - generates file/s even they already exists
 
 **Example**
 
@@ -177,6 +184,7 @@ Create view templates.
 * `--bootstrap` - adds styling based on Bootstrap
 * `--doctrine` - generates Doctrine-based views
 * `--wildfire` - generates Wildfire-based views
+* `--force` - generates file/s even they already exists
 
 **Example**
 
@@ -197,6 +205,7 @@ Create a new HTTP controller, model, and view templates.
 * `--bootstrap` - adds styling based on Bootstrap
 * `--doctrine` - generates a Doctrine-based controller, model, and views
 * `--wildfire` - generates a Wildfire-based controller, model, and views
+* `--force` - generates file/s even they already exists
 
 **Example**
 

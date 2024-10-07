@@ -32,19 +32,31 @@ class CreateRepo extends Command
         /** @var string */
         $table = $this->getArgument('table');
 
-        // Create the repository file -------------------
+        /** @var boolean */
+        $force = $this->getOption('force');
+
         $name = Inflector::singular($table);
 
         $name = ucfirst(Inflector::singular($table));
 
+        $name = $name . '_repository';
+
         $path = $this->path . '/repositories/';
 
+        $file = $path . $name . '.php';
+
+        if (file_exists($file) && ! $force)
+        {
+            $this->showFail('"' . $name . '" already exists. Use --force to overwrite the file.');
+
+            return self::RETURN_FAILURE;
+        }
+
+        // Create the repository file -------------------
         if (! is_dir($path))
         {
             mkdir($path);
         }
-
-        $file = $path . $name . '_repository.php';
 
         $plate = $this->getTemplate(self::TYPE_DOCTRINE);
 

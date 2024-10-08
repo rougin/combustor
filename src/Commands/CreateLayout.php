@@ -78,6 +78,8 @@ class CreateLayout extends Command
         file_put_contents($file, $footer->make());
         // ---------------------------------------
 
+        $this->showPass('Layout files created!');
+
         return self::RETURN_SUCCESS;
     }
 }

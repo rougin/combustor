@@ -1,4 +1,5 @@
 add layout in controller if added
+checkbox if field is boolean
 custom field date types
 custom field email
 custom field gender

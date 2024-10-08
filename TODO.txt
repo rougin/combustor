@@ -1,5 +1,6 @@
-[ ] bootstrap pagination
-[ ] custom field email
-[ ] custom field gender
-[ ] custom field date types
-[ ] multi relations
+add layout in controller if added
+custom field date types
+custom field email
+custom field gender
+multi relations in controller, model
+pagination template if bootstrap

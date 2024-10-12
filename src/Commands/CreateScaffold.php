@@ -110,6 +110,7 @@ class CreateScaffold extends Command
         if ($doctrine)
         {
             $input = array('table' => $table);
+            $input['--force'] = $force;
 
             $this->runCommand('create:repository', $input);
         }

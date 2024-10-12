@@ -1,5 +1,7 @@
 multi relations in controller, model
 pagination template if bootstrap
+classidy can return class argument without type-hint
+fix incorrect return type in repository (no "\")
 
 ------
 

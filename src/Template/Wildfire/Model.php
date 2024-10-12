@@ -138,7 +138,7 @@ class Model extends Classidy
                     $type = $type . '|null';
                 }
 
-                if ($col->isNull() || $type === 'boolean')
+                if ($col->isNull())
                 {
                     $lines[] = 'if (array_key_exists(\'' . $name . '\', $data))';
                     $lines[] = '{';
@@ -149,8 +149,22 @@ class Model extends Classidy
                 }
                 else
                 {
-                    $lines[] = '/** @var ' . $type . ' */';
-                    $lines[] = '$' . $name . ' = $data[\'' . $name . '\'];';
+
+                    if ($type === 'boolean')
+                    {
+                        $lines[] = '$' . $name . ' = false;';
+                        $lines[] = 'if (array_key_exists(\'' . $name . '\', $data))';
+                        $lines[] = '{';
+                        $lines[] = '    /** @var ' . $type . ' */';
+                        $lines[] = '    $' . $name . ' = $data[\'' . $name . '\'];';
+                        $lines[] = '}';
+                    }
+                    else
+                    {
+                        $lines[] = '/** @var ' . $type . ' */';
+                        $lines[] = '$' . $name . ' = $data[\'' . $name . '\'];';
+                    }
+
                     $lines[] = '$load[\'' . $name . '\'] = $' . $name . ';';
                 }
 

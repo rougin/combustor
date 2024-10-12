@@ -95,12 +95,13 @@ class User extends Model
         $year = $data['year'];
         $load['year'] = $year;
 
+        $admin = false;
         if (array_key_exists('admin', $data))
         {
             /** @var boolean */
             $admin = $data['admin'];
-            $load['admin'] = $admin;
         }
+        $load['admin'] = $admin;
 
         if (array_key_exists('remarks', $data))
         {

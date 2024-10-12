@@ -3,6 +3,8 @@
 namespace Rougin\Combustor\Template;
 
 use Rougin\Combustor\Inflector;
+use Rougin\Combustor\Template\Fields\BooleanField;
+use Rougin\Combustor\Template\Fields\DefaultField;
 use Rougin\Describe\Column;
 
 /**
@@ -68,15 +70,10 @@ class FormPlate
     public function make($tab = '')
     {
         $model = Inflector::singular($this->table);
-
         $route = Inflector::plural($this->table);
 
-        $title = 'Create New ' . ucfirst($model);
-
-        if ($this->edit)
-        {
-            $title = 'Update ' . ucfirst($model);
-        }
+        $title = $this->edit ? 'Update' : 'Create New';
+        $title = $title . ' ' . ucfirst($model);
 
         $lines = array('<h1>' . $title . '</h1>');
         $lines[] = '';
@@ -87,12 +84,7 @@ class FormPlate
         {
             $primary = $this->getPrimary();
 
-            $id = null;
-
-            if ($primary)
-            {
-                $id = '/\' . ' . $this->getField($primary);
-            }
+            $id = $primary ? '/\' . ' . $this->getAccessor($primary) : '';
 
             $link = $route . '/edit' . $id;
         }
@@ -116,22 +108,16 @@ class FormPlate
 
             $title = Inflector::humanize($name);
 
-            $field = $this->getField($col);
-
             $class = $this->bootstrap ? 'mb-3' : '';
             $lines[] = $tab . '<div class="' . $class . '">';
             $class = $this->bootstrap ? 'form-label mb-0' : '';
             $lines[] = $tab . $tab . '<?= form_label(\'' . $title . '\', \'\', [\'class\' => \'' . $class . '\']) ?>';
 
-            $class = $this->bootstrap ? 'form-control' : '';
+            $field = $this->getField($col, $tab);
 
-            if ($this->edit)
+            foreach ($field->getPlate() as $plate)
             {
-                $lines[] = $tab . $tab . '<?= form_input(\'' . $name . '\', set_value(\'' . $name . '\', ' . $field . '), \'class="' . $class . '"\') ?>';
-            }
-            else
-            {
-                $lines[] = $tab . $tab . '<?= form_input(\'' . $name . '\', set_value(\'' . $name . '\'), \'class="' . $class . '"\') ?>';
+                $lines[] = $tab . $tab . $plate;
             }
 
             $class = $this->bootstrap ? 'text-danger small' : '';
@@ -140,12 +126,7 @@ class FormPlate
             $lines[] = '';
         }
 
-        $submit = 'Create';
-
-        if ($this->edit)
-        {
-            $submit = 'Update';
-        }
+        $submit = $this->edit ? 'Update' : 'Create';
 
         $lines[] = $tab . '<?php if (isset($error)): ?>';
         $class = $this->bootstrap ? 'alert alert-danger' : '';
@@ -201,7 +182,7 @@ class FormPlate
      *
      * @return string
      */
-    protected function getField(Column $column)
+    protected function getAccessor(Column $column)
     {
         $name = $column->getField();
 
@@ -211,6 +192,36 @@ class FormPlate
         }
 
         return '$item->' . $name;
+    }
+
+    /**
+     * @param \Rougin\Describe\Column $column
+     * @param string                  $tab
+     *
+     * @return \Rougin\Combustor\Colfield
+     */
+    protected function getField(Column $column, $tab = '')
+    {
+        $name = $this->getAccessor($column);
+
+        $field = new DefaultField($this->edit, $tab);
+        $field->withName($column->getField());
+
+        $class = $this->bootstrap ? 'form-control' : '';
+        $field->withClass($class);
+
+        $type = $column->getDataType();
+
+        if ($type === 'boolean')
+        {
+            $field = new BooleanField($this->edit, $tab);
+            $field->withName($column->getField());
+
+            $class = $this->bootstrap ? 'form-check-input' : '';
+            $field->withClass($class);
+        }
+
+        return $field->withAccessor($name);
     }
 
     /**

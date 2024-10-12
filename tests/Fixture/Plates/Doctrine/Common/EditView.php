@@ -24,7 +24,7 @@
   <div>
     <?= form_label('Admin') ?>
     <div>
-      <?= form_checkbox('admin', true, set_value('admin', $item->get_admin())) ?>
+      <?= form_checkbox('admin', true, set_value('admin', $item->is_admin())) ?>
     </div>
     <?= form_error('admin', '<div><span>', '</span></div>') ?>
   </div>

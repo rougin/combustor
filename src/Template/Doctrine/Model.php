@@ -101,6 +101,7 @@ class Model extends Classidy
                 $type = $type . '|null';
             }
 
+            // TODO: Use a single function for this code -------
             $method = 'get_' . $name;
 
             if ($col->getDataType() === 'boolean')
@@ -111,6 +112,7 @@ class Model extends Classidy
 
                 $method = 'is_' . $temp;
             }
+            // -------------------------------------------------
 
             $method = new Method($method);
 

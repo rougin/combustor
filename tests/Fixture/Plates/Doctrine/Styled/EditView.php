@@ -24,7 +24,7 @@
   <div class="mb-3">
     <?= form_label('Admin', '', ['class' => 'form-label mb-0']) ?>
     <div>
-      <?= form_checkbox('admin', true, set_value('admin', $item->get_admin()), 'class="form-check-input"') ?>
+      <?= form_checkbox('admin', true, set_value('admin', $item->is_admin()), 'class="form-check-input"') ?>
     </div>
     <?= form_error('admin', '<div><span class="text-danger small">', '</span></div>') ?>
   </div>

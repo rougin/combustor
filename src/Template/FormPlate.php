@@ -208,7 +208,20 @@ class FormPlate
 
         if ($this->type === self::TYPE_DOCTRINE)
         {
-            $name = 'get_' . $name . '()';
+            // TODO: Use a single function for this code -------
+            $method = 'get_' . $name;
+
+            if ($column->getDataType() === 'boolean')
+            {
+                // Remove "is_" from name to get proper name ---
+                $temp = str_replace('is_', '', $name);
+                // ---------------------------------------------
+
+                $method = 'is_' . $temp;
+            }
+            // -------------------------------------------------
+
+            $name = $method . '()';
         }
 
         return '$item->' . $name;

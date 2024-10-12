@@ -1,4 +1,3 @@
-add layout in controller if added
 custom field date types
 custom field gender
 multi relations in controller, model

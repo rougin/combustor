@@ -5,7 +5,7 @@
 
   <div>
     <?= form_label('Email') ?>
-    <?= form_input('email', set_value('email', $item->get_email())) ?>
+    <?= form_input(['type' => 'email', 'name' => 'email', 'value' => set_value('email', $item->get_email())]) ?>
     <?= form_error('email', '<div><span>', '</span></div>') ?>
   </div>
 

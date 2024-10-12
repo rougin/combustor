@@ -39,16 +39,4 @@ class BooleanField extends Colfield
 
         return $lines;
     }
-
-    /**
-     * @param string $name
-     *
-     * @return self
-     */
-    public function withName($name)
-    {
-        $this->name = $name;
-
-        return $this;
-    }
 }

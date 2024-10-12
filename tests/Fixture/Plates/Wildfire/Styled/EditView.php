@@ -5,7 +5,7 @@
 
   <div class="mb-3">
     <?= form_label('Email', '', ['class' => 'form-label mb-0']) ?>
-    <?= form_input('email', set_value('email', $item->email), 'class="form-control"') ?>
+    <?= form_input(['type' => 'email', 'name' => 'email', 'value' => set_value('email', $item->email), 'class' => 'form-control']) ?>
     <?= form_error('email', '<div><span class="text-danger small">', '</span></div>') ?>
   </div>
 

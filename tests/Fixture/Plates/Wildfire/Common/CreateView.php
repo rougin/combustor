@@ -3,7 +3,7 @@
 <?= form_open('users/create') ?>
   <div>
     <?= form_label('Email') ?>
-    <?= form_input('email', set_value('email')) ?>
+    <?= form_input(['type' => 'email', 'name' => 'email', 'value' => set_value('email')]) ?>
     <?= form_error('email', '<div><span>', '</span></div>') ?>
   </div>
 

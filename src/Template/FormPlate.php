@@ -5,6 +5,7 @@ namespace Rougin\Combustor\Template;
 use Rougin\Combustor\Inflector;
 use Rougin\Combustor\Template\Fields\BooleanField;
 use Rougin\Combustor\Template\Fields\DefaultField;
+use Rougin\Combustor\Template\Fields\EmailField;
 use Rougin\Describe\Column;
 
 /**
@@ -142,15 +143,17 @@ class FormPlate
 
         $result = implode("\n", $lines);
 
-        // Replace all empty class placeholders -------------
+        // Replace all empty class placeholders ------------------
         $result = str_replace(' class=""', '', $result);
+
+        $result = str_replace(', \'class\' => \'\'', '', $result);
 
         $result = str_replace(', \'class=""\'', '', $result);
 
         $search = ', \'\', [\'class\' => \'\']';
 
         return str_replace($search, '', $result);
-        // --------------------------------------------------
+        // -------------------------------------------------------
     }
 
     /**
@@ -205,6 +208,12 @@ class FormPlate
         $name = $this->getAccessor($column);
 
         $field = new DefaultField($this->edit, $tab);
+
+        if ($column->getField() === 'email')
+        {
+            $field = new EmailField($this->edit, $tab);
+        }
+
         $field->withName($column->getField());
 
         $class = $this->bootstrap ? 'form-control' : '';

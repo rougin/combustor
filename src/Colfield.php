@@ -86,4 +86,16 @@ class Colfield
 
         return $this;
     }
+
+    /**
+     * @param string $name
+     *
+     * @return self
+     */
+    public function withName($name)
+    {
+        $this->name = $name;
+
+        return $this;
+    }
 }

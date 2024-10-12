@@ -283,6 +283,13 @@ class Model extends Classidy
                 continue;
             }
 
+            // Do not include boolean types in validation ---
+            if ($col->getDataType() === 'boolean')
+            {
+                continue;
+            }
+            // ----------------------------------------------
+
             $rule = array('field' => $name);
 
             $rule['label'] = ucfirst($name);

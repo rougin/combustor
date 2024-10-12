@@ -49,7 +49,6 @@ class User extends Model
         array('field' => 'email', 'label' => 'Email', 'rules' => 'required'),
         array('field' => 'name', 'label' => 'Name', 'rules' => 'required'),
         array('field' => 'year', 'label' => 'Year', 'rules' => 'required'),
-        array('field' => 'admin', 'label' => 'Admin', 'rules' => 'required'),
     );
 
     /**

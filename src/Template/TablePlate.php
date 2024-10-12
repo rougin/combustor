@@ -94,6 +94,8 @@ class TablePlate
             $lines[] = $space . '<th>' . $name . '</th>';
         }
 
+        $lines[] = $space . '<th></th>';
+
         $lines[] = $tab . $tab . '</tr>';
         $lines[] = $tab . '</thead>';
 

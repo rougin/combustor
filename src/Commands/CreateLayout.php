@@ -59,10 +59,7 @@ class CreateLayout extends Command
             return self::RETURN_FAILURE;
         }
 
-        if (! is_dir($path . 'layout'))
-        {
-            mkdir($path . 'layout');
-        }
+        $this->createDirectory();
 
         // Create the "header.php" file ----------
         $header = new HeaderPlate($bootstrap);
@@ -81,5 +78,22 @@ class CreateLayout extends Command
         $this->showPass('Layout files created!');
 
         return self::RETURN_SUCCESS;
+    }
+
+    /**
+     * @codeCoverageIgnore
+     *
+     * @return void
+     */
+    protected function createDirectory()
+    {
+        $path = $this->path . '/views/layout';
+
+        if (is_dir($path))
+        {
+            return;
+        }
+
+        mkdir($this->path . '/views/layout');
     }
 }

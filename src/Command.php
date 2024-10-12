@@ -154,6 +154,16 @@ class Command extends Blueprint
             return new Repository($table, $cols, $this->excluded);
         }
 
-        return new Controller($table, $type);
+        $layout = $this->hasLayout();
+
+        return new Controller($table, $type, $layout);
+    }
+
+    /**
+     * @return boolean
+     */
+    protected function hasLayout()
+    {
+        return is_dir($this->path . '/views/layout');
     }
 }

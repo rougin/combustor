@@ -555,7 +555,7 @@ class PlateTest extends Testcase
         $footer = $this->getActualFile($name . '/footer', self::TYPE_VIEW);
 
         // Delete directory after getting the files ---
-        $this->deleteDir('views/layout');
+        // $this->deleteDir('views/layout');
         // --------------------------------------------
 
         return $header . "\n" . $footer;

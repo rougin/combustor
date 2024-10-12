@@ -66,7 +66,9 @@ class Users extends Controller
 
         if (! $input)
         {
+            $this->load->view('layout/header');
             $this->load->view('users/create');
+            $this->load->view('layout/footer');
 
             return;
         }
@@ -88,7 +90,9 @@ class Users extends Controller
 
         if (! $valid || $exists)
         {
+            $this->load->view('layout/header');
             $this->load->view('users/create', $data);
+            $this->load->view('layout/footer');
 
             return;
         }
@@ -163,7 +167,9 @@ class Users extends Controller
 
         if (! $input)
         {
+            $this->load->view('layout/header');
             $this->load->view('users/edit', $data);
+            $this->load->view('layout/footer');
 
             return;
         }
@@ -192,7 +198,9 @@ class Users extends Controller
 
         if (! $valid || $exists)
         {
+            $this->load->view('layout/header');
             $this->load->view('users/edit', $data);
+            $this->load->view('layout/footer');
 
             return;
         }
@@ -237,6 +245,8 @@ class Users extends Controller
             $data['alert'] = $alert;
         }
 
+        $this->load->view('layout/header');
         $this->load->view('users/index', $data);
+        $this->load->view('layout/footer');
     }
 }

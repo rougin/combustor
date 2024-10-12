@@ -18,6 +18,11 @@ class Controller extends Classidy
     const TYPE_DOCTRINE = 1;
 
     /**
+     * @var boolean
+     */
+    protected $layout = false;
+
+    /**
      * @var integer
      */
     protected $type;
@@ -25,10 +30,13 @@ class Controller extends Classidy
     /**
      * @param string  $table
      * @param integer $type
+     * @param boolean $layout
      */
-    public function __construct($table, $type)
+    public function __construct($table, $type, $layout = false)
     {
         $this->type = $type;
+
+        $this->layout = $layout;
 
         $this->init($table);
     }
@@ -189,7 +197,18 @@ class Controller extends Classidy
             $lines[] = '{';
 
             // TODO: Show if --with-view enabled -------------------------
+            if ($this->layout)
+            {
+                $lines[] = '    $this->load->view(\'layout/header\');';
+            }
+
             $lines[] = '    $this->load->view(\'' . $name . '/create\');';
+
+            if ($this->layout)
+            {
+                $lines[] = '    $this->load->view(\'layout/footer\');';
+            }
+
             $lines[] = '';
             // -----------------------------------------------------------
 
@@ -225,10 +244,21 @@ class Controller extends Classidy
             $lines[] = 'if (! $valid || $exists)';
             $lines[] = '{';
 
-            // TODO: Show if --with-view enabled ----------------------------
+            // TODO: Show if --with-view enabled --------------------------------
+            if ($this->layout)
+            {
+                $lines[] = '    $this->load->view(\'layout/header\');';
+            }
+
             $lines[] = '    $this->load->view(\'' . $name . '/create\', $data);';
+
+            if ($this->layout)
+            {
+                $lines[] = '    $this->load->view(\'layout/footer\');';
+            }
+
             $lines[] = '';
-            // --------------------------------------------------------------
+            // ------------------------------------------------------------------
 
             $lines[] = '    return;';
             $lines[] = '}';
@@ -378,10 +408,21 @@ class Controller extends Classidy
             $lines[] = 'if (! $input)';
             $lines[] = '{';
 
-            // TODO: Show if --with-view enabled ----------------------------
+            // TODO: Show if --with-view enabled ------------------------------
+            if ($this->layout)
+            {
+                $lines[] = '    $this->load->view(\'layout/header\');';
+            }
+
             $lines[] = '    $this->load->view(\'' . $name . '/edit\', $data);';
+
+            if ($this->layout)
+            {
+                $lines[] = '    $this->load->view(\'layout/footer\');';
+            }
+
             $lines[] = '';
-            // --------------------------------------------------------------
+            // ----------------------------------------------------------------
 
             $lines[] = '    return;';
             $lines[] = '}';
@@ -423,10 +464,21 @@ class Controller extends Classidy
             $lines[] = 'if (! $valid || $exists)';
             $lines[] = '{';
 
-            // TODO: Show if --with-view enabled ----------------------------
+            // TODO: Show if --with-view enabled ------------------------------
+            if ($this->layout)
+            {
+                $lines[] = '    $this->load->view(\'layout/header\');';
+            }
+
             $lines[] = '    $this->load->view(\'' . $name . '/edit\', $data);';
+
+            if ($this->layout)
+            {
+                $lines[] = '    $this->load->view(\'layout/footer\');';
+            }
+
             $lines[] = '';
-            // --------------------------------------------------------------
+            // ----------------------------------------------------------------
 
             $lines[] = '    return;';
             $lines[] = '}';
@@ -527,7 +579,18 @@ class Controller extends Classidy
 
             // TODO: Show if --with-view enabled ---------------------------
             $lines[] = '';
+
+            if ($this->layout)
+            {
+                $lines[] = '$this->load->view(\'layout/header\');';
+            }
+
             $lines[] = '$this->load->view(\'' . $name . '/index\', $data);';
+
+            if ($this->layout)
+            {
+                $lines[] = '$this->load->view(\'layout/footer\');';
+            }
             // -------------------------------------------------------------
 
             return $lines;

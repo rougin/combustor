@@ -161,32 +161,34 @@ class TablePlate
             $route = Inflector::plural($this->table);
 
             $class = $this->bootstrap ? 'd-flex' : '';
-            $lines[] = $space . '<td class="' . $class . '">';
+            $lines[] = $space . '<td>';
+            $lines[] = $space . $tab . '<div class="' . $class . '">';
 
-            $lines[] = $space . $tab . '<span>';
+            $lines[] = $space . $tab . $tab . '<span>';
             $class = $this->bootstrap ? 'btn btn-secondary' : '';
             $link = '<?= base_url(\'' . $route . '/edit/\' . ' . $field . ') ?>';
             $link = '<a class="' . $class . '" href="' . $link . '">Edit</a>';
-            $lines[] = $space . $tab . $tab . $link;
-            $lines[] = $space . $tab . '</span>';
+            $lines[] = $space . $tab . $tab . $tab . $link;
+            $lines[] = $space . $tab . $tab . '</span>';
 
-            $lines[] = $space . $tab . '<span>';
+            $lines[] = $space . $tab . $tab . '<span>';
 
             $form = '<?= form_open(\'' . $route . '/delete/\' . ' . $field . ') ?>';
-            $lines[] = $space . $tab . $tab . $form;
+            $lines[] = $space . $tab . $tab . $tab . $form;
 
             $hidden = '<?= form_hidden(\'_method\', \'DELETE\') ?>';
-            $lines[] = $space . $tab . $tab . $tab . $hidden;
+            $lines[] = $space . $tab . $tab . $tab . $tab . $hidden;
 
             $class = $this->bootstrap ? 'btn btn-link text-danger text-decoration-none' : '';
             $delete = '<a class="' . $class . '" href="javascript:void(0)" onclick="trash(this.parentElement)">Delete</a>';
-            $lines[] = $space . $tab . $tab . $tab . $delete;
+            $lines[] = $space . $tab . $tab . $tab . $tab . $delete;
 
             $close = '<?= form_close() ?>';
-            $lines[] = $space . $tab . $tab . $close;
+            $lines[] = $space . $tab . $tab . $tab . $close;
 
-            $lines[] = $space . $tab . '</span>';
+            $lines[] = $space . $tab . $tab . '</span>';
 
+            $lines[] = $space . $tab . '</div>';
             $lines[] = $space . '</td>';
         }
 

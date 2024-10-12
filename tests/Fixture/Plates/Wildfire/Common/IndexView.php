@@ -20,6 +20,7 @@
       <th>Created At</th>
       <th>Updated At</th>
       <th>Deleted At</th>
+      <th></th>
     </tr>
   </thead>
   <tbody>
@@ -34,15 +35,17 @@
         <td><?= $item->updated_at ?></td>
         <td><?= $item->deleted_at ?></td>
         <td>
-          <span>
-            <a href="<?= base_url('users/edit/' . $item->id) ?>">Edit</a>
-          </span>
-          <span>
-            <?= form_open('users/delete/' . $item->id) ?>
-              <?= form_hidden('_method', 'DELETE') ?>
-              <a href="javascript:void(0)" onclick="trash(this.parentElement)">Delete</a>
-            <?= form_close() ?>
-          </span>
+          <div>
+            <span>
+              <a href="<?= base_url('users/edit/' . $item->id) ?>">Edit</a>
+            </span>
+            <span>
+              <?= form_open('users/delete/' . $item->id) ?>
+                <?= form_hidden('_method', 'DELETE') ?>
+                <a href="javascript:void(0)" onclick="trash(this.parentElement)">Delete</a>
+              <?= form_close() ?>
+            </span>
+          </div>
         </td>
       </tr>
     <?php endforeach ?>

@@ -20,6 +20,7 @@
       <th>Created At</th>
       <th>Updated At</th>
       <th>Deleted At</th>
+      <th></th>
     </tr>
   </thead>
   <tbody>
@@ -33,16 +34,18 @@
         <td><?= $item->get_created_at() ?></td>
         <td><?= $item->get_updated_at() ?></td>
         <td><?= $item->get_deleted_at() ?></td>
-        <td class="d-flex">
-          <span>
-            <a class="btn btn-secondary" href="<?= base_url('users/edit/' . $item->get_id()) ?>">Edit</a>
-          </span>
-          <span>
-            <?= form_open('users/delete/' . $item->get_id()) ?>
-              <?= form_hidden('_method', 'DELETE') ?>
-              <a class="btn btn-link text-danger text-decoration-none" href="javascript:void(0)" onclick="trash(this.parentElement)">Delete</a>
-            <?= form_close() ?>
-          </span>
+        <td>
+          <div class="d-flex">
+            <span>
+              <a class="btn btn-secondary" href="<?= base_url('users/edit/' . $item->get_id()) ?>">Edit</a>
+            </span>
+            <span>
+              <?= form_open('users/delete/' . $item->get_id()) ?>
+                <?= form_hidden('_method', 'DELETE') ?>
+                <a class="btn btn-link text-danger text-decoration-none" href="javascript:void(0)" onclick="trash(this.parentElement)">Delete</a>
+              <?= form_close() ?>
+            </span>
+          </div>
         </td>
       </tr>
     <?php endforeach ?>

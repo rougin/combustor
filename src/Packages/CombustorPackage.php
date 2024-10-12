@@ -15,6 +15,11 @@ use Rougin\Slytherin\Integration\IntegrationInterface;
 class CombustorPackage implements IntegrationInterface
 {
     /**
+     * @var \Rougin\Combustor\Colfield[]
+     */
+    protected $customs = array();
+
+    /**
      * @var string[]
      */
     protected $excluded = array();
@@ -42,9 +47,14 @@ class CombustorPackage implements IntegrationInterface
     {
         $app = new Combustor($this->root);
 
+        if ($this->customs)
+        {
+            $app->setCustomFields($this->customs);
+        }
+
         if ($this->excluded)
         {
-            $app->setExcluded($this->excluded);
+            $app->setExcludedFields($this->excluded);
         }
 
         $name = 'Rougin\SparkPlug\Controller';
@@ -71,11 +81,23 @@ class CombustorPackage implements IntegrationInterface
     }
 
     /**
+     * @param \Rougin\Combustor\Colfield[] $customs
+     *
+     * @return self
+     */
+    public function setCustomFields($customs)
+    {
+        $this->customs = $customs;
+
+        return $this;
+    }
+
+    /**
      * @param string[] $excluded
      *
      * @return self
      */
-    public function setExcluded($excluded)
+    public function setExcludedFields($excluded)
     {
         $this->excluded = $excluded;
 

@@ -12,14 +12,25 @@ use Rougin\Combustor\Colfield;
 class EmailField extends Colfield
 {
     /**
+     * @var string
+     */
+    protected $class = 'form-control';
+
+    /**
+     * @var string
+     */
+    protected $name = 'email';
+
+    /**
      * @return string[]
      */
     public function getPlate()
     {
-        $class = $this->class;
-
         $field = $this->accessor;
 
+        $class = $this->getClass();
+
+        /** @var string */
         $name = $this->getName();
 
         $html = '<?= form_input([\'type\' => \'email\', \'name\' => \'' . $name . '\', \'value\' => set_value(\'' . $name . '\')]) ?>';

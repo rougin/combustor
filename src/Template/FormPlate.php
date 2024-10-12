@@ -30,6 +30,11 @@ class FormPlate
     protected $cols;
 
     /**
+     * @var \Rougin\Combustor\Colfield[]
+     */
+    protected $customs = array();
+
+    /**
      * @var boolean
      */
     protected $edit = false;
@@ -169,11 +174,23 @@ class FormPlate
     }
 
     /**
+     * @param \Rougin\Combustor\Colfield[] $customs
+     *
+     * @return self
+     */
+    public function withCustomFields($customs)
+    {
+        $this->customs = $customs;
+
+        return $this;
+    }
+
+    /**
      * @param string[] $excluded
      *
      * @return self
      */
-    public function withExcluded($excluded)
+    public function withExcludedFields($excluded)
     {
         $this->excluded = $excluded;
 
@@ -207,30 +224,59 @@ class FormPlate
     {
         $name = $this->getAccessor($column);
 
-        $field = new DefaultField($this->edit, $tab);
+        $field = new DefaultField;
 
-        if ($column->getField() === 'email')
+        foreach ($this->customs as $custom)
         {
-            $field = new EmailField($this->edit, $tab);
+            $isField = $custom->getName() === $column->getField();
+
+            $isType = $custom->getType() === $column->getDataType();
+
+            if ($isField || $isType)
+            {
+                $field = $custom;
+            }
         }
 
-        $field->withName($column->getField());
+        $field->setName($column->getField());
 
-        $class = $this->bootstrap ? 'form-control' : '';
-        $field->withClass($class);
-
-        $type = $column->getDataType();
-
-        if ($type === 'boolean')
+        if ($this->bootstrap)
         {
-            $field = new BooleanField($this->edit, $tab);
-            $field->withName($column->getField());
-
-            $class = $this->bootstrap ? 'form-check-input' : '';
-            $field->withClass($class);
+            $field->useStyling(true);
         }
 
-        return $field->withAccessor($name);
+        $field->asEdit($this->edit);
+
+        $field->setSpacing($tab);
+
+        return $field->setAccessor($name);
+
+        // if ($column->getField() === 'email')
+        // {
+        //     $field = new EmailField;
+        //     $field->asEdit($this->edit);
+        //     $field->withSpacing($tab);
+        // }
+
+        // $field->withName($column->getField());
+
+        // $class = $this->bootstrap ? 'form-control' : '';
+        // $field->withClass($class);
+
+        // $type = $column->getDataType();
+
+        // if ($type === 'boolean')
+        // {
+        //     $field = new BooleanField;
+        //     $field->asEdit($this->edit);
+        //     $field->withSpacing($tab);
+        //     $field->withName($column->getField());
+
+        //     $class = $this->bootstrap ? 'form-check-input' : '';
+        //     $field->withClass($class);
+        // }
+
+        // return $field->withAccessor($name);
     }
 
     /**

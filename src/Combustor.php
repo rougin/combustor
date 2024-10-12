@@ -18,6 +18,11 @@ class Combustor
     protected $app = null;
 
     /**
+     * @var \Rougin\Combustor\Colfield[]
+     */
+    protected $customs = array();
+
+    /**
      * @var \Rougin\Describe\Driver\DriverInterface|null
      */
     protected $driver = null;
@@ -63,9 +68,17 @@ class Combustor
     /**
      * @return string[]
      */
-    public function getExcluded()
+    public function getExcludedFields()
     {
         return $this->excluded;
+    }
+
+    /**
+     * @return \Rougin\Combustor\Colfield[]
+     */
+    public function getCustomFields()
+    {
+        return $this->customs;
     }
 
     /**
@@ -101,11 +114,23 @@ class Combustor
     }
 
     /**
+     * @param \Rougin\Combustor\Colfield[] $customs
+     *
+     * @return self
+     */
+    public function setCustomFields($customs)
+    {
+        $this->customs = $customs;
+
+        return $this;
+    }
+
+    /**
      * @param string[] $excluded
      *
      * @return self
      */
-    public function setExcluded($excluded)
+    public function setExcludedFields($excluded)
     {
         $this->excluded = $excluded;
 

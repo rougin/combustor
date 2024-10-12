@@ -31,6 +31,11 @@ class Command extends Blueprint
     protected $excluded = array();
 
     /**
+     * @var \Rougin\Combustor\Colfield[]
+     */
+    protected $customs = array();
+
+    /**
      * @var \Rougin\Classidy\Generator
      */
     protected $maker;
@@ -48,7 +53,9 @@ class Command extends Blueprint
     {
         $this->driver = $combustor->getDriver();
 
-        $this->excluded = $combustor->getExcluded();
+        $this->excluded = $combustor->getExcludedFields();
+
+        $this->customs = $combustor->getCustomFields();
 
         $this->maker = $maker;
 

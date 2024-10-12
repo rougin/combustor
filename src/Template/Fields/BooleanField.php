@@ -12,15 +12,25 @@ use Rougin\Combustor\Colfield;
 class BooleanField extends Colfield
 {
     /**
+     * @var string
+     */
+    protected $class = 'form-check-input';
+
+    /**
+     * @var string
+     */
+    protected $type = 'boolean';
+
+    /**
      * @return string[]
      */
     public function getPlate()
     {
-        $class = $this->class;
+        $field = $this->accessor;
 
         $tab = $this->tab;
 
-        $field = $this->accessor;
+        $class = $this->getClass();
 
         $name = $this->getName();
 

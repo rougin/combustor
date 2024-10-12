@@ -30,19 +30,43 @@ class Colfield
     protected $name = null;
 
     /**
+     * @var boolean
+     */
+    protected $styling = false;
+
+    /**
      * @var string
      */
     protected $tab = '';
 
     /**
-     * @param boolean $edit
-     * @param string  $tab
+     * @var string|null
      */
-    public function __construct($edit = false, $tab = '')
+    protected $type = null;
+
+    /**
+     * @param boolean $edit
+     *
+     * @return self
+     */
+    public function asEdit($edit = true)
     {
         $this->edit = $edit;
 
-        $this->tab = $tab;
+        return $this;
+    }
+
+    /**
+     * @return string|null
+     */
+    public function getClass()
+    {
+        if ($this->styling)
+        {
+            return $this->class;
+        }
+
+        return null;
     }
 
     /**
@@ -64,25 +88,21 @@ class Colfield
     }
 
     /**
+     * @return string|null
+     */
+    public function getType()
+    {
+        return $this->type;
+    }
+
+    /**
      * @param string $accessor
      *
      * @return self
      */
-    public function withAccessor($accessor)
+    public function setAccessor($accessor)
     {
         $this->accessor = $accessor;
-
-        return $this;
-    }
-
-    /**
-     * @param string $class
-     *
-     * @return self
-     */
-    public function withClass($class)
-    {
-        $this->class = $class;
 
         return $this;
     }
@@ -92,9 +112,33 @@ class Colfield
      *
      * @return self
      */
-    public function withName($name)
+    public function setName($name)
     {
         $this->name = $name;
+
+        return $this;
+    }
+
+    /**
+     * @param string $tab
+     *
+     * @return self
+     */
+    public function setSpacing($tab = '')
+    {
+        $this->tab = $tab;
+
+        return $this;
+    }
+
+    /**
+     * @param boolean $styling
+     *
+     * @return self
+     */
+    public function useStyling($styling = true)
+    {
+        $this->styling = $styling;
 
         return $this;
     }

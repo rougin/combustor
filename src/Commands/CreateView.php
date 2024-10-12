@@ -100,7 +100,9 @@ class CreateView extends Command
 
         $create->withBootstrap($bootstrap);
 
-        $create->withExcluded($this->excluded);
+        $create->withExcludedFields($this->excluded);
+
+        $create->withCustomFields($this->customs);
 
         $file = $path . $name . '/create.php';
 
@@ -112,7 +114,9 @@ class CreateView extends Command
 
         $edit->withBootstrap($bootstrap);
 
-        $edit->withExcluded($this->excluded);
+        $edit->withExcludedFields($this->excluded);
+
+        $edit->withCustomFields($this->customs);
 
         $file = $path . $name . '/edit.php';
 

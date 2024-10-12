@@ -12,13 +12,18 @@ use Rougin\Combustor\Colfield;
 class DefaultField extends Colfield
 {
     /**
+     * @var string
+     */
+    protected $class = 'form-control';
+
+    /**
      * @return string[]
      */
     public function getPlate()
     {
-        $class = $this->class;
-
         $field = $this->accessor;
+
+        $class = $this->getClass();
 
         $name = $this->getName();
 

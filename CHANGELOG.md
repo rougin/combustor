@@ -6,6 +6,7 @@ All notable changes to `Combustor` will be documented in this file.
 
 ### Added
 - Command for creating `combustor.yml` configuration file
+- Custom fields in templates using `custom_fields`
 - Fields that can be excluded through `excluded_files`
 - Specify customized `application` path using `app_path` 
 - `create:repository` for creating Entity Repositories

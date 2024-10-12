@@ -165,7 +165,7 @@ class TablePlate
             $lines[] = $space . $tab . '<div class="' . $class . '">';
 
             $lines[] = $space . $tab . $tab . '<span>';
-            $class = $this->bootstrap ? 'btn btn-secondary' : '';
+            $class = $this->bootstrap ? 'btn btn-secondary btn-sm' : '';
             $link = '<?= base_url(\'' . $route . '/edit/\' . ' . $field . ') ?>';
             $link = '<a class="' . $class . '" href="' . $link . '">Edit</a>';
             $lines[] = $space . $tab . $tab . $tab . $link;
@@ -179,7 +179,7 @@ class TablePlate
             $hidden = '<?= form_hidden(\'_method\', \'DELETE\') ?>';
             $lines[] = $space . $tab . $tab . $tab . $tab . $hidden;
 
-            $class = $this->bootstrap ? 'btn btn-link text-danger text-decoration-none' : '';
+            $class = $this->bootstrap ? 'btn btn-link btn-sm text-danger text-decoration-none' : '';
             $delete = '<a class="' . $class . '" href="javascript:void(0)" onclick="trash(this.parentElement)">Delete</a>';
             $lines[] = $space . $tab . $tab . $tab . $tab . $delete;
 

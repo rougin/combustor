@@ -37,12 +37,12 @@
         <td>
           <div class="d-flex">
             <span>
-              <a class="btn btn-secondary" href="<?= base_url('users/edit/' . $item->get_id()) ?>">Edit</a>
+              <a class="btn btn-secondary btn-sm" href="<?= base_url('users/edit/' . $item->get_id()) ?>">Edit</a>
             </span>
             <span>
               <?= form_open('users/delete/' . $item->get_id()) ?>
                 <?= form_hidden('_method', 'DELETE') ?>
-                <a class="btn btn-link text-danger text-decoration-none" href="javascript:void(0)" onclick="trash(this.parentElement)">Delete</a>
+                <a class="btn btn-link btn-sm text-danger text-decoration-none" href="javascript:void(0)" onclick="trash(this.parentElement)">Delete</a>
               <?= form_close() ?>
             </span>
           </div>

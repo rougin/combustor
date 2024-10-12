@@ -36,16 +36,4 @@ class DefaultField extends Colfield
 
         return array($html);
     }
-
-    /**
-     * @param string $name
-     *
-     * @return self
-     */
-    public function withName($name)
-    {
-        $this->name = $name;
-
-        return $this;
-    }
 }

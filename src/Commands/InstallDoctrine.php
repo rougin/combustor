@@ -65,7 +65,7 @@ class InstallDoctrine extends Command
 
         $result = $maker->make($class);
 
-        $file = $this->path . '/core/Loader.php';
+        $file = $this->path . '/core/MY_Loader.php';
 
         if (! file_exists($file))
         {

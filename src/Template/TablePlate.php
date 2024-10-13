@@ -153,9 +153,20 @@ class TablePlate
 
             if ($this->type === self::TYPE_DOCTRINE)
             {
-                $field = 'get_' . $col->getField();
+                // TODO: Use a single function for this code -------
+                $method = 'get_' . $field;
 
-                $field = Inflector::snakeCase($field);
+                if ($col->getDataType() === 'boolean')
+                {
+                    // Remove "is_" from name to get proper name ---
+                    $temp = str_replace('is_', '', $field);
+                    // ---------------------------------------------
+
+                    $method = 'is_' . $temp;
+                }
+                // -------------------------------------------------
+
+                $field = Inflector::snakeCase($method);
 
                 $field = $field . '()';
             }

@@ -29,7 +29,7 @@
         <td><?= $item->get_email() ?></td>
         <td><?= $item->get_name() ?></td>
         <td><?= $item->get_year() ?></td>
-        <td><?= $item->get_admin() ?></td>
+        <td><?= $item->is_admin() ?></td>
         <td><?= $item->get_remarks() ?></td>
         <td><?= $item->get_created_at() ?></td>
         <td><?= $item->get_updated_at() ?></td>

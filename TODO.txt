@@ -1,5 +1,4 @@
 multi relations in model
-classidy should return class argument without type-hint
 fix incorrect return type in repository (no "\")
 pagination template if bootstrap
 

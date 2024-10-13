@@ -17,7 +17,7 @@
   {
     "php": ">=5.4.0",
     "rougin/blueprint": "dev-master",
-    "rougin/classidy": "dev-master",
+    "rougin/classidy": "~0.1",
     "rougin/describe": "dev-master",
     "rougin/spark-plug": "~0.6"
   },

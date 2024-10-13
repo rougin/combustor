@@ -18,9 +18,19 @@ class Controller extends Classidy
     const TYPE_DOCTRINE = 1;
 
     /**
+     * @var \Rougin\Describe\Column[]
+     */
+    protected $cols;
+
+    /**
      * @var boolean
      */
     protected $layout = false;
+
+    /**
+     * @var string
+     */
+    protected $table;
 
     /**
      * @var integer
@@ -28,31 +38,26 @@ class Controller extends Classidy
     protected $type;
 
     /**
-     * @param string  $table
-     * @param integer $type
-     * @param boolean $layout
+     * @param string                    $table
+     * @param \Rougin\Describe\Column[] $cols
      */
-    public function __construct($table, $type, $layout = false)
+    public function __construct($table, $cols)
     {
-        $this->type = $type;
+        $this->cols = $cols;
 
-        $this->layout = $layout;
-
-        $this->init($table);
+        $this->table = $table;
     }
 
     /**
      * Configures the current class.
      *
-     * @param string $table
-     *
-     * @return void
+     * @return self
      */
-    public function init($table)
+    public function init()
     {
-        $name = Inflector::plural($table);
+        $name = Inflector::plural($this->table);
 
-        $model = Inflector::singular($table);
+        $model = Inflector::singular($this->table);
 
         /** @var class-string */
         $class = ucfirst($model);
@@ -98,6 +103,32 @@ class Controller extends Classidy
         $this->setEditMethod($name, $model, $type);
 
         $this->setIndexMethod($name, $model, $type);
+
+        return $this;
+    }
+
+    /**
+     * @param integer $type
+     *
+     * @return self
+     */
+    public function setType($type)
+    {
+        $this->type = $type;
+
+        return $this;
+    }
+
+    /**
+     * @param boolean $layout
+     *
+     * @return self
+     */
+    public function useLayout($layout = true)
+    {
+        $this->layout = $layout;
+
+        return $this;
     }
 
     /**

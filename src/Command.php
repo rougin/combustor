@@ -161,9 +161,11 @@ class Command extends Blueprint
             return new Repository($table, $cols, $this->excluded);
         }
 
-        $layout = $this->hasLayout();
+        $route = new Controller($table, $cols);
 
-        return new Controller($table, $type, $layout);
+        $route->useLayout($this->hasLayout());
+
+        return $route->setType($type)->init();
     }
 
     /**

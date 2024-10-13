@@ -173,7 +173,16 @@ class TablePlate
 
             $name = str_replace('[FIELD]', $field, $name);
 
-            $lines[] = $space . '<td>' . $name . '</td>';
+            $plate = $space . '<td>' . $name . '</td>';
+
+            $type = $col->getDataType();
+
+            if ($this->type === self::TYPE_DOCTRINE && ($type === 'date' || $type === 'datetime'))
+            {
+                $plate = $space . '<td><?= $item->' . $field . ' ? $item->' . $field . '->format(\'Y-m-d H:i:s\') : \'\' ?></td>';
+            }
+
+            $lines[] = $plate;
         }
 
         if ($primary)

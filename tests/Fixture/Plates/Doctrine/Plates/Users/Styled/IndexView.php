@@ -31,9 +31,9 @@
         <td><?= $item->get_year() ?></td>
         <td><?= $item->is_admin() ?></td>
         <td><?= $item->get_remarks() ?></td>
-        <td><?= $item->get_created_at() ?></td>
-        <td><?= $item->get_updated_at() ?></td>
-        <td><?= $item->get_deleted_at() ?></td>
+        <td><?= $item->get_created_at() ? $item->get_created_at()->format('Y-m-d H:i:s') : '' ?></td>
+        <td><?= $item->get_updated_at() ? $item->get_updated_at()->format('Y-m-d H:i:s') : '' ?></td>
+        <td><?= $item->get_deleted_at() ? $item->get_deleted_at()->format('Y-m-d H:i:s') : '' ?></td>
         <td>
           <div class="d-flex">
             <span>

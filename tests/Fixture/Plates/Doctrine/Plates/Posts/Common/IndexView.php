@@ -27,9 +27,9 @@
         <td><?= $item->get_title() ?></td>
         <td><?= $item->get_text() ?></td>
         <td><?= $item->get_user_id() ?></td>
-        <td><?= $item->get_created_at() ?></td>
-        <td><?= $item->get_updated_at() ?></td>
-        <td><?= $item->get_deleted_at() ?></td>
+        <td><?= $item->get_created_at() ? $item->get_created_at()->format('Y-m-d H:i:s') : '' ?></td>
+        <td><?= $item->get_updated_at() ? $item->get_updated_at()->format('Y-m-d H:i:s') : '' ?></td>
+        <td><?= $item->get_deleted_at() ? $item->get_deleted_at()->format('Y-m-d H:i:s') : '' ?></td>
         <td>
           <div>
             <span>

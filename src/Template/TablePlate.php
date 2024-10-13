@@ -3,6 +3,7 @@
 namespace Rougin\Combustor\Template;
 
 use Rougin\Combustor\Inflector;
+use Rougin\Describe\Column;
 
 /**
  * @package Combustor
@@ -70,6 +71,25 @@ class TablePlate
     }
 
     /**
+     * @param \Rougin\Describe\Column $column
+     *
+     * @return string
+     */
+    protected function getFieldTitle(Column $column)
+    {
+        $name = $column->getField();
+
+        if ($column->isForeignKey())
+        {
+            $name = $column->getReferencedTable();
+
+            $name = Inflector::singular($name);
+        }
+
+        return Inflector::humanize($name);
+    }
+
+    /**
      * @param string[] $lines
      * @param string   $tab
      *
@@ -89,7 +109,7 @@ class TablePlate
                 continue;
             }
 
-            $name = Inflector::humanize($col->getField());
+            $name = $this->getFieldTitle($col);
 
             $lines[] = $space . '<th>' . $name . '</th>';
         }

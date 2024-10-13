@@ -14,7 +14,7 @@
     <tr>
       <th>Title</th>
       <th>Text</th>
-      <th>User Id</th>
+      <th>User</th>
       <th>Created At</th>
       <th>Updated At</th>
       <th>Deleted At</th>

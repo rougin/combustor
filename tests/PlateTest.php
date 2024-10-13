@@ -175,6 +175,25 @@ class PlateTest extends Testcase
     /**
      * @return void
      */
+    public function test_doctrine_repository_with_foreigns()
+    {
+        $test = $this->findCommand('create:repository');
+
+        $input = array('table' => 'posts');
+        $input['--force'] = true;
+
+        $test->execute($input);
+
+        $expected = $this->getDoctrineRepo('Post');
+
+        $actual = $this->getActualRepo('Post');
+
+        $this->assertEquals($expected, $actual);
+    }
+
+    /**
+     * @return void
+     */
     public function test_doctrine_view()
     {
         $test = $this->findCommand('create:view');

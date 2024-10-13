@@ -5,7 +5,8 @@ use Rougin\Credo\Repository;
 /**
  * @extends \Rougin\Credo\Repository<\User>
  *
- * @property \CI_DB_query_builder $db
+ * @property \CI_DB_query_builder                 $db
+ * @property \Doctrine\ORM\EntityManagerInterface $_em
  *
  * @method void       create(array<string, mixed> $data, \User $entity)
  * @method void       delete(\User $entity)

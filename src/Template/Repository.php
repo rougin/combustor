@@ -52,7 +52,11 @@ class Repository extends Classidy
         $comment = '@extends \Rougin\Credo\Repository<\\' . $model . '>';
         $this->setComment($comment);
 
-        $this->addClassProperty('db', 'CI_DB_query_builder')->asTag();
+        $ci = 'CI_DB_query_builder';
+        $this->addClassProperty('db', $ci)->asTag();
+
+        $em = 'Doctrine\ORM\EntityManagerInterface';
+        $this->addClassProperty('_em', $em)->asTag();
 
         $method = new Method('create');
         $method->addArrayArgument('data', 'array<string, mixed>');
@@ -159,16 +163,33 @@ class Repository extends Classidy
                 $lines[] = '/** @var ' . $type . ' */';
                 $lines[] = '$' . $name . ' = $data[\'' . $name . '\'];';
 
-                if ($col->isNull())
+                $isNull = $col->isNull();
+
+                $space = $isNull ? '    ' : '';
+
+                if ($isNull)
                 {
                     $lines[] = 'if ($' . $name . ')';
                     $lines[] = '{';
-                    $lines[] = '    $entity->set_' . $name . '($' . $name . ');';
-                    $lines[] = '}';
                 }
-                else
+
+                if ($col->isForeignKey())
                 {
-                    $lines[] = '$entity->set_' . $name . '($' . $name . ');';
+                    $foreign = $col->getReferencedTable();
+                    $foreign = Inflector::singular($foreign);
+
+                    $class = ucfirst($foreign);
+
+                    $lines[] = $space . '$user = $this->_em->find(\'' . $class . '\', $' . $name . ');';
+
+                    $name = $foreign;
+                }
+
+                $lines[] = $space . '$entity->set_' . $name . '($' . $name . ');';
+
+                if ($isNull)
+                {
+                    $lines[] = '}';
                 }
 
                 if (array_key_exists($index + 1, $cols))

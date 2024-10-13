@@ -160,18 +160,18 @@ class Repository extends Classidy
                     $type = $type . '|null';
                 }
 
-                $lines[] = '/** @var ' . $type . ' */';
-                $lines[] = '$' . $name . ' = $data[\'' . $name . '\'];';
-
                 $isNull = $col->isNull();
 
-                $space = $isNull ? '    ' : '';
+                $space = $isNull || $type === 'boolean' ? '    ' : '';
 
-                if ($isNull)
+                if ($isNull || $type === 'boolean')
                 {
-                    $lines[] = 'if ($' . $name . ')';
+                    $lines[] = 'if (array_key_exists(\'' . $name . '\', $data))';
                     $lines[] = '{';
                 }
+
+                $lines[] = $space . '/** @var ' . $type . ' */';
+                $lines[] = $space . '$' . $name . ' = $data[\'' . $name . '\'];';
 
                 if ($col->isForeignKey())
                 {
@@ -187,7 +187,7 @@ class Repository extends Classidy
 
                 $lines[] = $space . '$entity->set_' . $name . '($' . $name . ');';
 
-                if ($isNull)
+                if ($isNull || $type === 'boolean')
                 {
                     $lines[] = '}';
                 }

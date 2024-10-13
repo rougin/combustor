@@ -53,14 +53,17 @@ class User_repository extends Repository
         $year = $data['year'];
         $entity->set_year($year);
 
-        /** @var boolean */
-        $admin = $data['admin'];
-        $entity->set_admin($admin);
-
-        /** @var string|null */
-        $remarks = $data['remarks'];
-        if ($remarks)
+        if (array_key_exists('admin', $data))
         {
+            /** @var boolean */
+            $admin = $data['admin'];
+            $entity->set_admin($admin);
+        }
+
+        if (array_key_exists('remarks', $data))
+        {
+            /** @var string|null */
+            $remarks = $data['remarks'];
             $entity->set_remarks($remarks);
         }
         // -----------------------------------

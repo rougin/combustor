@@ -1,2 +1,0 @@
-multi-relation in view from wildfire
-pagination template if bootstrap

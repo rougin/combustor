@@ -130,7 +130,8 @@ class Repository extends Classidy
 
         $method->setReturn($model);
         $method->addArrayArgument('data', 'array<string, mixed>');
-        $method->addClassArgument('entity', $model);
+        $method->addClassArgument('entity', $model)
+            ->withoutTypeDeclared();
         $method->addIntegerArgument('id', true);
 
         $cols = $this->cols;

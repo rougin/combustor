@@ -37,7 +37,7 @@ class User_repository extends Repository
      *
      * @return User
      */
-    public function set($data, \User $entity, $id = null)
+    public function set($data, $entity, $id = null)
     {
         // List editable fields from table ---
         /** @var string */

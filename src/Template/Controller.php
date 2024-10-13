@@ -225,6 +225,9 @@ class Controller extends Classidy
             $lines[] = '$input = $this->input->post(null, true);';
             $lines[] = '';
             $lines[] = '$data = array();';
+
+            $lines = $this->setForeigns($lines, $model);
+
             $lines[] = '';
             $lines[] = 'if (! $input)';
             $lines[] = '{';
@@ -542,6 +545,47 @@ class Controller extends Classidy
         });
 
         $this->addMethod($method);
+    }
+
+    /**
+     * @param string[] $lines
+     * @param string   $model
+     *
+     * @return string[]
+     */
+    protected function setForeigns($lines, $model)
+    {
+        // $items = array();
+
+        // foreach ($this->cols as $col)
+        // {
+        //     if ($col->isForeignKey())
+        //     {
+        //         $items[] = $col;
+        //     }
+        // }
+
+        // if (count($items) > 0)
+        // {
+        //     $lines[] = '';
+        // }
+
+        // foreach ($items as $item)
+        // {
+        //     $name = $item->getReferencedTable();
+        //     $name = Inflector::plural($name);
+
+        //     if ($this->type === self::TYPE_DOCTRINE)
+        //     {
+        //         $lines[] = '$data[\'' . $name . '\'] = $this->repo->dropdown(\'id\');';
+        //     }
+        //     else
+        //     {
+        //         $lines[] = '$data[\'' . $name . '\'] = $this->' . $model . '->get()->dropdown(\'id\');';
+        //     }
+        // }
+
+        return $lines;
     }
 
     /**

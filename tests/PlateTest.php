@@ -86,7 +86,7 @@ class PlateTest extends Testcase
 
         $test->execute($input);
 
-        $expected = $this->getDoctrineCtrl();
+        $expected = $this->getDoctrineCtrl('Users');
 
         $actual = $this->getActualCtrl('Users');
 
@@ -106,7 +106,7 @@ class PlateTest extends Testcase
 
         $test->execute($input);
 
-        $expected = $this->getDoctrineModel();
+        $expected = $this->getDoctrineModel('User');
 
         $actual = $this->getActualModel('User');
 
@@ -125,7 +125,7 @@ class PlateTest extends Testcase
 
         $test->execute($input);
 
-        $expected = $this->getDoctrineRepo();
+        $expected = $this->getDoctrineRepo('User');
 
         $actual = $this->getActualRepo('User');
 
@@ -339,11 +339,11 @@ class PlateTest extends Testcase
         $test->execute($input);
 
         // Return the controller, model, and views --------
-        $route = $this->getDoctrineCtrl();
+        $route = $this->getDoctrineCtrl('Users');
 
-        $model = $this->getDoctrineModel();
+        $model = $this->getDoctrineModel('User');
 
-        $repo = $this->getDoctrineRepo();
+        $repo = $this->getDoctrineRepo('User');
 
         $views = $this->getDoctrineView(self::VIEW_STYLED);
 
@@ -382,7 +382,7 @@ class PlateTest extends Testcase
 
         $test->execute($input);
 
-        $expected = $this->getWildfireCtrl();
+        $expected = $this->getWildfireCtrl('Users');
 
         $actual = $this->getActualCtrl('Users');
 
@@ -402,7 +402,7 @@ class PlateTest extends Testcase
 
         $test->execute($input);
 
-        $expected = $this->getWildfireModel();
+        $expected = $this->getWildfireModel('User');
 
         $actual = $this->getActualModel('User');
 
@@ -610,27 +610,33 @@ class PlateTest extends Testcase
     }
 
     /**
+     * @param string $name
+     *
      * @return string
      */
-    protected function getDoctrineCtrl()
+    protected function getDoctrineCtrl($name)
     {
-        return $this->getTemplate('Doctrine/Controller');
+        return $this->getTemplate('Doctrine/Routes/' . $name);
     }
 
     /**
+     * @param string $name
+     *
      * @return string
      */
-    protected function getDoctrineModel()
+    protected function getDoctrineModel($name)
     {
-        return $this->getTemplate('Doctrine/Model');
+        return $this->getTemplate('Doctrine/Models/' . $name);
     }
 
     /**
+     * @param string $name
+     *
      * @return string
      */
-    protected function getDoctrineRepo()
+    protected function getDoctrineRepo($name)
     {
-        return $this->getTemplate('Doctrine/Repository');
+        return $this->getTemplate('Doctrine/Repos/' . $name);
     }
 
     /**
@@ -647,11 +653,11 @@ class PlateTest extends Testcase
             $name = 'Styled';
         }
 
-        $create = $this->getTemplate('Doctrine/' . $name . '/CreateView');
+        $create = $this->getTemplate('Doctrine/Plates/' . $name . '/CreateView');
 
-        $edit = $this->getTemplate('Doctrine/' . $name . '/EditView');
+        $edit = $this->getTemplate('Doctrine/Plates/' . $name . '/EditView');
 
-        $index = $this->getTemplate('Doctrine/' . $name . '/IndexView');
+        $index = $this->getTemplate('Doctrine/Plates/' . $name . '/IndexView');
 
         return $create . "\n" . $edit . "\n" . $index;
     }
@@ -709,19 +715,23 @@ class PlateTest extends Testcase
     }
 
     /**
+     * @param string $name
+     *
      * @return string
      */
-    protected function getWildfireCtrl()
+    protected function getWildfireCtrl($name)
     {
-        return $this->getTemplate('Wildfire/Controller');
+        return $this->getTemplate('Wildfire/Routes/' . $name);
     }
 
     /**
+     * @param string $name
+     *
      * @return string
      */
-    protected function getWildfireModel()
+    protected function getWildfireModel($name)
     {
-        return $this->getTemplate('Wildfire/Model');
+        return $this->getTemplate('Wildfire/Models/' . $name);
     }
 
     /**
@@ -738,11 +748,11 @@ class PlateTest extends Testcase
             $name = 'Styled';
         }
 
-        $create = $this->getTemplate('Wildfire/' . $name . '/CreateView');
+        $create = $this->getTemplate('Wildfire/Plates/' . $name . '/CreateView');
 
-        $edit = $this->getTemplate('Wildfire/' . $name . '/EditView');
+        $edit = $this->getTemplate('Wildfire/Plates/' . $name . '/EditView');
 
-        $index = $this->getTemplate('Wildfire/' . $name . '/IndexView');
+        $index = $this->getTemplate('Wildfire/Plates/' . $name . '/IndexView');
 
         return $create . "\n" . $edit . "\n" . $index;
     }

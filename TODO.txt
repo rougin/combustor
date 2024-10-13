@@ -3,13 +3,3 @@ multi relations in views
 classidy should return class argument without type-hint
 fix incorrect return type in repository (no "\")
 pagination template if bootstrap
-
-------
-
-<div class="form-group col-lg-12 col-md-12 col-sm-12 col-xs-12">
-    <?php echo form_label('User', 'user_id', array('class' => 'control-label')); ?>
-    <div class="">
-        <?php echo form_dropdown('user_id', $users, set_value('user_id'), 'class="form-control" '); ?>
-        <?php echo form_error('user_id'); ?>
-    </div>
-</div>

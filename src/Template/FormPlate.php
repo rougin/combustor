@@ -3,9 +3,8 @@
 namespace Rougin\Combustor\Template;
 
 use Rougin\Combustor\Inflector;
-use Rougin\Combustor\Template\Fields\BooleanField;
 use Rougin\Combustor\Template\Fields\DefaultField;
-use Rougin\Combustor\Template\Fields\EmailField;
+use Rougin\Combustor\Template\Fields\ForeignField;
 use Rougin\Describe\Column;
 
 /**
@@ -112,14 +111,14 @@ class FormPlate
                 continue;
             }
 
-            $title = Inflector::humanize($name);
+            $title = $this->getFieldTitle($col);
 
             $class = $this->bootstrap ? 'mb-3' : '';
             $lines[] = $tab . '<div class="' . $class . '">';
             $class = $this->bootstrap ? 'form-label mb-0' : '';
             $lines[] = $tab . $tab . '<?= form_label(\'' . $title . '\', \'\', [\'class\' => \'' . $class . '\']) ?>';
 
-            $field = $this->getField($col, $tab);
+            $field = $this->getFieldPlate($col, $tab);
 
             foreach ($field->getPlate() as $plate)
             {
@@ -233,7 +232,7 @@ class FormPlate
      *
      * @return \Rougin\Combustor\Colfield
      */
-    protected function getField(Column $column, $tab = '')
+    protected function getFieldPlate(Column $column, $tab = '')
     {
         $name = $this->getAccessor($column);
 
@@ -251,6 +250,13 @@ class FormPlate
             }
         }
 
+        if ($column->isForeignKey())
+        {
+            $field = new ForeignField;
+
+            $field->setTableName($column->getReferencedTable());
+        }
+
         $field->setName($column->getField());
 
         if ($this->bootstrap)
@@ -263,33 +269,25 @@ class FormPlate
         $field->setSpacing($tab);
 
         return $field->setAccessor($name);
+    }
 
-        // if ($column->getField() === 'email')
-        // {
-        //     $field = new EmailField;
-        //     $field->asEdit($this->edit);
-        //     $field->withSpacing($tab);
-        // }
+    /**
+     * @param \Rougin\Describe\Column $column
+     *
+     * @return string
+     */
+    protected function getFieldTitle(Column $column)
+    {
+        $name = $column->getField();
 
-        // $field->withName($column->getField());
+        if ($column->isForeignKey())
+        {
+            $name = $column->getReferencedTable();
 
-        // $class = $this->bootstrap ? 'form-control' : '';
-        // $field->withClass($class);
+            $name = Inflector::singular($name);
+        }
 
-        // $type = $column->getDataType();
-
-        // if ($type === 'boolean')
-        // {
-        //     $field = new BooleanField;
-        //     $field->asEdit($this->edit);
-        //     $field->withSpacing($tab);
-        //     $field->withName($column->getField());
-
-        //     $class = $this->bootstrap ? 'form-check-input' : '';
-        //     $field->withClass($class);
-        // }
-
-        // return $field->withAccessor($name);
+        return Inflector::humanize($name);
     }
 
     /**

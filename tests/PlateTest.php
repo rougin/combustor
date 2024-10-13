@@ -136,6 +136,26 @@ class PlateTest extends Testcase
     /**
      * @return void
      */
+    public function test_doctrine_model_with_foreigns()
+    {
+        $test = $this->findCommand('create:model');
+
+        $input = array('table' => 'posts');
+        $input['--force'] = true;
+        $input['--doctrine'] = true;
+
+        $test->execute($input);
+
+        $expected = $this->getDoctrineModel('Post');
+
+        $actual = $this->getActualModel('Post');
+
+        $this->assertEquals($expected, $actual);
+    }
+
+    /**
+     * @return void
+     */
     public function test_doctrine_repository()
     {
         $test = $this->findCommand('create:repository');
@@ -465,6 +485,26 @@ class PlateTest extends Testcase
         $expected = $this->getWildfireModel('User');
 
         $actual = $this->getActualModel('User');
+
+        $this->assertEquals($expected, $actual);
+    }
+
+    /**
+     * @return void
+     */
+    public function test_wildfire_model_with_foreigns()
+    {
+        $test = $this->findCommand('create:model');
+
+        $input = array('table' => 'posts');
+        $input['--force'] = true;
+        $input['--wildfire'] = true;
+
+        $test->execute($input);
+
+        $expected = $this->getWildfireModel('Post');
+
+        $actual = $this->getActualModel('Post');
 
         $this->assertEquals($expected, $actual);
     }

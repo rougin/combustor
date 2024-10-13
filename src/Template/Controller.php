@@ -362,6 +362,8 @@ class Controller extends Classidy
                 $class = ucfirst($model);
 
                 $lines[] = '$this->' . $model . '_repo->create($input, new ' . $class . ');';
+                $lines[] = '';
+                $lines[] = '$this->' . $model . '_repo->flush();';
             }
 
             $lines[] = '';
@@ -430,6 +432,8 @@ class Controller extends Classidy
 
                 $lines[] = '/** @var \\' . $class . ' $item */';
                 $lines[] = '$this->' . $model . '_repo->delete($item);';
+                $lines[] = '';
+                $lines[] = '$this->' . $model . '_repo->flush();';
             }
 
             $lines[] = '';
@@ -586,6 +590,8 @@ class Controller extends Classidy
 
                 $lines[] = '/** @var \\' . $class . ' $item */';
                 $lines[] = '$this->' . $model . '_repo->update($item, $input);';
+                $lines[] = '';
+                $lines[] = '$this->' . $model . '_repo->flush();';
             }
 
             $lines[] = '';

@@ -175,16 +175,17 @@ class Model extends Classidy
 
             $type = $col->getDataType();
 
-            if ($col->isNull())
+            if ($col->isForeignKey())
             {
-                $type = $type . '|null';
+                $name = $col->getReferencedTable();
+                $name = Inflector::singular($name);
+
+                $type = ucfirst($name);
             }
 
             $method = new Method('set_' . $name);
 
             $method->setReturn('self');
-
-            $type = $col->getDataType();
 
             $isNull = $col->isNull();
 
@@ -199,19 +200,28 @@ class Model extends Classidy
 
                     break;
                 default:
-                    $method->addStringArgument($name, $isNull);
+                    if ($col->isForeignKey())
+                    {
+                        $method->addClassArgument($name, ucfirst($name), $isNull);
+                    }
+                    else
+                    {
+                        $method->addStringArgument($name, $isNull);
+                    }
 
                     break;
             }
 
-            $method->setCodeLine(function ($lines) use ($name)
+            $fn = function ($lines) use ($name)
             {
                 $lines[] = '$this->' . $name . ' = $' . $name . ';';
                 $lines[] = '';
                 $lines[] = 'return $this;';
 
                 return $lines;
-            });
+            };
+
+            $method->setCodeLine($fn);
 
             $this->addMethod($method);
         }

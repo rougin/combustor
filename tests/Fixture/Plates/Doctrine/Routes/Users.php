@@ -99,6 +99,8 @@ class Users extends Controller
         // Create the item then go back to "index" page ---
         $this->user_repo->create($input, new User);
 
+        $this->user_repo->flush();
+
         $text = (string) 'User successfully created!';
 
         $this->session->set_flashdata('alert', $text);
@@ -130,6 +132,8 @@ class Users extends Controller
         // Delete the item then go back to "index" page ---
         /** @var \User $item */
         $this->user_repo->delete($item);
+
+        $this->user_repo->flush();
 
         $text = (string) 'User successfully deleted!';
 
@@ -207,6 +211,8 @@ class Users extends Controller
         // Update the item then go back to "index" page ---
         /** @var \User $item */
         $this->user_repo->update($item, $input);
+
+        $this->user_repo->flush();
 
         $text = (string) 'User successfully updated!';
 

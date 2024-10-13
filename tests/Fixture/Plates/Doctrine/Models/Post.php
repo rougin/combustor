@@ -224,13 +224,13 @@ class Post extends Model
     }
 
     /**
-     * @param integer|null $user_id
+     * @param \User|null $user
      *
      * @return self
      */
-    public function set_user_id($user_id = null)
+    public function set_user(\User $user = null)
     {
-        $this->user_id = $user_id;
+        $this->user = $user;
 
         return $this;
     }

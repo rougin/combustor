@@ -113,6 +113,8 @@ class Posts extends Controller
         // Create the item then go back to "index" page ---
         $this->post_repo->create($input, new Post);
 
+        $this->post_repo->flush();
+
         $text = (string) 'Post successfully created!';
 
         $this->session->set_flashdata('alert', $text);
@@ -144,6 +146,8 @@ class Posts extends Controller
         // Delete the item then go back to "index" page ---
         /** @var \Post $item */
         $this->post_repo->delete($item);
+
+        $this->post_repo->flush();
 
         $text = (string) 'Post successfully deleted!';
 
@@ -223,6 +227,8 @@ class Posts extends Controller
         // Update the item then go back to "index" page ---
         /** @var \Post $item */
         $this->post_repo->update($item, $input);
+
+        $this->post_repo->flush();
 
         $text = (string) 'User successfully updated!';
 

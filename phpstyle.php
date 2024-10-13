@@ -48,6 +48,7 @@ $rules['no_empty_phpdoc'] = true;
 $groups = [];
 $groups[] = ['template', 'extends'];
 $groups[] = ['deprecated', 'link', 'see', 'since', 'codeCoverageIgnore'];
+$groups[] = ['ManyToOne', 'JoinColumn'];
 $groups[] = ['property', 'property-read', 'property-write'];
 $groups[] = ['method'];
 $groups[] = ['author', 'copyright', 'license'];

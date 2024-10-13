@@ -59,6 +59,14 @@ class Post extends Model
     protected $updated_at = null;
 
     /**
+     * @ManyToOne(targetEntity="User", cascade={"persist"})
+     * @JoinColumn(name="user_id", referencedColumnName="id", nullable=true, unique=false)
+     *
+     * @var \User|null
+     */
+    protected $user = null;
+
+    /**
      * @Column(name="user_id", type="integer", nullable=true, unique=false)
      *
      * @var integer|null
@@ -137,6 +145,14 @@ class Post extends Model
     public function get_updated_at()
     {
         return $this->updated_at;
+    }
+
+    /**
+     * @return \User|null
+     */
+    public function get_user()
+    {
+        return $this->user;
     }
 
     /**

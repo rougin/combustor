@@ -1,13 +1,2 @@
-multi relations in model
-fix incorrect return type in repository (no "\")
+multi-relation in view from wildfire
 pagination template if bootstrap
-
-------
-
-/**
- * @ManyToOne(targetEntity="User", cascade={"persist"})
- * @JoinColumn(name="user_id", referencedColumnName="id", nullable=true, unique=false)
- *
- * @var \User|null
- */
-protected $user = null;

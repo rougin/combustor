@@ -171,6 +171,18 @@ class TablePlate
                 $field = $field . '()';
             }
 
+            if ($this->type === self::TYPE_DOCTRINE && $col->isForeignKey())
+            {
+                $foreign = $col->getReferencedField();
+                $table = $col->getReferencedTable();
+                $table = Inflector::singular($table);
+
+                $method = 'get_' . strtolower($table) . '()';
+                $foreign = 'get_' . Inflector::snakeCase($foreign) . '()';
+
+                $field = $method . '->' . $foreign;
+            }
+
             $name = str_replace('[FIELD]', $field, $name);
 
             $plate = $space . '<td>' . $name . '</td>';

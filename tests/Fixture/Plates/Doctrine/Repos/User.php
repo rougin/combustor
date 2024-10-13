@@ -35,7 +35,7 @@ class User_repository extends Repository
      * @param \User                $entity
      * @param integer|null         $id
      *
-     * @return User
+     * @return \User
      */
     public function set($data, $entity, $id = null)
     {

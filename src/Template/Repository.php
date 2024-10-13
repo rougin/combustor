@@ -128,7 +128,7 @@ class Repository extends Classidy
 
         $method = new Method('set');
 
-        $method->setReturn($model);
+        $method->setReturn('\\' . $model);
         $method->addArrayArgument('data', 'array<string, mixed>');
         $method->addClassArgument('entity', $model)
             ->withoutTypeDeclared();

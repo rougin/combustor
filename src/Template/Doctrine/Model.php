@@ -90,6 +90,38 @@ class Model extends Classidy
     {
         foreach ($cols as $col)
         {
+            // Add additional method for foreign keys --------
+            if ($col->isForeignKey())
+            {
+                $name = $col->getReferencedTable();
+                $name = Inflector::singular($name);
+
+                $method = 'get_' . $name;
+
+                $method = new Method($method);
+
+                $type = '\\' . ucfirst($name);
+
+                if ($col->isNull())
+                {
+                    $type = $type . '|null';
+                }
+
+                $method->setReturn($type);
+
+                $fn = function ($lines) use ($name)
+                {
+                    $lines[] = 'return $this->' . $name . ';';
+
+                    return $lines;
+                };
+
+                $method->setCodeLine($fn);
+
+                $this->addMethod($method);
+            }
+            // -----------------------------------------------
+
             $name = $col->getField();
 
             $name = Inflector::snakeCase($name);
@@ -118,12 +150,14 @@ class Model extends Classidy
 
             $method->setReturn($type);
 
-            $method->setCodeLine(function ($lines) use ($name)
+            $fn = function ($lines) use ($name)
             {
                 $lines[] = 'return $this->' . $name . ';';
 
                 return $lines;
-            });
+            };
+
+            $method->setCodeLine($fn);
 
             $this->addMethod($method);
         }
@@ -219,6 +253,32 @@ class Model extends Classidy
             $name = $col->getField();
 
             $name = Inflector::snakeCase($name);
+
+            if ($col->isForeignKey())
+            {
+                $foreignTable = $col->getReferencedTable();
+                $foreignName = Inflector::singular($foreignTable);
+                $class = ucfirst($foreignName);
+                $foreign = $col->getReferencedField();
+
+                $this->addClassProperty($foreignName, $class, $isNull);
+
+                // Generate Doctrine annotations to foreign key -------
+                $lines = array();
+
+                $keys = array('targetEntity="' . $class . '"');
+                $keys[] = 'cascade={"persist"}';
+                $lines[] = '@ManyToOne(' . implode(', ', $keys) . ')';
+
+                $keys = array('name="' . $name . '"');
+                $keys[] = 'referencedColumnName="' . $foreign . '"';
+                $keys[] = 'nullable=' . ($isNull ? 'true' : 'false');
+                $keys[] = 'unique=' . ($isUnique ? 'true' : 'false');
+                $lines[] = '@JoinColumn(' . implode(', ', $keys) . ')';
+
+                $this->withComment($lines);
+                // ----------------------------------------------------
+            }
 
             $type = $col->getDataType();
 

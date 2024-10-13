@@ -162,10 +162,23 @@ class Repository extends Classidy
 
                 $isNull = $col->isNull();
 
-                $space = $isNull || $type === 'boolean' ? '    ' : '';
+                $isOptional = $isNull || $type === 'boolean';
 
-                if ($isNull || $type === 'boolean')
+                $space = $isOptional ? '    ' : '';
+
+                if ($isOptional)
                 {
+                    $default = $isNull ? 'null' : 'false';
+
+                    $field = $name;
+
+                    if ($col->isForeignKey())
+                    {
+                        $field = $col->getReferencedTable();
+                        $field = Inflector::singular($field);
+                    }
+
+                    $lines[] = '$' . $field . ' = ' . $default . ';';
                     $lines[] = 'if (array_key_exists(\'' . $name . '\', $data))';
                     $lines[] = '{';
                 }
@@ -185,12 +198,12 @@ class Repository extends Classidy
                     $name = $foreign;
                 }
 
-                $lines[] = $space . '$entity->set_' . $name . '($' . $name . ');';
-
-                if ($isNull || $type === 'boolean')
+                if ($isOptional)
                 {
                     $lines[] = '}';
                 }
+
+                $lines[] = '$entity->set_' . $name . '($' . $name . ');';
 
                 if (array_key_exists($index + 1, $cols))
                 {

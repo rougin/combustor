@@ -49,13 +49,14 @@ class Post_repository extends Repository
         $text = $data['text'];
         $entity->set_text($text);
 
+        $user = null;
         if (array_key_exists('user_id', $data))
         {
             /** @var integer|null */
             $user_id = $data['user_id'];
             $user = $this->_em->find('User', $user_id);
-            $entity->set_user($user);
         }
+        $entity->set_user($user);
         // -----------------------------------
 
         return $entity;

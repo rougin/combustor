@@ -193,6 +193,8 @@ class Controller extends Classidy
             $lines[] = '/** @var array<string, mixed> */';
             $lines[] = '$input = $this->input->post(null, true);';
             $lines[] = '';
+            $lines[] = '$data = array();';
+            $lines[] = '';
             $lines[] = 'if (! $input)';
             $lines[] = '{';
 
@@ -202,7 +204,7 @@ class Controller extends Classidy
                 $lines[] = '    $this->load->view(\'layout/header\');';
             }
 
-            $lines[] = '    $this->load->view(\'' . $name . '/create\');';
+            $lines[] = '    $this->load->view(\'' . $name . '/create\', $data);';
 
             if ($this->layout)
             {
@@ -228,8 +230,6 @@ class Controller extends Classidy
                 $lines[] = '$exists = $this->repo->exists($input);';
             }
 
-            $lines[] = '';
-            $lines[] = '$data = array();';
             $lines[] = '';
             $lines[] = 'if ($exists)';
             $lines[] = '{';

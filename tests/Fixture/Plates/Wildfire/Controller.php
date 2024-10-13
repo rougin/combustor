@@ -46,10 +46,12 @@ class Users extends Controller
         /** @var array<string, mixed> */
         $input = $this->input->post(null, true);
 
+        $data = array();
+
         if (! $input)
         {
             $this->load->view('layout/header');
-            $this->load->view('users/create');
+            $this->load->view('users/create', $data);
             $this->load->view('layout/footer');
 
             return;
@@ -58,8 +60,6 @@ class Users extends Controller
 
         // Specify logic here if applicable ---
         $exists = $this->user->exists($input);
-
-        $data = array();
 
         if ($exists)
         {

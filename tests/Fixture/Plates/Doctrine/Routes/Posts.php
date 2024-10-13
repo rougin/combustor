@@ -9,13 +9,19 @@ use Rougin\SparkPlug\Controller;
  * @property \MY_Loader           $load
  * @property \CI_Session          $session
  * @property \User                $user
+ * @property \Post                $post
  */
-class Users extends Controller
+class Posts extends Controller
 {
     /**
      * @var \User_repository
      */
     private $user_repo;
+
+    /**
+     * @var \Post_repository
+     */
+    private $post_repo;
 
     /**
      * Loads the required helpers, libraries, and models.
@@ -37,8 +43,10 @@ class Users extends Controller
 
         // Load multiple models if required ---
         $this->load->model('user');
+        $this->load->model('post');
 
         $this->load->repository('user');
+        $this->load->repository('post');
         // ------------------------------------
 
         // Load the required entity repositories ---
@@ -47,12 +55,16 @@ class Users extends Controller
         /** @var \User_repository */
         $repo = $credo->get_repository('User');
         $this->user_repo = $repo;
+
+        /** @var \Post_repository */
+        $repo = $credo->get_repository('Post');
+        $this->post_repo = $repo;
         // -----------------------------------------
     }
 
     /**
-     * Returns the form page for creating a user.
-     * Creates a new user if receiving payload.
+     * Returns the form page for creating a post.
+     * Creates a new post if receiving payload.
      *
      * @return void
      */
@@ -64,10 +76,12 @@ class Users extends Controller
 
         $data = array();
 
+        $data['users'] = $this->user_repo->dropdown('id');
+
         if (! $input)
         {
             $this->load->view('layout/header');
-            $this->load->view('users/create', $data);
+            $this->load->view('posts/create', $data);
             $this->load->view('layout/footer');
 
             return;
@@ -75,7 +89,7 @@ class Users extends Controller
         // --------------------------------
 
         // Specify logic here if applicable ---
-        $exists = $this->user_repo->exists($input);
+        $exists = $this->post_repo->exists($input);
 
         if ($exists)
         {
@@ -84,12 +98,12 @@ class Users extends Controller
         // ------------------------------------
 
         // Check if provided input is valid ---
-        $valid = $this->user->validate($input);
+        $valid = $this->post->validate($input);
 
         if (! $valid || $exists)
         {
             $this->load->view('layout/header');
-            $this->load->view('users/create', $data);
+            $this->load->view('posts/create', $data);
             $this->load->view('layout/footer');
 
             return;
@@ -97,18 +111,18 @@ class Users extends Controller
         // ------------------------------------
 
         // Create the item then go back to "index" page ---
-        $this->user_repo->create($input, new User);
+        $this->post_repo->create($input, new Post);
 
-        $text = (string) 'User successfully created!';
+        $text = (string) 'Post successfully created!';
 
         $this->session->set_flashdata('alert', $text);
 
-        redirect('users');
+        redirect('posts');
         // ------------------------------------------------
     }
 
     /**
-     * Deletes the specified user.
+     * Deletes the specified post.
      *
      * @param integer $id
      *
@@ -119,7 +133,7 @@ class Users extends Controller
         // Show 404 page if not using "DELETE" method ---
         $method = $this->input->post('_method', true);
 
-        $item = $this->user_repo->find($id);
+        $item = $this->post_repo->find($id);
 
         if ($method !== 'DELETE' || ! $item)
         {
@@ -128,20 +142,20 @@ class Users extends Controller
         // ----------------------------------------------
 
         // Delete the item then go back to "index" page ---
-        /** @var \User $item */
-        $this->user_repo->delete($item);
+        /** @var \Post $item */
+        $this->post_repo->delete($item);
 
-        $text = (string) 'User successfully deleted!';
+        $text = (string) 'Post successfully deleted!';
 
         $this->session->set_flashdata('alert', $text);
 
-        redirect('users');
+        redirect('posts');
         // ------------------------------------------------
     }
 
     /**
-     * Returns the form page for updating a user.
-     * Updates the specified user if receiving payload.
+     * Returns the form page for updating a post.
+     * Updates the specified post if receiving payload.
      *
      * @param integer $id
      *
@@ -150,14 +164,16 @@ class Users extends Controller
     public function edit($id)
     {
         // Show 404 page if item not found ---
-        if (! $item = $this->user_repo->find($id))
+        if (! $item = $this->post_repo->find($id))
         {
             show_404();
         }
 
-        /** @var \User $item */
+        /** @var \Post $item */
         $data = array('item' => $item);
         // -----------------------------------
+
+        $data['users'] = $this->user_repo->dropdown('id');
 
         // Skip if provided empty input ---
         /** @var array<string, mixed> */
@@ -166,7 +182,7 @@ class Users extends Controller
         if (! $input)
         {
             $this->load->view('layout/header');
-            $this->load->view('users/edit', $data);
+            $this->load->view('posts/edit', $data);
             $this->load->view('layout/footer');
 
             return;
@@ -183,7 +199,7 @@ class Users extends Controller
         // -------------------------------------------
 
         // Specify logic here if applicable ---
-        $exists = $this->user_repo->exists($input, $id);
+        $exists = $this->post_repo->exists($input, $id);
 
         if ($exists)
         {
@@ -192,12 +208,12 @@ class Users extends Controller
         // ------------------------------------
 
         // Check if provided input is valid ---
-        $valid = $this->user->validate($input);
+        $valid = $this->post->validate($input);
 
         if (! $valid || $exists)
         {
             $this->load->view('layout/header');
-            $this->load->view('users/edit', $data);
+            $this->load->view('posts/edit', $data);
             $this->load->view('layout/footer');
 
             return;
@@ -205,28 +221,28 @@ class Users extends Controller
         // ------------------------------------
 
         // Update the item then go back to "index" page ---
-        /** @var \User $item */
-        $this->user_repo->update($item, $input);
+        /** @var \Post $item */
+        $this->post_repo->update($item, $input);
 
         $text = (string) 'User successfully updated!';
 
         $this->session->set_flashdata('alert', $text);
 
-        redirect('users');
+        redirect('posts');
         // ------------------------------------------------
     }
 
     /**
-     * Returns the list of paginated users.
+     * Returns the list of paginated posts.
      *
      * @return void
      */
     public function index()
     {
         // Create pagination links and get the offset ---
-        $total = (int) $this->user_repo->total();
+        $total = (int) $this->post_repo->total();
 
-        $result = $this->user->paginate(10, $total);
+        $result = $this->post->paginate(10, $total);
 
         $data = array('links' => $result[1]);
 
@@ -234,7 +250,7 @@ class Users extends Controller
         $offset = $result[0];
         // ----------------------------------------------
 
-        $items = $this->user_repo->get(10, $offset);
+        $items = $this->post_repo->get(10, $offset);
 
         $data['items'] = $items;
 
@@ -244,7 +260,7 @@ class Users extends Controller
         }
 
         $this->load->view('layout/header');
-        $this->load->view('users/index', $data);
+        $this->load->view('posts/index', $data);
         $this->load->view('layout/footer');
     }
 }

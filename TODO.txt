@@ -1,13 +1,8 @@
-multi relations in controller, model
-pagination template if bootstrap
-classidy can return class argument without type-hint
+multi relations in model
+multi relations in views
+classidy should return class argument without type-hint
 fix incorrect return type in repository (no "\")
-
-------
-
-$data['users'] = $this->wildfire->get_all('users')->as_dropdown('id');
-
-$this->load->view('posts/create', $data);
+pagination template if bootstrap
 
 ------
 

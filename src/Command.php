@@ -31,6 +31,11 @@ class Command extends Blueprint
     protected $excluded = array();
 
     /**
+     * @var \Rougin\Combustor\Colfield[]
+     */
+    protected $customs = array();
+
+    /**
      * @var \Rougin\Classidy\Generator
      */
     protected $maker;
@@ -48,7 +53,9 @@ class Command extends Blueprint
     {
         $this->driver = $combustor->getDriver();
 
-        $this->excluded = $combustor->getExcluded();
+        $this->excluded = $combustor->getExcludedFields();
+
+        $this->customs = $combustor->getCustomFields();
 
         $this->maker = $maker;
 
@@ -61,6 +68,8 @@ class Command extends Blueprint
     public function init()
     {
         $this->addArgument('table', 'Name of the database table');
+
+        $this->addOption('force', 'generates file/s even they already exists');
     }
 
     /**
@@ -152,6 +161,18 @@ class Command extends Blueprint
             return new Repository($table, $cols, $this->excluded);
         }
 
-        return new Controller($table, $type);
+        $route = new Controller($table, $cols);
+
+        $route->useLayout($this->hasLayout());
+
+        return $route->setType($type)->init();
+    }
+
+    /**
+     * @return boolean
+     */
+    protected function hasLayout()
+    {
+        return is_dir($this->path . '/views/layout');
     }
 }

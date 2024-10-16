@@ -44,6 +44,8 @@ class CreateScaffold extends Command
         $this->addOption('doctrine', 'generates a Doctrine-based controller, models, and views');
 
         $this->addOption('wildfire', 'generates a Wildfire-based controller, models, and views');
+
+        $this->addOption('empty', 'generates an empty HTTP controller and model');
     }
 
     /**
@@ -57,7 +59,13 @@ class CreateScaffold extends Command
         $doctrine = $this->getOption('doctrine');
 
         /** @var boolean */
+        $empty = $this->getOption('empty');
+
+        /** @var boolean */
         $wildfire = $this->getOption('wildfire');
+
+        /** @var boolean */
+        $force = $this->getOption('force');
 
         try
         {
@@ -75,7 +83,9 @@ class CreateScaffold extends Command
 
         $input = array('table' => $table);
         $input['--doctrine'] = $doctrine;
+        $input['--empty'] = $empty;
         $input['--wildfire'] = $wildfire;
+        $input['--force'] = $force;
 
         // Execute the "create:controller" command ----
         $this->runCommand('create:controller', $input);
@@ -89,16 +99,22 @@ class CreateScaffold extends Command
         /** @var boolean */
         $bootstrap = $this->getOption('bootstrap');
 
+        unset($input['--empty']);
+
         $input['--bootstrap'] = $bootstrap;
 
         $this->runCommand('create:views', $input);
         // ----------------------------------------
 
-        // Execute the "create:repository" command ----
-        $input = array('table' => $table);
+        // Execute the "create:repository" command --------
+        if ($doctrine)
+        {
+            $input = array('table' => $table);
+            $input['--force'] = $force;
 
-        $this->runCommand('create:repository', $input);
-        // --------------------------------------------
+            $this->runCommand('create:repository', $input);
+        }
+        // ------------------------------------------------
 
         return Command::RETURN_SUCCESS;
     }

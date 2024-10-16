@@ -31,6 +31,8 @@ class CreateLayout extends Command
     public function init()
     {
         $this->addOption('bootstrap', 'adds styling based on Bootstrap');
+
+        $this->addOption('force', 'generates file/s even they already exists');
     }
 
     /**
@@ -43,17 +45,24 @@ class CreateLayout extends Command
         /** @var boolean */
         $bootstrap = $this->getOption('bootstrap');
 
+        /** @var boolean */
+        $force = $this->getOption('force');
+
         $path = $this->path . '/views/';
 
-        if (! is_dir($path . 'layout'))
+        $file = $path . 'layout/header.php';
+
+        if (is_dir($path . 'layout') && ! $force)
         {
-            mkdir($path . 'layout');
+            $this->showFail('"header.php", "footer.php" already exists. Use --force to overwrite them.');
+
+            return self::RETURN_FAILURE;
         }
+
+        $this->createDirectory();
 
         // Create the "header.php" file ----------
         $header = new HeaderPlate($bootstrap);
-
-        $file = $path . 'layout/header.php';
 
         file_put_contents($file, $header->make());
         // ---------------------------------------
@@ -66,6 +75,25 @@ class CreateLayout extends Command
         file_put_contents($file, $footer->make());
         // ---------------------------------------
 
+        $this->showPass('Layout files created!');
+
         return self::RETURN_SUCCESS;
+    }
+
+    /**
+     * @codeCoverageIgnore
+     *
+     * @return void
+     */
+    protected function createDirectory()
+    {
+        $path = $this->path . '/views/layout';
+
+        if (is_dir($path))
+        {
+            return;
+        }
+
+        mkdir($this->path . '/views/layout');
     }
 }

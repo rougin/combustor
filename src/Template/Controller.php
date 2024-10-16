@@ -18,33 +18,46 @@ class Controller extends Classidy
     const TYPE_DOCTRINE = 1;
 
     /**
+     * @var \Rougin\Describe\Column[]
+     */
+    protected $cols;
+
+    /**
+     * @var boolean
+     */
+    protected $layout = false;
+
+    /**
+     * @var string
+     */
+    protected $table;
+
+    /**
      * @var integer
      */
     protected $type;
 
     /**
-     * @param string  $table
-     * @param integer $type
+     * @param string                    $table
+     * @param \Rougin\Describe\Column[] $cols
      */
-    public function __construct($table, $type)
+    public function __construct($table, $cols)
     {
-        $this->type = $type;
+        $this->cols = $cols;
 
-        $this->init($table);
+        $this->table = $table;
     }
 
     /**
      * Configures the current class.
      *
-     * @param string $table
-     *
-     * @return void
+     * @return self
      */
-    public function init($table)
+    public function init()
     {
-        $name = Inflector::plural($table);
+        $name = Inflector::plural($this->table);
 
-        $model = Inflector::singular($table);
+        $model = Inflector::singular($this->table);
 
         /** @var class-string */
         $class = ucfirst($model);
@@ -64,17 +77,26 @@ class Controller extends Classidy
 
         $this->addClassProperty('session', 'CI_Session')->asTag();
 
-        $this->addClassProperty($model, $class)->asTag();
+        $models = $this->getForeignModels();
+        $models[] = $model;
+
+        foreach ($models as $item)
+        {
+            $this->addClassProperty($item, ucfirst($item))->asTag();
+        }
 
         if ($type === self::TYPE_DOCTRINE)
         {
-            $repo = $model . '_repository';
+            foreach ($models as $item)
+            {
+                $repo = $item . '_repository';
 
-            $class = ucfirst($repo);
+                $repoName = strtolower($item . '_repo');
 
-            $this->addClassProperty($repo, $class)->asTag();
+                $class = ucfirst($repo);
 
-            $this->addClassProperty('repo', $class)->asPrivate();
+                $this->addClassProperty($repoName, $class)->asPrivate();
+            }
         }
 
         $this->setName(ucfirst($name));
@@ -90,6 +112,55 @@ class Controller extends Classidy
         $this->setEditMethod($name, $model, $type);
 
         $this->setIndexMethod($name, $model, $type);
+
+        return $this;
+    }
+
+    /**
+     * @param integer $type
+     *
+     * @return self
+     */
+    public function setType($type)
+    {
+        $this->type = $type;
+
+        return $this;
+    }
+
+    /**
+     * @param boolean $layout
+     *
+     * @return self
+     */
+    public function useLayout($layout = true)
+    {
+        $this->layout = $layout;
+
+        return $this;
+    }
+
+    /**
+     * @return string[]
+     */
+    protected function getForeignModels()
+    {
+        $items = array();
+
+        foreach ($this->cols as $col)
+        {
+            if (! $col->isForeignKey())
+            {
+                continue;
+            }
+
+            $name = $col->getReferencedTable();
+            $name = Inflector::singular($name);
+
+            $items[] = $name;
+        }
+
+        return $items;
     }
 
     /**
@@ -131,28 +202,48 @@ class Controller extends Classidy
             // -----------------------------------------------
 
             $lines[] = '// Load multiple models if required ---';
+
+            foreach ($this->getForeignModels() as $foreign)
+            {
+                $lines[] = '$this->load->model(\'' . $foreign . '\');';
+            }
+
             $lines[] = '$this->load->model(\'' . $model . '\');';
+
+            $foreigns = $this->getForeignModels();
 
             if ($type === self::TYPE_DOCTRINE)
             {
                 $lines[] = '';
+
+                foreach ($foreigns as $foreign)
+                {
+                    $lines[] = '$this->load->repository(\'' . $foreign . '\');';
+                }
+
                 $lines[] = '$this->load->repository(\'' . $model . '\');';
             }
 
             $lines[] = '// ------------------------------------';
 
-            $model = ucfirst($model);
-
             if ($type === self::TYPE_DOCTRINE)
             {
                 $lines[] = '';
-                $lines[] = '// Load the main repository of the model ---';
+                $lines[] = '// Load the required entity repositories ---';
                 $lines[] = '$credo = new Credo($this->db);';
-                $lines[] = '';
-                $lines[] = '/** @var \\' . $model . '_repository */';
-                $lines[] = '$repo = $credo->get_repository(\'' . $model . '\');';
-                $lines[] = '';
-                $lines[] = '$this->repo = $repo;';
+
+                $foreigns[] = $model;
+
+                foreach ($foreigns as $foreign)
+                {
+                    $foreign = ucfirst($foreign);
+
+                    $lines[] = '';
+                    $lines[] = '/** @var \\' . $foreign . '_repository */';
+                    $lines[] = '$repo = $credo->get_repository(\'' . $foreign . '\');';
+                    $lines[] = '$this->' . strtolower($foreign) . '_repo = $repo;';
+                }
+
                 $lines[] = '// -----------------------------------------';
             }
 
@@ -185,11 +276,27 @@ class Controller extends Classidy
             $lines[] = '/** @var array<string, mixed> */';
             $lines[] = '$input = $this->input->post(null, true);';
             $lines[] = '';
+            $lines[] = '$data = array();';
+
+            $lines = $this->setForeigns($lines);
+
+            $lines[] = '';
             $lines[] = 'if (! $input)';
             $lines[] = '{';
 
             // TODO: Show if --with-view enabled -------------------------
-            $lines[] = '    $this->load->view(\'' . $name . '/create\');';
+            if ($this->layout)
+            {
+                $lines[] = '    $this->load->view(\'layout/header\');';
+            }
+
+            $lines[] = '    $this->load->view(\'' . $name . '/create\', $data);';
+
+            if ($this->layout)
+            {
+                $lines[] = '    $this->load->view(\'layout/footer\');';
+            }
+
             $lines[] = '';
             // -----------------------------------------------------------
 
@@ -206,11 +313,9 @@ class Controller extends Classidy
             }
             else
             {
-                $lines[] = '$exists = $this->repo->exists($input);';
+                $lines[] = '$exists = $this->' . $model . '_repo->exists($input);';
             }
 
-            $lines[] = '';
-            $lines[] = '$data = array();';
             $lines[] = '';
             $lines[] = 'if ($exists)';
             $lines[] = '{';
@@ -225,10 +330,21 @@ class Controller extends Classidy
             $lines[] = 'if (! $valid || $exists)';
             $lines[] = '{';
 
-            // TODO: Show if --with-view enabled ----------------------------
+            // TODO: Show if --with-view enabled --------------------------------
+            if ($this->layout)
+            {
+                $lines[] = '    $this->load->view(\'layout/header\');';
+            }
+
             $lines[] = '    $this->load->view(\'' . $name . '/create\', $data);';
+
+            if ($this->layout)
+            {
+                $lines[] = '    $this->load->view(\'layout/footer\');';
+            }
+
             $lines[] = '';
-            // --------------------------------------------------------------
+            // ------------------------------------------------------------------
 
             $lines[] = '    return;';
             $lines[] = '}';
@@ -245,7 +361,9 @@ class Controller extends Classidy
             {
                 $class = ucfirst($model);
 
-                $lines[] = '$this->repo->create($input, new ' . $class . ');';
+                $lines[] = '$this->' . $model . '_repo->create($input, new ' . $class . ');';
+                $lines[] = '';
+                $lines[] = '$this->' . $model . '_repo->flush();';
             }
 
             $lines[] = '';
@@ -291,7 +409,7 @@ class Controller extends Classidy
             }
             else
             {
-                $lines[] = '$item = $this->repo->find($id);';
+                $lines[] = '$item = $this->' . $model . '_repo->find($id);';
             }
 
             $lines[] = '';
@@ -313,7 +431,9 @@ class Controller extends Classidy
                 $class = ucfirst($model);
 
                 $lines[] = '/** @var \\' . $class . ' $item */';
-                $lines[] = '$this->repo->delete($item);';
+                $lines[] = '$this->' . $model . '_repo->delete($item);';
+                $lines[] = '';
+                $lines[] = '$this->' . $model . '_repo->flush();';
             }
 
             $lines[] = '';
@@ -359,7 +479,7 @@ class Controller extends Classidy
             }
             else
             {
-                $lines[] = 'if (! $item = $this->repo->find($id))';
+                $lines[] = 'if (! $item = $this->' . $model . '_repo->find($id))';
             }
 
             $lines[] = '{';
@@ -369,6 +489,9 @@ class Controller extends Classidy
             $lines[] = '/** @var \\' . ucfirst($model) . ' $item */';
             $lines[] = '$data = array(\'item\' => $item);';
             $lines[] = '// -----------------------------------';
+
+            $lines = $this->setForeigns($lines);
+
             $lines[] = '';
 
             $lines[] = '// Skip if provided empty input ---';
@@ -378,10 +501,21 @@ class Controller extends Classidy
             $lines[] = 'if (! $input)';
             $lines[] = '{';
 
-            // TODO: Show if --with-view enabled ----------------------------
+            // TODO: Show if --with-view enabled ------------------------------
+            if ($this->layout)
+            {
+                $lines[] = '    $this->load->view(\'layout/header\');';
+            }
+
             $lines[] = '    $this->load->view(\'' . $name . '/edit\', $data);';
+
+            if ($this->layout)
+            {
+                $lines[] = '    $this->load->view(\'layout/footer\');';
+            }
+
             $lines[] = '';
-            // --------------------------------------------------------------
+            // ----------------------------------------------------------------
 
             $lines[] = '    return;';
             $lines[] = '}';
@@ -406,7 +540,7 @@ class Controller extends Classidy
             }
             else
             {
-                $lines[] = '$exists = $this->repo->exists($input, $id);';
+                $lines[] = '$exists = $this->' . $model . '_repo->exists($input, $id);';
             }
 
             $lines[] = '';
@@ -423,10 +557,21 @@ class Controller extends Classidy
             $lines[] = 'if (! $valid || $exists)';
             $lines[] = '{';
 
-            // TODO: Show if --with-view enabled ----------------------------
+            // TODO: Show if --with-view enabled ------------------------------
+            if ($this->layout)
+            {
+                $lines[] = '    $this->load->view(\'layout/header\');';
+            }
+
             $lines[] = '    $this->load->view(\'' . $name . '/edit\', $data);';
+
+            if ($this->layout)
+            {
+                $lines[] = '    $this->load->view(\'layout/footer\');';
+            }
+
             $lines[] = '';
-            // --------------------------------------------------------------
+            // ----------------------------------------------------------------
 
             $lines[] = '    return;';
             $lines[] = '}';
@@ -444,7 +589,9 @@ class Controller extends Classidy
                 $class = ucfirst($model);
 
                 $lines[] = '/** @var \\' . $class . ' $item */';
-                $lines[] = '$this->repo->update($item, $input);';
+                $lines[] = '$this->' . $model . '_repo->update($item, $input);';
+                $lines[] = '';
+                $lines[] = '$this->' . $model . '_repo->flush();';
             }
 
             $lines[] = '';
@@ -459,6 +606,48 @@ class Controller extends Classidy
         });
 
         $this->addMethod($method);
+    }
+
+    /**
+     * @param string[] $lines
+     *
+     * @return string[]
+     */
+    protected function setForeigns($lines)
+    {
+        $items = array();
+
+        foreach ($this->cols as $col)
+        {
+            if ($col->isForeignKey())
+            {
+                $items[] = $col;
+            }
+        }
+
+        if (count($items) > 0)
+        {
+            $lines[] = '';
+        }
+
+        foreach ($items as $item)
+        {
+            $name = $item->getReferencedTable();
+            $name = Inflector::plural($name);
+
+            $model = Inflector::singular($name);
+
+            if ($this->type === self::TYPE_DOCTRINE)
+            {
+                $lines[] = '$data[\'' . $name . '\'] = $this->' . $model . '_repo->dropdown(\'id\');';
+            }
+            else
+            {
+                $lines[] = '$data[\'' . $name . '\'] = $this->' . $model . '->get()->dropdown(\'id\');';
+            }
+        }
+
+        return $lines;
     }
 
     /**
@@ -486,7 +675,7 @@ class Controller extends Classidy
             }
             else
             {
-                $lines[] = '$total = (int) $this->repo->total();';
+                $lines[] = '$total = (int) $this->' . $model . '_repo->total();';
             }
 
             $lines[] = '';
@@ -505,7 +694,7 @@ class Controller extends Classidy
             }
             else
             {
-                $lines[] = '$items = $this->repo->get(10, $offset);';
+                $lines[] = '$items = $this->' . $model . '_repo->get(10, $offset);';
             }
 
             $lines[] = '';
@@ -527,7 +716,18 @@ class Controller extends Classidy
 
             // TODO: Show if --with-view enabled ---------------------------
             $lines[] = '';
+
+            if ($this->layout)
+            {
+                $lines[] = '$this->load->view(\'layout/header\');';
+            }
+
             $lines[] = '$this->load->view(\'' . $name . '/index\', $data);';
+
+            if ($this->layout)
+            {
+                $lines[] = '$this->load->view(\'layout/footer\');';
+            }
             // -------------------------------------------------------------
 
             return $lines;

@@ -2,6 +2,7 @@
 
 namespace Rougin\Combustor;
 
+use ReflectionClass;
 use Rougin\Blueprint\Blueprint;
 use Rougin\Blueprint\Container;
 use Rougin\Combustor\Packages\CombustorPackage;
@@ -78,9 +79,41 @@ class Console extends Blueprint
     }
 
     /**
+     * @return \Rougin\Combustor\Colfield[]
+     */
+    public function getCustomFields()
+    {
+        $parsed = $this->getParsed();
+
+        $field = 'custom_fields';
+
+        if (! array_key_exists($field, $parsed))
+        {
+            return array();
+        }
+
+        /** @var class-string[] */
+        $items = $parsed[$field];
+
+        $customs = array();
+
+        foreach ($items as $item)
+        {
+            $ref = new ReflectionClass($item);
+
+            /** @var \Rougin\Combustor\Colfield */
+            $custom = $ref->newInstance();
+
+            $customs[] = $custom;
+        }
+
+        return $customs;
+    }
+
+    /**
      * @return string[]
      */
-    public function getExcluded()
+    public function getExcludedFields()
     {
         $parsed = $this->getParsed();
 
@@ -139,9 +172,13 @@ class Console extends Blueprint
         $container->addPackage($describe);
 
         $combustor = new CombustorPackage($path);
-        $excluded = $this->getExcluded();
 
-        $combustor->setExcluded($excluded);
+        $customs = $this->getCustomFields();
+        $combustor->setCustomFields($customs);
+
+        $excluded = $this->getExcludedFields();
+        $combustor->setExcludedFields($excluded);
+
         $container->addPackage($combustor);
 
         $this->setContainer($container);

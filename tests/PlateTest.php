@@ -43,7 +43,7 @@ class PlateTest extends Testcase
     {
         $test = $this->findCommand('create:layout');
 
-        $test->execute(array());
+        $test->execute(array('--force' => true));
 
         $type = self::VIEW_COMMON;
 
@@ -61,11 +61,12 @@ class PlateTest extends Testcase
     {
         $test = $this->findCommand('create:layout');
 
-        $test->execute(array('--bootstrap' => true));
+        $input = array('--force' => true);
+        $input['--bootstrap'] = true;
 
-        $type = self::VIEW_STYLED;
+        $test->execute($input);
 
-        $expected = $this->getLayoutView($type);
+        $expected = $this->getLayoutView(self::VIEW_STYLED);
 
         $actual = $this->getActualLayout();
 
@@ -80,13 +81,34 @@ class PlateTest extends Testcase
         $test = $this->findCommand('create:controller');
 
         $input = array('table' => 'users');
+        $input['--force'] = true;
         $input['--doctrine'] = true;
 
         $test->execute($input);
 
-        $expected = $this->getDoctrineCtrl();
+        $expected = $this->getDoctrineCtrl('Users');
 
         $actual = $this->getActualCtrl('Users');
+
+        $this->assertEquals($expected, $actual);
+    }
+
+    /**
+     * @return void
+     */
+    public function test_doctrine_controller_with_foreigns()
+    {
+        $test = $this->findCommand('create:controller');
+
+        $input = array('table' => 'posts');
+        $input['--force'] = true;
+        $input['--doctrine'] = true;
+
+        $test->execute($input);
+
+        $expected = $this->getDoctrineCtrl('Posts');
+
+        $actual = $this->getActualCtrl('Posts');
 
         $this->assertEquals($expected, $actual);
     }
@@ -99,13 +121,34 @@ class PlateTest extends Testcase
         $test = $this->findCommand('create:model');
 
         $input = array('table' => 'users');
+        $input['--force'] = true;
         $input['--doctrine'] = true;
 
         $test->execute($input);
 
-        $expected = $this->getDoctrineModel();
+        $expected = $this->getDoctrineModel('User');
 
         $actual = $this->getActualModel('User');
+
+        $this->assertEquals($expected, $actual);
+    }
+
+    /**
+     * @return void
+     */
+    public function test_doctrine_model_with_foreigns()
+    {
+        $test = $this->findCommand('create:model');
+
+        $input = array('table' => 'posts');
+        $input['--force'] = true;
+        $input['--doctrine'] = true;
+
+        $test->execute($input);
+
+        $expected = $this->getDoctrineModel('Post');
+
+        $actual = $this->getActualModel('Post');
 
         $this->assertEquals($expected, $actual);
     }
@@ -118,12 +161,32 @@ class PlateTest extends Testcase
         $test = $this->findCommand('create:repository');
 
         $input = array('table' => 'users');
+        $input['--force'] = true;
 
         $test->execute($input);
 
-        $expected = $this->getDoctrineRepo();
+        $expected = $this->getDoctrineRepo('User');
 
         $actual = $this->getActualRepo('User');
+
+        $this->assertEquals($expected, $actual);
+    }
+
+    /**
+     * @return void
+     */
+    public function test_doctrine_repository_with_foreigns()
+    {
+        $test = $this->findCommand('create:repository');
+
+        $input = array('table' => 'posts');
+        $input['--force'] = true;
+
+        $test->execute($input);
+
+        $expected = $this->getDoctrineRepo('Post');
+
+        $actual = $this->getActualRepo('Post');
 
         $this->assertEquals($expected, $actual);
     }
@@ -136,13 +199,14 @@ class PlateTest extends Testcase
         $test = $this->findCommand('create:view');
 
         $input = array('table' => 'users');
+        $input['--force'] = true;
         $input['--doctrine'] = true;
 
         $test->execute($input);
 
-        $expected = $this->getDoctrineView();
+        $expected = $this->getDoctrineView('Users');
 
-        $actual = $this->getActualView('User');
+        $actual = $this->getActualView('Users');
 
         $this->assertEquals($expected, $actual);
     }
@@ -157,12 +221,184 @@ class PlateTest extends Testcase
         $input = array('table' => 'users');
         $input['--doctrine'] = true;
         $input['--bootstrap'] = true;
+        $input['--force'] = true;
 
         $test->execute($input);
 
-        $expected = $this->getDoctrineView(self::VIEW_STYLED);
+        $expected = $this->getDoctrineView('Users', self::VIEW_STYLED);
 
-        $actual = $this->getActualView('User');
+        $actual = $this->getActualView('Users');
+
+        $this->assertEquals($expected, $actual);
+    }
+
+    /**
+     * @return void
+     */
+    public function test_doctrine_view_with_foreigns()
+    {
+        $test = $this->findCommand('create:view');
+
+        $input = array('table' => 'posts');
+        $input['--force'] = true;
+        $input['--doctrine'] = true;
+
+        $test->execute($input);
+
+        $expected = $this->getDoctrineView('Posts');
+
+        $actual = $this->getActualView('Posts');
+
+        $this->assertEquals($expected, $actual);
+    }
+
+    /**
+     * @return void
+     */
+    public function test_empty_controller()
+    {
+        $test = $this->findCommand('create:controller');
+
+        $input = array('table' => 'users');
+        $input['--empty'] = true;
+        $input['--wildfire'] = true;
+        $input['--force'] = true;
+
+        $test->execute($input);
+
+        $expected = $this->getEmptyCtrl();
+
+        $actual = $this->getActualCtrl('Users');
+
+        $this->assertEquals($expected, $actual);
+    }
+
+    /**
+     * @return void
+     */
+    public function test_empty_model()
+    {
+        $test = $this->findCommand('create:model');
+
+        $input = array('table' => 'users');
+        $input['--empty'] = true;
+        $input['--wildfire'] = true;
+        $input['--force'] = true;
+
+        $test->execute($input);
+
+        $expected = $this->getEmptyModel();
+
+        $actual = $this->getActualModel('User');
+
+        $this->assertEquals($expected, $actual);
+    }
+
+    /**
+     * @return void
+     */
+    public function test_existing_controller()
+    {
+        $test = $this->findCommand('create:controller');
+
+        $input = array('table' => 'users');
+        $input['--doctrine'] = true;
+
+        $test->execute($input);
+
+        $expected = '[FAIL] "Users" already exists. Use --force to overwrite the file.';
+
+        $actual = $this->getActualDisplay($test);
+
+        $this->assertEquals($expected, $actual);
+    }
+
+    /**
+     * @return void
+     */
+    public function test_existing_layout()
+    {
+        // Run the command to create its directory ---
+        $old = $this->findCommand('create:layout');
+
+        $old->execute(array());
+        // -------------------------------------------
+
+        $test = $this->findCommand('create:layout');
+
+        $test->execute(array());
+
+        $expected = '[FAIL] "header.php", "footer.php" already exists. Use --force to overwrite them.';
+
+        $actual = $this->getActualDisplay($test);
+
+        $this->assertEquals($expected, $actual);
+    }
+
+    /**
+     * @return void
+     */
+    public function test_existing_model()
+    {
+        $test = $this->findCommand('create:model');
+
+        $input = array('table' => 'users');
+        $input['--doctrine'] = true;
+
+        $test->execute($input);
+
+        $expected = '[FAIL] "User" already exists. Use --force to overwrite the file.';
+
+        $actual = $this->getActualDisplay($test);
+
+        $this->assertEquals($expected, $actual);
+    }
+
+    /**
+     * @return void
+     */
+    public function test_existing_repository()
+    {
+        $input = array('table' => 'users');
+
+        // Run the command to create its directory ---
+        $old = $this->findCommand('create:repository');
+
+        $old->execute($input);
+        // -------------------------------------------
+
+        $test = $this->findCommand('create:repository');
+
+        $test->execute($input);
+
+        $expected = '[FAIL] "User_repository" already exists. Use --force to overwrite the file.';
+
+        $actual = $this->getActualDisplay($test);
+
+        $this->assertEquals($expected, $actual);
+    }
+
+    /**
+     * @return void
+     */
+    public function test_existing_views()
+    {
+        $input = array('table' => 'users');
+        $input['--doctrine'] = true;
+
+        // Run the command to create the directory ---
+        $old = $this->findCommand('create:views');
+
+        $old->execute($input);
+        // -------------------------------------------
+
+        $test = $this->findCommand('create:views');
+
+        $test->execute($input);
+
+        $expected = '[FAIL] "users" directory already exists. Use --force to overwrite the directory.';
+
+        $actual = $this->getActualDisplay($test);
 
         $this->assertEquals($expected, $actual);
     }
@@ -177,17 +413,18 @@ class PlateTest extends Testcase
         $input = array('table' => 'users');
         $input['--doctrine'] = true;
         $input['--bootstrap'] = true;
+        $input['--force'] = true;
 
         $test->execute($input);
 
         // Return the controller, model, and views --------
-        $route = $this->getDoctrineCtrl();
+        $route = $this->getDoctrineCtrl('Users');
 
-        $model = $this->getDoctrineModel();
+        $model = $this->getDoctrineModel('User');
 
-        $repo = $this->getDoctrineRepo();
+        $repo = $this->getDoctrineRepo('User');
 
-        $views = $this->getDoctrineView(self::VIEW_STYLED);
+        $views = $this->getDoctrineView('Users', self::VIEW_STYLED);
 
         $expected = $route . "\n" . $model . "\n" . $views;
 
@@ -201,7 +438,7 @@ class PlateTest extends Testcase
 
         $repo = $this->getActualRepo('User');
 
-        $views = $this->getActualView('User');
+        $views = $this->getActualView('Users');
 
         $actual = $route . "\n" . $model . "\n" . $views;
 
@@ -219,13 +456,34 @@ class PlateTest extends Testcase
         $test = $this->findCommand('create:controller');
 
         $input = array('table' => 'users');
+        $input['--force'] = true;
         $input['--wildfire'] = true;
 
         $test->execute($input);
 
-        $expected = $this->getWildfireCtrl();
+        $expected = $this->getWildfireCtrl('Users');
 
         $actual = $this->getActualCtrl('Users');
+
+        $this->assertEquals($expected, $actual);
+    }
+
+    /**
+     * @return void
+     */
+    public function test_wildfire_controller_with_foreigns()
+    {
+        $test = $this->findCommand('create:controller');
+
+        $input = array('table' => 'posts');
+        $input['--force'] = true;
+        $input['--wildfire'] = true;
+
+        $test->execute($input);
+
+        $expected = $this->getWildfireCtrl('Posts');
+
+        $actual = $this->getActualCtrl('Posts');
 
         $this->assertEquals($expected, $actual);
     }
@@ -238,13 +496,34 @@ class PlateTest extends Testcase
         $test = $this->findCommand('create:model');
 
         $input = array('table' => 'users');
+        $input['--force'] = true;
         $input['--wildfire'] = true;
 
         $test->execute($input);
 
-        $expected = $this->getWildfireModel();
+        $expected = $this->getWildfireModel('User');
 
         $actual = $this->getActualModel('User');
+
+        $this->assertEquals($expected, $actual);
+    }
+
+    /**
+     * @return void
+     */
+    public function test_wildfire_model_with_foreigns()
+    {
+        $test = $this->findCommand('create:model');
+
+        $input = array('table' => 'posts');
+        $input['--force'] = true;
+        $input['--wildfire'] = true;
+
+        $test->execute($input);
+
+        $expected = $this->getWildfireModel('Post');
+
+        $actual = $this->getActualModel('Post');
 
         $this->assertEquals($expected, $actual);
     }
@@ -257,13 +536,14 @@ class PlateTest extends Testcase
         $test = $this->findCommand('create:view');
 
         $input = array('table' => 'users');
+        $input['--force'] = true;
         $input['--wildfire'] = true;
 
         $test->execute($input);
 
-        $expected = $this->getWildfireView();
+        $expected = $this->getWildfireView('Users');
 
-        $actual = $this->getActualView('User');
+        $actual = $this->getActualView('Users');
 
         $this->assertEquals($expected, $actual);
     }
@@ -276,14 +556,35 @@ class PlateTest extends Testcase
         $test = $this->findCommand('create:view');
 
         $input = array('table' => 'users');
-        $input['--wildfire'] = true;
         $input['--bootstrap'] = true;
+        $input['--force'] = true;
+        $input['--wildfire'] = true;
 
         $test->execute($input);
 
-        $expected = $this->getWildfireView(self::VIEW_STYLED);
+        $expected = $this->getWildfireView('Users', self::VIEW_STYLED);
 
-        $actual = $this->getActualView('User');
+        $actual = $this->getActualView('Users');
+
+        $this->assertEquals($expected, $actual);
+    }
+
+    /**
+     * @return void
+     */
+    public function test_wildfire_view_with_foreigns()
+    {
+        $test = $this->findCommand('create:view');
+
+        $input = array('table' => 'posts');
+        $input['--force'] = true;
+        $input['--wildfire'] = true;
+
+        $test->execute($input);
+
+        $expected = $this->getWildfireView('Posts');
+
+        $actual = $this->getActualView('Posts');
 
         $this->assertEquals($expected, $actual);
     }
@@ -325,6 +626,20 @@ class PlateTest extends Testcase
     protected function getActualCtrl($name)
     {
         return $this->getActualFile($name, self::TYPE_CONTROLLER);
+    }
+
+    /**
+     * @param \Symfony\Component\Console\Tester\CommandTester $tester
+     *
+     * @return string
+     */
+    protected function getActualDisplay(CommandTester $tester)
+    {
+        $actual = $tester->getDisplay();
+
+        $actual = str_replace("\r\n", '', $actual);
+
+        return str_replace("\n", '', $actual);
     }
 
     /**
@@ -379,7 +694,7 @@ class PlateTest extends Testcase
         $footer = $this->getActualFile($name . '/footer', self::TYPE_VIEW);
 
         // Delete directory after getting the files ---
-        $this->deleteDir('views/' . $name);
+        // $this->deleteDir('views/layout');
         // --------------------------------------------
 
         return $header . "\n" . $footer;
@@ -418,7 +733,7 @@ class PlateTest extends Testcase
      */
     protected function getActualView($name)
     {
-        $name = strtolower(Inflector::plural($name));
+        $name = strtolower($name);
 
         $create = $this->getActualFile($name . '/create', self::TYPE_VIEW);
 
@@ -434,50 +749,68 @@ class PlateTest extends Testcase
     }
 
     /**
+     * @param string $name
+     *
      * @return string
      */
-    protected function getDoctrineCtrl()
+    protected function getDoctrineCtrl($name)
     {
-        return $this->getTemplate('Doctrine/Controller');
+        return $this->getTemplate('Doctrine/Routes/' . $name);
     }
 
     /**
+     * @param string $name
+     *
      * @return string
      */
-    protected function getDoctrineModel()
+    protected function getDoctrineModel($name)
     {
-        return $this->getTemplate('Doctrine/Model');
+        return $this->getTemplate('Doctrine/Models/' . $name);
     }
 
     /**
+     * @param string $name
+     *
      * @return string
      */
-    protected function getDoctrineRepo()
+    protected function getDoctrineRepo($name)
     {
-        return $this->getTemplate('Doctrine/Repository');
+        return $this->getTemplate('Doctrine/Repos/' . $name);
     }
 
     /**
+     * @param string  $name
      * @param integer $type
      *
      * @return string
      */
-    protected function getDoctrineView($type = self::VIEW_COMMON)
+    protected function getDoctrineView($name, $type = self::VIEW_COMMON)
     {
-        $name = 'Common';
+        $type = $type === self::VIEW_STYLED ? 'Styled' : 'Common';
 
-        if ($type === self::VIEW_STYLED)
-        {
-            $name = 'Styled';
-        }
+        $create = $this->getTemplate('Doctrine/Plates/' . $name . '/' . $type . '/CreateView');
 
-        $create = $this->getTemplate('Doctrine/' . $name . '/CreateView');
+        $edit = $this->getTemplate('Doctrine/Plates/' . $name . '/' . $type . '/EditView');
 
-        $edit = $this->getTemplate('Doctrine/' . $name . '/EditView');
-
-        $index = $this->getTemplate('Doctrine/' . $name . '/IndexView');
+        $index = $this->getTemplate('Doctrine/Plates/' . $name . '/' . $type . '/IndexView');
 
         return $create . "\n" . $edit . "\n" . $index;
+    }
+
+    /**
+     * @return string
+     */
+    protected function getEmptyCtrl()
+    {
+        return $this->getTemplate('Empty/Controller');
+    }
+
+    /**
+     * @return string
+     */
+    protected function getEmptyModel()
+    {
+        return $this->getTemplate('Empty/Model');
     }
 
     /**
@@ -517,40 +850,40 @@ class PlateTest extends Testcase
     }
 
     /**
+     * @param string $name
+     *
      * @return string
      */
-    protected function getWildfireCtrl()
+    protected function getWildfireCtrl($name)
     {
-        return $this->getTemplate('Wildfire/Controller');
+        return $this->getTemplate('Wildfire/Routes/' . $name);
     }
 
     /**
+     * @param string $name
+     *
      * @return string
      */
-    protected function getWildfireModel()
+    protected function getWildfireModel($name)
     {
-        return $this->getTemplate('Wildfire/Model');
+        return $this->getTemplate('Wildfire/Models/' . $name);
     }
 
     /**
+     * @param string  $name
      * @param integer $type
      *
      * @return string
      */
-    protected function getWildfireView($type = self::VIEW_COMMON)
+    protected function getWildfireView($name, $type = self::VIEW_COMMON)
     {
-        $name = 'Common';
+        $type = $type === self::VIEW_STYLED ? 'Styled' : 'Common';
 
-        if ($type === self::VIEW_STYLED)
-        {
-            $name = 'Styled';
-        }
+        $create = $this->getTemplate('Wildfire/Plates/' . $name . '/' . $type . '/CreateView');
 
-        $create = $this->getTemplate('Wildfire/' . $name . '/CreateView');
+        $edit = $this->getTemplate('Wildfire/Plates/' . $name . '/' . $type . '/EditView');
 
-        $edit = $this->getTemplate('Wildfire/' . $name . '/EditView');
-
-        $index = $this->getTemplate('Wildfire/' . $name . '/IndexView');
+        $index = $this->getTemplate('Wildfire/Plates/' . $name . '/' . $type . '/IndexView');
 
         return $create . "\n" . $edit . "\n" . $index;
     }

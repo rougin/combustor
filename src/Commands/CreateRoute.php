@@ -34,6 +34,8 @@ class CreateRoute extends Command
         $this->addOption('doctrine', 'generates a Doctrine-based controller');
 
         $this->addOption('wildfire', 'generates a Wildfire-based controller');
+
+        $this->addOption('empty', 'generates an empty HTTP controller');
     }
 
     /**
@@ -52,6 +54,12 @@ class CreateRoute extends Command
         /** @var boolean */
         $wildfire = $this->getOption('wildfire');
 
+        /** @var boolean */
+        $empty = $this->getOption('empty');
+
+        /** @var boolean */
+        $force = $this->getOption('force');
+
         try
         {
             $type = $this->getInstalled($doctrine, $wildfire);
@@ -63,7 +71,6 @@ class CreateRoute extends Command
             return self::RETURN_FAILURE;
         }
 
-        // Create the controller file -------------
         $path = $this->path . '/controllers/';
 
         $name = Inflector::plural($table);
@@ -72,7 +79,20 @@ class CreateRoute extends Command
 
         $file = $path . $name . '.php';
 
+        if (file_exists($file) && ! $force)
+        {
+            $this->showFail('"' . $name . '" already exists. Use --force to overwrite the file.');
+
+            return self::RETURN_FAILURE;
+        }
+
+        // Create the controller file -------------
         $plate = $this->getTemplate($type);
+
+        if ($empty)
+        {
+            $plate->setEmpty();
+        }
 
         $plate = $this->maker->make($plate);
 

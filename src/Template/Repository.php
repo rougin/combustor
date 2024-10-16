@@ -52,7 +52,11 @@ class Repository extends Classidy
         $comment = '@extends \Rougin\Credo\Repository<\\' . $model . '>';
         $this->setComment($comment);
 
-        $this->addClassProperty('db', 'CI_DB_query_builder')->asTag();
+        $ci = 'CI_DB_query_builder';
+        $this->addClassProperty('db', $ci)->asTag();
+
+        $em = 'Doctrine\ORM\EntityManagerInterface';
+        $this->addClassProperty('_em', $em)->asTag();
 
         $method = new Method('create');
         $method->addArrayArgument('data', 'array<string, mixed>');
@@ -128,9 +132,10 @@ class Repository extends Classidy
 
         $method = new Method('set');
 
-        $method->setReturn($model);
+        $method->setReturn('\\' . $model);
         $method->addArrayArgument('data', 'array<string, mixed>');
-        $method->addClassArgument('entity', $model);
+        $method->addClassArgument('entity', $model)
+            ->withoutTypeDeclared();
         $method->addIntegerArgument('id', true);
 
         $cols = $this->cols;
@@ -155,20 +160,50 @@ class Repository extends Classidy
                     $type = $type . '|null';
                 }
 
-                $lines[] = '/** @var ' . $type . ' */';
-                $lines[] = '$' . $name . ' = $data[\'' . $name . '\'];';
+                $isNull = $col->isNull();
 
-                if ($col->isNull())
+                $isOptional = $isNull || $type === 'boolean';
+
+                $space = $isOptional ? '    ' : '';
+
+                if ($isOptional)
                 {
-                    $lines[] = 'if ($' . $name . ')';
+                    $default = $isNull ? 'null' : 'false';
+
+                    $field = $name;
+
+                    if ($col->isForeignKey())
+                    {
+                        $field = $col->getReferencedTable();
+                        $field = Inflector::singular($field);
+                    }
+
+                    $lines[] = '$' . $field . ' = ' . $default . ';';
+                    $lines[] = 'if (array_key_exists(\'' . $name . '\', $data))';
                     $lines[] = '{';
-                    $lines[] = '    $entity->set_' . $name . '($' . $name . ');';
+                }
+
+                $lines[] = $space . '/** @var ' . $type . ' */';
+                $lines[] = $space . '$' . $name . ' = $data[\'' . $name . '\'];';
+
+                if ($col->isForeignKey())
+                {
+                    $foreign = $col->getReferencedTable();
+                    $foreign = Inflector::singular($foreign);
+
+                    $class = ucfirst($foreign);
+
+                    $lines[] = $space . '$user = $this->_em->find(\'' . $class . '\', $' . $name . ');';
+
+                    $name = $foreign;
+                }
+
+                if ($isOptional)
+                {
                     $lines[] = '}';
                 }
-                else
-                {
-                    $lines[] = '$entity->set_' . $name . '($' . $name . ');';
-                }
+
+                $lines[] = '$entity->set_' . $name . '($' . $name . ');';
 
                 if (array_key_exists($index + 1, $cols))
                 {

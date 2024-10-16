@@ -34,6 +34,8 @@ class CreateModel extends Command
         $this->addOption('doctrine', 'generates a Doctrine-based model');
 
         $this->addOption('wildfire', 'generates a Wildfire-based model');
+
+        $this->addOption('empty', 'generates an empty model');
     }
 
     /**
@@ -52,6 +54,12 @@ class CreateModel extends Command
         /** @var boolean */
         $wildfire = $this->getOption('wildfire');
 
+        /** @var boolean */
+        $empty = $this->getOption('empty');
+
+        /** @var boolean */
+        $force = $this->getOption('force');
+
         try
         {
             $type = $this->getInstalled($doctrine, $wildfire);
@@ -63,7 +71,6 @@ class CreateModel extends Command
             return self::RETURN_FAILURE;
         }
 
-        // Create the model file --------------------
         $name = Inflector::singular($table);
 
         $name = ucfirst(Inflector::singular($table));
@@ -72,7 +79,20 @@ class CreateModel extends Command
 
         $file = $path . $name . '.php';
 
+        if (file_exists($file) && ! $force)
+        {
+            $this->showFail('"' . $name . '" already exists. Use --force to overwrite the file.');
+
+            return self::RETURN_FAILURE;
+        }
+
+        // Create the model file --------------------
         $plate = $this->getTemplate($type);
+
+        if ($empty)
+        {
+            $plate->setEmpty();
+        }
 
         $plate = $this->maker->make($plate);
 

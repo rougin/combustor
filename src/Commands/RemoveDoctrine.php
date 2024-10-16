@@ -54,7 +54,7 @@ class RemoveDoctrine extends Command
     {
         system('composer remove rougin/credo');
 
-        $file = $this->path . '/core/Loader.php';
+        $file = $this->path . '/core/MY_Loader.php';
 
         if (file_exists($file))
         {

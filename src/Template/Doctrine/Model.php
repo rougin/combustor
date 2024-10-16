@@ -90,6 +90,38 @@ class Model extends Classidy
     {
         foreach ($cols as $col)
         {
+            // Add additional method for foreign keys --------
+            if ($col->isForeignKey())
+            {
+                $name = $col->getReferencedTable();
+                $name = Inflector::singular($name);
+
+                $method = 'get_' . $name;
+
+                $method = new Method($method);
+
+                $type = '\\' . ucfirst($name);
+
+                if ($col->isNull())
+                {
+                    $type = $type . '|null';
+                }
+
+                $method->setReturn($type);
+
+                $fn = function ($lines) use ($name)
+                {
+                    $lines[] = 'return $this->' . $name . ';';
+
+                    return $lines;
+                };
+
+                $method->setCodeLine($fn);
+
+                $this->addMethod($method);
+            }
+            // -----------------------------------------------
+
             $name = $col->getField();
 
             $name = Inflector::snakeCase($name);
@@ -101,6 +133,7 @@ class Model extends Classidy
                 $type = $type . '|null';
             }
 
+            // TODO: Use a single function for this code -------
             $method = 'get_' . $name;
 
             if ($col->getDataType() === 'boolean')
@@ -111,17 +144,20 @@ class Model extends Classidy
 
                 $method = 'is_' . $temp;
             }
+            // -------------------------------------------------
 
             $method = new Method($method);
 
             $method->setReturn($type);
 
-            $method->setCodeLine(function ($lines) use ($name)
+            $fn = function ($lines) use ($name)
             {
                 $lines[] = 'return $this->' . $name . ';';
 
                 return $lines;
-            });
+            };
+
+            $method->setCodeLine($fn);
 
             $this->addMethod($method);
         }
@@ -139,16 +175,17 @@ class Model extends Classidy
 
             $type = $col->getDataType();
 
-            if ($col->isNull())
+            if ($col->isForeignKey())
             {
-                $type = $type . '|null';
+                $name = $col->getReferencedTable();
+                $name = Inflector::singular($name);
+
+                $type = ucfirst($name);
             }
 
             $method = new Method('set_' . $name);
 
             $method->setReturn('self');
-
-            $type = $col->getDataType();
 
             $isNull = $col->isNull();
 
@@ -163,19 +200,28 @@ class Model extends Classidy
 
                     break;
                 default:
-                    $method->addStringArgument($name, $isNull);
+                    if ($col->isForeignKey())
+                    {
+                        $method->addClassArgument($name, ucfirst($name), $isNull);
+                    }
+                    else
+                    {
+                        $method->addStringArgument($name, $isNull);
+                    }
 
                     break;
             }
 
-            $method->setCodeLine(function ($lines) use ($name)
+            $fn = function ($lines) use ($name)
             {
                 $lines[] = '$this->' . $name . ' = $' . $name . ';';
                 $lines[] = '';
                 $lines[] = 'return $this;';
 
                 return $lines;
-            });
+            };
+
+            $method->setCodeLine($fn);
 
             $this->addMethod($method);
         }
@@ -217,6 +263,32 @@ class Model extends Classidy
             $name = $col->getField();
 
             $name = Inflector::snakeCase($name);
+
+            if ($col->isForeignKey())
+            {
+                $foreignTable = $col->getReferencedTable();
+                $foreignName = Inflector::singular($foreignTable);
+                $class = ucfirst($foreignName);
+                $foreign = $col->getReferencedField();
+
+                $this->addClassProperty($foreignName, $class, $isNull);
+
+                // Generate Doctrine annotations to foreign key -------
+                $lines = array();
+
+                $keys = array('targetEntity="' . $class . '"');
+                $keys[] = 'cascade={"persist"}';
+                $lines[] = '@ManyToOne(' . implode(', ', $keys) . ')';
+
+                $keys = array('name="' . $name . '"');
+                $keys[] = 'referencedColumnName="' . $foreign . '"';
+                $keys[] = 'nullable=' . ($isNull ? 'true' : 'false');
+                $keys[] = 'unique=' . ($isUnique ? 'true' : 'false');
+                $lines[] = '@JoinColumn(' . implode(', ', $keys) . ')';
+
+                $this->withComment($lines);
+                // ----------------------------------------------------
+            }
 
             $type = $col->getDataType();
 
@@ -282,6 +354,13 @@ class Model extends Classidy
             {
                 continue;
             }
+
+            // Do not include boolean types in validation ---
+            if ($col->getDataType() === 'boolean')
+            {
+                continue;
+            }
+            // ----------------------------------------------
 
             $rule = array('field' => $name);
 

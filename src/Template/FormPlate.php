@@ -3,6 +3,8 @@
 namespace Rougin\Combustor\Template;
 
 use Rougin\Combustor\Inflector;
+use Rougin\Combustor\Template\Fields\DefaultField;
+use Rougin\Combustor\Template\Fields\ForeignField;
 use Rougin\Describe\Column;
 
 /**
@@ -25,6 +27,11 @@ class FormPlate
      * @var \Rougin\Describe\Column[]
      */
     protected $cols;
+
+    /**
+     * @var \Rougin\Combustor\Colfield[]
+     */
+    protected $customs = array();
 
     /**
      * @var boolean
@@ -68,15 +75,10 @@ class FormPlate
     public function make($tab = '')
     {
         $model = Inflector::singular($this->table);
-
         $route = Inflector::plural($this->table);
 
-        $title = 'Create New ' . ucfirst($model);
-
-        if ($this->edit)
-        {
-            $title = 'Update ' . ucfirst($model);
-        }
+        $title = $this->edit ? 'Update' : 'Create New';
+        $title = $title . ' ' . ucfirst($model);
 
         $lines = array('<h1>' . $title . '</h1>');
         $lines[] = '';
@@ -87,12 +89,7 @@ class FormPlate
         {
             $primary = $this->getPrimary();
 
-            $id = null;
-
-            if ($primary)
-            {
-                $id = '/\' . ' . $this->getField($primary);
-            }
+            $id = $primary ? '/\' . ' . $this->getAccessor($primary) : '';
 
             $link = $route . '/edit' . $id;
         }
@@ -114,24 +111,18 @@ class FormPlate
                 continue;
             }
 
-            $title = Inflector::humanize($name);
-
-            $field = $this->getField($col);
+            $title = $this->getFieldTitle($col);
 
             $class = $this->bootstrap ? 'mb-3' : '';
             $lines[] = $tab . '<div class="' . $class . '">';
             $class = $this->bootstrap ? 'form-label mb-0' : '';
             $lines[] = $tab . $tab . '<?= form_label(\'' . $title . '\', \'\', [\'class\' => \'' . $class . '\']) ?>';
 
-            $class = $this->bootstrap ? 'form-control' : '';
+            $field = $this->getFieldPlate($col, $tab);
 
-            if ($this->edit)
+            foreach ($field->getPlate() as $plate)
             {
-                $lines[] = $tab . $tab . '<?= form_input(\'' . $name . '\', set_value(\'' . $name . '\', ' . $field . '), \'class="' . $class . '"\') ?>';
-            }
-            else
-            {
-                $lines[] = $tab . $tab . '<?= form_input(\'' . $name . '\', set_value(\'' . $name . '\'), \'class="' . $class . '"\') ?>';
+                $lines[] = $tab . $tab . $plate;
             }
 
             $class = $this->bootstrap ? 'text-danger small' : '';
@@ -140,12 +131,7 @@ class FormPlate
             $lines[] = '';
         }
 
-        $submit = 'Create';
-
-        if ($this->edit)
-        {
-            $submit = 'Update';
-        }
+        $submit = $this->edit ? 'Update' : 'Create';
 
         $lines[] = $tab . '<?php if (isset($error)): ?>';
         $class = $this->bootstrap ? 'alert alert-danger' : '';
@@ -161,15 +147,17 @@ class FormPlate
 
         $result = implode("\n", $lines);
 
-        // Replace all empty class placeholders -------------
+        // Replace all empty class placeholders ------------------
         $result = str_replace(' class=""', '', $result);
+
+        $result = str_replace(', \'class\' => \'\'', '', $result);
 
         $result = str_replace(', \'class=""\'', '', $result);
 
         $search = ', \'\', [\'class\' => \'\']';
 
         return str_replace($search, '', $result);
-        // --------------------------------------------------
+        // -------------------------------------------------------
     }
 
     /**
@@ -185,11 +173,23 @@ class FormPlate
     }
 
     /**
+     * @param \Rougin\Combustor\Colfield[] $customs
+     *
+     * @return self
+     */
+    public function withCustomFields($customs)
+    {
+        $this->customs = $customs;
+
+        return $this;
+    }
+
+    /**
      * @param string[] $excluded
      *
      * @return self
      */
-    public function withExcluded($excluded)
+    public function withExcludedFields($excluded)
     {
         $this->excluded = $excluded;
 
@@ -201,16 +201,93 @@ class FormPlate
      *
      * @return string
      */
-    protected function getField(Column $column)
+    protected function getAccessor(Column $column)
     {
         $name = $column->getField();
 
         if ($this->type === self::TYPE_DOCTRINE)
         {
-            $name = 'get_' . $name . '()';
+            // TODO: Use a single function for this code -------
+            $method = 'get_' . $name;
+
+            if ($column->getDataType() === 'boolean')
+            {
+                // Remove "is_" from name to get proper name ---
+                $temp = str_replace('is_', '', $name);
+                // ---------------------------------------------
+
+                $method = 'is_' . $temp;
+            }
+            // -------------------------------------------------
+
+            $name = $method . '()';
         }
 
         return '$item->' . $name;
+    }
+
+    /**
+     * @param \Rougin\Describe\Column $column
+     * @param string                  $tab
+     *
+     * @return \Rougin\Combustor\Colfield
+     */
+    protected function getFieldPlate(Column $column, $tab = '')
+    {
+        $name = $this->getAccessor($column);
+
+        $field = new DefaultField;
+
+        foreach ($this->customs as $custom)
+        {
+            $isField = $custom->getName() === $column->getField();
+
+            $isType = $custom->getType() === $column->getDataType();
+
+            if ($isField || $isType)
+            {
+                $field = $custom;
+            }
+        }
+
+        if ($column->isForeignKey())
+        {
+            $field = new ForeignField;
+
+            $field->setTableName($column->getReferencedTable());
+        }
+
+        $field->setName($column->getField());
+
+        if ($this->bootstrap)
+        {
+            $field->useStyling(true);
+        }
+
+        $field->asEdit($this->edit);
+
+        $field->setSpacing($tab);
+
+        return $field->setAccessor($name);
+    }
+
+    /**
+     * @param \Rougin\Describe\Column $column
+     *
+     * @return string
+     */
+    protected function getFieldTitle(Column $column)
+    {
+        $name = $column->getField();
+
+        if ($column->isForeignKey())
+        {
+            $name = $column->getReferencedTable();
+
+            $name = Inflector::singular($name);
+        }
+
+        return Inflector::humanize($name);
     }
 
     /**

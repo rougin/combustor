@@ -60,7 +60,7 @@ class Console extends Blueprint
         /** @var string */
         $path = realpath($this->root);
 
-        if (! file_exists($path . '/combustor.yml'))
+        if (! file_exists($path . '/' . $this->file))
         {
             return $path;
         }

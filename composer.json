@@ -18,7 +18,7 @@
     "php": ">=5.4.0",
     "rougin/blueprint": "dev-master",
     "rougin/classidy": "~0.1",
-    "rougin/describe": "dev-master",
+    "rougin/describe": "~1.8",
     "rougin/spark-plug": "~0.6"
   },
   "require-dev":

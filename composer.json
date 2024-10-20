@@ -16,7 +16,7 @@
   "require":
   {
     "php": ">=5.4.0",
-    "rougin/blueprint": "dev-master",
+    "rougin/blueprint": "~0.7",
     "rougin/classidy": "~0.1",
     "rougin/describe": "~1.8",
     "rougin/spark-plug": "~0.6"

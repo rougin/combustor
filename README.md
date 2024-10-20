@@ -21,18 +21,18 @@ Extract the contents of the [latest Codeigniter 3 project](https://github.com/bc
 
 ``` bash
 $ wget https://github.com/bcit-ci/CodeIgniter/archive/3.1.13.zip
-$ unzip 3.1.13.zip -d acme
+$ unzip 3.1.13.zip -d ciacme
 ```
 
 Then configure the project's database connectivity settings:
 
 ```
-$ cd acme
+$ cd ciacme
 $ nano application/config/database.php
 ```
 
 ``` php
-// acme/application/config/database.php
+// ciacme/application/config/database.php
 
 // ...
 
@@ -55,7 +55,7 @@ $ composer require rougin/combustor --dev
 ```
 
 ``` json
-// acme/composer.json
+// ciacme/composer.json
 
 {
   // ...
@@ -293,7 +293,7 @@ $ vendor/bin/combustor initialize
 
 ### `app_path`
 
-This property specifies the `application` directory. It may updated to any directory (e.g., `acme/application`, `acme/config`, etc.) as long it can detect the `config/config.php` file from the defined directory:
+This property specifies the `application` directory. It may updated to any directory (e.g., `ciacme/application`, `ciacme/config`, etc.) as long it can detect the `config/config.php` file from the defined directory:
 
 ``` yaml
 # combustor.yml

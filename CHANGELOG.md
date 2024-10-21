@@ -18,6 +18,7 @@ All notable changes to `Combustor` will be documented in this file.
 - Code documentation by `php-cs-fixer`
 - Improved code quality by `phpstan`
 - Main argument `name` to `table` in `Commands`
+- Minimum PHP version to `v5.3.0`
 - Simplified code structure
 - Workflow provider to `Github Actions`
 

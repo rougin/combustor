@@ -82,6 +82,7 @@ class CheckTest extends Testcase
     /**
      * @return void
      */
+    #[\PHPUnit\Framework\Attributes\RunInSeparateProcess]
     public function test_with_packages_present()
     {
         // Mock class of specified packages ---

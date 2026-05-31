@@ -2,7 +2,12 @@
 
 All notable changes to `Combustor` will be documented in this file.
 
-## [1.3.0](https://github.com/rougin/transcribe/compare/v1.2.4...v1.3.0) - 2024-10-22
+## [1.3.1](https://github.com/rougin/combustor/compare/v1.3.0...v1.3.1) - 2026-05-31
+
+### Added
+- Support for PHP `8.4`, `8.5`
+
+## [1.3.0](https://github.com/rougin/combustor/compare/v1.2.4...v1.3.0) - 2024-10-22
 
 ### Added
 - Command for creating `combustor.yml` configuration file
